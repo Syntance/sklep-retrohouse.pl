@@ -16,6 +16,7 @@
 		"test:watch": "vitest",
 		"test:e2e": "playwright test",
 		"knip": "knip",
+		"dns:cf-sync": "bash scripts/cloudflare-sync-vercel-dns.sh",
 		"preinstall": "npx only-allow pnpm"
 	},
 	"dependencies": {
