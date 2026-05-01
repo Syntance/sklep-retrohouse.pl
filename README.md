@@ -68,6 +68,25 @@ Tych ustawień nie zautomatyzujesz wiarygodnie samym `vercel` CLI na Hobby/Pro b
 4. **Deployment Protection** — jeśli Production ma być publiczny bez SSO, wyłącz ochronę dla **Production** albo dodaj **custom domain** (DNS u rejestratora).
 5. **Code scanning** — GitHub → Security → Code scanning — workflow `codeql.yml` uruchamia się automatycznie po pushu.
 
+### DNS Cloudflare → Vercel (CLI)
+
+1. Cloudflare → **My Profile** → **API Tokens** → utwórz token z **Zone → DNS → Edit** dla strefy `sklep-retrohouse.pl`.
+2. W katalogu repo utwórz **`.env.cf.local`** (gitignored przez `.env*`) z minimalnym zestawem:
+
+```bash
+CLOUDFLARE_API_TOKEN=twoj_token
+CLOUDFLARE_ZONE_NAME=sklep-retrohouse.pl
+```
+
+3. Uruchom (najpierw podgląd):
+
+```bash
+pnpm dns:cf-sync -- --dry-run
+pnpm dns:cf-sync -- --apply
+```
+
+Opcja **`STRICT=1`** usuwa **wszystkie** rekordy A na apex/`www`, które nie są `76.76.21.21` (ostrożnie). Sam skrypt **nie naprawia DNSSEC** — DS przy rejestratorze musisz skorygować w panelu (jak wcześniej).
+
 ## Struktura
 
 ```
