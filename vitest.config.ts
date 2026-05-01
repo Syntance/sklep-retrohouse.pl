@@ -16,13 +16,7 @@ export default defineConfig({
 		coverage: {
 			provider: "v8",
 			reporter: ["text", "html"],
-			exclude: [
-				"**/*.config.*",
-				"**/.next/**",
-				"**/dist/**",
-				"src/components/ui/**",
-				"src/env.ts",
-			],
+			exclude: ["**/*.config.*", "**/.next/**", "**/dist/**", "src/components/ui/**", "src/env.ts"],
 		},
 	},
 });
