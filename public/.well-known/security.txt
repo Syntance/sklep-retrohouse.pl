@@ -1,0 +1,5 @@
+Contact: mailto:security@retrohouse.pl
+Expires: 2027-05-01T00:00:00.000Z
+Preferred-Languages: pl, en
+Canonical: https://sklep.retrohouse.pl/.well-known/security.txt
+Policy: https://sklep.retrohouse.pl/polityka-prywatnosci
