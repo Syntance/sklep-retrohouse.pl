@@ -10,7 +10,7 @@ Sklep retrohouse.pl — Next.js 16 App Router + React 19 + Tailwind v4.
 - **3D**: React Three Fiber + drei + postprocessing
 - **Forms**: React Hook Form + Zod
 - **State**: Zustand + nuqs (URL state)
-- **CMS**: Sanity (decyzja pendinguje)
+- **CMS**: **Sanity** (ADR-0003 — `/studio`, schema TS, preview)
 - **Media**: Cloudinary (`next-cloudinary`)
 - **Observability**: Sentry + PostHog (EU) + Vercel Speed Insights/Analytics
 - **Lint+format**: Biome 2
@@ -55,6 +55,18 @@ pnpm dev
 - **Region**: `fra1` (Frankfurt — minimalne TTFB dla PL)
 - **Auto-deploy**: push do `main` → production · PR → preview deploy
 - **Pre-deploy checklist**: `.cursor/rules/90-release.mdc`
+
+### Checklista po pierwszym deployu (Vercel Dashboard)
+
+Tych ustawień nie zautomatyzujesz wiarygodnie samym `vercel` CLI na Hobby/Pro bez dodatkowych tokenów API — ustaw jednorazowo w dashboardzie:
+
+1. **Speed Insights** — Project → Speed Insights → **Enable** (kod `<SpeedInsights />` już w `layout.tsx`).
+2. **Web Analytics** — Project → Analytics → **Enable** (kod `<Analytics />` już w `layout.tsx`).
+3. **Environment Variables** — Project → Settings → Environment Variables:
+   - `NEXT_PUBLIC_SITE_URL` = kanoniczny URL prod (np. `https://sklep.retrohouse.pl` lub assigned `.vercel.app` jeśli bez domeny).
+   - pozostałe wg `.env.example` (Sanity, Cloudinary, Sentry, PostHog).
+4. **Deployment Protection** — jeśli Production ma być publiczny bez SSO, wyłącz ochronę dla **Production** albo dodaj **custom domain** (DNS u rejestratora).
+5. **Code scanning** — GitHub → Security → Code scanning — workflow `codeql.yml` uruchamia się automatycznie po pushu.
 
 ## Struktura
 
