@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# sklep-retrohouse.pl
 
-## Getting Started
+Sklep retrohouse.pl — Next.js 16 App Router + React 19 + Tailwind v4.
 
-First, run the development server:
+## Stack
+
+- **Framework**: Next.js 16 + React 19 (RSC default)
+- **Style**: Tailwind v4 + CSS variables (OKLCH) + shadcn/ui
+- **Animacje**: Framer Motion / GSAP / Theatre.js / Lenis (zgodnie z `.cursor/rules/30-motion.mdc`)
+- **3D**: React Three Fiber + drei + postprocessing
+- **Forms**: React Hook Form + Zod
+- **State**: Zustand + nuqs (URL state)
+- **CMS**: Sanity (decyzja pendinguje)
+- **Media**: Cloudinary (`next-cloudinary`)
+- **Observability**: Sentry + PostHog (EU) + Vercel Speed Insights/Analytics
+- **Lint+format**: Biome 2
+- **Test**: Vitest + Playwright
+- **Pakiety**: pnpm 10 (strict, blokuje npm/yarn)
+
+Reguły projektu: `.cursor/rules/`. ADR: `docs/adr/`.
+
+## Wymagania
+
+- Node 24+
+- pnpm 10+ (`corepack enable && corepack prepare pnpm@10.33.2 --activate`)
+
+## Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+cp .env.example .env.local   # uzupełnij wartości
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Skrypty
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Komenda | Co robi |
+|---|---|
+| `pnpm dev` | Dev server (turbopack) na `localhost:3000` |
+| `pnpm build` | Production build |
+| `pnpm build:analyze` | Build + bundle analyzer (`ANALYZE=true`) |
+| `pnpm typecheck` | `tsc --noEmit` |
+| `pnpm lint` | `biome lint .` |
+| `pnpm lint:fix` | `biome lint --write .` |
+| `pnpm format` | `biome format --write .` |
+| `pnpm check` | `biome check .` (lint + format combined) |
+| `pnpm test` | Vitest (jednorazowo) |
+| `pnpm test:watch` | Vitest watch |
+| `pnpm test:e2e` | Playwright E2E |
+| `pnpm knip` | Wykryj martwe eksporty / unused deps |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deploy
 
-## Learn More
+- **Hosting**: Vercel (team `syntance`, project `sklep-retrohouse-pl`)
+- **Region**: `fra1` (Frankfurt — minimalne TTFB dla PL)
+- **Auto-deploy**: push do `main` → production · PR → preview deploy
+- **Pre-deploy checklist**: `.cursor/rules/90-release.mdc`
 
-To learn more about Next.js, take a look at the following resources:
+## Struktura
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+  app/                 # routes (App Router)
+  components/
+    ui/                # shadcn primitives
+    sections/          # sekcje stron (kebab-case folders)
+    3d/                # sceny R3F
+  lib/                 # helpery, utils
+  env.ts               # T3 Env (walidacja env vars)
+docs/
+  adr/                 # Architecture Decision Records
+  runbook/             # Incident playbooks
+public/
+  .well-known/
+    security.txt       # RFC 9116
+.github/workflows/     # CI
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Środowisko
 
-## Deploy on Vercel
+ENV variables w `.env.example`. Walidacja Zod w `src/env.ts` — build fails gdy required brakuje. Skip w CI: `SKIP_ENV_VALIDATION=true`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## A11y / Perf budget
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- LCP < 2.0s · CLS < 0.05 · INP < 200ms
+- WCAG 2.2 AA, EAA-compliant (od 28.06.2025)
+- `prefers-reduced-motion: reduce` wyłącza parallax / scrub / autoplay / 3D auto-rotate
+
+## Licencja
+
+Proprietary — wszystkie prawa zastrzeżone.

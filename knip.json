@@ -1,0 +1,29 @@
+{
+	"$schema": "https://unpkg.com/knip@6/schema.json",
+	"entry": [
+		"src/app/**/{page,layout,template,error,loading,not-found,route,sitemap,robots,opengraph-image,manifest}.{ts,tsx}",
+		"src/app/**/*.{ts,tsx}!",
+		"src/middleware.ts",
+		"src/instrumentation.ts",
+		"next.config.ts",
+		"vercel.json"
+	],
+	"project": ["src/**/*.{ts,tsx}"],
+	"ignore": ["src/components/ui/**", "node_modules/**", ".next/**", "public/**"],
+	"ignoreDependencies": [
+		"sharp",
+		"@types/node",
+		"@types/react",
+		"@types/react-dom",
+		"tw-animate-css"
+	],
+	"ignoreBinaries": ["only-allow"],
+	"next": {
+		"entry": [
+			"src/app/**/{page,layout,template,error,loading,not-found,route,sitemap,robots,opengraph-image,manifest}.{ts,tsx}",
+			"next.config.ts",
+			"src/middleware.ts",
+			"src/instrumentation.ts"
+		]
+	}
+}
