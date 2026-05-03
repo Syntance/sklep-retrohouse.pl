@@ -111,7 +111,9 @@ should_delete_record() {
 	local content="$3"
 
 	if [[ "$type" == "CNAME" ]] && is_www_name "$name"; then
-		if [[ "${content,,}" == *"squarespace"* ]]; then
+		local content_lc
+		content_lc="$(printf '%s' "$content" | tr '[:upper:]' '[:lower:]')"
+		if [[ "$content_lc" == *"squarespace"* ]]; then
 			return 0
 		fi
 	fi
