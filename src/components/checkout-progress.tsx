@@ -21,8 +21,8 @@ export function CheckoutProgress({ step }: { step: 1 | 2 | 3 | 4 }) {
 							className={cn(
 								"grid size-6 place-items-center rounded-full text-[0.7rem] font-semibold",
 								state === "done" && "bg-success text-success-foreground",
-								state === "active" && "bg-foreground text-background",
-								state === "todo" && "border border-border bg-background text-foreground/60",
+								state === "active" && "bg-terracotta text-terracotta-foreground",
+								state === "todo" && "border border-walnut/25 bg-background text-foreground/60",
 							)}
 						>
 							{state === "done" ? "✓" : value}

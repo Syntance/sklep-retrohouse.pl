@@ -31,6 +31,17 @@
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
 
+  /* Brand colors z brandbook (logo) */
+  --color-terracotta: var(--terracotta);
+  --color-terracotta-foreground: var(--terracotta-foreground);
+  --color-walnut: var(--walnut);
+  --color-walnut-foreground: var(--walnut-foreground);
+  --color-paper: var(--paper);
+  --color-paper-foreground: var(--paper-foreground);
+  --color-cream: var(--cream);
+  --color-cream-foreground: var(--cream-foreground);
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
   --color-brass: var(--brass);
   --color-brass-foreground: var(--brass-foreground);
 
@@ -53,7 +64,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-sm: calc(var(--radius) * 0.55);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
@@ -61,120 +72,160 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  --shadow-sm: 0 1px 2px -0.5px oklch(0.27 0.005 280 / 0.08);
-  --shadow-md: 0 8px 16px -4px oklch(0.27 0.005 280 / 0.10);
-  --shadow-lg: 0 24px 48px -16px oklch(0.27 0.005 280 / 0.16);
-  --shadow-xl: 0 48px 96px -32px oklch(0.27 0.005 280 / 0.22);
-  --shadow-glow: 0 0 64px oklch(0.74 0.10 80 / 0.35);
+  /* Cienie ciepłe (tonowane brązowo, nie szare — vintage feel) */
+  --shadow-sm: 0 1px 2px -0.5px oklch(0.18 0.04 35 / 0.08);
+  --shadow-md: 0 8px 20px -8px oklch(0.18 0.04 35 / 0.12);
+  --shadow-lg: 0 24px 56px -20px oklch(0.18 0.04 35 / 0.18);
+  --shadow-xl: 0 48px 96px -32px oklch(0.18 0.04 35 / 0.24);
+  --shadow-glow: 0 0 64px oklch(0.52 0.15 38 / 0.30);
+  --shadow-card: 0 1px 0 0 oklch(0.18 0.04 35 / 0.04), 0 8px 24px -12px oklch(0.18 0.04 35 / 0.08);
 }
 
 /*
- * Paleta RetroHouse — z brandbook (Notion):
- * - Surface (kość słoniowa) #FAF7F2 → oklch(0.97 0.012 80)
- * - Ink (ciemny grafit)     #2A2A2A → oklch(0.27 0.005 280)
- * - Akcent niebieski        #2C4A6E → oklch(0.39 0.06 245)
- * - Akcent mosiądz          #C5A55A → oklch(0.74 0.10 80)
- * - Zieleń butelkowa        #2D5F3E → oklch(0.43 0.07 150)
- * - Ciepła szarość          #E8E2D9 → oklch(0.91 0.014 70)
- * Zawsze OKLCH, nigdy hex w kodzie aplikacji (rule 20-design.mdc).
+ * Paleta RetroHouse — z brandbook (Notion 2026-05-03), wyciągnięta wprost z logo:
+ *
+ *  Kolory główne (logo)
+ *  - Terakota / palony pomarańcz   #B14A2A → oklch(0.52 0.15 38)   — CTA primary, badge, ceny wyróżnione, linki
+ *  - Brąz orzechowy                #7B4A2E → oklch(0.39 0.07 45)   — akcent secondary, ramki, ozdobniki
+ *  - Czerń złamana brązem          #2D1810 → oklch(0.18 0.025 35)  — typografia, footer
+ *
+ *  Neutralne
+ *  - Biały                         #FFFFFF → oklch(1 0 0)          — UI główne (karty, tła sekcji default)
+ *  - Beż / kość słoniowa (logo)    #CDB99F → oklch(0.78 0.04 70)   — sekcje "papier" (hero, story)
+ *  - Krem jasny (klosz lampy)      #E8DCC0 → oklch(0.89 0.035 80)  — alt sekcje, dividers, hover na białym
+ *
+ *  Ozdobnik
+ *  - Mosiądz złoty                 #C5A55A → oklch(0.74 0.10 80)   — linia separator, ramki ozdobne (NIE primary)
+ *
+ *  Status colors (utrzymane)
+ *  - Zieleń butelkowa              #2D5F3E → oklch(0.43 0.07 150)  — success
+ *  - Ceglany                                  oklch(0.55 0.18 28)  — destructive
+ *
+ *  Zasada: zawsze OKLCH, nigdy hex w kodzie aplikacji (rule 20-design.mdc).
  */
 :root {
-  --radius: 0.75rem;
+  --radius: 0.625rem; /* 10px — środek brandbook 8–12 */
 
-  --background: oklch(0.97 0.012 80); /* kość słoniowa */
-  --foreground: oklch(0.27 0.005 280); /* grafit */
+  --background: oklch(1 0 0); /* biały — UI główne */
+  --foreground: oklch(0.18 0.025 35); /* czerń złamana brązem */
 
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.27 0.005 280);
+  --card-foreground: oklch(0.18 0.025 35);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.27 0.005 280);
+  --popover-foreground: oklch(0.18 0.025 35);
 
-  --primary: oklch(0.39 0.06 245); /* niebieski wiedeński */
-  --primary-foreground: oklch(0.98 0.005 80);
+  --primary: oklch(0.52 0.15 38); /* terakota */
+  --primary-foreground: oklch(0.99 0.005 80);
 
-  --secondary: oklch(0.91 0.014 70); /* ciepła szarość */
-  --secondary-foreground: oklch(0.27 0.005 280);
+  --secondary: oklch(0.78 0.04 70); /* beż / kość słoniowa */
+  --secondary-foreground: oklch(0.18 0.025 35);
 
-  --muted: oklch(0.94 0.013 75);
-  --muted-foreground: oklch(0.45 0.012 280);
+  --muted: oklch(0.89 0.035 80); /* krem jasny */
+  --muted-foreground: oklch(0.39 0.07 45); /* brąz orzechowy */
 
-  --accent: oklch(0.74 0.10 80); /* mosiądz */
-  --accent-foreground: oklch(0.27 0.005 280);
+  --accent: oklch(0.39 0.07 45); /* brąz orzechowy */
+  --accent-foreground: oklch(0.99 0.005 80);
 
+  /* Brand semantic tokens (do bezpośredniego użycia w kodzie) */
+  --terracotta: oklch(0.52 0.15 38);
+  --terracotta-foreground: oklch(0.99 0.005 80);
+  --walnut: oklch(0.39 0.07 45);
+  --walnut-foreground: oklch(0.99 0.005 80);
+  --paper: oklch(0.78 0.04 70);
+  --paper-foreground: oklch(0.18 0.025 35);
+  --cream: oklch(0.89 0.035 80);
+  --cream-foreground: oklch(0.18 0.025 35);
+  --ink: oklch(0.18 0.025 35);
+  --ink-foreground: oklch(0.92 0.025 80); /* krem na ciemnym */
   --brass: oklch(0.74 0.10 80);
-  --brass-foreground: oklch(0.27 0.005 280);
+  --brass-foreground: oklch(0.18 0.025 35);
 
-  --success: oklch(0.43 0.07 150); /* zieleń butelkowa */
-  --success-foreground: oklch(0.98 0.005 80);
+  --success: oklch(0.43 0.07 150);
+  --success-foreground: oklch(0.99 0.005 80);
 
-  --destructive: oklch(0.55 0.18 28); /* ceglany */
+  --destructive: oklch(0.55 0.18 28);
 
-  --border: oklch(0.86 0.013 75);
-  --input: oklch(0.86 0.013 75);
-  --ring: oklch(0.74 0.10 80 / 0.6); /* mosiądzowy outline focus */
+  --border: oklch(0.39 0.07 45 / 0.18); /* brąz orzechowy z alpha */
+  --input: oklch(0.39 0.07 45 / 0.22);
+  --ring: oklch(0.52 0.15 38 / 0.55); /* terakota outline focus */
 
-  --chart-1: oklch(0.74 0.10 80); /* mosiądz */
-  --chart-2: oklch(0.39 0.06 245); /* niebieski */
-  --chart-3: oklch(0.43 0.07 150); /* zieleń */
-  --chart-4: oklch(0.55 0.05 60); /* ciepły bursztyn */
-  --chart-5: oklch(0.27 0.005 280); /* ink */
+  --chart-1: oklch(0.52 0.15 38); /* terakota */
+  --chart-2: oklch(0.39 0.07 45); /* brąz orzechowy */
+  --chart-3: oklch(0.74 0.10 80); /* mosiądz */
+  --chart-4: oklch(0.43 0.07 150); /* zieleń butelkowa */
+  --chart-5: oklch(0.18 0.025 35); /* ink */
 
-  --sidebar: oklch(0.95 0.012 78);
-  --sidebar-foreground: oklch(0.27 0.005 280);
-  --sidebar-primary: oklch(0.39 0.06 245);
-  --sidebar-primary-foreground: oklch(0.98 0.005 80);
-  --sidebar-accent: oklch(0.91 0.014 70);
-  --sidebar-accent-foreground: oklch(0.27 0.005 280);
-  --sidebar-border: oklch(0.86 0.013 75);
-  --sidebar-ring: oklch(0.74 0.10 80 / 0.6);
+  --sidebar: oklch(0.89 0.035 80);
+  --sidebar-foreground: oklch(0.18 0.025 35);
+  --sidebar-primary: oklch(0.52 0.15 38);
+  --sidebar-primary-foreground: oklch(0.99 0.005 80);
+  --sidebar-accent: oklch(0.78 0.04 70);
+  --sidebar-accent-foreground: oklch(0.18 0.025 35);
+  --sidebar-border: oklch(0.39 0.07 45 / 0.18);
+  --sidebar-ring: oklch(0.52 0.15 38 / 0.55);
 }
 
+/*
+ * Dark mode: brandowy ciemny brąz (#2D1810) jako tło, krem jako tekst, terakota wciąż primary.
+ * Brand jest wybitnie light-first (vintage + skandynawski), ale dark mode zachowuję
+ * jako alternatywę dla low-light reading + system preference.
+ */
 .dark {
-  --background: oklch(0.18 0.01 280);
-  --foreground: oklch(0.95 0.005 80);
+  --background: oklch(0.18 0.025 35); /* czerń złamana brązem */
+  --foreground: oklch(0.92 0.025 80); /* krem */
 
-  --card: oklch(0.22 0.01 280);
-  --card-foreground: oklch(0.95 0.005 80);
-  --popover: oklch(0.22 0.01 280);
-  --popover-foreground: oklch(0.95 0.005 80);
+  --card: oklch(0.22 0.03 35);
+  --card-foreground: oklch(0.92 0.025 80);
+  --popover: oklch(0.22 0.03 35);
+  --popover-foreground: oklch(0.92 0.025 80);
 
-  --primary: oklch(0.78 0.10 80); /* mosiądz jako primary w dark */
-  --primary-foreground: oklch(0.18 0.01 280);
+  --primary: oklch(0.62 0.16 38); /* jaśniejsza terakota dla kontrastu */
+  --primary-foreground: oklch(0.18 0.025 35);
 
-  --secondary: oklch(0.28 0.01 280);
-  --secondary-foreground: oklch(0.95 0.005 80);
+  --secondary: oklch(0.30 0.04 38);
+  --secondary-foreground: oklch(0.92 0.025 80);
 
-  --muted: oklch(0.25 0.01 280);
-  --muted-foreground: oklch(0.72 0.008 80);
+  --muted: oklch(0.27 0.035 38);
+  --muted-foreground: oklch(0.74 0.04 70);
 
-  --accent: oklch(0.78 0.10 80);
-  --accent-foreground: oklch(0.18 0.01 280);
+  --accent: oklch(0.62 0.16 38);
+  --accent-foreground: oklch(0.18 0.025 35);
 
+  --terracotta: oklch(0.62 0.16 38);
+  --terracotta-foreground: oklch(0.18 0.025 35);
+  --walnut: oklch(0.55 0.08 45);
+  --walnut-foreground: oklch(0.92 0.025 80);
+  --paper: oklch(0.30 0.04 38);
+  --paper-foreground: oklch(0.92 0.025 80);
+  --cream: oklch(0.27 0.035 38);
+  --cream-foreground: oklch(0.92 0.025 80);
+  --ink: oklch(0.12 0.02 35);
+  --ink-foreground: oklch(0.92 0.025 80);
   --brass: oklch(0.78 0.10 80);
-  --brass-foreground: oklch(0.18 0.01 280);
+  --brass-foreground: oklch(0.18 0.025 35);
 
   --success: oklch(0.62 0.10 150);
-  --success-foreground: oklch(0.18 0.01 280);
+  --success-foreground: oklch(0.18 0.025 35);
 
   --destructive: oklch(0.65 0.20 28);
 
-  --border: oklch(1 0 0 / 0.08);
-  --input: oklch(1 0 0 / 0.10);
-  --ring: oklch(0.78 0.10 80 / 0.6);
+  --border: oklch(1 0 0 / 0.10);
+  --input: oklch(1 0 0 / 0.12);
+  --ring: oklch(0.62 0.16 38 / 0.55);
 
-  --sidebar: oklch(0.22 0.01 280);
-  --sidebar-foreground: oklch(0.95 0.005 80);
-  --sidebar-primary: oklch(0.78 0.10 80);
-  --sidebar-primary-foreground: oklch(0.18 0.01 280);
-  --sidebar-accent: oklch(0.28 0.01 280);
-  --sidebar-accent-foreground: oklch(0.95 0.005 80);
-  --sidebar-border: oklch(1 0 0 / 0.08);
-  --sidebar-ring: oklch(0.78 0.10 80 / 0.6);
+  --sidebar: oklch(0.22 0.03 35);
+  --sidebar-foreground: oklch(0.92 0.025 80);
+  --sidebar-primary: oklch(0.62 0.16 38);
+  --sidebar-primary-foreground: oklch(0.18 0.025 35);
+  --sidebar-accent: oklch(0.30 0.04 38);
+  --sidebar-accent-foreground: oklch(0.92 0.025 80);
+  --sidebar-border: oklch(1 0 0 / 0.10);
+  --sidebar-ring: oklch(0.62 0.16 38 / 0.55);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/60;
   }
 
   html {
@@ -187,30 +238,103 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "ss01", "ss02", "kern", "liga";
+    line-height: 1.6; /* brandbook: body 16/1.6 */
   }
 
+  /*
+   * Typografia wg brandbook 2026-05-03:
+   *  H1, H2  → Playfair Display (serif, vintage elegancja)
+   *  H3      → Inter SemiBold (sans-serif, czytelność)
+   *  Body/Caption/CTA → Inter
+   * H3 nie ma już serifa (zmiana z poprzedniej wersji).
+   */
   h1,
   h2,
-  h3,
   .font-display {
-    font-family: var(--font-display), Georgia, serif;
-    font-feature-settings: "kern", "liga", "dlig";
+    font-family: var(--font-display), Georgia, "Times New Roman", serif;
+    font-feature-settings: "kern", "liga", "dlig", "onum";
     letter-spacing: -0.01em;
     text-wrap: balance;
+    line-height: 1.15;
   }
 
   h1 {
     letter-spacing: -0.02em;
   }
 
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+    line-height: 1.25;
+  }
+
+  /* Tonowane zaznaczenie — terakota + ink readable */
   ::selection {
-    background-color: oklch(0.74 0.10 80 / 0.35);
-    color: oklch(0.27 0.005 280);
+    background-color: oklch(0.52 0.15 38 / 0.30);
+    color: oklch(0.18 0.025 35);
+  }
+
+  ::-moz-selection {
+    background-color: oklch(0.52 0.15 38 / 0.30);
+    color: oklch(0.18 0.025 35);
   }
 
   /* Liczby tabularne (ceny, daty) */
   .tabular {
     font-variant-numeric: tabular-nums;
+  }
+
+  /* CTA uppercase wg brandbook */
+  .cta-text {
+    font-family: var(--font-sans), sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /*
+   * Złoty/mosiężny separator — element dekoracyjny brandbooka.
+   * Użycie: <hr class="brass-rule" /> lub `<span class="brass-rule" />`.
+   */
+  .brass-rule {
+    height: 1px;
+    border: 0;
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      oklch(0.74 0.10 80 / 0.3) 18%,
+      oklch(0.74 0.10 80) 50%,
+      oklch(0.74 0.10 80 / 0.3) 82%,
+      transparent 100%
+    );
+  }
+
+  /*
+   * Subtelna tekstura papieru — używana w sekcjach `paper` i `cream`.
+   * Bardzo lekka — zaledwie 6% opacity, dodaje "duszy" sekcjom hero.
+   */
+  .paper-grain {
+    position: relative;
+    isolation: isolate;
+  }
+  .paper-grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.06;
+    pointer-events: none;
+    background-image:
+      radial-gradient(oklch(0.18 0.025 35) 1px, transparent 1px),
+      radial-gradient(oklch(0.18 0.025 35) 1px, transparent 1px);
+    background-position: 0 0, 8px 8px;
+    background-size: 16px 16px;
+    mix-blend-mode: multiply;
   }
 
   /* Reduce motion zgodnie z 50-perf-a11y.mdc */
@@ -222,6 +346,15 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.001ms !important;
       scroll-behavior: auto !important;
+    }
+  }
+
+  /* Forced colors (Windows High Contrast) — brand kolory tracą znaczenie, layout musi działać */
+  @media (forced-colors: active) {
+    *,
+    *::before,
+    *::after {
+      forced-color-adjust: auto;
     }
   }
 }

@@ -137,7 +137,7 @@ export default function DlaProjektantowPage() {
 									href={`https://wa.me/${STORE_INFO.whatsapp.replace(/\s|\+/g, "")}`}
 									target="_blank"
 									rel="noreferrer"
-									className="inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-background px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:border-brass hover:text-brass"
+									className="inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-background px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:border-terracotta hover:text-terracotta"
 								>
 									<WhatsAppIcon className="size-4" />
 									WhatsApp · 15 min call
@@ -156,14 +156,14 @@ export default function DlaProjektantowPage() {
 								className="absolute inset-0"
 								style={{
 									backgroundImage:
-										"radial-gradient(70% 60% at 30% 20%, oklch(0.92 0.04 80), transparent 60%), linear-gradient(160deg, oklch(0.39 0.06 245), oklch(0.27 0.005 280))",
+										"radial-gradient(70% 60% at 30% 20%, oklch(0.92 0.04 80), transparent 60%), linear-gradient(160deg, oklch(0.39 0.07 45), oklch(0.27 0.005 280))",
 								}}
 							/>
-							<div className="relative flex h-full flex-col justify-between p-6 text-background sm:p-8">
-								<span className="rounded-full bg-foreground/85 px-3 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-background backdrop-blur">
+							<div className="relative flex h-full flex-col justify-between p-6 text-ink-foreground sm:p-8">
+								<span className="rounded-full bg-ink/85 px-3 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-ink-foreground backdrop-blur">
 									Realizacja · Studio Zaleska, Kraków
 								</span>
-								<p className="rounded-2xl border border-background/30 bg-background/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
+								<p className="rounded-2xl border border-ink-foreground/30 bg-ink-foreground/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
 									„Trzy przedmioty z Wiednia zdefiniowały całe wnętrze. RetroHouse dostarczył w 5
 									dni od briefu."
 								</p>
@@ -183,7 +183,7 @@ export default function DlaProjektantowPage() {
 					</header>
 					<div className="overflow-hidden rounded-2xl border border-border bg-card">
 						<table className="w-full text-left">
-							<thead className="bg-secondary/40 text-xs uppercase tracking-[0.14em] text-foreground/60">
+							<thead className="bg-cream text-xs uppercase tracking-[0.14em] text-foreground/60">
 								<tr>
 									<th className="px-5 py-3 font-semibold">Warunek</th>
 									<th className="px-5 py-3 font-semibold">Detal</th>
@@ -238,7 +238,7 @@ export default function DlaProjektantowPage() {
 						</div>
 						<Link
 							href="/blog?kategoria=realizacje"
-							className="group/cta inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:text-brass"
+							className="group/cta inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:text-terracotta"
 						>
 							Zobacz wszystkie na blogu
 							<ArrowRightIcon className="size-4" />
@@ -258,7 +258,7 @@ export default function DlaProjektantowPage() {
 											backgroundImage: `radial-gradient(60% 60% at 30% 20%, ${study.hue}, transparent 60%), linear-gradient(160deg, oklch(0.55 0.08 60), oklch(0.27 0.005 280))`,
 										}}
 									/>
-									<span className="absolute left-3 top-3 rounded-full bg-background/85 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-foreground backdrop-blur">
+									<span className="absolute left-3 top-3 rounded-full bg-ink-foreground/85 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-foreground backdrop-blur">
 										{study.studio}
 									</span>
 								</div>
@@ -279,13 +279,13 @@ export default function DlaProjektantowPage() {
 						<form
 							action="/api/b2b-brief"
 							method="post"
-							className="rounded-3xl border border-background/15 bg-background/5 p-6 md:p-10"
+							className="rounded-3xl border border-ink-foreground/15 bg-ink-foreground/5 p-6 md:p-10"
 						>
-							<Eyebrow className="text-brass before:bg-brass/60">Formularz briefu B2B</Eyebrow>
+							<Eyebrow className="text-brass before:bg-brass">Formularz briefu B2B</Eyebrow>
 							<h2 className="mt-3 font-display text-4xl font-semibold leading-tight">
 								Wyślij brief — odpiszemy w 24h
 							</h2>
-							<p className="mt-2 text-background/70">
+							<p className="mt-2 text-ink-foreground/70">
 								Im więcej szczegółów, tym lepsza selekcja. Nie potrzebujemy gotowych decyzji —
 								wystarczy mood board i kierunek.
 							</p>
@@ -325,11 +325,11 @@ export default function DlaProjektantowPage() {
 								/>
 							</div>
 
-							<label className="mt-4 flex items-start gap-2 text-sm text-background/80">
+							<label className="mt-4 flex items-start gap-2 text-sm text-ink-foreground/80">
 								<input
 									type="checkbox"
 									name="newsletter"
-									className="mt-1 size-4 rounded border-background/30 bg-background/10 text-brass"
+									className="mt-1 size-4 rounded border-ink-foreground/30 bg-ink-foreground/10 text-brass"
 								/>
 								<span>
 									Chcę dostawać priorytetowy newsletter B2B z nowymi dostawami z Wiednia (48 h przed
@@ -339,19 +339,19 @@ export default function DlaProjektantowPage() {
 
 							<button
 								type="submit"
-								className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-brass px-6 text-sm font-semibold uppercase tracking-[0.16em] text-foreground transition-transform hover:translate-y-[-1px]"
+								className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-terracotta px-6 text-sm font-semibold uppercase tracking-[0.16em] text-foreground transition-transform hover:translate-y-[-1px]"
 							>
 								Wyślij brief
 								<ArrowRightIcon className="size-4" />
 							</button>
-							<p className="mt-3 text-xs text-background/60">
+							<p className="mt-3 text-xs text-ink-foreground/60">
 								Odpowiemy w ciągu 24 h roboczych. Priorytet na zapytania B2B.
 							</p>
 						</form>
 
 						<aside className="space-y-4">
-							<div className="rounded-2xl border border-background/15 bg-background/5 p-6 text-sm">
-								<Eyebrow className="text-brass before:bg-brass/60">Dlaczego my</Eyebrow>
+							<div className="rounded-2xl border border-ink-foreground/15 bg-ink-foreground/5 p-6 text-sm">
+								<Eyebrow className="text-brass before:bg-brass">Dlaczego my</Eyebrow>
 								<ul className="mt-4 space-y-3">
 									<TrustItem
 										icon={<CheckIcon className="size-4" />}
@@ -376,14 +376,14 @@ export default function DlaProjektantowPage() {
 								</ul>
 							</div>
 
-							<div className="rounded-2xl border border-background/15 bg-background/5 p-6 text-sm">
-								<Eyebrow className="text-brass before:bg-brass/60">Bezpośredni kontakt</Eyebrow>
+							<div className="rounded-2xl border border-ink-foreground/15 bg-ink-foreground/5 p-6 text-sm">
+								<Eyebrow className="text-brass before:bg-brass">Bezpośredni kontakt</Eyebrow>
 								<ul className="mt-4 space-y-3">
 									<li className="flex items-start gap-3">
 										<PhoneIcon className="mt-0.5 size-4 text-brass" />
 										<div>
-											<p className="font-semibold text-background">{STORE_INFO.phone}</p>
-											<p className="text-background/60">wt–pt 11–18, sob 10–14</p>
+											<p className="font-semibold text-ink-foreground">{STORE_INFO.phone}</p>
+											<p className="text-ink-foreground/60">wt–pt 11–18, sob 10–14</p>
 										</div>
 									</li>
 									<li className="flex items-start gap-3">
@@ -392,7 +392,7 @@ export default function DlaProjektantowPage() {
 											href={`https://wa.me/${STORE_INFO.whatsapp.replace(/\s|\+/g, "")}`}
 											target="_blank"
 											rel="noreferrer"
-											className="text-background hover:text-brass"
+											className="text-ink-foreground hover:text-terracotta"
 										>
 											WhatsApp · 15 min call
 										</Link>
@@ -401,7 +401,7 @@ export default function DlaProjektantowPage() {
 										<CompassIcon className="mt-0.5 size-4 text-brass" />
 										<Link
 											href={`mailto:${STORE_INFO.emailB2B}`}
-											className="text-background hover:text-brass"
+											className="text-ink-foreground hover:text-terracotta"
 										>
 											{STORE_INFO.emailB2B}
 										</Link>
@@ -423,7 +423,7 @@ export default function DlaProjektantowPage() {
 						{FAQS.map((faq) => (
 							<details
 								key={faq.question}
-								className="group/qa px-6 py-5 transition-colors open:bg-secondary/40"
+								className="group/qa px-6 py-5 transition-colors open:bg-cream"
 							>
 								<summary className="flex cursor-pointer items-center justify-between gap-3 text-left">
 									<dt className="font-display text-lg">{faq.question}</dt>
@@ -457,7 +457,7 @@ export default function DlaProjektantowPage() {
 								href={`https://wa.me/${STORE_INFO.whatsapp.replace(/\s|\+/g, "")}`}
 								target="_blank"
 								rel="noreferrer"
-								className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:border-brass hover:text-brass"
+								className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:border-terracotta hover:text-terracotta"
 							>
 								<WhatsAppIcon className="size-4" />
 								WhatsApp
@@ -490,12 +490,12 @@ function TrustItem({
 }) {
 	return (
 		<li className="flex items-start gap-3">
-			<span className="mt-0.5 grid size-7 place-items-center rounded-full bg-background/10 text-brass">
+			<span className="mt-0.5 grid size-7 place-items-center rounded-full bg-ink-foreground/10 text-brass">
 				{icon}
 			</span>
 			<div>
-				<p className="font-semibold text-background">{title}</p>
-				<p className="text-background/70">{description}</p>
+				<p className="font-semibold text-ink-foreground">{title}</p>
+				<p className="text-ink-foreground/70">{description}</p>
 			</div>
 		</li>
 	);
@@ -519,7 +519,7 @@ function DarkField({
 	const id = `b2b-${name}`;
 	return (
 		<label htmlFor={id} className={className}>
-			<span className="text-xs font-semibold uppercase tracking-[0.14em] text-background/70">
+			<span className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-foreground/70">
 				{label} {required ? <span aria-hidden>*</span> : null}
 			</span>
 			{textarea ? (
@@ -529,7 +529,7 @@ function DarkField({
 					required={required}
 					rows={5}
 					minLength={50}
-					className="mt-2 w-full rounded-xl border border-background/20 bg-background/10 px-3 py-2 text-sm text-background placeholder:text-background/50 focus-visible:border-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
+					className="mt-2 w-full rounded-xl border border-ink-foreground/20 bg-ink-foreground/10 px-3 py-2 text-sm text-ink-foreground placeholder:text-ink-foreground/50 focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
 					placeholder="Mood board, paleta, klucz designerski, status projektu…"
 				/>
 			) : (
@@ -538,7 +538,7 @@ function DarkField({
 					name={name}
 					type={type}
 					required={required}
-					className="mt-2 h-11 w-full rounded-xl border border-background/20 bg-background/10 px-3 text-sm text-background placeholder:text-background/50 focus-visible:border-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
+					className="mt-2 h-11 w-full rounded-xl border border-ink-foreground/20 bg-ink-foreground/10 px-3 text-sm text-ink-foreground placeholder:text-ink-foreground/50 focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
 				/>
 			)}
 		</label>
@@ -557,14 +557,14 @@ function DarkSelect({
 	const id = `b2b-${name}`;
 	return (
 		<label htmlFor={id}>
-			<span className="text-xs font-semibold uppercase tracking-[0.14em] text-background/70">
+			<span className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-foreground/70">
 				{label}
 			</span>
 			<select
 				id={id}
 				name={name}
 				defaultValue=""
-				className="mt-2 h-11 w-full rounded-xl border border-background/20 bg-background/10 px-3 text-sm text-background focus-visible:border-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
+				className="mt-2 h-11 w-full rounded-xl border border-ink-foreground/20 bg-ink-foreground/10 px-3 text-sm text-ink-foreground focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
 			>
 				<option value="" disabled>
 					Wybierz…

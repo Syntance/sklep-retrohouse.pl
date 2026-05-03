@@ -79,7 +79,7 @@ export default function KoszykPage() {
 															{item.epochLabel} · {item.categoryLabel}
 														</p>
 														<p className="mt-1 font-display text-xl">
-															<Link href={`/sklep/${item.slug}`} className="hover:text-brass">
+															<Link href={`/sklep/${item.slug}`} className="hover:text-terracotta">
 																{item.name}
 															</Link>
 														</p>
@@ -92,7 +92,7 @@ export default function KoszykPage() {
 													</button>
 												</div>
 												<div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-foreground/60">
-													<span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 font-semibold uppercase tracking-[0.14em] text-foreground">
+													<span className="inline-flex items-center gap-1 rounded-full bg-cream px-2.5 py-1 font-semibold uppercase tracking-[0.14em] text-foreground">
 														Ilość: 1 — unikat
 													</span>
 													<span className="inline-flex items-center gap-1.5">
@@ -112,7 +112,7 @@ export default function KoszykPage() {
 							<details className="group/upsell mt-6 rounded-2xl border border-border bg-card p-5">
 								<summary className="flex cursor-pointer items-start justify-between gap-3 text-left">
 									<div className="flex items-start gap-3">
-										<span className="grid size-9 place-items-center rounded-full bg-brass text-foreground">
+										<span className="grid size-9 place-items-center rounded-full bg-terracotta text-terracotta-foreground">
 											<GiftIcon className="size-5" />
 										</span>
 										<div>
@@ -135,7 +135,7 @@ export default function KoszykPage() {
 										rows={3}
 										maxLength={240}
 										placeholder="Dla Marty — żeby kawa smakowała jak w Wiedniu."
-										className="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus-visible:border-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
+										className="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
 									/>
 								</label>
 							</details>
@@ -180,13 +180,13 @@ export default function KoszykPage() {
 							</CtaLink>
 							<Link
 								href="/sklep"
-								className="inline-flex items-center gap-1.5 text-sm font-semibold text-foreground/70 hover:text-brass"
+								className="inline-flex items-center gap-1.5 text-sm font-semibold text-foreground/70 hover:text-terracotta"
 							>
 								<ArrowRightIcon className="size-4 -rotate-180" />
 								Kontynuuj zakupy
 							</Link>
 
-							<ul className="space-y-2 rounded-2xl border border-border bg-secondary/40 p-4 text-xs text-foreground/70">
+							<ul className="space-y-2 rounded-2xl border border-border bg-cream p-4 text-xs text-foreground/70">
 								<TrustLine
 									icon={<ShieldIcon className="size-4" />}
 									text="Bezpieczna płatność Przelewy24 (BLIK, karta, szybki przelew)"

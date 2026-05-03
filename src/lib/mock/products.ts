@@ -27,10 +27,10 @@ export type Product = {
 };
 
 const HUE_TRIADS: Record<ProductCategory, [string, string, string]> = {
-	porcelana: ["oklch(0.92 0.02 80)", "oklch(0.74 0.10 80)", "oklch(0.39 0.06 245)"],
-	szklo: ["oklch(0.86 0.04 200)", "oklch(0.62 0.07 220)", "oklch(0.39 0.06 245)"],
+	porcelana: ["oklch(0.92 0.02 80)", "oklch(0.74 0.10 80)", "oklch(0.39 0.07 45)"],
+	szklo: ["oklch(0.86 0.03 75)", "oklch(0.55 0.08 50)", "oklch(0.39 0.07 45)"],
 	dekoracje: ["oklch(0.78 0.06 60)", "oklch(0.55 0.08 60)", "oklch(0.27 0.005 280)"],
-	meble: ["oklch(0.68 0.07 50)", "oklch(0.43 0.07 150)", "oklch(0.27 0.005 280)"],
+	meble: ["oklch(0.68 0.07 50)", "oklch(0.52 0.15 38)", "oklch(0.27 0.005 280)"],
 	obrazy: ["oklch(0.84 0.04 90)", "oklch(0.60 0.06 50)", "oklch(0.27 0.005 280)"],
 };
 

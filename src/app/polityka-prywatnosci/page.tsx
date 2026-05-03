@@ -93,7 +93,7 @@ export default function PolitykaPage() {
 							E-mail:{" "}
 							<Link
 								href="mailto:privacy@retrohouse.pl"
-								className="font-semibold text-foreground underline underline-offset-4 hover:text-brass"
+								className="font-semibold text-foreground underline underline-offset-4 hover:text-terracotta"
 							>
 								privacy@retrohouse.pl
 							</Link>

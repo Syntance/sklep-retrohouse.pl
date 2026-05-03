@@ -67,11 +67,11 @@ export default function CheckoutPage() {
 									<input
 										type="checkbox"
 										name="invoice"
-										className="size-4 rounded border-border text-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
+										className="size-4 rounded border-border text-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
 									/>
 									<span>Chcę fakturę VAT (B2B)</span>
 								</label>
-								<details className="mt-3 rounded-xl border border-border bg-card p-4 text-sm open:bg-secondary/30">
+								<details className="mt-3 rounded-xl border border-border bg-card p-4 text-sm open:bg-cream">
 									<summary className="cursor-pointer font-semibold">Dane do faktury</summary>
 									<div className="mt-4 grid gap-4 sm:grid-cols-2">
 										<TextField label="NIP" name="nip" />
@@ -126,7 +126,7 @@ export default function CheckoutPage() {
 										type="checkbox"
 										name="terms"
 										required
-										className="mt-1 size-4 rounded border-border text-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
+										className="mt-1 size-4 rounded border-border text-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
 									/>
 									<span>
 										Akceptuję{" "}
@@ -182,12 +182,12 @@ export default function CheckoutPage() {
 
 							<button
 								type="submit"
-								className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-6 text-sm font-semibold uppercase tracking-[0.16em] text-background shadow-md transition-transform hover:translate-y-[-1px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+								className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-terracotta px-6 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground shadow-md transition-transform hover:translate-y-[-1px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
 							>
 								<ShieldIcon className="size-4 text-brass" />
 								Zapłać bezpiecznie
 							</button>
-							<ul className="space-y-2 rounded-2xl border border-border bg-secondary/40 p-4 text-xs text-foreground/70">
+							<ul className="space-y-2 rounded-2xl border border-border bg-cream p-4 text-xs text-foreground/70">
 								<li className="flex items-start gap-2">
 									<CheckIcon className="size-4 text-brass" />
 									Brak rejestracji — kupujesz jako gość
@@ -276,7 +276,7 @@ function TextField({
 				name={name}
 				type={type}
 				required={required}
-				className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-3 text-sm focus-visible:border-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
+				className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-3 text-sm focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
 			/>
 		</label>
 	);
@@ -298,14 +298,14 @@ function RadioCard({
 	defaultChecked?: boolean;
 }) {
 	return (
-		<label className="flex cursor-pointer items-start justify-between gap-3 rounded-xl border border-border bg-background p-4 transition-colors has-[:checked]:border-foreground has-[:checked]:bg-secondary/40">
+		<label className="flex cursor-pointer items-start justify-between gap-3 rounded-xl border border-border bg-background p-4 transition-colors has-[:checked]:border-terracotta has-[:checked]:bg-cream has-[:checked]:shadow-md">
 			<span className="flex items-start gap-3">
 				<input
 					type="radio"
 					name={name}
 					value={value}
 					defaultChecked={defaultChecked}
-					className="mt-1 size-4 border-border text-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
+					className="mt-1 size-4 border-border text-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
 				/>
 				<span>
 					<span className="block font-semibold">{title}</span>

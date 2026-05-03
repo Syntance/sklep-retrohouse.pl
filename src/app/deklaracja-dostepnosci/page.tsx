@@ -77,14 +77,14 @@ export default function DeklaracjaPage() {
 						Jeśli napotkasz problem z dostępnością, napisz na{" "}
 						<Link
 							href="mailto:access@retrohouse.pl"
-							className="font-semibold text-foreground underline underline-offset-4 hover:text-brass"
+							className="font-semibold text-foreground underline underline-offset-4 hover:text-terracotta"
 						>
 							access@retrohouse.pl
 						</Link>
 						lub przez{" "}
 						<Link
 							href="/kontakt"
-							className="font-semibold text-foreground underline underline-offset-4 hover:text-brass"
+							className="font-semibold text-foreground underline underline-offset-4 hover:text-terracotta"
 						>
 							formularz kontaktowy
 						</Link>
@@ -94,7 +94,7 @@ export default function DeklaracjaPage() {
 							href="https://uodo.gov.pl"
 							target="_blank"
 							rel="noreferrer"
-							className="font-semibold text-foreground underline underline-offset-4 hover:text-brass"
+							className="font-semibold text-foreground underline underline-offset-4 hover:text-terracotta"
 						>
 							UODO
 						</Link>{" "}

@@ -24,7 +24,7 @@ export const CASE_STUDIES: CaseStudy[] = [
 		city: "Warszawa",
 		summary:
 			"Krzesła Thonet i lustro mosiężne ujednoliciły surowy industrial — bez utraty charakteru.",
-		hue: "oklch(0.43 0.07 150)",
+		hue: "oklch(0.52 0.15 38)",
 	},
 	{
 		slug: "willa-zakopane-modernizm-wiedenski",
@@ -33,7 +33,7 @@ export const CASE_STUDIES: CaseStudy[] = [
 		city: "Zakopane",
 		summary:
 			"Serwis Augarten i obraz Schönbrunn na tle drewnianego stropu — kontrast, który działa.",
-		hue: "oklch(0.39 0.06 245)",
+		hue: "oklch(0.39 0.07 45)",
 	},
 	{
 		slug: "biuro-kreatywne-poznan",

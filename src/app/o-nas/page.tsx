@@ -66,7 +66,7 @@ const FOUNDERS = [
 		name: "Łukasz",
 		role: "Współzałożyciel · sklep w Nowym Targu",
 		bio: "Były antykwariusz z 12 latami doświadczenia. Pakowanie, fotografia i karta historii — jego robota.",
-		hue: "oklch(0.39 0.06 245)",
+		hue: "oklch(0.39 0.07 45)",
 	},
 ];
 
@@ -136,14 +136,14 @@ export default function ONasPage() {
 								className="absolute inset-0"
 								style={{
 									backgroundImage:
-										"radial-gradient(120% 80% at 30% 20%, oklch(0.92 0.04 80), transparent 60%), linear-gradient(160deg, oklch(0.55 0.08 60), oklch(0.39 0.06 245))",
+										"radial-gradient(120% 80% at 30% 20%, oklch(0.92 0.04 80), transparent 60%), linear-gradient(160deg, oklch(0.55 0.08 60), oklch(0.39 0.07 45))",
 								}}
 							/>
-							<div className="relative flex h-full flex-col justify-between p-6 text-background sm:p-8">
-								<span className="rounded-full bg-foreground/85 px-3 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-background backdrop-blur">
+							<div className="relative flex h-full flex-col justify-between p-6 text-ink-foreground sm:p-8">
+								<span className="rounded-full bg-ink/85 px-3 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-ink-foreground backdrop-blur">
 									Behind the scenes · Landstraße
 								</span>
-								<p className="rounded-2xl border border-background/30 bg-background/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
+								<p className="rounded-2xl border border-ink-foreground/30 bg-ink-foreground/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
 									„Dziadek prowadził adwokaturę przy Graben. Po jego śmierci nikt nie umiał się
 									zdecydować, co zostawić. Wybierajcie."
 								</p>
@@ -213,7 +213,7 @@ export default function ONasPage() {
 										}}
 									/>
 									<div className="relative flex h-full items-end p-5">
-										<span className="rounded-full bg-background/85 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-foreground backdrop-blur">
+										<span className="rounded-full bg-ink-foreground/85 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-foreground backdrop-blur">
 											Współzałożyciel
 										</span>
 									</div>
@@ -265,7 +265,7 @@ export default function ONasPage() {
 									href={STORE_INFO.mapsHref}
 									target="_blank"
 									rel="noreferrer"
-									className="inline-flex items-center gap-1.5 text-sm font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-brass"
+									className="inline-flex items-center gap-1.5 text-sm font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-terracotta"
 								>
 									Pokaż na mapie
 									<ArrowRightIcon className="size-4" />
@@ -278,11 +278,11 @@ export default function ONasPage() {
 								className="absolute inset-0"
 								style={{
 									backgroundImage:
-										"radial-gradient(60% 60% at 30% 20%, oklch(0.85 0.05 70), transparent 60%), linear-gradient(160deg, oklch(0.74 0.06 50), oklch(0.43 0.07 150))",
+										"radial-gradient(60% 60% at 30% 20%, oklch(0.85 0.05 70), transparent 60%), linear-gradient(160deg, oklch(0.74 0.06 50), oklch(0.52 0.15 38))",
 								}}
 							/>
-							<div className="relative flex h-full items-end p-6 text-background">
-								<p className="rounded-2xl border border-background/30 bg-background/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
+							<div className="relative flex h-full items-end p-6 text-ink-foreground">
+								<p className="rounded-2xl border border-ink-foreground/30 bg-ink-foreground/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
 									„Wiedeńska kamienica w Tatry — atmosfera nie do pomylenia."
 								</p>
 							</div>
@@ -302,7 +302,7 @@ export default function ONasPage() {
 					<ul className="grid gap-4 md:grid-cols-3">
 						{VALUES.map((value) => (
 							<li key={value.title} className="rounded-2xl border border-border bg-card p-6">
-								<span className="grid size-10 place-items-center rounded-full bg-brass text-foreground">
+								<span className="grid size-10 place-items-center rounded-full bg-terracotta text-terracotta-foreground">
 									{value.icon}
 								</span>
 								<p className="mt-4 font-display text-xl">{value.title}</p>
@@ -358,15 +358,17 @@ function CtaCard({
 	return (
 		<Link
 			href={href}
-			className={`group/card flex flex-col justify-between gap-3 rounded-3xl border p-6 transition-colors ${highlight ? "border-brass bg-brass text-foreground" : "border-background/15 bg-background/5 text-background"} hover:border-brass`}
+			className={`group/card flex flex-col justify-between gap-3 rounded-3xl border p-6 transition-colors ${highlight ? "border-brass bg-terracotta text-terracotta-foreground" : "border-ink-foreground/15 bg-ink-foreground/5 text-ink-foreground"} hover:border-terracotta`}
 		>
 			<span
-				className={`text-[0.65rem] font-semibold uppercase tracking-[0.18em] ${highlight ? "text-foreground/80" : "text-brass"}`}
+				className={`text-[0.65rem] font-semibold uppercase tracking-[0.18em] ${highlight ? "text-terracotta-foreground/85" : "text-brass"}`}
 			>
 				{eyebrow}
 			</span>
 			<p className="font-display text-2xl font-semibold leading-tight">{title}</p>
-			<p className={`text-sm ${highlight ? "text-foreground/80" : "text-background/70"}`}>
+			<p
+				className={`text-sm ${highlight ? "text-terracotta-foreground/85" : "text-ink-foreground/70"}`}
+			>
 				{description}
 			</p>
 			<span className="inline-flex items-center gap-1 text-sm font-semibold uppercase tracking-[0.16em]">

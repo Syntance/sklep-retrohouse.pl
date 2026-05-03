@@ -3,4 +3,4 @@ export { Container } from "./container";
 export { CtaLink } from "./cta-link";
 export { Eyebrow } from "./eyebrow";
 export { Lead } from "./lead";
-export { Section } from "./section";
+export { BrassRule, Section } from "./section";

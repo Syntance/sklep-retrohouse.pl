@@ -77,8 +77,9 @@ export const viewport: Viewport = {
 	initialScale: 1,
 	colorScheme: "light dark",
 	themeColor: [
-		{ media: "(prefers-color-scheme: light)", color: "oklch(0.97 0.012 80)" },
-		{ media: "(prefers-color-scheme: dark)", color: "oklch(0.18 0.01 280)" },
+		// Brandbook 2026-05-03: white UI dla light, czerń złamana brązem #2D1810 dla dark
+		{ media: "(prefers-color-scheme: light)", color: "#FFFFFF" },
+		{ media: "(prefers-color-scheme: dark)", color: "#2D1810" },
 	],
 };
 
@@ -92,7 +93,7 @@ export default function RootLayout({
 			<body className="min-h-full flex flex-col bg-background text-foreground">
 				<a
 					href="#main"
-					className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-foreground focus:px-4 focus:py-2 focus:text-background focus:shadow-lg"
+					className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-terracotta focus:px-4 focus:py-2 focus:text-terracotta-foreground focus:shadow-lg"
 				>
 					Przejdź do treści
 				</a>

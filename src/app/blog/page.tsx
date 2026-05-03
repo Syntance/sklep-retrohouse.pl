@@ -114,11 +114,11 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
 								required
 								autoComplete="email"
 								placeholder="twój e-mail"
-								className="h-11 w-full rounded-full border border-border bg-background px-4 text-sm focus-visible:border-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
+								className="h-11 w-full rounded-full border border-border bg-background px-4 text-sm focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
 							/>
 							<button
 								type="submit"
-								className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-foreground px-5 text-sm font-semibold uppercase tracking-[0.16em] text-background"
+								className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-terracotta px-5 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground"
 							>
 								Zapisz mnie
 								<ArrowRightIcon className="size-4" />
@@ -139,7 +139,7 @@ function CategoryPill({ label, href, active }: { label: string; href: string; ac
 			className={cn(
 				"inline-flex items-center rounded-full border px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] transition-colors",
 				active
-					? "border-foreground bg-foreground text-background"
+					? "border-ink bg-terracotta text-terracotta-foreground"
 					: "border-border bg-card text-foreground/70 hover:border-foreground hover:text-foreground",
 			)}
 		>
@@ -162,7 +162,7 @@ function FeaturedPost({ post }: { post: Post }) {
 						backgroundImage: `radial-gradient(70% 60% at 30% 20%, ${post.heroHue}, transparent 60%), linear-gradient(160deg, oklch(0.55 0.08 60), oklch(0.27 0.005 280))`,
 					}}
 				/>
-				<span className="absolute left-4 top-4 rounded-full bg-background/85 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-foreground backdrop-blur">
+				<span className="absolute left-4 top-4 rounded-full bg-ink-foreground/85 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-foreground backdrop-blur">
 					Wyróżniony · {post.categoryLabel}
 				</span>
 			</Link>
@@ -171,7 +171,7 @@ function FeaturedPost({ post }: { post: Post }) {
 					{post.categoryLabel}
 				</p>
 				<h2 className="mt-3 font-display text-4xl font-semibold leading-tight md:text-5xl">
-					<Link href={`/blog/${post.slug}`} className="hover:text-brass">
+					<Link href={`/blog/${post.slug}`} className="hover:text-terracotta">
 						{post.title}
 					</Link>
 				</h2>
@@ -202,7 +202,7 @@ function PostCard({ post }: { post: Post }) {
 						backgroundImage: `radial-gradient(80% 60% at 40% 20%, ${post.heroHue}, transparent 60%), linear-gradient(160deg, oklch(0.74 0.06 50), oklch(0.27 0.005 280))`,
 					}}
 				/>
-				<span className="absolute left-3 top-3 rounded-full bg-background/85 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-foreground backdrop-blur">
+				<span className="absolute left-3 top-3 rounded-full bg-ink-foreground/85 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-foreground backdrop-blur">
 					{post.categoryLabel}
 				</span>
 			</Link>
@@ -211,14 +211,14 @@ function PostCard({ post }: { post: Post }) {
 					{formatDate(post.publishedAt)} · {post.readingTime} min
 				</p>
 				<h3 className="font-display text-xl leading-tight">
-					<Link href={`/blog/${post.slug}`} className="hover:text-brass">
+					<Link href={`/blog/${post.slug}`} className="hover:text-terracotta">
 						{post.title}
 					</Link>
 				</h3>
 				<p className="line-clamp-3 text-sm text-foreground/70">{post.excerpt}</p>
 				<Link
 					href={`/blog/${post.slug}`}
-					className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-foreground hover:text-brass"
+					className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-foreground hover:text-terracotta"
 				>
 					Czytaj dalej
 					<ArrowRightIcon className="size-4 transition-transform group-hover/card:translate-x-0.5" />
