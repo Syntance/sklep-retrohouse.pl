@@ -71,29 +71,27 @@ export const FOOTER_COLUMNS: NavGroup[] = [
 	{
 		heading: "Sklep",
 		items: [
-			{ label: "Wszystkie produkty", href: "/sklep" },
-			{ label: "Nowości", href: "/sklep?sort=najnowsze" },
-			{ label: "Bestsellery", href: "/sklep?sort=popularne" },
+			{ label: "Wszystkie skarby", href: "/sklep" },
+			{ label: "Nowości z Wiednia", href: "/sklep?sort=najnowsze" },
 			{ label: "Prezent z duszą", href: "/prezent" },
-			{ label: "Blog", href: "/blog" },
+			{ label: "Dla projektantów", href: "/dla-projektantow" },
 		],
 	},
 	{
-		heading: "Informacje",
+		heading: "O sklepie",
 		items: [
-			{ label: "O nas", href: "/o-nas" },
+			{ label: "Nasza historia", href: "/o-nas" },
+			{ label: "Blog", href: "/blog" },
 			{ label: "Wysyłka i zwroty", href: "/wysylka" },
+			{ label: "Kontakt", href: "/kontakt" },
+		],
+	},
+	{
+		heading: "Formalności",
+		items: [
 			{ label: "Regulamin", href: "/regulamin" },
 			{ label: "Polityka prywatności", href: "/polityka-prywatnosci" },
 			{ label: "Deklaracja dostępności", href: "/deklaracja-dostepnosci" },
-		],
-	},
-	{
-		heading: "Dla biznesu",
-		items: [
-			{ label: "Dla projektantów", href: "/dla-projektantow" },
-			{ label: "Warunki trade", href: "/dla-projektantow#warunki" },
-			{ label: "Newsletter B2B", href: "/dla-projektantow#brief" },
 		],
 	},
 ];
