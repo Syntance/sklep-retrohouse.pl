@@ -96,7 +96,7 @@ export default function KontaktPage() {
 								allowFullScreen
 							/>
 						</div>
-						<div className="flex flex-wrap items-center justify-between gap-3 border-t border-border bg-secondary/40 p-4 text-sm">
+						<div className="flex flex-wrap items-center justify-between gap-3 border-t border-border bg-cream p-4 text-sm">
 							<p className="text-foreground/80">
 								<strong>Jak do nas dojechać:</strong> 4 minuty pieszo od rynku Nowego Targu, parking
 								100 m. Wyznaczamy najlepszą trasę z Twojej lokalizacji.
@@ -105,7 +105,7 @@ export default function KontaktPage() {
 								href={STORE_INFO.mapsHref}
 								target="_blank"
 								rel="noreferrer"
-								className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:text-brass"
+								className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:text-terracotta"
 							>
 								Otwórz w Google Maps
 								<ArrowRightIcon className="size-4" />
@@ -141,7 +141,7 @@ export default function KontaktPage() {
 									<select
 										name="topic"
 										required
-										className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-3 text-sm focus-visible:border-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
+										className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-3 text-sm focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
 										defaultValue=""
 									>
 										<option value="" disabled>
@@ -163,14 +163,14 @@ export default function KontaktPage() {
 										required
 										minLength={20}
 										placeholder="Napisz, czego szukasz — dopasujemy z najnowszej dostawy z Wiednia."
-										className="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus-visible:border-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
+										className="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
 									/>
 								</label>
 							</div>
 
 							<button
 								type="submit"
-								className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-foreground px-6 text-sm font-semibold uppercase tracking-[0.16em] text-background"
+								className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-terracotta px-6 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground"
 							>
 								Wyślij
 								<ArrowRightIcon className="size-4" />
@@ -180,20 +180,20 @@ export default function KontaktPage() {
 								Wysyłając formularz akceptujesz{" "}
 								<Link
 									href="/polityka-prywatnosci"
-									className="underline underline-offset-4 hover:text-brass"
+									className="underline underline-offset-4 hover:text-terracotta"
 								>
 									politykę prywatności
 								</Link>
 								.
 							</p>
 
-							<aside className="mt-6 rounded-2xl border border-brass/40 bg-brass/15 p-4 text-sm">
+							<aside className="mt-6 rounded-2xl border border-brass/40 bg-terracotta/15 p-4 text-sm">
 								<p className="font-display text-base">Jesteś projektantem wnętrz / architektem?</p>
 								<p className="mt-1 text-foreground/80">
 									Przejdź na{" "}
 									<Link
 										href="/dla-projektantow"
-										className="font-semibold text-foreground underline underline-offset-4 hover:text-brass"
+										className="font-semibold text-foreground underline underline-offset-4 hover:text-terracotta"
 									>
 										/dla-projektantow
 									</Link>
@@ -244,7 +244,7 @@ export default function KontaktPage() {
 								</ul>
 							</div>
 
-							<div className="rounded-2xl border border-border bg-secondary/40 p-6">
+							<div className="rounded-2xl border border-border bg-cream p-6">
 								<p className="font-display text-lg">Najszybsza droga</p>
 								<p className="mt-1 text-sm text-foreground/70">
 									DM na Instagramie albo WhatsApp — odpisujemy w godzinach otwarcia w ciągu 30
@@ -277,7 +277,7 @@ export default function KontaktPage() {
 						{FAQS.map((faq) => (
 							<details
 								key={faq.question}
-								className="group/qa px-6 py-5 transition-colors open:bg-secondary/40"
+								className="group/qa px-6 py-5 transition-colors open:bg-cream"
 							>
 								<summary className="flex cursor-pointer items-center justify-between gap-3 text-left">
 									<dt className="font-display text-lg">{faq.question}</dt>
@@ -321,7 +321,7 @@ function ContactRow({
 	);
 	return (
 		<li className="flex items-start gap-3">
-			<span className="mt-0.5 grid size-8 place-items-center rounded-full bg-secondary text-brass">
+			<span className="mt-0.5 grid size-8 place-items-center rounded-full bg-cream text-brass">
 				{icon}
 			</span>
 			{href ? (
@@ -329,7 +329,7 @@ function ContactRow({
 					href={href}
 					target={href.startsWith("http") ? "_blank" : undefined}
 					rel={href.startsWith("http") ? "noreferrer" : undefined}
-					className="flex-1 hover:text-brass"
+					className="flex-1 hover:text-terracotta"
 				>
 					{inner}
 				</Link>
@@ -362,7 +362,7 @@ function TextField({
 				name={name}
 				type={type}
 				required={required}
-				className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-3 text-sm focus-visible:border-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
+				className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-3 text-sm focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
 			/>
 		</label>
 	);

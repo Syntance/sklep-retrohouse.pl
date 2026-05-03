@@ -59,9 +59,9 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Sea
 								/>
 							</ol>
 						</div>
-						<div className="rounded-2xl border border-border bg-secondary/40 p-5">
+						<div className="rounded-2xl border border-border bg-cream p-5">
 							<div className="flex items-start gap-3">
-								<span className="grid size-10 place-items-center rounded-full bg-brass text-foreground">
+								<span className="grid size-10 place-items-center rounded-full bg-terracotta text-terracotta-foreground">
 									<GiftIcon className="size-5" />
 								</span>
 								<div>
@@ -76,7 +76,7 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Sea
 								href={STORE_INFO.instagramHref}
 								target="_blank"
 								rel="noreferrer"
-								className="mt-4 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:text-brass"
+								className="mt-4 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:text-terracotta"
 							>
 								<InstagramIcon className="size-4" />
 								Otwórz Instagrama
@@ -103,11 +103,11 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Sea
 								required
 								autoComplete="email"
 								placeholder="twój e-mail"
-								className="h-11 w-full rounded-full border border-border bg-background px-4 text-sm focus-visible:border-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
+								className="h-11 w-full rounded-full border border-border bg-background px-4 text-sm focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
 							/>
 							<button
 								type="submit"
-								className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-foreground px-5 text-sm font-semibold uppercase tracking-[0.16em] text-background"
+								className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-terracotta px-5 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground"
 							>
 								Zapisz mnie
 								<ArrowRightIcon className="size-4" />
@@ -122,7 +122,7 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Sea
 					<div className="grid gap-4 md:grid-cols-2">
 						<Link
 							href="/o-nas"
-							className="group/card flex h-full flex-col justify-between gap-3 rounded-2xl border border-border bg-card p-6 transition-colors hover:border-brass"
+							className="group/card flex h-full flex-col justify-between gap-3 rounded-2xl border border-border bg-card p-6 transition-colors hover:border-terracotta"
 						>
 							<div className="flex items-center gap-2 text-brass">
 								<HeartIcon className="size-5" />
@@ -144,7 +144,7 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Sea
 							href={STORE_INFO.mapsHref}
 							target="_blank"
 							rel="noreferrer"
-							className="group/card flex h-full flex-col justify-between gap-3 rounded-2xl border border-border bg-card p-6 transition-colors hover:border-brass"
+							className="group/card flex h-full flex-col justify-between gap-3 rounded-2xl border border-border bg-card p-6 transition-colors hover:border-terracotta"
 						>
 							<div className="flex items-center gap-2 text-brass">
 								<PinIcon className="size-5" />
@@ -171,7 +171,7 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Sea
 							href={STORE_INFO.instagramHref}
 							target="_blank"
 							rel="noreferrer"
-							className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-brass"
+							className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-terracotta"
 						>
 							<InstagramIcon className="size-4" />
 							@retrohouse
@@ -186,7 +186,7 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Sea
 function TimelineStep({ label, description }: { label: string; description: string }) {
 	return (
 		<li className="flex items-start gap-3">
-			<span className="mt-1 size-2 shrink-0 rounded-full bg-brass" />
+			<span className="mt-1 size-2 shrink-0 rounded-full bg-terracotta" />
 			<div>
 				<p className="font-semibold">{label}</p>
 				<p className="text-sm text-foreground/70">{description}</p>

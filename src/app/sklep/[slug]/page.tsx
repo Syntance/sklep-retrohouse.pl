@@ -154,7 +154,7 @@ export default async function ProduktPage({ params }: { params: Params }) {
 							</div>
 							<Link
 								href="/sklep"
-								className="group/cta inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:text-brass"
+								className="group/cta inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:text-terracotta"
 							>
 								Zobacz wszystkie
 								<ArrowRightIcon className="size-4" />
@@ -184,7 +184,7 @@ export default async function ProduktPage({ params }: { params: Params }) {
 								href="https://instagram.com/retrohouse"
 								target="_blank"
 								rel="noreferrer"
-								className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-brass"
+								className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-terracotta"
 							>
 								<InstagramIcon className="size-4" />
 								@retrohouse
@@ -223,11 +223,11 @@ function Gallery({ product }: { product: Product }) {
 						backgroundImage: `radial-gradient(120% 80% at 30% 20%, ${primary}, transparent 60%), radial-gradient(80% 80% at 80% 90%, ${secondary}, transparent 70%), linear-gradient(135deg, ${accent}, ${primary})`,
 					}}
 				/>
-				<div className="absolute right-4 top-4 inline-flex items-center gap-2 rounded-full bg-background/85 px-3 py-1.5 text-xs font-semibold text-foreground backdrop-blur">
+				<div className="absolute right-4 top-4 inline-flex items-center gap-2 rounded-full bg-ink-foreground/85 px-3 py-1.5 text-xs font-semibold text-foreground backdrop-blur">
 					<ZoomIcon className="size-3.5" />
 					Zoom on hover
 				</div>
-				<figcaption className="absolute bottom-4 left-4 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-background drop-shadow">
+				<figcaption className="absolute bottom-4 left-4 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-ink-foreground drop-shadow">
 					Główne zdjęcie · {product.name}
 				</figcaption>
 			</figure>
@@ -245,7 +245,7 @@ function Gallery({ product }: { product: Product }) {
 								opacity: slot.weight,
 							}}
 						/>
-						<span className="absolute inset-x-1 bottom-1 rounded bg-background/80 px-1.5 py-0.5 text-center text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-foreground">
+						<span className="absolute inset-x-1 bottom-1 rounded bg-ink-foreground/80 px-1.5 py-0.5 text-center text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-foreground">
 							{slot.label}
 						</span>
 					</li>
@@ -259,7 +259,7 @@ function InfoPanel({ product }: { product: Product }) {
 	return (
 		<aside className="flex flex-col gap-6 lg:sticky lg:top-24 lg:self-start">
 			<div className="flex flex-wrap gap-2">
-				<span className="rounded-full bg-foreground px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-background">
+				<span className="rounded-full bg-ink px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-ink-foreground">
 					Unikat — 1 z 1
 				</span>
 				{product.badges.includes("fresh") ? (
@@ -268,7 +268,7 @@ function InfoPanel({ product }: { product: Product }) {
 					</span>
 				) : null}
 				{product.badges.includes("bestseller") ? (
-					<span className="rounded-full bg-brass px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-foreground">
+					<span className="rounded-full bg-terracotta px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-foreground">
 						Bestseller
 					</span>
 				) : null}
@@ -295,27 +295,27 @@ function InfoPanel({ product }: { product: Product }) {
 				<input type="hidden" name="slug" value={product.slug} />
 				<button
 					type="submit"
-					className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-foreground px-6 text-sm font-semibold uppercase tracking-[0.16em] text-background shadow-md transition-transform hover:translate-y-[-1px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+					className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-terracotta px-6 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground shadow-md transition-transform hover:translate-y-[-1px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
 				>
 					<CartIcon className="size-4" />
 					Dodaj do koszyka
 				</button>
 				<Link
 					href={`/kontakt?subject=produkt&slug=${product.slug}`}
-					className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-border bg-card text-sm font-semibold uppercase tracking-[0.16em] text-foreground transition-colors hover:border-brass hover:text-brass"
+					className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-border bg-card text-sm font-semibold uppercase tracking-[0.16em] text-foreground transition-colors hover:border-terracotta hover:text-terracotta"
 				>
 					Zapytaj o ten przedmiot
 				</Link>
 				<Link
 					href={`/dla-projektantow#brief?slug=${product.slug}`}
-					className="inline-flex items-center gap-1.5 self-start text-xs font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-brass"
+					className="inline-flex items-center gap-1.5 self-start text-xs font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-terracotta"
 				>
 					Jesteś projektantem? Rezerwacja 14 dni i FV
 					<ArrowRightIcon className="size-3" />
 				</Link>
 			</form>
 
-			<ul className="grid gap-2.5 rounded-2xl border border-border bg-secondary/40 p-4 text-sm">
+			<ul className="grid gap-2.5 rounded-2xl border border-border bg-cream p-4 text-sm">
 				<TrustItem
 					icon={<PackageIcon className="size-4" />}
 					label="Ubezpieczona wysyłka"

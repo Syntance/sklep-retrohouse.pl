@@ -74,7 +74,7 @@ export const POSTS: Post[] = [
 		publishedAt: "2026-04-01",
 		readingTime: 8,
 		author: "Redakcja RetroHouse",
-		heroHue: "oklch(0.62 0.07 220)",
+		heroHue: "oklch(0.55 0.08 50)",
 	},
 	{
 		slug: "secesja-wiedenska-przewodnik-dla-poczatkujacych",
@@ -98,7 +98,7 @@ export const POSTS: Post[] = [
 		publishedAt: "2026-03-12",
 		readingTime: 7,
 		author: "Redakcja RetroHouse",
-		heroHue: "oklch(0.43 0.07 150)",
+		heroHue: "oklch(0.52 0.15 38)",
 	},
 	{
 		slug: "dla-projektantow-jak-pracujemy-z-briefem",
@@ -109,7 +109,7 @@ export const POSTS: Post[] = [
 		publishedAt: "2026-03-04",
 		readingTime: 6,
 		author: "Redakcja RetroHouse",
-		heroHue: "oklch(0.39 0.06 245)",
+		heroHue: "oklch(0.39 0.07 45)",
 	},
 	{
 		slug: "jak-dbac-o-porcelane",
@@ -121,7 +121,7 @@ export const POSTS: Post[] = [
 		publishedAt: "2026-02-21",
 		readingTime: 4,
 		author: "Redakcja RetroHouse",
-		heroHue: "oklch(0.86 0.04 200)",
+		heroHue: "oklch(0.86 0.03 75)",
 	},
 ];
 

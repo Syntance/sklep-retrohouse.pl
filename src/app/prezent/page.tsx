@@ -84,14 +84,14 @@ export default function PrezentPage() {
 								className="absolute inset-0"
 								style={{
 									backgroundImage:
-										"radial-gradient(70% 60% at 30% 20%, oklch(0.92 0.04 80), transparent 60%), linear-gradient(160deg, oklch(0.74 0.10 80), oklch(0.39 0.06 245))",
+										"radial-gradient(70% 60% at 30% 20%, oklch(0.92 0.04 80), transparent 60%), linear-gradient(160deg, oklch(0.74 0.10 80), oklch(0.39 0.07 45))",
 								}}
 							/>
-							<div className="relative flex h-full flex-col justify-between p-6 text-background sm:p-8">
-								<span className="rounded-full bg-foreground/85 px-3 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-background backdrop-blur">
+							<div className="relative flex h-full flex-col justify-between p-6 text-ink-foreground sm:p-8">
+								<span className="rounded-full bg-ink/85 px-3 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-ink-foreground backdrop-blur">
 									Pakowanie · bibułka + karta historii
 								</span>
-								<p className="rounded-2xl border border-background/30 bg-background/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
+								<p className="rounded-2xl border border-ink-foreground/30 bg-ink-foreground/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
 									„Otworzyłam paczkę i miałam wrażenie, że dostałam list z przeszłości."
 								</p>
 							</div>
@@ -117,9 +117,9 @@ export default function PrezentPage() {
 							<li key={bucket.id}>
 								<Link
 									href={`/sklep?cena=${bucket.id}`}
-									className="group/budget flex h-full flex-col justify-between gap-3 rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-0.5 hover:border-brass hover:shadow-md"
+									className="group/budget flex h-full flex-col justify-between gap-3 rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-0.5 hover:border-terracotta hover:shadow-md"
 								>
-									<span className="grid size-10 place-items-center rounded-full bg-brass text-foreground">
+									<span className="grid size-10 place-items-center rounded-full bg-terracotta text-terracotta-foreground">
 										<GiftIcon className="size-5" />
 									</span>
 									<span className="font-display text-2xl font-semibold leading-tight">
@@ -148,7 +148,7 @@ export default function PrezentPage() {
 						</div>
 						<Link
 							href="/sklep"
-							className="group/cta inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:text-brass"
+							className="group/cta inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:text-terracotta"
 						>
 							Zobacz wszystkie prezenty
 							<ArrowRightIcon className="size-4" />
@@ -171,11 +171,11 @@ export default function PrezentPage() {
 								className="absolute inset-0"
 								style={{
 									backgroundImage:
-										"radial-gradient(80% 60% at 30% 30%, oklch(0.92 0.04 80), transparent 60%), linear-gradient(160deg, oklch(0.78 0.06 60), oklch(0.43 0.07 150))",
+										"radial-gradient(80% 60% at 30% 30%, oklch(0.92 0.04 80), transparent 60%), linear-gradient(160deg, oklch(0.78 0.06 60), oklch(0.52 0.15 38))",
 								}}
 							/>
-							<div className="relative flex h-full items-end p-6 text-background">
-								<p className="rounded-2xl border border-background/30 bg-background/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
+							<div className="relative flex h-full items-end p-6 text-ink-foreground">
+								<p className="rounded-2xl border border-ink-foreground/30 bg-ink-foreground/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
 									„Bibułka, karta z historią, wizytówka — paczka jak prezent sam w sobie."
 								</p>
 							</div>
@@ -211,13 +211,13 @@ export default function PrezentPage() {
 
 			<Section spacing="md" tone="ink">
 				<Container size="xl">
-					<div className="grid gap-6 rounded-3xl border border-background/15 bg-background/5 p-8 md:grid-cols-[1.4fr_1fr] md:items-center md:p-12">
+					<div className="grid gap-6 rounded-3xl border border-ink-foreground/15 bg-ink-foreground/5 p-8 md:grid-cols-[1.4fr_1fr] md:items-center md:p-12">
 						<div>
-							<Eyebrow className="text-brass before:bg-brass/60">Doradzimy</Eyebrow>
+							<Eyebrow className="text-brass before:bg-brass">Doradzimy</Eyebrow>
 							<h2 className="mt-3 font-display text-3xl font-semibold leading-tight md:text-4xl">
 								Nie wiesz co wybrać? Napisz — doradzimy
 							</h2>
-							<p className="mt-2 text-background/70">
+							<p className="mt-2 text-ink-foreground/70">
 								Powiedz, dla kogo i jaki budżet — odpiszemy z 3 propozycjami dopasowanymi do okazji.
 							</p>
 						</div>
@@ -229,14 +229,14 @@ export default function PrezentPage() {
 								href="https://instagram.com/retrohouse"
 								target="_blank"
 								rel="noreferrer"
-								className="inline-flex items-center justify-center gap-2 rounded-full border border-background/20 px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-background/80 hover:border-brass hover:text-brass"
+								className="inline-flex items-center justify-center gap-2 rounded-full border border-ink-foreground/20 px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-ink-foreground/80 hover:border-terracotta hover:text-terracotta"
 							>
 								<InstagramIcon className="size-4" />
 								DM @retrohouse
 							</Link>
 						</div>
 					</div>
-					<p className="mt-6 text-xs text-background/60">
+					<p className="mt-6 text-xs text-ink-foreground/60">
 						Nie zdążysz? Odbiór osobisty w Nowym Targu tego samego dnia po uprzednim kontakcie.
 					</p>
 				</Container>
@@ -248,7 +248,7 @@ export default function PrezentPage() {
 function PackingItem({ icon, text }: { icon: React.ReactNode; text: string }) {
 	return (
 		<li className="flex items-start gap-3">
-			<span className="mt-0.5 grid size-7 place-items-center rounded-full bg-brass/20 text-brass">
+			<span className="mt-0.5 grid size-7 place-items-center rounded-full bg-terracotta/20 text-brass">
 				{icon}
 			</span>
 			<span>{text}</span>

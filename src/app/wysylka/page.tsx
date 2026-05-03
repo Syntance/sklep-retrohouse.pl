@@ -82,7 +82,7 @@ export default function WysylkaPage() {
 					</header>
 					<div className="overflow-hidden rounded-2xl border border-border bg-card">
 						<table className="w-full text-left text-sm">
-							<thead className="bg-secondary/40 text-xs uppercase tracking-[0.14em] text-foreground/60">
+							<thead className="bg-cream text-xs uppercase tracking-[0.14em] text-foreground/60">
 								<tr>
 									<th className="px-5 py-3 font-semibold">Opcja</th>
 									<th className="px-5 py-3 font-semibold">Czas</th>
@@ -117,15 +117,15 @@ export default function WysylkaPage() {
 							<ul className="mt-6 space-y-3">
 								{PACKAGING.map((item) => (
 									<li key={item} className="flex items-start gap-3 text-foreground/80">
-										<span className="mt-0.5 grid size-7 place-items-center rounded-full bg-brass/20 text-brass">
+										<span className="mt-0.5 grid size-7 place-items-center rounded-full bg-terracotta/20 text-brass">
 											<CheckIcon className="size-4" />
 										</span>
 										{item}
 									</li>
 								))}
 							</ul>
-							<aside className="mt-8 flex items-start gap-3 rounded-2xl border border-brass/40 bg-brass/15 p-5">
-								<span className="grid size-9 place-items-center rounded-full bg-foreground text-brass">
+							<aside className="mt-8 flex items-start gap-3 rounded-2xl border border-brass/40 bg-terracotta/15 p-5">
+								<span className="grid size-9 place-items-center rounded-full bg-ink text-brass">
 									<GiftIcon className="size-5" />
 								</span>
 								<div>
@@ -142,11 +142,11 @@ export default function WysylkaPage() {
 								className="absolute inset-0"
 								style={{
 									backgroundImage:
-										"radial-gradient(70% 60% at 30% 20%, oklch(0.92 0.04 80), transparent 60%), linear-gradient(160deg, oklch(0.74 0.10 80), oklch(0.39 0.06 245))",
+										"radial-gradient(70% 60% at 30% 20%, oklch(0.92 0.04 80), transparent 60%), linear-gradient(160deg, oklch(0.74 0.10 80), oklch(0.39 0.07 45))",
 								}}
 							/>
-							<div className="relative flex h-full items-end p-6 text-background">
-								<p className="rounded-2xl border border-background/30 bg-background/15 p-4 text-sm leading-snug backdrop-blur-md">
+							<div className="relative flex h-full items-end p-6 text-ink-foreground">
+								<p className="rounded-2xl border border-ink-foreground/30 bg-ink-foreground/15 p-4 text-sm leading-snug backdrop-blur-md">
 									Premium unboxing — zdjęcie zapakowanej paczki
 								</p>
 							</div>
@@ -200,7 +200,7 @@ export default function WysylkaPage() {
 						{FAQS.map((faq) => (
 							<details
 								key={faq.question}
-								className="group/qa px-6 py-5 transition-colors open:bg-secondary/40"
+								className="group/qa px-6 py-5 transition-colors open:bg-cream"
 							>
 								<summary className="flex cursor-pointer items-center justify-between gap-3 text-left">
 									<dt className="font-display text-lg">{faq.question}</dt>

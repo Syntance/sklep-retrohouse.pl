@@ -109,7 +109,7 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 											className={cn(
 												"inline-flex items-center justify-center rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] transition-colors",
 												isActive
-													? "border-foreground bg-foreground text-background"
+													? "border-ink bg-terracotta text-terracotta-foreground"
 													: "border-border bg-card text-foreground/70 hover:border-foreground hover:text-foreground",
 											)}
 										>
@@ -196,7 +196,7 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 								href="https://instagram.com/retrohouse"
 								target="_blank"
 								rel="noreferrer"
-								className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-brass"
+								className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-terracotta"
 							>
 								<InstagramIcon className="size-4" />
 								Obserwuj IG — nowości tam najpierw
@@ -241,8 +241,8 @@ function FilterGroup({
 								className={cn(
 									"flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
 									isActive
-										? "bg-foreground text-background"
-										: "text-foreground/80 hover:bg-secondary/60 hover:text-foreground",
+										? "bg-ink text-ink-foreground"
+										: "text-foreground/80 hover:bg-cream hover:text-foreground",
 								)}
 							>
 								{option.label}
@@ -263,7 +263,7 @@ function FilterGroup({
 function EmptyState() {
 	return (
 		<div className="flex flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-border bg-card p-10 text-center">
-			<span className="grid size-14 place-items-center rounded-full bg-secondary/60">
+			<span className="grid size-14 place-items-center rounded-full bg-cream">
 				<ArrowRightIcon className="size-6 text-brass" />
 			</span>
 			<h2 className="font-display text-2xl">Nic tu jeszcze nie ma</h2>

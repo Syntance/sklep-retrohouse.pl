@@ -91,7 +91,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
 								backgroundImage: `radial-gradient(70% 60% at 30% 20%, ${post.heroHue}, transparent 60%), linear-gradient(160deg, oklch(0.55 0.08 60), oklch(0.27 0.005 280))`,
 							}}
 						/>
-						<figcaption className="absolute bottom-4 left-4 text-xs font-semibold uppercase tracking-[0.16em] text-background drop-shadow">
+						<figcaption className="absolute bottom-4 left-4 text-xs font-semibold uppercase tracking-[0.16em] text-ink-foreground drop-shadow">
 							Hero · {post.title}
 						</figcaption>
 					</figure>
@@ -113,7 +113,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
 							listy i embed produktów.
 						</p>
 
-						<aside className="not-prose my-10 grid gap-3 rounded-2xl border border-brass/40 bg-brass/15 p-6 md:grid-cols-[1fr_auto] md:items-center">
+						<aside className="not-prose my-10 grid gap-3 rounded-2xl border border-brass/40 bg-terracotta/15 p-6 md:grid-cols-[1fr_auto] md:items-center">
 							<div>
 								<p className="font-display text-xl">Polecane do tego artykułu</p>
 								<p className="text-sm text-foreground/70">
@@ -179,11 +179,11 @@ export default async function BlogPostPage({ params }: { params: Params }) {
 								type="email"
 								required
 								placeholder="twój e-mail"
-								className="h-11 w-full rounded-full border border-border bg-background px-4 text-sm focus-visible:border-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
+								className="h-11 w-full rounded-full border border-border bg-background px-4 text-sm focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
 							/>
 							<button
 								type="submit"
-								className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-foreground px-5 text-sm font-semibold uppercase tracking-[0.16em] text-background"
+								className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-terracotta px-5 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground"
 							>
 								Zapisz mnie
 								<ArrowRightIcon className="size-4" />
@@ -195,7 +195,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
 							href="https://instagram.com/retrohouse"
 							target="_blank"
 							rel="noreferrer"
-							className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-brass"
+							className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-terracotta"
 						>
 							<InstagramIcon className="size-4" />
 							Obserwuj @retrohouse

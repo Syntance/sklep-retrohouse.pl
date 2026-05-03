@@ -68,7 +68,7 @@ export default function RegulaminPage() {
 						po konsultacji z radcą prawnym (zgodność z UPK, Omnibus, DSA, RODO).
 					</p>
 
-					<aside className="mt-6 rounded-2xl border border-brass/40 bg-brass/15 p-5 text-sm">
+					<aside className="mt-6 rounded-2xl border border-brass/40 bg-terracotta/15 p-5 text-sm">
 						<p className="font-display text-base">Wersja robocza</p>
 						<p className="mt-1 text-foreground/80">
 							Strona służy jako szablon. Pełną treść regulaminu dostarczymy po finalnym audycie
@@ -101,14 +101,14 @@ export default function RegulaminPage() {
 							Napisz na{" "}
 							<Link
 								href="mailto:kontakt@retrohouse.pl"
-								className="font-semibold text-foreground underline underline-offset-4 hover:text-brass"
+								className="font-semibold text-foreground underline underline-offset-4 hover:text-terracotta"
 							>
 								kontakt@retrohouse.pl
 							</Link>{" "}
 							lub przez{" "}
 							<Link
 								href="/kontakt"
-								className="font-semibold text-foreground underline underline-offset-4 hover:text-brass"
+								className="font-semibold text-foreground underline underline-offset-4 hover:text-terracotta"
 							>
 								formularz kontaktowy
 							</Link>

@@ -61,7 +61,7 @@ export function SiteHeader() {
 			data-scrolled={scrolled || mobileOpen ? "true" : "false"}
 			className={cn(
 				"sticky top-0 z-40 w-full transition-colors",
-				"data-[scrolled=true]:bg-background/85 data-[scrolled=true]:backdrop-blur-md data-[scrolled=true]:shadow-[0_1px_0_0_color-mix(in_oklch,var(--color-border)_60%,transparent)]",
+				"data-[scrolled=true]:bg-ink-foreground/90 data-[scrolled=true]:backdrop-blur-md data-[scrolled=true]:shadow-[0_1px_0_0_color-mix(in_oklch,var(--color-walnut)_25%,transparent)]",
 			)}
 		>
 			<div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-5 sm:px-8 lg:px-12">
@@ -72,7 +72,7 @@ export function SiteHeader() {
 				>
 					<span
 						aria-hidden="true"
-						className="grid size-9 place-items-center rounded-full border border-foreground/20 bg-background text-brass transition-colors group-hover:border-brass"
+						className="grid size-9 place-items-center rounded-full border border-walnut/30 bg-background text-terracotta transition-colors group-hover:border-terracotta"
 					>
 						<svg
 							viewBox="0 0 24 24"
@@ -113,8 +113,8 @@ export function SiteHeader() {
 							aria-expanded={shopOpen}
 							aria-controls={megaId}
 							className={cn(
-								"inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring",
-								pathname.startsWith("/sklep") && "text-foreground",
+								"inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm font-medium text-foreground/75 transition-colors hover:text-terracotta focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring",
+								pathname.startsWith("/sklep") && "text-terracotta",
 							)}
 						>
 							Sklep
@@ -125,22 +125,22 @@ export function SiteHeader() {
 						<div
 							id={megaId}
 							hidden={!shopOpen}
-							className="absolute left-1/2 top-full mt-2 w-[min(64rem,calc(100vw-3rem))] -translate-x-1/2 rounded-2xl border border-border bg-background p-6 shadow-xl"
+							className="absolute left-1/2 top-full mt-2 w-[min(64rem,calc(100vw-3rem))] -translate-x-1/2 rounded-2xl border border-walnut/15 bg-background p-6 shadow-xl"
 						>
 							<div className="grid grid-cols-3 gap-6">
 								{SHOP_MEGA_MENU.map((group) => (
 									<div key={group.heading}>
-										<p className="mb-3 font-sans text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-brass">
+										<p className="mb-3 font-sans text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-terracotta">
 											{group.heading}
 										</p>
-										<ul className="space-y-2">
+										<ul className="space-y-1">
 											{group.items.map((item) => (
 												<li key={item.href}>
 													<Link
 														href={item.href}
-														className="group/menu block rounded-md px-2 py-1.5 transition-colors hover:bg-secondary/60 focus-visible:bg-secondary/60 focus-visible:outline-none"
+														className="group/menu block rounded-md px-2 py-2 transition-colors hover:bg-cream focus-visible:bg-cream focus-visible:outline-none"
 													>
-														<span className="block font-sans text-sm font-semibold text-foreground">
+														<span className="block font-sans text-sm font-semibold text-foreground group-hover/menu:text-terracotta">
 															{item.label}
 														</span>
 														{item.description ? (
@@ -161,11 +161,11 @@ export function SiteHeader() {
 					<Link
 						href="/prezent"
 						className={cn(
-							"inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring",
-							pathname.startsWith("/prezent") && "text-foreground",
+							"inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium text-foreground/75 transition-colors hover:text-terracotta focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring",
+							pathname.startsWith("/prezent") && "text-terracotta",
 						)}
 					>
-						<GiftIcon className="size-4 text-brass" />
+						<GiftIcon className="size-4 text-terracotta" />
 						Prezent z duszą
 					</Link>
 
@@ -175,8 +175,8 @@ export function SiteHeader() {
 							href={item.href}
 							aria-current={pathname === item.href ? "page" : undefined}
 							className={cn(
-								"rounded-full px-3 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring",
-								pathname === item.href && "text-foreground",
+								"rounded-full px-3 py-2 text-sm font-medium text-foreground/75 transition-colors hover:text-terracotta focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring",
+								pathname === item.href && "text-terracotta",
 							)}
 						>
 							{item.label}
@@ -188,18 +188,18 @@ export function SiteHeader() {
 					<Link
 						href="/sklep"
 						aria-label="Szukaj"
-						className="grid size-10 place-items-center rounded-full text-foreground/70 transition-colors hover:bg-secondary/60 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+						className="grid size-10 place-items-center rounded-full text-foreground/70 transition-colors hover:bg-cream hover:text-terracotta focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
 					>
 						<SearchIcon className="size-5" />
 					</Link>
 					<Link
 						href="/koszyk"
 						aria-label={`Koszyk (${CART_ITEMS} ${CART_ITEMS === 1 ? "pozycja" : "pozycji"})`}
-						className="relative grid size-10 place-items-center rounded-full text-foreground/80 transition-colors hover:bg-secondary/60 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+						className="relative grid size-10 place-items-center rounded-full text-foreground/80 transition-colors hover:bg-cream hover:text-terracotta focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
 					>
 						<CartIcon className="size-5" />
 						{CART_ITEMS > 0 ? (
-							<span className="absolute -right-0.5 -top-0.5 grid min-w-5 place-items-center rounded-full bg-brass px-1 text-[0.65rem] font-semibold tabular text-foreground">
+							<span className="absolute -right-0.5 -top-0.5 grid min-w-5 place-items-center rounded-full bg-terracotta px-1 text-[0.65rem] font-semibold tabular text-terracotta-foreground">
 								{CART_ITEMS}
 							</span>
 						) : null}
@@ -210,7 +210,7 @@ export function SiteHeader() {
 						aria-expanded={mobileOpen}
 						aria-controls="mobile-nav"
 						onClick={() => setMobileOpen((value) => !value)}
-						className="grid size-10 place-items-center rounded-full text-foreground/80 transition-colors hover:bg-secondary/60 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring lg:hidden"
+						className="grid size-10 place-items-center rounded-full text-foreground/80 transition-colors hover:bg-cream hover:text-terracotta focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring lg:hidden"
 					>
 						{mobileOpen ? <CloseIcon className="size-5" /> : <MenuIcon className="size-5" />}
 					</button>
@@ -218,13 +218,13 @@ export function SiteHeader() {
 			</div>
 
 			<nav id="mobile-nav" hidden={!mobileOpen} className="lg:hidden" aria-label="Menu mobilne">
-				<div className="border-t border-border bg-background/95 backdrop-blur-md">
+				<div className="border-t border-walnut/15 bg-ink-foreground/97 backdrop-blur-md">
 					<div className="mx-auto max-w-7xl px-5 py-6 sm:px-8">
 						<ul className="grid gap-1">
 							<li>
 								<Link
 									href="/sklep"
-									className="block rounded-lg px-3 py-3 font-display text-2xl font-semibold text-foreground hover:bg-secondary/60"
+									className="block rounded-lg px-3 py-3 font-display text-2xl font-semibold text-foreground hover:bg-cream hover:text-terracotta"
 								>
 									Sklep
 								</Link>
@@ -233,7 +233,7 @@ export function SiteHeader() {
 										<li key={cat.href}>
 											<Link
 												href={cat.href}
-												className="block rounded-md px-3 py-2 text-sm text-foreground/70 hover:bg-secondary/60 hover:text-foreground"
+												className="block rounded-md px-3 py-2 text-sm text-foreground/70 hover:bg-cream hover:text-terracotta"
 											>
 												{cat.label}
 											</Link>
@@ -245,22 +245,22 @@ export function SiteHeader() {
 								<li key={item.href}>
 									<Link
 										href={item.href}
-										className="block rounded-lg px-3 py-3 font-display text-2xl font-semibold text-foreground hover:bg-secondary/60"
+										className="block rounded-lg px-3 py-3 font-display text-2xl font-semibold text-foreground hover:bg-cream hover:text-terracotta"
 									>
 										{item.label}
 									</Link>
 								</li>
 							))}
-							<li className="mt-4 border-t border-border pt-4">
+							<li className="mt-4 border-t border-walnut/15 pt-4">
 								<Link
 									href="/dla-projektantow"
-									className="block rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-secondary/60 hover:text-foreground"
+									className="block rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-cream hover:text-terracotta"
 								>
 									Dla projektantów →
 								</Link>
 								<Link
 									href="/kontakt"
-									className="block rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-secondary/60 hover:text-foreground"
+									className="block rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-cream hover:text-terracotta"
 								>
 									Odwiedź sklep w Nowym Targu →
 								</Link>
