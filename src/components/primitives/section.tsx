@@ -30,12 +30,17 @@ const toneMap: Record<NonNullable<SectionProps["tone"]>, string> = {
 };
 
 const spacingMap: Record<NonNullable<SectionProps["spacing"]>, string> = {
-	sm: "py-12 md:py-16",
-	md: "py-16 md:py-24",
-	lg: "py-20 md:py-32",
-	xl: "py-24 md:py-40",
+	sm: "py-10 md:py-14",
+	md: "py-14 md:py-20",
+	lg: "py-18 md:py-28",
+	xl: "py-22 md:py-36",
 };
 
+/**
+ * Tony „papier" i „krem" automatycznie dostają subtelny grain — to ich
+ * tożsamość („papierowe" sekcje brandbooka). Można jawnie wyłączyć
+ * przez `grain={false}` jeśli komuś przeszkadza w konkretnym layoucie.
+ */
 export function Section({
 	className,
 	tone = "default",
@@ -44,12 +49,13 @@ export function Section({
 	grain,
 	...props
 }: SectionProps) {
+	const autoGrain = grain ?? (tone === "paper" || tone === "cream");
 	return (
 		<section
 			className={cn(
 				"relative isolate",
 				toneMap[tone],
-				grain && "paper-grain",
+				autoGrain && "paper-grain",
 				bleed ? "" : spacingMap[spacing],
 				className,
 			)}

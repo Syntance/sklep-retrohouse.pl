@@ -72,13 +72,16 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* Cienie ciepłe (tonowane brązowo, nie szare — vintage feel) */
-  --shadow-sm: 0 1px 2px -0.5px oklch(0.18 0.04 35 / 0.08);
-  --shadow-md: 0 8px 20px -8px oklch(0.18 0.04 35 / 0.12);
-  --shadow-lg: 0 24px 56px -20px oklch(0.18 0.04 35 / 0.18);
-  --shadow-xl: 0 48px 96px -32px oklch(0.18 0.04 35 / 0.24);
-  --shadow-glow: 0 0 64px oklch(0.52 0.15 38 / 0.30);
-  --shadow-card: 0 1px 0 0 oklch(0.18 0.04 35 / 0.04), 0 8px 24px -12px oklch(0.18 0.04 35 / 0.08);
+  /*
+   * Cienie miękkie, ciepło-brązowe (nie szare). Zmniejszone amplitudy —
+   * mają „muskać" elementy, nie podnosić ich z impetem. Retro = subtelne.
+   */
+  --shadow-sm: 0 1px 2px -0.5px oklch(0.18 0.04 35 / 0.06);
+  --shadow-md: 0 6px 14px -6px oklch(0.18 0.04 35 / 0.09);
+  --shadow-lg: 0 18px 40px -16px oklch(0.18 0.04 35 / 0.13);
+  --shadow-xl: 0 36px 72px -28px oklch(0.18 0.04 35 / 0.18);
+  --shadow-glow: 0 0 56px oklch(0.52 0.15 38 / 0.22);
+  --shadow-card: 0 1px 0 0 oklch(0.18 0.04 35 / 0.03), 0 4px 18px -10px oklch(0.18 0.04 35 / 0.07);
 }
 
 /*
@@ -104,15 +107,20 @@
  *  Zasada: zawsze OKLCH, nigdy hex w kodzie aplikacji (rule 20-design.mdc).
  */
 :root {
-  --radius: 0.625rem; /* 10px — środek brandbook 8–12 */
+  --radius: 0.875rem; /* 14px — bardziej miękkie, retro „obła ramka", w granicach brandbook 8–14 */
 
-  --background: oklch(1 0 0); /* biały — UI główne */
-  --foreground: oklch(0.18 0.025 35); /* czerń złamana brązem */
+  /*
+   * Default tło: ciepły off-white, ledwo wyczuwalny —
+   * biały straszył sterylnością, a beż był za mocny.
+   * Hex orient: #FBF8F2 (kość słoniowa, ale jaśniejsza niż logo bg).
+   */
+  --background: oklch(0.985 0.008 80);
+  --foreground: oklch(0.20 0.025 35); /* czerń złamana brązem, ciut delikatniejsza */
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.025 35);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.025 35);
+  --card: oklch(0.995 0.004 80);
+  --card-foreground: oklch(0.20 0.025 35);
+  --popover: oklch(0.995 0.004 80);
+  --popover-foreground: oklch(0.20 0.025 35);
 
   --primary: oklch(0.52 0.15 38); /* terakota */
   --primary-foreground: oklch(0.99 0.005 80);
@@ -145,9 +153,9 @@
 
   --destructive: oklch(0.55 0.18 28);
 
-  --border: oklch(0.39 0.07 45 / 0.18); /* brąz orzechowy z alpha */
-  --input: oklch(0.39 0.07 45 / 0.22);
-  --ring: oklch(0.52 0.15 38 / 0.55); /* terakota outline focus */
+  --border: oklch(0.39 0.07 45 / 0.13); /* brąz orzechowy z alpha — delikatniej */
+  --input: oklch(0.39 0.07 45 / 0.18);
+  --ring: oklch(0.52 0.15 38 / 0.45); /* terakota outline focus, spokojniejszy */
 
   --chart-1: oklch(0.52 0.15 38); /* terakota */
   --chart-2: oklch(0.39 0.07 45); /* brąz orzechowy */
@@ -295,6 +303,39 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
+  }
+
+  /*
+   * Retro-przytulny eyebrow: Playfair italic, lowercase, bez tracking.
+   * Alternatywa do uppercase Inter — używać tam, gdzie chcemy „domowości"
+   * (hero, sekcje story). Nadal dostępny jest „cta-text" dla momentów
+   * korporacyjnych (CTA, badges).
+   */
+  .script-eyebrow {
+    font-family: var(--font-display), Georgia, serif;
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  /*
+   * Vintage divider — dwa cienkie myślniki + środkowy ornament.
+   * Używać do separowania sekcji storytelling.
+   */
+  .vintage-rule {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    color: oklch(0.74 0.10 80);
+  }
+  .vintage-rule::before,
+  .vintage-rule::after {
+    content: "";
+    width: 2.25rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.55;
   }
 
   /*
