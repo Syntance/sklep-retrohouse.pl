@@ -2,8 +2,10 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
+import { CookieConsentBanner } from "@/components/cookie-consent";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { AnalyticsProvider } from "@/lib/analytics/provider";
 import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sklep-retrohouse.pl";
@@ -97,9 +99,12 @@ export default function RootLayout({
 				>
 					Przejdź do treści
 				</a>
-				<SiteHeader />
-				{children}
-				<SiteFooter />
+				<AnalyticsProvider>
+					<SiteHeader />
+					{children}
+					<SiteFooter />
+				</AnalyticsProvider>
+				<CookieConsentBanner />
 				<SpeedInsights />
 				<Analytics />
 			</body>

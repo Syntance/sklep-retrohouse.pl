@@ -32,6 +32,18 @@ export const env = createEnv({
 		NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
 
 		NEXT_PUBLIC_SITE_URL: z.string().url().default("https://sklep.retrohouse.pl"),
+
+		/**
+		 * Live commerce — banner na homepage. Sanity nie podpięte (etap 2),
+		 * więc tymczasowo flaga przez env. Migracja: ADR-0006.
+		 */
+		NEXT_PUBLIC_LIVE_SCHEDULED: z
+			.union([z.literal("true"), z.literal("false")])
+			.default("false")
+			.transform((v) => v === "true"),
+		NEXT_PUBLIC_LIVE_DATE: z.string().datetime({ offset: true }).optional(),
+		NEXT_PUBLIC_LIVE_DROP_TITLE: z.string().optional(),
+		NEXT_PUBLIC_LIVE_DROP_COUNT: z.coerce.number().int().positive().optional(),
 	},
 	runtimeEnv: {
 		NODE_ENV: process.env.NODE_ENV,
@@ -53,6 +65,11 @@ export const env = createEnv({
 		SENTRY_PROJECT: process.env.SENTRY_PROJECT,
 
 		NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+
+		NEXT_PUBLIC_LIVE_SCHEDULED: process.env.NEXT_PUBLIC_LIVE_SCHEDULED,
+		NEXT_PUBLIC_LIVE_DATE: process.env.NEXT_PUBLIC_LIVE_DATE,
+		NEXT_PUBLIC_LIVE_DROP_TITLE: process.env.NEXT_PUBLIC_LIVE_DROP_TITLE,
+		NEXT_PUBLIC_LIVE_DROP_COUNT: process.env.NEXT_PUBLIC_LIVE_DROP_COUNT,
 	},
 	emptyStringAsUndefined: true,
 	skipValidation: process.env.SKIP_ENV_VALIDATION === "true",
