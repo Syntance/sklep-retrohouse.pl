@@ -100,7 +100,7 @@ function HeroSection() {
 			<Container size="lg">
 				<div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
 					<div className="flex flex-col gap-6">
-						<Eyebrow variant="script">witamy w naszym pokoju</Eyebrow>
+						<Eyebrow variant="script">Witamy w RetroHouse</Eyebrow>
 						<h1 className="text-balance font-display text-[clamp(2rem,4.6vw,3.6rem)] font-medium leading-[1.05] text-foreground">
 							{HERO_HEADLINE}
 						</h1>

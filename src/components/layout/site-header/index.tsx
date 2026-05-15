@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
 	CartIcon,
 	ChevronDownIcon,
@@ -24,6 +25,11 @@ export function SiteHeader() {
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const megaId = useId();
+	const [megaMounted, setMegaMounted] = useState(false);
+
+	useEffect(() => {
+		setMegaMounted(true);
+	}, []);
 
 	useEffect(() => {
 		const onScroll = () => setScrolled(window.scrollY > 4);
@@ -122,40 +128,6 @@ export function SiteHeader() {
 								className={cn("size-3.5 transition-transform", shopOpen && "rotate-180")}
 							/>
 						</Link>
-						<div
-							id={megaId}
-							hidden={!shopOpen}
-							className="absolute left-1/2 top-full mt-2 w-[min(64rem,calc(100vw-3rem))] -translate-x-1/2 rounded-2xl border border-walnut/15 bg-background p-6 shadow-xl"
-						>
-							<div className="grid grid-cols-3 gap-6">
-								{SHOP_MEGA_MENU.map((group) => (
-									<div key={group.heading}>
-										<p className="mb-3 font-sans text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-terracotta">
-											{group.heading}
-										</p>
-										<ul className="space-y-1">
-											{group.items.map((item) => (
-												<li key={item.href}>
-													<Link
-														href={item.href}
-														className="group/menu block rounded-md px-2 py-2 transition-colors hover:bg-cream focus-visible:bg-cream focus-visible:outline-none"
-													>
-														<span className="block font-sans text-sm font-semibold text-foreground group-hover/menu:text-terracotta">
-															{item.label}
-														</span>
-														{item.description ? (
-															<span className="mt-0.5 block text-xs text-foreground/60">
-																{item.description}
-															</span>
-														) : null}
-													</Link>
-												</li>
-											))}
-										</ul>
-									</div>
-								))}
-							</div>
-						</div>
 					</div>
 
 					<Link
@@ -269,6 +241,48 @@ export function SiteHeader() {
 					</div>
 				</div>
 			</nav>
+
+			{megaMounted && shopOpen
+				? createPortal(
+						<section
+							id={megaId}
+							aria-label="Podmenu sklepu"
+							onMouseEnter={onShopEnter}
+							onMouseLeave={onShopLeave}
+							className="fixed top-16 left-1/2 z-[60] mt-2 max-h-[min(32rem,calc(100dvh-5rem))] w-[min(64rem,calc(100vw-2rem))] -translate-x-1/2 overflow-y-auto overscroll-contain rounded-2xl border border-walnut/15 bg-background p-6 shadow-xl"
+						>
+							<div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+								{SHOP_MEGA_MENU.map((group) => (
+									<div key={group.heading}>
+										<p className="mb-3 font-sans text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-terracotta">
+											{group.heading}
+										</p>
+										<ul className="space-y-1">
+											{group.items.map((item) => (
+												<li key={item.href}>
+													<Link
+														href={item.href}
+														className="group/menu block rounded-md px-2 py-2 transition-colors hover:bg-cream focus-visible:bg-cream focus-visible:outline-none"
+													>
+														<span className="block font-sans text-sm font-semibold text-foreground group-hover/menu:text-terracotta">
+															{item.label}
+														</span>
+														{item.description ? (
+															<span className="mt-0.5 block text-xs text-foreground/60">
+																{item.description}
+															</span>
+														) : null}
+													</Link>
+												</li>
+											))}
+										</ul>
+									</div>
+								))}
+							</div>
+						</section>,
+						document.body,
+					)
+				: null}
 		</header>
 	);
 }
