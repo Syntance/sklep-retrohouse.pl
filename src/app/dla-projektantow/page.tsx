@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Suspense } from "react";
 import {
 	ArrowRightIcon,
 	CheckIcon,
@@ -8,11 +8,24 @@ import {
 	HeartIcon,
 	PackageIcon,
 	PhoneIcon,
+	StarIcon,
 	WhatsAppIcon,
 } from "@/components/icons";
 import { STORE_INFO } from "@/components/layout/site-header/nav-data";
-import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/components/primitives";
-import { CASE_STUDIES } from "@/lib/mock/case-studies";
+import { Breadcrumbs, Container, Eyebrow, Lead, Section } from "@/components/primitives";
+import {
+	B2B_STATS,
+	B2B_STUDIO_LOGOS,
+	B2B_TESTIMONIALS,
+	CASE_STUDIES,
+} from "@/lib/mock/case-studies";
+import {
+	B2BCaseStudyLink,
+	B2BFinalCta,
+	B2BHeroCta,
+	B2BWhatsAppLink,
+} from "./b2b-cta";
+import { BriefForm } from "./brief-form";
 
 export const metadata: Metadata = {
 	title: "Dla projektantów wnętrz — antyki z Wiednia z FV i rezerwacją 14 dni",
@@ -22,49 +35,19 @@ export const metadata: Metadata = {
 };
 
 const TRADE_TERMS = [
-	{
-		label: "Rabat trade",
-		detail: "10–15% od 3 sztuk lub koszyka >2 000 zł",
-	},
-	{
-		label: "Rezerwacja",
-		detail: "Do 14 dni bez płatności — na czas prezentacji u klienta",
-	},
-	{
-		label: "FV VAT",
-		detail: "Standardowo. NIP + dane firmy w briefie",
-	},
-	{
-		label: "Priorytetowy dostęp",
-		detail: "Nowe dostawy z Wiednia mailem 48 h przed publikacją",
-	},
-	{
-		label: "Płatność",
-		detail: "Przelew, termin 14 dni od odbioru",
-	},
-	{
-		label: "Dostawa",
-		detail: "Kurier ubezpieczony, odbiór w NT, dostarczenie na plac budowy",
-	},
+	{ label: "Rabat trade", detail: "10–15% od 3 sztuk lub koszyka >2 000 zł" },
+	{ label: "Rezerwacja", detail: "Do 14 dni bez płatności — na czas prezentacji u klienta" },
+	{ label: "FV VAT", detail: "Standardowo. NIP + dane firmy w briefie" },
+	{ label: "Priorytetowy dostęp", detail: "Nowe dostawy z Wiednia mailem 48 h przed publikacją" },
+	{ label: "Płatność", detail: "Przelew, termin 14 dni od odbioru" },
+	{ label: "Dostawa", detail: "Kurier ubezpieczony, odbiór w NT, dostarczenie na plac budowy" },
 ];
 
 const PROCESS = [
-	{
-		title: "Wyślij brief",
-		description: "Mood board (PDF / link / zdjęcia), opis stylistyki, budżet, termin.",
-	},
-	{
-		title: "Selekcja w 24 h",
-		description: "Mailem dostajesz 3–5 propozycji z fotografią i pochodzeniem każdego obiektu.",
-	},
-	{
-		title: "Rezerwacja 14 dni",
-		description: "Wybrane przedmioty blokujemy — masz czas pokazać klientowi.",
-	},
-	{
-		title: "FV VAT + dostawa",
-		description: "Faktura po zatwierdzeniu, kurier ubezpieczony lub odbiór w NT.",
-	},
+	{ title: "Wyślij brief", description: "Mood board (PDF / link / zdjęcia), opis stylistyki, budżet, termin." },
+	{ title: "Selekcja w 24 h", description: "Mailem dostajesz 3–5 propozycji z fotografią i pochodzeniem każdego obiektu." },
+	{ title: "Rezerwacja 14 dni", description: "Wybrane przedmioty blokujemy — masz czas pokazać klientowi." },
+	{ title: "FV VAT + dostawa", description: "Faktura po zatwierdzeniu, kurier ubezpieczony lub odbiór w NT." },
 ];
 
 const FAQS = [
@@ -101,6 +84,9 @@ const FAQS = [
 ];
 
 export default function DlaProjektantowPage() {
+	const whatsappHref = `https://wa.me/${STORE_INFO.whatsapp.replace(/\s|\+/g, "")}`;
+	const callMailto = `mailto:${STORE_INFO.emailB2B}?subject=Umowienie%20calla%2015%20min%20z%20RetroHouse`;
+
 	return (
 		<main id="main" className="flex flex-col">
 			<Section spacing="sm">
@@ -111,7 +97,7 @@ export default function DlaProjektantowPage() {
 
 			<Section spacing="lg" className="overflow-hidden">
 				<div
-					aria-hidden
+					aria-hidden="true"
 					className="absolute inset-0 -z-10"
 					style={{
 						backgroundImage:
@@ -129,30 +115,29 @@ export default function DlaProjektantowPage() {
 								Sprowadzamy unikaty bezpośrednio od wiedeńskich właścicieli. 100% pewność
 								pochodzenia, transparentny stan, rezerwacja na czas prezentacji u klienta.
 							</Lead>
-							<div className="mt-8 flex flex-wrap items-center gap-3">
-								<CtaLink href="#brief" variant="primary">
-									Wyślij brief
-								</CtaLink>
-								<Link
-									href={`https://wa.me/${STORE_INFO.whatsapp.replace(/\s|\+/g, "")}`}
-									target="_blank"
-									rel="noreferrer"
-									className="inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-background px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:border-terracotta hover:text-terracotta"
-								>
-									<WhatsAppIcon className="size-4" />
-									WhatsApp · 15 min call
-								</Link>
+							<div className="mt-8">
+								<Suspense fallback={null}>
+									<B2BHeroCta whatsappHref={whatsappHref} callMailto={callMailto} />
+								</Suspense>
 							</div>
-							<dl className="mt-10 grid grid-cols-3 gap-6 border-t border-border pt-6">
-								<Stat label="Średni czas odpowiedzi" value="12 h" />
-								<Stat label="Rezerwacja" value="14 dni" />
-								<Stat label="Nowe dostawy" value="co 2 tyg" />
+
+							<dl className="mt-10 grid grid-cols-2 gap-6 border-t border-border pt-6 sm:grid-cols-4">
+								{B2B_STATS.map((stat) => (
+									<div key={stat.label}>
+										<dt className="text-xs uppercase tracking-[0.18em] text-foreground/60">
+											{stat.label}
+										</dt>
+										<dd className="mt-1 font-display text-2xl font-semibold text-foreground">
+											{stat.value}
+										</dd>
+									</div>
+								))}
 							</dl>
 						</div>
 
 						<div className="relative aspect-[5/6] w-full overflow-hidden rounded-3xl border border-border bg-card shadow-xl">
 							<div
-								aria-hidden
+								aria-hidden="true"
 								className="absolute inset-0"
 								style={{
 									backgroundImage:
@@ -164,8 +149,7 @@ export default function DlaProjektantowPage() {
 									Realizacja · Studio Zaleska, Kraków
 								</span>
 								<p className="rounded-2xl border border-ink-foreground/30 bg-ink-foreground/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
-									„Trzy przedmioty z Wiednia zdefiniowały całe wnętrze. RetroHouse dostarczył w 5
-									dni od briefu."
+									„Trzy przedmioty z Wiednia zdefiniowały całe wnętrze. RetroHouse dostarczył w 5 dni od briefu."
 								</p>
 							</div>
 						</div>
@@ -227,6 +211,87 @@ export default function DlaProjektantowPage() {
 				</Container>
 			</Section>
 
+			<Section spacing="lg" id="zaufanie">
+				<Container size="xl">
+					<header className="mb-10 max-w-2xl">
+						<Eyebrow>Zaufanie</Eyebrow>
+						<h2 className="mt-3 font-display text-4xl font-semibold leading-tight md:text-5xl">
+							Pracują z nami studia z całej Polski
+						</h2>
+					</header>
+
+					<ul
+						aria-label="Studia, które z nami pracują"
+						className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 border-y border-border py-6"
+					>
+						{B2B_STUDIO_LOGOS.map((logo) => (
+							<li
+								key={logo}
+								className="cta-text text-sm text-foreground/55"
+							>
+								{logo}
+							</li>
+						))}
+					</ul>
+
+					<div className="mt-10 grid gap-5 md:grid-cols-2">
+						{B2B_TESTIMONIALS.map((opinion) => (
+							<blockquote
+								key={opinion.id}
+								className="rounded-2xl border border-walnut/15 bg-card p-6 shadow-card"
+							>
+								<div
+									role="img"
+									aria-label="Ocena 5 na 5"
+									className="flex gap-1 text-terracotta"
+								>
+									{Array.from({ length: 5 }, (_, i) => (
+										<StarIcon
+											// biome-ignore lint/suspicious/noArrayIndexKey: czyste gwiazdki dekoracyjne
+											key={`b2b-star-${opinion.id}-${i}`}
+											className="size-4 fill-current"
+											aria-hidden="true"
+										/>
+									))}
+								</div>
+								<p className="mt-3 font-display text-lg leading-snug text-foreground">
+									„{opinion.body}"
+								</p>
+								<footer className="mt-4 cta-text text-xs text-foreground/55">
+									{opinion.author} · {opinion.role}
+								</footer>
+							</blockquote>
+						))}
+					</div>
+
+					<aside className="mt-10 grid gap-5 rounded-3xl border border-walnut/15 bg-card p-6 md:grid-cols-[1fr_1.2fr] md:p-8">
+						<div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+							<div
+								aria-hidden="true"
+								className="absolute inset-0"
+								style={{
+									backgroundImage:
+										"radial-gradient(60% 60% at 30% 20%, oklch(0.92 0.04 80), transparent 60%), linear-gradient(160deg, oklch(0.74 0.06 50), oklch(0.39 0.07 45))",
+								}}
+							/>
+							<span className="absolute bottom-3 left-3 rounded-full bg-ink-foreground/85 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-foreground backdrop-blur">
+								Magdalena &amp; Łukasz · założyciele
+							</span>
+						</div>
+						<div>
+							<Eyebrow variant="script">poznajcie nas</Eyebrow>
+							<p className="mt-3 font-display text-2xl leading-snug text-foreground">
+								Jesteśmy dwoma osobami, które pakują paczki, jeżdżą do Wiednia i odpisują na briefy.
+							</p>
+							<p className="mt-3 text-sm text-foreground/70">
+								Bez działu sprzedaży i pośredników. Pojedyncze studio dostaje się bezpośrednio do
+								selekcjonera — to przewaga, której nie da inny antykwariat.
+							</p>
+						</div>
+					</aside>
+				</Container>
+			</Section>
+
 			<Section spacing="lg">
 				<Container size="xl">
 					<header className="mb-10 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
@@ -236,37 +301,41 @@ export default function DlaProjektantowPage() {
 								Wybrane projekty z RetroHouse
 							</h2>
 						</div>
-						<Link
+						<B2BCaseStudyLink
 							href="/blog?kategoria=realizacje"
-							className="group/cta inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:text-terracotta"
+							caseStudyId="all"
+							className="group/cta inline-flex items-center gap-2 cta-text text-xs text-foreground hover:text-terracotta"
 						>
 							Zobacz wszystkie na blogu
 							<ArrowRightIcon className="size-4" />
-						</Link>
+						</B2BCaseStudyLink>
 					</header>
 					<ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
 						{CASE_STUDIES.map((study) => (
-							<li
-								key={study.slug}
-								className="group/card flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:-translate-y-0.5 hover:shadow-lg"
-							>
-								<div className="relative aspect-[4/5] overflow-hidden">
-									<div
-										aria-hidden
-										className="absolute inset-0 transition-transform duration-700 group-hover/card:scale-[1.04]"
-										style={{
-											backgroundImage: `radial-gradient(60% 60% at 30% 20%, ${study.hue}, transparent 60%), linear-gradient(160deg, oklch(0.55 0.08 60), oklch(0.27 0.005 280))`,
-										}}
-									/>
-									<span className="absolute left-3 top-3 rounded-full bg-ink-foreground/85 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-foreground backdrop-blur">
-										{study.studio}
-									</span>
-								</div>
-								<div className="flex flex-1 flex-col gap-2 p-5">
-									<p className="text-xs text-brass">{study.city}</p>
-									<h3 className="font-display text-lg leading-tight">{study.title}</h3>
-									<p className="text-sm text-foreground/70">{study.summary}</p>
-								</div>
+							<li key={study.slug}>
+								<B2BCaseStudyLink
+									href={`/blog/${study.articleSlug}`}
+									caseStudyId={study.slug}
+									className="group/card flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-terracotta"
+								>
+									<div className="relative aspect-[4/5] overflow-hidden">
+										<div
+											aria-hidden="true"
+											className="absolute inset-0 transition-transform duration-700 group-hover/card:scale-[1.04]"
+											style={{
+												backgroundImage: `radial-gradient(60% 60% at 30% 20%, ${study.hue}, transparent 60%), linear-gradient(160deg, oklch(0.55 0.08 60), oklch(0.27 0.005 280))`,
+											}}
+										/>
+										<span className="absolute left-3 top-3 rounded-full bg-ink-foreground/85 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-foreground backdrop-blur">
+											{study.studio}
+										</span>
+									</div>
+									<div className="flex flex-1 flex-col gap-2 p-5">
+										<p className="text-xs text-brass">{study.city}</p>
+										<h3 className="font-display text-lg leading-tight">{study.title}</h3>
+										<p className="text-sm text-foreground/70">{study.summary}</p>
+									</div>
+								</B2BCaseStudyLink>
 							</li>
 						))}
 					</ul>
@@ -276,78 +345,7 @@ export default function DlaProjektantowPage() {
 			<Section spacing="lg" tone="ink" id="brief">
 				<Container size="xl">
 					<div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
-						<form
-							action="/api/b2b-brief"
-							method="post"
-							className="rounded-3xl border border-ink-foreground/15 bg-ink-foreground/5 p-6 md:p-10"
-						>
-							<Eyebrow className="text-brass before:bg-brass">Formularz briefu B2B</Eyebrow>
-							<h2 className="mt-3 font-display text-4xl font-semibold leading-tight">
-								Wyślij brief — odpiszemy w 24h
-							</h2>
-							<p className="mt-2 text-ink-foreground/70">
-								Im więcej szczegółów, tym lepsza selekcja. Nie potrzebujemy gotowych decyzji —
-								wystarczy mood board i kierunek.
-							</p>
-
-							<div className="mt-6 grid gap-4 sm:grid-cols-2">
-								<DarkField label="Imię i nazwisko" name="name" required />
-								<DarkField label="Studio / firma" name="studio" required />
-								<DarkField label="E-mail" name="email" type="email" required />
-								<DarkField label="Telefon / WhatsApp" name="phone" type="tel" />
-								<DarkField label="NIP (opcjonalnie)" name="nip" className="sm:col-span-2" />
-								<DarkField
-									label="Link do mood boardu lub opis briefu"
-									name="brief"
-									textarea
-									required
-									className="sm:col-span-2"
-								/>
-								<DarkSelect
-									label="Budżet orientacyjny"
-									name="budget"
-									options={[
-										{ value: "do-2k", label: "do 2 000 zł" },
-										{ value: "2-5k", label: "2 000 – 5 000 zł" },
-										{ value: "5-15k", label: "5 000 – 15 000 zł" },
-										{ value: "15k-plus", label: "15 000+ zł" },
-									]}
-								/>
-								<DarkSelect
-									label="Termin realizacji"
-									name="timeline"
-									options={[
-										{ value: "<2t", label: "< 2 tygodnie" },
-										{ value: "2-4t", label: "2 – 4 tygodnie" },
-										{ value: "1-3m", label: "1 – 3 miesiące" },
-										{ value: "elastyczne", label: "Elastyczne" },
-									]}
-								/>
-							</div>
-
-							<label className="mt-4 flex items-start gap-2 text-sm text-ink-foreground/80">
-								<input
-									type="checkbox"
-									name="newsletter"
-									className="mt-1 size-4 rounded border-ink-foreground/30 bg-ink-foreground/10 text-brass"
-								/>
-								<span>
-									Chcę dostawać priorytetowy newsletter B2B z nowymi dostawami z Wiednia (48 h przed
-									publikacją w sklepie).
-								</span>
-							</label>
-
-							<button
-								type="submit"
-								className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-terracotta px-6 text-sm font-semibold uppercase tracking-[0.16em] text-foreground transition-transform hover:translate-y-[-1px]"
-							>
-								Wyślij brief
-								<ArrowRightIcon className="size-4" />
-							</button>
-							<p className="mt-3 text-xs text-ink-foreground/60">
-								Odpowiemy w ciągu 24 h roboczych. Priorytet na zapytania B2B.
-							</p>
-						</form>
+						<BriefForm />
 
 						<aside className="space-y-4">
 							<div className="rounded-2xl border border-ink-foreground/15 bg-ink-foreground/5 p-6 text-sm">
@@ -388,23 +386,21 @@ export default function DlaProjektantowPage() {
 									</li>
 									<li className="flex items-start gap-3">
 										<WhatsAppIcon className="mt-0.5 size-4 text-brass" />
-										<Link
-											href={`https://wa.me/${STORE_INFO.whatsapp.replace(/\s|\+/g, "")}`}
-											target="_blank"
-											rel="noreferrer"
+										<B2BWhatsAppLink
+											href={whatsappHref}
 											className="text-ink-foreground hover:text-terracotta"
 										>
 											WhatsApp · 15 min call
-										</Link>
+										</B2BWhatsAppLink>
 									</li>
 									<li className="flex items-start gap-3">
 										<CompassIcon className="mt-0.5 size-4 text-brass" />
-										<Link
+										<a
 											href={`mailto:${STORE_INFO.emailB2B}`}
 											className="text-ink-foreground hover:text-terracotta"
 										>
 											{STORE_INFO.emailB2B}
-										</Link>
+										</a>
 									</li>
 								</ul>
 							</div>
@@ -428,7 +424,7 @@ export default function DlaProjektantowPage() {
 								<summary className="flex cursor-pointer items-center justify-between gap-3 text-left">
 									<dt className="font-display text-lg">{faq.question}</dt>
 									<span
-										aria-hidden
+										aria-hidden="true"
 										className="text-2xl font-light leading-none text-brass transition-transform group-open/qa:rotate-45"
 									>
 										+
@@ -451,31 +447,16 @@ export default function DlaProjektantowPage() {
 						<p className="mx-auto mt-3 max-w-xl text-foreground/70">
 							Krótki brief wystarczy. Pomożemy uciąć czas selekcji o połowę.
 						</p>
-						<div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-							<CtaLink href="#brief">Wypełnij brief</CtaLink>
-							<Link
-								href={`https://wa.me/${STORE_INFO.whatsapp.replace(/\s|\+/g, "")}`}
-								target="_blank"
-								rel="noreferrer"
-								className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:border-terracotta hover:text-terracotta"
-							>
-								<WhatsAppIcon className="size-4" />
-								WhatsApp
-							</Link>
+						<div className="mt-6">
+							<B2BFinalCta
+								whatsappHref={whatsappHref}
+								emailHref={`mailto:${STORE_INFO.emailB2B}`}
+							/>
 						</div>
 					</div>
 				</Container>
 			</Section>
 		</main>
-	);
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-	return (
-		<div>
-			<dt className="text-xs uppercase tracking-[0.18em] text-foreground/60">{label}</dt>
-			<dd className="mt-1 font-display text-2xl font-semibold text-foreground">{value}</dd>
-		</div>
 	);
 }
 
@@ -498,83 +479,5 @@ function TrustItem({
 				<p className="text-ink-foreground/70">{description}</p>
 			</div>
 		</li>
-	);
-}
-
-function DarkField({
-	label,
-	name,
-	type = "text",
-	textarea,
-	required,
-	className,
-}: {
-	label: string;
-	name: string;
-	type?: string;
-	textarea?: boolean;
-	required?: boolean;
-	className?: string;
-}) {
-	const id = `b2b-${name}`;
-	return (
-		<label htmlFor={id} className={className}>
-			<span className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-foreground/70">
-				{label} {required ? <span aria-hidden>*</span> : null}
-			</span>
-			{textarea ? (
-				<textarea
-					id={id}
-					name={name}
-					required={required}
-					rows={5}
-					minLength={50}
-					className="mt-2 w-full rounded-xl border border-ink-foreground/20 bg-ink-foreground/10 px-3 py-2 text-sm text-ink-foreground placeholder:text-ink-foreground/50 focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
-					placeholder="Mood board, paleta, klucz designerski, status projektu…"
-				/>
-			) : (
-				<input
-					id={id}
-					name={name}
-					type={type}
-					required={required}
-					className="mt-2 h-11 w-full rounded-xl border border-ink-foreground/20 bg-ink-foreground/10 px-3 text-sm text-ink-foreground placeholder:text-ink-foreground/50 focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
-				/>
-			)}
-		</label>
-	);
-}
-
-function DarkSelect({
-	label,
-	name,
-	options,
-}: {
-	label: string;
-	name: string;
-	options: Array<{ value: string; label: string }>;
-}) {
-	const id = `b2b-${name}`;
-	return (
-		<label htmlFor={id}>
-			<span className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-foreground/70">
-				{label}
-			</span>
-			<select
-				id={id}
-				name={name}
-				defaultValue=""
-				className="mt-2 h-11 w-full rounded-xl border border-ink-foreground/20 bg-ink-foreground/10 px-3 text-sm text-ink-foreground focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
-			>
-				<option value="" disabled>
-					Wybierz…
-				</option>
-				{options.map((option) => (
-					<option key={option.value} value={option.value}>
-						{option.label}
-					</option>
-				))}
-			</select>
-		</label>
 	);
 }
