@@ -24,6 +24,12 @@ export type Product = {
 	shortDescription: string;
 	imageHues: [string, string, string]; // OKLCH triad placeholder
 	popularity: number;
+	/**
+	 * Curator pick na /prezent — produkt nadaje się jako prezent
+	 * z duszą (pakowanie, story, cenowy "świeet spot"). Niezależne
+	 * od popularności; ustawiamy ręcznie przy wpisywaniu produktu.
+	 */
+	giftBestseller?: boolean;
 };
 
 const HUE_TRIADS: Record<ProductCategory, [string, string, string]> = {
@@ -85,6 +91,7 @@ const RAW_PRODUCTS: Array<
 		shortDescription:
 			"Porcelana Augarten z secesyjnym dekorem. 100% wiedeńskie pochodzenie, sygnatura niebieskiej tarczy.",
 		popularity: 87,
+		giftBestseller: true,
 	},
 	{
 		slug: "wazon-rosenthal-art-deco-1934",
@@ -122,6 +129,7 @@ const RAW_PRODUCTS: Array<
 		shortDescription:
 			"Karafka z grubego kryształu, ręcznie cięte motywy diamentowe. Zachowuje wagę i klasę okresu międzywojennego.",
 		popularity: 70,
+		giftBestseller: true,
 	},
 	{
 		slug: "lampka-stolowa-mosiezna-1962",
@@ -140,6 +148,7 @@ const RAW_PRODUCTS: Array<
 		shortDescription:
 			"Lampka Kalmar Wien — chłodny mosiądz, ciepłe opalowe światło. Ikoniczny design wiedeński.",
 		popularity: 90,
+		giftBestseller: true,
 	},
 	{
 		slug: "figurka-porcelanowa-balerina-1955",
@@ -158,6 +167,7 @@ const RAW_PRODUCTS: Array<
 		shortDescription:
 			"Drobna figurka z atelier wiedeńskiego — typowy element dekoracyjny powojennego salonu.",
 		popularity: 65,
+		giftBestseller: true,
 	},
 	{
 		slug: "obraz-akwarela-graben-1928",
@@ -230,6 +240,7 @@ const RAW_PRODUCTS: Array<
 		shortDescription:
 			"Drobny prezent z duszą — secesyjna ramka mosiężna, idealna pod portret rodzinny.",
 		popularity: 55,
+		giftBestseller: true,
 	},
 	{
 		slug: "serwis-kawowy-augarten-art-deco",
@@ -266,6 +277,7 @@ const RAW_PRODUCTS: Array<
 			"Z bufetu wiedeńskiej rodziny. Kieliszki używane wyłącznie na święta, dlatego ich stan jest tak dobry.",
 		shortDescription: "Komplet 6 sztuk — głęboka butelkowa zieleń, idealny pod czarne wnętrza.",
 		popularity: 60,
+		giftBestseller: true,
 	},
 	{
 		slug: "obraz-olej-palac-schonbrunn",

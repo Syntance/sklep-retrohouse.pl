@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import {
-	ArrowRightIcon,
 	CompassIcon,
 	HeartIcon,
 	PackageIcon,
@@ -12,6 +10,8 @@ import {
 } from "@/components/icons";
 import { STORE_INFO } from "@/components/layout/site-header/nav-data";
 import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/components/primitives";
+import { AboutCtaCards } from "@/components/sections/about-cta-cards";
+import { StoreMap } from "@/components/sections/store-map";
 
 export const metadata: Metadata = {
 	title: "O nas — ratujemy skarby z wiedeńskich kamienic",
@@ -231,63 +231,40 @@ export default function ONasPage() {
 
 			<Section spacing="lg" tone="muted">
 				<Container size="xl">
-					<div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+					<header className="mb-10 grid gap-3 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
 						<div>
 							<Eyebrow>Sklep stacjonarny</Eyebrow>
 							<h2 className="mt-3 font-display text-4xl font-semibold leading-tight md:text-5xl">
-								Odwiedź nas w Nowym Targu
+								Odwiedź nas w&nbsp;Nowym Targu
 							</h2>
-							<p className="mt-4 max-w-xl text-foreground/80">
-								Stoły, regały, witryny i karty historii w wersji papierowej. W Nowym Targu możesz
-								dotknąć każdego przedmiotu — i posłuchać, jak trafił do nas z Wiednia.
-							</p>
-							<dl className="mt-8 grid gap-3 text-sm">
-								<div className="flex items-start gap-3">
-									<PinIcon className="mt-0.5 size-4 text-brass" />
-									<div>
-										<dt className="font-semibold">Adres</dt>
-										<dd className="text-foreground/70">{STORE_INFO.address}</dd>
-									</div>
-								</div>
-								<div className="flex items-start gap-3">
-									<ScrollIcon className="mt-0.5 size-4 text-brass" />
-									<div>
-										<dt className="font-semibold">Godziny otwarcia</dt>
-										<dd className="text-foreground/70">{STORE_INFO.hours}</dd>
-									</div>
-								</div>
-							</dl>
-							<div className="mt-8 flex flex-wrap items-center gap-3">
-								<CtaLink href="/kontakt" variant="primary">
-									Odwiedź nas
-								</CtaLink>
-								<Link
-									href={STORE_INFO.mapsHref}
-									target="_blank"
-									rel="noreferrer"
-									className="inline-flex items-center gap-1.5 text-sm font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-terracotta"
-								>
-									Pokaż na mapie
-									<ArrowRightIcon className="size-4" />
-								</Link>
-							</div>
 						</div>
-						<div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-border bg-card">
-							<div
-								aria-hidden
-								className="absolute inset-0"
-								style={{
-									backgroundImage:
-										"radial-gradient(60% 60% at 30% 20%, oklch(0.85 0.05 70), transparent 60%), linear-gradient(160deg, oklch(0.74 0.06 50), oklch(0.52 0.15 38))",
-								}}
-							/>
-							<div className="relative flex h-full items-end p-6 text-ink-foreground">
-								<p className="rounded-2xl border border-ink-foreground/30 bg-ink-foreground/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
-									„Wiedeńska kamienica w Tatry — atmosfera nie do pomylenia."
-								</p>
+						<dl className="grid gap-3 text-sm md:grid-cols-2">
+							<div className="flex items-start gap-3">
+								<PinIcon className="mt-0.5 size-4 text-terracotta" />
+								<div>
+									<dt className="font-semibold">Adres</dt>
+									<dd className="text-foreground/70">
+										{STORE_INFO.streetAddress}, {STORE_INFO.postalCode} {STORE_INFO.city}
+									</dd>
+								</div>
 							</div>
-						</div>
-					</div>
+							<div className="flex items-start gap-3">
+								<ScrollIcon className="mt-0.5 size-4 text-terracotta" />
+								<div>
+									<dt className="font-semibold">Godziny otwarcia</dt>
+									<dd className="text-foreground/70">{STORE_INFO.hours}</dd>
+								</div>
+							</div>
+						</dl>
+					</header>
+
+					<StoreMap
+						mapsHref={STORE_INFO.mapsHref}
+						googleMapsEmbedSrc={STORE_INFO.googleMapsEmbedSrc}
+						streetAddress={STORE_INFO.streetAddress}
+						postalCode={STORE_INFO.postalCode}
+						city={STORE_INFO.city}
+					/>
 				</Container>
 			</Section>
 
@@ -315,66 +292,34 @@ export default function ONasPage() {
 
 			<Section spacing="lg" tone="ink">
 				<Container size="xl">
-					<div className="grid gap-6 md:grid-cols-3">
-						<CtaCard
-							href="/sklep"
-							eyebrow="Najszybsza droga"
-							title="Zobacz nasze antyki"
-							description="12 unikatów aktualnie w sklepie."
-						/>
-						<CtaCard
-							href="/kontakt"
-							eyebrow="Pytania?"
-							title="Napisz lub zadzwoń"
-							description="Odpowiadamy w 12 godzin (średnia z 30 dni)."
-						/>
-						<CtaCard
-							href="/dla-projektantow"
-							eyebrow="B2B"
-							title="Współpraca dla projektantów"
-							description="Rezerwacja 14 dni, FV VAT, priorytetowy newsletter."
-							highlight
-						/>
-					</div>
+					<AboutCtaCards
+						cards={[
+							{
+								href: "/sklep",
+								eyebrow: "Najszybsza droga",
+								title: "Zobacz nasze antyki",
+								description: "12 unikatów aktualnie w sklepie.",
+								analytics: { event: "noop" },
+							},
+							{
+								href: "/kontakt",
+								eyebrow: "Pytania?",
+								title: "Napisz lub zadzwoń",
+								description: "Odpowiadamy w 12 godzin (średnia z 30 dni).",
+								analytics: { event: "visit_store_cta_clicked", source: "/o-nas" },
+							},
+							{
+								href: "/dla-projektantow",
+								eyebrow: "B2B",
+								title: "Współpraca dla projektantów",
+								description: "Rezerwacja 14 dni, FV VAT, priorytetowy newsletter.",
+								highlight: true,
+								analytics: { event: "b2b_landing_clicked", source: "/o-nas" },
+							},
+						]}
+					/>
 				</Container>
 			</Section>
 		</main>
-	);
-}
-
-function CtaCard({
-	href,
-	eyebrow,
-	title,
-	description,
-	highlight,
-}: {
-	href: string;
-	eyebrow: string;
-	title: string;
-	description: string;
-	highlight?: boolean;
-}) {
-	return (
-		<Link
-			href={href}
-			className={`group/card flex flex-col justify-between gap-3 rounded-3xl border p-6 transition-colors ${highlight ? "border-brass bg-terracotta text-terracotta-foreground" : "border-ink-foreground/15 bg-ink-foreground/5 text-ink-foreground"} hover:border-terracotta`}
-		>
-			<span
-				className={`text-[0.65rem] font-semibold uppercase tracking-[0.18em] ${highlight ? "text-terracotta-foreground/85" : "text-brass"}`}
-			>
-				{eyebrow}
-			</span>
-			<p className="font-display text-2xl font-semibold leading-tight">{title}</p>
-			<p
-				className={`text-sm ${highlight ? "text-terracotta-foreground/85" : "text-ink-foreground/70"}`}
-			>
-				{description}
-			</p>
-			<span className="inline-flex items-center gap-1 text-sm font-semibold uppercase tracking-[0.16em]">
-				Otwórz
-				<ArrowRightIcon className="size-4 transition-transform group-hover/card:translate-x-0.5" />
-			</span>
-		</Link>
 	);
 }

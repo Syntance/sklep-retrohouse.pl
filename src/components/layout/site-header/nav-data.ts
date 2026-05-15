@@ -99,6 +99,11 @@ export const FOOTER_COLUMNS: NavGroup[] = [
 export const STORE_INFO = {
 	name: "RetroHouse",
 	address: "Nowy Targ, Podhale",
+	streetAddress: "ul. Krakowska 1",
+	postalCode: "34-400",
+	city: "Nowy Targ",
+	country: "PL",
+	geo: { lat: 49.4781, lng: 20.0307 },
 	hours: "wt–pt 11:00–18:00 · sob 10:00–14:00",
 	email: "kontakt@retrohouse.pl",
 	emailB2B: "studio@retrohouse.pl",
@@ -107,7 +112,11 @@ export const STORE_INFO = {
 	instagram: "@retrohouse",
 	instagramHref: "https://instagram.com/retrohouse",
 	facebookHref: "https://facebook.com/retrohouse",
-	mapsHref: "https://maps.google.com/?q=Nowy+Targ",
+	mapsHref: "https://maps.google.com/?q=RetroHouse+Nowy+Targ",
+	googleMapsEmbedSrc:
+		"https://www.google.com/maps?q=Nowy+Targ,+ul.+Krakowska&z=15&output=embed",
+	googleReviewsHref:
+		"https://search.google.com/local/writereview?placeid=ChIJN1t_tDeuFkcRmSrV3Vo8AAQ",
 	madeBy: "Syntance",
 	madeByHref: "https://syntance.com",
 };

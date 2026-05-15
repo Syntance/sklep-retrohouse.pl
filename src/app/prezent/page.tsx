@@ -10,6 +10,8 @@ import {
 } from "@/components/icons";
 import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/components/primitives";
 import { ProductCard } from "@/components/product-card";
+import { GiftBudgetTiles } from "@/components/sections/gift-budget-tiles";
+import { GiftThemes } from "@/components/sections/gift-themes";
 import { PRICE_BUCKETS, PRODUCTS } from "@/lib/mock/products";
 
 export const metadata: Metadata = {
@@ -39,7 +41,7 @@ function bucketCaption(id: string) {
 }
 
 export default function PrezentPage() {
-	const giftPicks = [...PRODUCTS].sort((a, b) => b.popularity - a.popularity).slice(0, 6);
+	const giftPicks = PRODUCTS.filter((product) => product.giftBestseller).slice(0, 6);
 
 	return (
 		<main id="main" className="flex flex-col">
@@ -112,28 +114,22 @@ export default function PrezentPage() {
 							B (300 zł).
 						</p>
 					</header>
-					<ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-						{BUDGET_TILES.map((bucket) => (
-							<li key={bucket.id}>
-								<Link
-									href={`/sklep?cena=${bucket.id}`}
-									className="group/budget flex h-full flex-col justify-between gap-3 rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-0.5 hover:border-terracotta hover:shadow-md"
-								>
-									<span className="grid size-10 place-items-center rounded-full bg-terracotta text-terracotta-foreground">
-										<GiftIcon className="size-5" />
-									</span>
-									<span className="font-display text-2xl font-semibold leading-tight">
-										{bucket.label}
-									</span>
-									<span className="text-sm text-foreground/70">{bucket.caption}</span>
-									<span className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-[0.16em] text-foreground">
-										Filtruj sklep
-										<ArrowRightIcon className="size-3.5 transition-transform group-hover/budget:translate-x-0.5" />
-									</span>
-								</Link>
-							</li>
-						))}
-					</ul>
+					<GiftBudgetTiles tiles={BUDGET_TILES} />
+				</Container>
+			</Section>
+
+			<Section spacing="lg">
+				<Container size="xl">
+					<header className="mb-10 max-w-2xl">
+						<Eyebrow>Po okazji</Eyebrow>
+						<h2 className="mt-3 font-display text-4xl font-semibold leading-tight md:text-5xl">
+							Wybierz po okazji
+						</h2>
+						<p className="mt-3 text-foreground/70">
+							Cztery najczęstsze powody, dla których nasi klienci szukają prezentu.
+						</p>
+					</header>
+					<GiftThemes />
 				</Container>
 			</Section>
 
@@ -155,8 +151,22 @@ export default function PrezentPage() {
 						</Link>
 					</header>
 					<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-						{giftPicks.map((product) => (
-							<ProductCard key={product.slug} product={product} source="/prezent" />
+						{giftPicks.map((product, index) => (
+							<div key={product.slug} className="relative">
+								<span
+									role="img"
+									aria-label="Wybór curatorski na prezent"
+									className="absolute -top-2 left-3 z-10 inline-flex items-center gap-1 rounded-full bg-terracotta/15 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-terracotta"
+								>
+									<GiftIcon className="size-3.5" aria-hidden="true" />
+									<span>prezent z duszą</span>
+								</span>
+								<ProductCard
+									product={product}
+									source="/prezent"
+									position={index + 1}
+								/>
+							</div>
 						))}
 					</div>
 				</Container>
