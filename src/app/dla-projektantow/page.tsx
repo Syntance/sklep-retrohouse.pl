@@ -1,30 +1,18 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import {
-	ArrowRightIcon,
 	CheckIcon,
 	CompassIcon,
 	GiftIcon,
 	HeartIcon,
 	PackageIcon,
 	PhoneIcon,
-	StarIcon,
 	WhatsAppIcon,
 } from "@/components/icons";
 import { STORE_INFO } from "@/components/layout/site-header/nav-data";
 import { Breadcrumbs, Container, Eyebrow, Lead, Section } from "@/components/primitives";
-import {
-	B2B_STATS,
-	B2B_STUDIO_LOGOS,
-	B2B_TESTIMONIALS,
-	CASE_STUDIES,
-} from "@/lib/mock/case-studies";
-import {
-	B2BCaseStudyLink,
-	B2BFinalCta,
-	B2BHeroCta,
-	B2BWhatsAppLink,
-} from "./b2b-cta";
+import { B2B_STATS } from "@/lib/mock/case-studies";
+import { B2BFinalCta, B2BHeroCta, B2BWhatsAppLink } from "./b2b-cta";
 import { BriefForm } from "./brief-form";
 
 export const metadata: Metadata = {
@@ -146,10 +134,11 @@ export default function DlaProjektantowPage() {
 							/>
 							<div className="relative flex h-full flex-col justify-between p-6 text-ink-foreground sm:p-8">
 								<span className="rounded-full bg-ink/85 px-3 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-ink-foreground backdrop-blur">
-									Realizacja · Studio Zaleska, Kraków
+									Mood board → selekcja w 24 h
 								</span>
 								<p className="rounded-2xl border border-ink-foreground/30 bg-ink-foreground/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
-									„Trzy przedmioty z Wiednia zdefiniowały całe wnętrze. RetroHouse dostarczył w 5 dni od briefu."
+									Trzy przedmioty z Wiednia potrafią zdefiniować całe wnętrze. Selekcję
+									przygotowujemy w 24 godziny od briefu.
 								</p>
 							</div>
 						</div>
@@ -216,55 +205,11 @@ export default function DlaProjektantowPage() {
 					<header className="mb-10 max-w-2xl">
 						<Eyebrow>Zaufanie</Eyebrow>
 						<h2 className="mt-3 font-display text-4xl font-semibold leading-tight md:text-5xl">
-							Pracują z nami studia z całej Polski
+							Bezpośredni kontakt z założycielami — bez działu sprzedaży
 						</h2>
 					</header>
 
-					<ul
-						aria-label="Studia, które z nami pracują"
-						className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 border-y border-border py-6"
-					>
-						{B2B_STUDIO_LOGOS.map((logo) => (
-							<li
-								key={logo}
-								className="cta-text text-sm text-foreground/55"
-							>
-								{logo}
-							</li>
-						))}
-					</ul>
-
-					<div className="mt-10 grid gap-5 md:grid-cols-2">
-						{B2B_TESTIMONIALS.map((opinion) => (
-							<blockquote
-								key={opinion.id}
-								className="rounded-2xl border border-walnut/15 bg-card p-6 shadow-card"
-							>
-								<div
-									role="img"
-									aria-label="Ocena 5 na 5"
-									className="flex gap-1 text-terracotta"
-								>
-									{Array.from({ length: 5 }, (_, i) => (
-										<StarIcon
-											// biome-ignore lint/suspicious/noArrayIndexKey: czyste gwiazdki dekoracyjne
-											key={`b2b-star-${opinion.id}-${i}`}
-											className="size-4 fill-current"
-											aria-hidden="true"
-										/>
-									))}
-								</div>
-								<p className="mt-3 font-display text-lg leading-snug text-foreground">
-									„{opinion.body}"
-								</p>
-								<footer className="mt-4 cta-text text-xs text-foreground/55">
-									{opinion.author} · {opinion.role}
-								</footer>
-							</blockquote>
-						))}
-					</div>
-
-					<aside className="mt-10 grid gap-5 rounded-3xl border border-walnut/15 bg-card p-6 md:grid-cols-[1fr_1.2fr] md:p-8">
+					<aside className="grid gap-5 rounded-3xl border border-walnut/15 bg-card p-6 md:grid-cols-[1fr_1.2fr] md:p-8">
 						<div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
 							<div
 								aria-hidden="true"
@@ -275,70 +220,33 @@ export default function DlaProjektantowPage() {
 								}}
 							/>
 							<span className="absolute bottom-3 left-3 rounded-full bg-ink-foreground/85 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-foreground backdrop-blur">
-								Magdalena &amp; Łukasz · założyciele
+								Założyciele RetroHouse
 							</span>
 						</div>
 						<div>
 							<Eyebrow variant="script">poznajcie nas</Eyebrow>
 							<p className="mt-3 font-display text-2xl leading-snug text-foreground">
-								Jesteśmy dwoma osobami, które pakują paczki, jeżdżą do Wiednia i odpisują na briefy.
+								Pakujemy paczki, jeździmy do Wiednia, odpisujemy na briefy. Wszystko sami.
 							</p>
 							<p className="mt-3 text-sm text-foreground/70">
-								Bez działu sprzedaży i pośredników. Pojedyncze studio dostaje się bezpośrednio do
-								selekcjonera — to przewaga, której nie da inny antykwariat.
+								Bez działu sprzedaży i pośredników. Twoje studio trafia bezpośrednio do osoby,
+								która stoi w wiedeńskim mieszkaniu i sprawdza sygnatury — przewaga, której nie
+								da inny antykwariat.
 							</p>
 						</div>
 					</aside>
-				</Container>
-			</Section>
 
-			<Section spacing="lg">
-				<Container size="xl">
-					<header className="mb-10 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-						<div>
-							<Eyebrow>Realizacje</Eyebrow>
-							<h2 className="mt-3 font-display text-4xl font-semibold leading-tight md:text-5xl">
-								Wybrane projekty z RetroHouse
-							</h2>
-						</div>
-						<B2BCaseStudyLink
-							href="/blog?kategoria=realizacje"
-							caseStudyId="all"
-							className="group/cta inline-flex items-center gap-2 cta-text text-xs text-foreground hover:text-terracotta"
-						>
-							Zobacz wszystkie na blogu
-							<ArrowRightIcon className="size-4" />
-						</B2BCaseStudyLink>
-					</header>
-					<ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-						{CASE_STUDIES.map((study) => (
-							<li key={study.slug}>
-								<B2BCaseStudyLink
-									href={`/blog/${study.articleSlug}`}
-									caseStudyId={study.slug}
-									className="group/card flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-terracotta"
-								>
-									<div className="relative aspect-[4/5] overflow-hidden">
-										<div
-											aria-hidden="true"
-											className="absolute inset-0 transition-transform duration-700 group-hover/card:scale-[1.04]"
-											style={{
-												backgroundImage: `radial-gradient(60% 60% at 30% 20%, ${study.hue}, transparent 60%), linear-gradient(160deg, oklch(0.55 0.08 60), oklch(0.27 0.005 280))`,
-											}}
-										/>
-										<span className="absolute left-3 top-3 rounded-full bg-ink-foreground/85 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-foreground backdrop-blur">
-											{study.studio}
-										</span>
-									</div>
-									<div className="flex flex-1 flex-col gap-2 p-5">
-										<p className="text-xs text-brass">{study.city}</p>
-										<h3 className="font-display text-lg leading-tight">{study.title}</h3>
-										<p className="text-sm text-foreground/70">{study.summary}</p>
-									</div>
-								</B2BCaseStudyLink>
-							</li>
-						))}
-					</ul>
+					<aside className="mt-6 rounded-3xl border border-dashed border-walnut/30 bg-cream/40 p-6 text-sm md:p-8">
+						<Eyebrow>Pierwsze realizacje</Eyebrow>
+						<p className="mt-3 max-w-2xl font-display text-xl leading-snug">
+							Zbieramy referencje od pierwszych studiów, z którymi pracujemy w 2026 r.
+						</p>
+						<p className="mt-2 max-w-2xl text-foreground/70">
+							Chcesz być pierwszym studiem, którego realizację tu opublikujemy? Wyślij brief —
+							case study przygotowujemy razem (z mood boardem, fotografią profesjonalną i kartą
+							pochodzenia każdego obiektu).
+						</p>
+					</aside>
 				</Container>
 			</Section>
 
@@ -354,7 +262,7 @@ export default function DlaProjektantowPage() {
 									<TrustItem
 										icon={<CheckIcon className="size-4" />}
 										title="Odpowiemy w 24 h"
-										description="Gwarancja czasu reakcji — średnia 12 h."
+										description="Gwarancja czasu reakcji w dni robocze."
 									/>
 									<TrustItem
 										icon={<PackageIcon className="size-4" />}

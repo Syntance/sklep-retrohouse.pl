@@ -94,7 +94,8 @@ export default function PrezentPage() {
 									Pakowanie · bibułka + karta historii
 								</span>
 								<p className="rounded-2xl border border-ink-foreground/30 bg-ink-foreground/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
-									„Otworzyłam paczkę i miałam wrażenie, że dostałam list z przeszłości."
+									Bibułka, karta z historią przedmiotu, wizytówka. Paczka jak prezent — sama
+									w&nbsp;sobie.
 								</p>
 							</div>
 						</div>
@@ -186,7 +187,8 @@ export default function PrezentPage() {
 							/>
 							<div className="relative flex h-full items-end p-6 text-ink-foreground">
 								<p className="rounded-2xl border border-ink-foreground/30 bg-ink-foreground/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
-									„Bibułka, karta z historią, wizytówka — paczka jak prezent sam w sobie."
+									Każdy element starannie zapakowany. Karta z historią dla obdarowanego.
+									Dedykacja od&nbsp;ręki.
 								</p>
 							</div>
 						</div>

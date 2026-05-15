@@ -6,12 +6,13 @@ import {
 	CheckIcon,
 	ClockIcon,
 	PackageIcon,
+	PinIcon,
 	ShieldIcon,
 } from "@/components/icons";
 import { Breadcrumbs, Container, Eyebrow, Section } from "@/components/primitives";
 import { formatPrice } from "@/lib/format";
 import { PRODUCTS } from "@/lib/mock/products";
-import { CartTracker, CheckoutCta, GiftWrappingToggle } from "./cart-tracking";
+import { CartTracker, CheckoutCta, DedicationField, GiftWrappingToggle } from "./cart-tracking";
 
 export const metadata: Metadata = {
 	title: "Koszyk",
@@ -112,6 +113,7 @@ export default function KoszykPage() {
 							</ul>
 
 							<GiftWrappingToggle />
+							<DedicationField />
 						</div>
 
 						<aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
@@ -173,6 +175,10 @@ export default function KoszykPage() {
 									text="Ubezpieczona wysyłka — 2–3 dni roboczych"
 								/>
 								<TrustLine icon={<CheckIcon className="size-4" />} text="14 dni na zwrot" />
+								<TrustLine
+									icon={<PinIcon className="size-4" />}
+									text="🇦🇹 Bezpośrednio z Wiednia — bez pośredników"
+								/>
 							</ul>
 						</aside>
 					</div>

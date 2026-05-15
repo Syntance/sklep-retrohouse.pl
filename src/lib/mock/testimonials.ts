@@ -1,6 +1,16 @@
 /**
  * Testimoniale klientek RetroHouse — TON „Na Ty" z brandbooka 2026-05-03.
- * Anonimizowane (imię + miasto), realne wypowiedzi z DM Instagram (zgoda).
+ *
+ * UWAGA: do czasu zebrania prawdziwych opinii (z anonimizacją + zgodą),
+ * lista jest pusta. Komponent `SocialProofSection` w `src/components/sections`
+ * obsługuje stan `length === 0` (renderuje wariant „pre-launch").
+ *
+ * Procedura dodawania opinii (Notion „SOP — Social Proof"):
+ *  1. Zrzut DM/IG + zgoda klientki na publikację (mail / DM).
+ *  2. Anonimizacja do imię + miasto (NIE nazwisko).
+ *  3. Field `source: 'instagram' | 'dm' | 'google'`.
+ *  4. Field `purchasedSlug` jeśli klient wskazał konkretny produkt.
+ *  5. Pole `consentVersion` z datą zgody dla audytu GDPR.
  */
 export type Testimonial = {
 	id: string;
@@ -10,34 +20,8 @@ export type Testimonial = {
 	source: "instagram" | "dm" | "google" | "direct";
 	rating: 5;
 	purchasedSlug?: string;
+	/** Data otrzymania zgody na publikację (YYYY-MM-DD) — wymagane przed go-live. */
+	consentDate: string;
 };
 
-export const TESTIMONIALS: Testimonial[] = [
-	{
-		id: "anna-wroclaw",
-		body: "Przyjechał wazon zapakowany jak relikwia. Karta z historią to detal, który zmienia wszystko — czuję, że mam u siebie kawałek czyjegoś życia, nie kolejny przedmiot z marketplace.",
-		author: "Anna",
-		location: "Wrocław",
-		source: "dm",
-		rating: 5,
-		purchasedSlug: "wazon-rosenthal-art-deco-1934",
-	},
-	{
-		id: "michal-warszawa",
-		body: "Filiżanka Augarten z 1910 r. dotarła w idealnym stanie, owinięta w bibułkę z pieczęcią. Zadzwoniłem podziękować — odebrał właściciel sklepu, pogadaliśmy 20 minut. Tak się buduje markę.",
-		author: "Michał",
-		location: "Warszawa",
-		source: "google",
-		rating: 5,
-		purchasedSlug: "filizanka-augarten-secesja-1910",
-	},
-	{
-		id: "ola-krakow",
-		body: "Zamówiłam karafkę jako prezent dla taty na 70-tkę. Wybór doradzał zespół na WhatsAppie — szybciej i bardziej ludzko niż w jakimkolwiek butiku. Tata płakał.",
-		author: "Ola",
-		location: "Kraków",
-		source: "instagram",
-		rating: 5,
-		purchasedSlug: "karafka-szklo-rzezbione-1940",
-	},
-];
+export const TESTIMONIALS: Testimonial[] = [];

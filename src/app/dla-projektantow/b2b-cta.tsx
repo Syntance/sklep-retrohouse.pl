@@ -68,35 +68,6 @@ function pickSource(utm: string | null): "/o-nas" | "footer" | "/blog" | "header
 	return "header";
 }
 
-type B2BCaseStudyLinkProps = {
-	href: string;
-	caseStudyId: string;
-	className?: string;
-	children: React.ReactNode;
-};
-
-export function B2BCaseStudyLink({
-	href,
-	caseStudyId,
-	className,
-	children,
-}: B2BCaseStudyLinkProps) {
-	return (
-		<Link
-			href={href}
-			onClick={() =>
-				track({
-					name: "b2b_case_study_clicked",
-					properties: { case_study_id: caseStudyId },
-				})
-			}
-			className={className}
-		>
-			{children}
-		</Link>
-	);
-}
-
 type B2BWhatsAppLinkProps = {
 	href: string;
 	className?: string;

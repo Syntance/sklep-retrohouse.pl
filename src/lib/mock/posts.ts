@@ -63,12 +63,12 @@ export const POSTS: Post[] = [
 		relatedProductSlug: "wazon-rosenthal-art-deco-1934",
 		bodyExtended: {
 			intro:
-				"Wnętrze, w którym wszystko jest nowe, brzmi jak playlist bez ulubionej piosenki — technicznie poprawnie, emocjonalnie pusto. Antyk z duszą działa odwrotnie: jeden przedmiot z historią zmienia rytm całej przestrzeni, bo mózg natychmiast szuka opowieści. W RetroHouse od trzech lat obserwujemy to u klientów Marty (35–55 lat, świadomych konsumpcyjnie): kupują jedną filiżankę Augarten i po dwóch tygodniach wracają po wazon, bo kawiarnia w domu zaczęła wyglądać jak wiedeński Ringstrasse. Poniżej trzy mechanizmy, które wyjaśniają to zjawisko, oraz konkretne przedmioty z naszego sklepu, na których możesz to przetestować.",
+				"Wnętrze, w którym wszystko jest nowe, brzmi jak playlist bez ulubionej piosenki — technicznie poprawnie, emocjonalnie pusto. Antyk z duszą działa odwrotnie: jeden przedmiot z historią zmienia rytm całej przestrzeni, bo oko natychmiast szuka opowieści. Klientki, które zaczęły od jednej filiżanki Augarten, wracają po wazon, bo poranna kawa w domu zaczyna wyglądać jak ta z wiedeńskiej kawiarni. Poniżej trzy mechanizmy, które wyjaśniają to zjawisko, oraz konkretne przedmioty z naszego sklepu, na których możesz to przetestować.",
 			sections: [
 				{
 					heading: "1. Patyna jako sygnał statusu",
 					paragraphs: [
-						"W psychologii konsumpcji istnieje pojęcie costly signaling — drogie sygnały kosztu, które mózg odczytuje jako dowód czyjegoś gustu. Patyna na mosiądzu, mikrorysy w glazurze porcelany, mleczne smugi na szkle — to wszystko mówi widzowi: „ten przedmiot przeszedł przez czyjeś życie i przetrwał”. Mózg natychmiast podnosi prestiż otoczenia. Naukowcy z Bath School of Management (badanie 2018, n=412) pokazali, że pokoje z jednym widocznym antykiem są oceniane o 23% wyżej w skali postrzeganej jakości niż identyczne pokoje wypełnione produkcją seryjną.",
+						"W psychologii konsumpcji funkcjonuje pojęcie „costly signaling” — drogie sygnały, które otoczenie odczytuje jako dowód gustu i czasu. Patyna na mosiądzu, mikrorysy w glazurze porcelany, mleczne smugi na szkle mówią widzowi jedno: ten przedmiot przeszedł przez czyjeś życie i przetrwał. Wnętrze z jednym takim obiektem czyta się inaczej niż salon wypełniony produkcją seryjną — kontrast między starym a nowym podnosi prestiż całej przestrzeni.",
 						"Ważne: to nie działa, gdy antyków jest dużo. Magia tkwi w kontraście. Jeden przedmiot z secesji wiedeńskiej w skandynawskim minimalu = high-impact. Pokój pełen antyków = muzeum, które męczy oko. W naszym briefie B2B dla architektów zawsze proponujemy regułę 1:5 — jeden antyk na każde pięć współczesnych elementów wnętrza.",
 					],
 				},
@@ -112,7 +112,7 @@ export const POSTS: Post[] = [
 		relatedProductSlug: "filizanka-augarten-secesja-1910",
 		bodyExtended: {
 			intro:
-				"Rosenthal istnieje od 1879 roku, ma w katalogu kilkanaście tysięcy wzorów i kilkanaście serii sygnatur. Polski rynek wtórny jest zalany podróbkami — Allegro w ostatnim roku miało 1 247 ofert „porcelana Rosenthal”, z których po sprawdzeniu sygnatur autentycznych było mniej niż 30%. Reszta to tańsze fabryki bawarskie z lat 70. udające markę, kopie azjatyckie albo świadome przekłamania ceny. Poniżej krótki, ale wystarczający przewodnik dla kupującego, który nie chce zostać oszukany — z naciskiem na trzy testy, które zrobisz w domu w 90 sekund.",
+				"Rosenthal istnieje od 1879 roku, ma w katalogu kilkanaście tysięcy wzorów i kilkanaście serii sygnatur. Na rynku wtórnym (zarówno polskim, jak i niemieckim) krąży sporo podróbek: tańsze fabryki bawarskie z lat 70. udające markę, kopie azjatyckie i świadome przekłamania ceny. Poniżej krótki, ale wystarczający przewodnik dla kupującego, który nie chce zostać oszukany — z naciskiem na trzy testy, które zrobisz w domu w 90 sekund.",
 			sections: [
 				{
 					heading: "Test 1: Sygnatura pod denkiem",
@@ -144,12 +144,12 @@ export const POSTS: Post[] = [
 				},
 			],
 			conclusion:
-				"90 sekund testu dotyk/dźwięk/światło uchroni Cię przed 70% pomyłek na rynku wtórnym. Pozostałe 30% to oryginalne, ale uszkodzone egzemplarze (włos, brak fragmentu, nieczytelna sygnatura) — tych unikamy. Jeśli chcesz pewności bez własnego sprawdzania, kup u nas: każda filiżanka, każdy talerz, każdy serwis ma w opisie pełny numer wzoru, datę produkcji i historię pochodzenia. Bezpieczna droga przez sklep z Nowego Targu zawsze wygrywa z loterią Allegro.",
+				"90 sekund testu dotyk/dźwięk/światło wystarczy, żeby odsiać większość fałszywych Rosenthali na rynku wtórnym. Reszta to oryginalne, ale uszkodzone egzemplarze (włos, brak fragmentu, nieczytelna sygnatura) — tych nie sprzedajemy. Jeśli chcesz pewności bez własnego sprawdzania, kup u nas: każda filiżanka, każdy talerz, każdy serwis ma w opisie pełny numer wzoru, datę produkcji i historię pochodzenia. Bezpieczna droga przez sklep z Nowego Targu wygrywa z loterią aukcji.",
 			cta: {
 				eyebrow: "Sprawdzony autentyk",
 				title: "Filiżanka Augarten — Wiedeń, ok. 1910",
 				description:
-					"Sygnatura skrzyżowane szpady, pattern Mokka 412. W idealnym stanie, kupiona przez nas w mieszkaniu kolekcjonerki z 3. dzielnicy.",
+					"Sygnatura skrzyżowane szpady, secesyjny wzór, w idealnym stanie. Kupiona przez nas bezpośrednio w mieszkaniu w 3. dzielnicy.",
 				buttonLabel: "Zobacz filiżankę",
 			},
 		},
@@ -181,7 +181,7 @@ export const POSTS: Post[] = [
 					heading: "2. Mosiężna lampka stolikowa lat 60. (340 zł)",
 					paragraphs: [
 						"Ten typ lampki jest naszym hitem w kategorii „mid-century na biurko”. Mosiężna podstawa, abażur z naturalnego lnu, oryginalny przewód tekstylny (w razie potrzeby wymieniamy na nowy z certyfikatem CE). Pasuje do każdego biurka — drewnianego, lakierowanego, mikrocementu. Ciepłe światło 2700 K (zalecamy żarówkę LED o tej barwie) zmienia atmosferę pokoju z neutralnej na „kawiarniana”.",
-						"Marta, klientka z Krakowa, kupiła u nas tę lampkę w styczniu 2026. W lutym wróciła po komplet kieliszków, w marcu po wazon. To klasyczny pattern — zaczynasz od jednego przedmiotu, mózg domaga się więcej tej samej estetyki.",
+						"To klasyczny przedmiot, od którego zaczyna się historia z vintage. Wystarczy postawić go na biurku, żeby cała przestrzeń zaczęła czytać się inaczej. W naszym sklepie często zaczyna od niego klientka, która później wraca po komplet kieliszków albo wazon — estetyka domaga się dopełnienia.",
 					],
 				},
 				{
@@ -194,14 +194,14 @@ export const POSTS: Post[] = [
 				{
 					heading: "4. Krzesło Thonet kawiarniane z 1925 (890 zł)",
 					paragraphs: [
-						"Thonet to marka, która wymyśliła krzesło z giętego drewna i sprzedała ich na świecie ponad 50 milionów. Każde autentyczne krzesło Thonet ma sygnaturę wypaloną pod siedzeniem, oryginalne obijanie z trzciny (lub jej odtworzenie) i 5 charakterystycznych elementów strukturalnych. Nasz egzemplarz pochodzi z kawiarni Café Hawelka, którą zlikwidowano w 2019 roku.",
-						"Krzesło Thonet sprawdza się świetnie jako jedno krzesło przy biurku albo jako akcent w jadalni (gdzie reszta krzeseł jest nowoczesna). Wagi 4.5 kg, wytrzymałość: 130 kg, naprawialne (każda część jest standardem branżowym).",
+						"Thonet to marka, która wymyśliła krzesło z giętego drewna i wprowadziła je do wiedeńskich kawiarni jeszcze przed I wojną światową. Każde autentyczne krzesło Thonet ma wypalaną sygnaturę pod siedzeniem, oryginalne obijanie z trzciny (lub jej odtworzenie) i charakterystyczne elementy strukturalne, które odróżniają go od współczesnych kopii. Nasze egzemplarze pozyskujemy z prywatnych mieszkań — głównie po remontach, kiedy właściciele decydują się na nowe meble.",
+						"Krzesło Thonet sprawdza się świetnie jako jedno krzesło przy biurku albo jako akcent w jadalni (gdzie reszta krzeseł jest nowoczesna). Lekkie, naprawialne, ze standardowymi częściami zamiennymi — to mebel pomyślany na dekady.",
 					],
 				},
 				{
 					heading: "5. Wazon Rosenthal Art Deco z 1934 (2400 zł)",
 					paragraphs: [
-						"Najwyższa półka. Sygnowany, idealnie zachowany, w oryginalnym pudełku Rosenthala (rzadkość — większość wazonów z lat 30. straciła pudełka). Jeśli masz salon z dużym stołem albo otwartą jadalnią, wazon staje się centralnym punktem aranżacji. Nie jest to wydatek dla każdego, ale dla osób, które myślą o przedmiotach jako inwestycji — wazony Rosenthal Art Deco zachowują wartość lub rosną o 5–8% rocznie (źródło: Sotheby's auction database 2020–2025).",
+						"Najwyższa półka. Sygnowany, idealnie zachowany, w oryginalnym pudełku Rosenthala (rzadkość — większość wazonów z lat 30. straciła pudełka). Jeśli masz salon z dużym stołem albo otwartą jadalnią, wazon staje się centralnym punktem aranżacji. Nie jest to wydatek dla każdego — ale dla osób, które myślą o przedmiotach jako o lokacie wartości, sygnowane Rosenthale Art Deco trzymają cenę na rynku kolekcjonerskim od lat.",
 						"Praktyczny tip: nie polecamy stawiać świeżych kwiatów w sygnowanej porcelanie z lat 30. (woda + glazura porowata = ryzyko mikropęknięć). Wazon dekoracyjny stawiamy z gałęziami suszonymi albo same, jako obiekt rzeźbiarski.",
 					],
 				},

@@ -1,4 +1,10 @@
-export type ProductCategory = "porcelana" | "szklo" | "dekoracje" | "meble" | "obrazy";
+export type ProductCategory =
+	| "porcelana"
+	| "szklo"
+	| "dekoracje"
+	| "meble"
+	| "obrazy"
+	| "inne";
 
 export type ProductEpoch = "secesja" | "art-deco" | "lata-50" | "lata-60-70" | "inne";
 
@@ -38,6 +44,7 @@ const HUE_TRIADS: Record<ProductCategory, [string, string, string]> = {
 	dekoracje: ["oklch(0.78 0.06 60)", "oklch(0.55 0.08 60)", "oklch(0.27 0.005 280)"],
 	meble: ["oklch(0.68 0.07 50)", "oklch(0.52 0.15 38)", "oklch(0.27 0.005 280)"],
 	obrazy: ["oklch(0.84 0.04 90)", "oklch(0.60 0.06 50)", "oklch(0.27 0.005 280)"],
+	inne: ["oklch(0.86 0.025 70)", "oklch(0.62 0.06 55)", "oklch(0.34 0.04 45)"],
 };
 
 function categoryLabel(category: ProductCategory) {
@@ -52,6 +59,8 @@ function categoryLabel(category: ProductCategory) {
 			return "Meble";
 		case "obrazy":
 			return "Obrazy";
+		case "inne":
+			return "Inne";
 	}
 }
 
@@ -330,6 +339,7 @@ export const PRODUCT_CATEGORIES: Array<{
 	{ value: "dekoracje", label: "Dekoracje" },
 	{ value: "meble", label: "Meble" },
 	{ value: "obrazy", label: "Obrazy" },
+	{ value: "inne", label: "Inne" },
 ];
 
 export const PRODUCT_EPOCHS: Array<{ value: ProductEpoch; label: string }> = [

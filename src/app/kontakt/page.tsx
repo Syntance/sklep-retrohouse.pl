@@ -105,8 +105,9 @@ export default function KontaktPage() {
 							Sklep z antykami w Nowym Targu — RetroHouse
 						</h1>
 						<Lead className="mt-4">
-							Napisz do nas lub odwiedź nas osobiście. Odpowiadamy w ciągu 12 godzin (średnia 4h
-							z ostatnich 30 dni).
+							Napisz do nas lub odwiedź nas osobiście. Gwarantujemy odpowiedź w ciągu 24 godzin
+							roboczych — w godzinach otwarcia DM na Instagramie i&nbsp;WhatsApp odpisujemy
+							w&nbsp;ciągu pół godziny.
 						</Lead>
 					</div>
 				</Container>
@@ -193,8 +194,8 @@ export default function KontaktPage() {
 							<div className="rounded-2xl border border-border bg-cream p-6">
 								<p className="font-display text-lg">Najszybsza droga</p>
 								<p className="mt-1 text-sm text-foreground/70">
-									DM na Instagramie albo WhatsApp — odpisujemy w godzinach otwarcia w ciągu 30
-									minut.
+									DM na Instagramie albo WhatsApp — staramy się odpisywać w godzinach
+									otwarcia w ciągu 30 minut.
 								</p>
 								<div className="mt-4 flex flex-wrap items-center gap-2">
 									<CtaLink href={STORE_INFO.instagramHref} variant="secondary">

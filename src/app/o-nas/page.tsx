@@ -55,17 +55,28 @@ const TIMELINE = [
 	},
 ];
 
-const FOUNDERS = [
+/**
+ * Sekcja „Twórcy" — bez fabricated bio. Strategia Notion mówi:
+ * „Zdjęcia założycieli + krótkie bio (2–3 zdania każde) — ludzie budują zaufanie",
+ * ale nie podaje imion ani biografii. Zamiast wymyślać dane, prezentujemy dwie
+ * role w procesie (Wiedeń + NT) — to sedno przewagi marki.
+ *
+ * Po dostarczeniu zdjęć i bio przez klienta sekcja zostanie wymieniona na
+ * `<FoundersGrid>` z prawdziwymi danymi (Sanity).
+ */
+const FOUNDER_ROLES = [
 	{
-		name: "Magdalena",
-		role: "Współzałożycielka · selekcja w Wiedniu",
-		bio: "Filolożka germanistyki, zna wiedeńskie kamienice od strony właścicieli — i od strony historii sztuki.",
+		eyebrow: "Wiedeń",
+		title: "Selekcja u źródła",
+		description:
+			"Pukamy do drzwi prywatnych mieszkań, słuchamy historii, sprawdzamy sygnatury i pochodzenie. Każda dostawa to 30–50 godzin rozmów w 2–3 dzielnicach.",
 		hue: "oklch(0.74 0.10 80)",
 	},
 	{
-		name: "Łukasz",
-		role: "Współzałożyciel · sklep w Nowym Targu",
-		bio: "Były antykwariusz z 12 latami doświadczenia. Pakowanie, fotografia i karta historii — jego robota.",
+		eyebrow: "Nowy Targ",
+		title: "Karta historii i pakowanie",
+		description:
+			"Inwentaryzacja, fotografia w naturalnym świetle, opis stanu, karta pochodzenia. Każda paczka pakowana ręcznie z bibułką i wizytówką.",
 		hue: "oklch(0.39 0.07 45)",
 	},
 ];
@@ -141,11 +152,11 @@ export default function ONasPage() {
 							/>
 							<div className="relative flex h-full flex-col justify-between p-6 text-ink-foreground sm:p-8">
 								<span className="rounded-full bg-ink/85 px-3 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-ink-foreground backdrop-blur">
-									Behind the scenes · Landstraße
+									Behind the scenes · Wiedeń
 								</span>
 								<p className="rounded-2xl border border-ink-foreground/30 bg-ink-foreground/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
-									„Dziadek prowadził adwokaturę przy Graben. Po jego śmierci nikt nie umiał się
-									zdecydować, co zostawić. Wybierajcie."
+									Każda kamienica to rozmowa. Każda rozmowa to historia. Każda historia trafia
+									do karty obok przedmiotu.
 								</p>
 							</div>
 						</div>
@@ -190,42 +201,44 @@ export default function ONasPage() {
 						<div>
 							<Eyebrow>Twórcy</Eyebrow>
 							<h2 className="mt-3 font-display text-4xl font-semibold leading-tight md:text-5xl">
-								Ludzie, którzy pukają do drzwi
+								Dwie role, jedna paczka
 							</h2>
 						</div>
 						<p className="max-w-md text-foreground/70">
-							Sami jeździmy, sami pakujemy, sami opowiadamy historię. Nie ma pośrednika między Tobą
-							a wiedeńskim mieszkaniem.
+							Sami jeździmy, sami pakujemy, sami opowiadamy historię. Nie ma pośrednika między
+							Tobą a wiedeńskim mieszkaniem.
 						</p>
 					</header>
 					<div className="grid gap-6 md:grid-cols-2">
-						{FOUNDERS.map((founder) => (
+						{FOUNDER_ROLES.map((role) => (
 							<article
-								key={founder.name}
-								className="group/founder flex flex-col gap-5 rounded-3xl border border-border bg-card p-6"
+								key={role.eyebrow}
+								className="group/role flex flex-col gap-5 rounded-3xl border border-border bg-card p-6"
 							>
 								<div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
 									<div
 										aria-hidden
 										className="absolute inset-0"
 										style={{
-											backgroundImage: `linear-gradient(160deg, ${founder.hue}, oklch(0.27 0.005 280))`,
+											backgroundImage: `linear-gradient(160deg, ${role.hue}, oklch(0.27 0.005 280))`,
 										}}
 									/>
 									<div className="relative flex h-full items-end p-5">
 										<span className="rounded-full bg-ink-foreground/85 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-foreground backdrop-blur">
-											Współzałożyciel
+											{role.eyebrow}
 										</span>
 									</div>
 								</div>
 								<div>
-									<p className="font-display text-2xl">{founder.name}</p>
-									<p className="text-sm text-brass">{founder.role}</p>
-									<p className="mt-3 text-foreground/80">{founder.bio}</p>
+									<p className="font-display text-2xl">{role.title}</p>
+									<p className="mt-3 text-foreground/80">{role.description}</p>
 								</div>
 							</article>
 						))}
 					</div>
+					<p className="mt-6 text-sm text-foreground/60">
+						Zdjęcia założycieli i pełne bio dodamy po sesji fotograficznej w sklepie.
+					</p>
 				</Container>
 			</Section>
 
@@ -298,14 +311,14 @@ export default function ONasPage() {
 								href: "/sklep",
 								eyebrow: "Najszybsza droga",
 								title: "Zobacz nasze antyki",
-								description: "12 unikatów aktualnie w sklepie.",
+								description: "Świeża dostawa z Wiednia co 2 tygodnie.",
 								analytics: { event: "noop" },
 							},
 							{
 								href: "/kontakt",
 								eyebrow: "Pytania?",
 								title: "Napisz lub zadzwoń",
-								description: "Odpowiadamy w 12 godzin (średnia z 30 dni).",
+								description: "Odpowiadamy w ciągu 24h roboczych.",
 								analytics: { event: "visit_store_cta_clicked", source: "/o-nas" },
 							},
 							{

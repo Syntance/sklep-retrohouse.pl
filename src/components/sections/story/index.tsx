@@ -44,7 +44,8 @@ export function StorySection() {
 							/>
 							<div className="relative flex h-full items-end p-6">
 								<p className="rounded-2xl border border-ink-foreground/30 bg-ink-foreground/25 p-5 font-display text-lg italic leading-snug text-ink backdrop-blur">
-									„Pukamy do drzwi w 7. dzielnicy. Pani Marta otwiera i mówi: «Wszystko po prababci. Wybierajcie». To jest nasza codzienność."
+									Pukamy do drzwi prywatnych mieszkań. Słuchamy historii. Wybieramy najpiękniejsze
+									przedmioty i przywozimy do Nowego Targu.
 								</p>
 							</div>
 						</div>

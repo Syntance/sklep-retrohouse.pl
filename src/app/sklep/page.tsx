@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { ArrowRightIcon, InstagramIcon } from "@/components/icons";
+import { MobileCartFab } from "@/components/mobile-cart-fab";
 import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/components/primitives";
 import { ProductCard } from "@/components/product-card";
 import {
@@ -13,6 +15,7 @@ import {
 	type ProductEpoch,
 } from "@/lib/mock/products";
 import { cn } from "@/lib/utils";
+import { ShopCategoryAutoScroll } from "./shop-category-scroll";
 
 export const metadata: Metadata = {
 	title: "Sklep z antykami i vintage",
@@ -72,6 +75,9 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 
 	return (
 		<main id="main" className="flex flex-col">
+			<Suspense fallback={null}>
+				<ShopCategoryAutoScroll />
+			</Suspense>
 			<Section spacing="md" tone="muted">
 				<Container size="xl">
 					<Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Sklep" }]} />
@@ -105,6 +111,7 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 										<Link
 											key={option.value}
 											href={`/sklep${next}`}
+											scroll={false}
 											aria-current={isActive ? "true" : undefined}
 											className={cn(
 												"inline-flex items-center justify-center rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] transition-colors",
@@ -125,7 +132,10 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 
 			<Section spacing="md">
 				<Container size="xl">
-					<div className="grid gap-10 lg:grid-cols-[260px_1fr]">
+					<div
+						id="sklep-filtry-start"
+						className="grid gap-10 scroll-mt-24 lg:grid-cols-[260px_1fr]"
+					>
 						<aside aria-label="Filtry" className="sticky top-24 self-start">
 							<FilterGroup
 								title="Kategoria"
@@ -205,6 +215,7 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 					</div>
 				</Container>
 			</Section>
+			<MobileCartFab />
 		</main>
 	);
 }
@@ -237,6 +248,7 @@ function FilterGroup({
 						<li key={option.value}>
 							<Link
 								href={`/sklep${next}`}
+								scroll={false}
 								aria-current={isActive ? "true" : undefined}
 								className={cn(
 									"flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",

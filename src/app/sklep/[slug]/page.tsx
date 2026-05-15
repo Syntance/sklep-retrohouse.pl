@@ -13,6 +13,7 @@ import { Breadcrumbs, Container, CtaLink, Eyebrow, Section } from "@/components/
 import { ProductCard } from "@/components/product-card";
 import { ProductCtaBlock } from "@/components/product-cta-block";
 import { ProductLightbox, type GallerySlot } from "@/components/product-lightbox";
+import { ProductMobileBar } from "@/components/product-mobile-bar";
 import type { ProductSource } from "@/lib/analytics/events";
 import { daysSince, formatPrice } from "@/lib/format";
 import { getProductBySlug, getRelatedProducts, PRODUCTS, type Product } from "@/lib/mock/products";
@@ -97,7 +98,7 @@ export default async function ProduktPage({
 	};
 
 	return (
-		<main id="main" className="flex flex-col">
+		<main id="main" className="flex flex-col pb-32 lg:pb-0">
 			<Section spacing="sm">
 				<Container size="xl">
 					<Breadcrumbs
@@ -238,6 +239,7 @@ export default async function ProduktPage({
 			</Section>
 
 			<JsonLd data={jsonLd} id="product-jsonld" />
+			<ProductMobileBar product={product} />
 		</main>
 	);
 }
