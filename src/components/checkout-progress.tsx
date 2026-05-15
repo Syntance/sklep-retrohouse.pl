@@ -1,8 +1,16 @@
 import { cn } from "@/lib/utils";
 
-const STEPS = ["Koszyk", "Dane", "Płatność", "Gotowe"] as const;
+/**
+ * 3-krokowy progressbar checkoutu (single-page checkout — patrz ADR-0008).
+ *
+ * step:
+ *  - 1: Koszyk (`/koszyk`)
+ *  - 2: Dane / Wysyłka / Płatność (`/koszyk/checkout`, single page)
+ *  - 3: Gotowe (`/dziekujemy`)
+ */
+const STEPS = ["Koszyk", "Dane / Wysyłka / Płatność", "Gotowe"] as const;
 
-export function CheckoutProgress({ step }: { step: 1 | 2 | 3 | 4 }) {
+export function CheckoutProgress({ step }: { step: 1 | 2 | 3 }) {
 	return (
 		<ol
 			aria-label="Postęp zakupu"

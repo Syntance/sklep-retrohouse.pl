@@ -1,9 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRightIcon } from "@/components/icons";
+import { InstagramGrid } from "@/components/instagram-grid";
+import { NewsletterForm } from "@/components/newsletter-form";
 import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/components/primitives";
 import { formatDate } from "@/lib/format";
-import { POST_CATEGORIES, POSTS, type Post, type PostCategory } from "@/lib/mock/posts";
+import {
+	getLatestPosts,
+	POST_CATEGORIES,
+	POSTS,
+	type Post,
+	type PostCategory,
+} from "@/lib/mock/posts";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -23,6 +31,7 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
 		? POSTS.filter((post) => post.category === activeCategory)
 		: POSTS;
 	const [featured, ...rest] = filtered;
+	const latest = getLatestPosts(3);
 
 	return (
 		<main id="main" className="flex flex-col">
@@ -59,71 +68,68 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
 				</Container>
 			</Section>
 
-			{featured ? (
-				<Section spacing="md">
-					<Container size="xl">
-						<FeaturedPost post={featured} />
-					</Container>
-				</Section>
-			) : null}
-
-			{rest.length > 0 ? (
-				<Section spacing="md" tone="muted">
-					<Container size="xl">
-						<header className="mb-8 flex items-end justify-between gap-3">
-							<div>
-								<Eyebrow>Wszystkie wpisy</Eyebrow>
-								<h2 className="mt-3 font-display text-3xl font-semibold leading-tight md:text-4xl">
-									Najnowsze
-								</h2>
-							</div>
-						</header>
-						<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-							{rest.map((post) => (
-								<PostCard key={post.slug} post={post} />
-							))}
-						</div>
-					</Container>
-				</Section>
-			) : null}
-
 			<Section spacing="md">
-				<Container size="md">
-					<div className="grid gap-4 rounded-3xl border border-border bg-card p-8 md:grid-cols-[1.4fr_1fr] md:items-center md:p-12">
-						<div>
-							<Eyebrow>Newsletter</Eyebrow>
-							<h2 className="mt-3 font-display text-3xl font-semibold leading-tight">
-								Co 2 tygodnie nowy artykuł i nowa dostawa
-							</h2>
-							<p className="mt-2 text-foreground/70">
-								Bez spamu — dzielimy się tylko nowymi tekstami i świeżymi przedmiotami z Wiednia.
-							</p>
+				<Container size="xl">
+					<div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+						<div className="space-y-12">
+							{featured ? <FeaturedPost post={featured} /> : null}
+
+							{rest.length > 0 ? (
+								<section>
+									<header className="mb-6 flex items-end justify-between gap-3">
+										<div>
+											<Eyebrow>Wszystkie wpisy</Eyebrow>
+											<h2 className="mt-3 font-display text-3xl font-semibold leading-tight md:text-4xl">
+												Najnowsze
+											</h2>
+										</div>
+									</header>
+									<div className="grid gap-6 sm:grid-cols-2">
+										{rest.map((post) => (
+											<PostCard key={post.slug} post={post} />
+										))}
+									</div>
+								</section>
+							) : null}
 						</div>
-						<form
-							action="/api/newsletter"
-							method="post"
-							className="flex flex-col gap-2 sm:flex-row"
-						>
-							<label htmlFor="blog-news" className="sr-only">
-								E-mail
-							</label>
-							<input
-								id="blog-news"
-								name="email"
-								type="email"
-								required
-								autoComplete="email"
-								placeholder="twój e-mail"
-								className="h-11 w-full rounded-full border border-border bg-background px-4 text-sm focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
+
+						<aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+							<NewsletterForm
+								source="blog"
+								heading="Bądź pierwszy przy nowej dostawie"
+								description="Co 2 tygodnie nowy artykuł i lista świeżych przedmiotów z Wiednia."
 							/>
-							<button
-								type="submit"
-								className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-terracotta px-5 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground"
-							>
-								Zapisz mnie
-								<ArrowRightIcon className="size-4" />
-							</button>
-						</form>
+
+							<div className="rounded-3xl border border-border bg-card p-6">
+								<InstagramGrid />
+							</div>
+
+							<div className="rounded-3xl border border-border bg-card p-6">
+								<p className="font-sans text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-brass">
+									Ostatnie wpisy
+								</p>
+								<ul className="mt-4 space-y-4">
+									{latest.map((post) => (
+										<li key={post.slug}>
+											<Link
+												href={`/blog/${post.slug}`}
+												className="group/latest block transition-colors hover:text-terracotta"
+											>
+												<p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-brass">
+													{post.categoryLabel}
+												</p>
+												<p className="mt-1 font-display text-base leading-snug">
+													{post.title}
+												</p>
+												<p className="mt-1 text-xs text-foreground/60">
+													{formatDate(post.publishedAt)} · {post.readingTime} min
+												</p>
+											</Link>
+										</li>
+									))}
+								</ul>
+							</div>
+						</aside>
 					</div>
 				</Container>
 			</Section>

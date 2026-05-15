@@ -5,13 +5,13 @@ import {
 	ArrowRightIcon,
 	CheckIcon,
 	ClockIcon,
-	GiftIcon,
 	PackageIcon,
 	ShieldIcon,
 } from "@/components/icons";
-import { Breadcrumbs, Container, CtaLink, Eyebrow, Section } from "@/components/primitives";
+import { Breadcrumbs, Container, Eyebrow, Section } from "@/components/primitives";
 import { formatPrice } from "@/lib/format";
 import { PRODUCTS } from "@/lib/mock/products";
+import { CartTracker, CheckoutCta, GiftWrappingToggle } from "./cart-tracking";
 
 export const metadata: Metadata = {
 	title: "Koszyk",
@@ -30,6 +30,8 @@ export default function KoszykPage() {
 
 	return (
 		<main id="main" className="flex flex-col">
+			<CartTracker itemsCount={SAMPLE_ITEMS.length} cartValue={total} />
+
 			<Section spacing="sm">
 				<Container size="xl">
 					<Breadcrumbs
@@ -45,7 +47,7 @@ export default function KoszykPage() {
 			<Section spacing="md">
 				<Container size="xl">
 					<div className="mb-10">
-						<Eyebrow>Krok 1 z 4 · Koszyk</Eyebrow>
+						<Eyebrow>Krok 1 z 3 · Koszyk</Eyebrow>
 						<h1 className="mt-3 font-display text-5xl font-semibold leading-tight md:text-6xl">
 							Twój koszyk
 						</h1>
@@ -109,36 +111,7 @@ export default function KoszykPage() {
 								})}
 							</ul>
 
-							<details className="group/upsell mt-6 rounded-2xl border border-border bg-card p-5">
-								<summary className="flex cursor-pointer items-start justify-between gap-3 text-left">
-									<div className="flex items-start gap-3">
-										<span className="grid size-9 place-items-center rounded-full bg-terracotta text-terracotta-foreground">
-											<GiftIcon className="size-5" />
-										</span>
-										<div>
-											<p className="font-display text-lg">Pakowanie prezentowe (+25 zł)</p>
-											<p className="text-sm text-foreground/70">
-												Eleganckie pudełko, bibułka, karta historii i opcjonalna dedykacja.
-											</p>
-										</div>
-									</div>
-									<span className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em]">
-										Dodaj
-									</span>
-								</summary>
-								<label className="mt-4 block text-sm">
-									<span className="text-xs font-semibold uppercase tracking-[0.14em] text-foreground/60">
-										Dedykacja (opcjonalnie)
-									</span>
-									<textarea
-										name="dedication"
-										rows={3}
-										maxLength={240}
-										placeholder="Dla Marty — żeby kawa smakowała jak w Wiedniu."
-										className="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
-									/>
-								</label>
-							</details>
+							<GiftWrappingToggle />
 						</div>
 
 						<aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
@@ -159,7 +132,7 @@ export default function KoszykPage() {
 									</div>
 									{shippingFree ? (
 										<p className="rounded-md bg-success/10 p-2 text-xs text-success">
-											🎉 Darmowa wysyłka — przekroczyłeś próg 500 zł
+											Darmowa wysyłka — przekroczyłeś próg 500 zł
 										</p>
 									) : (
 										<p className="text-xs text-foreground/60">
@@ -175,9 +148,13 @@ export default function KoszykPage() {
 								</div>
 							</div>
 
-							<CtaLink href="/koszyk/checkout" variant="primary" className="w-full justify-center">
+							<CheckoutCta
+								href="/koszyk/checkout"
+								cartValue={total}
+								className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-terracotta px-6 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground transition-transform hover:-translate-y-0.5"
+							>
 								Przejdź do płatności
-							</CtaLink>
+							</CheckoutCta>
 							<Link
 								href="/sklep"
 								className="inline-flex items-center gap-1.5 text-sm font-semibold text-foreground/70 hover:text-terracotta"

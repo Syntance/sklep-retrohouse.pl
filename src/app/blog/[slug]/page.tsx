@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRightIcon, InstagramIcon } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
-import { Breadcrumbs, Container, CtaLink, Eyebrow, Section } from "@/components/primitives";
+import { NewsletterForm } from "@/components/newsletter-form";
+import { Breadcrumbs, Container, Eyebrow, Section } from "@/components/primitives";
 import { ProductCard } from "@/components/product-card";
 import { formatDate } from "@/lib/format";
 import { getPostBySlug, getRelatedPosts, POSTS } from "@/lib/mock/posts";
-import { PRODUCTS } from "@/lib/mock/products";
+import { getProductBySlug, PRODUCTS } from "@/lib/mock/products";
+import {
+	ArticleGenericCta,
+	ArticleProductCta,
+	RelatedArticleLink,
+} from "./article-tracking";
 
 export function generateStaticParams() {
 	return POSTS.map((post) => ({ slug: post.slug }));
@@ -39,6 +43,9 @@ export default async function BlogPostPage({ params }: { params: Params }) {
 	if (!post) notFound();
 
 	const related = getRelatedPosts(slug, 3);
+	const relatedProduct = post.relatedProductSlug
+		? getProductBySlug(post.relatedProductSlug)
+		: undefined;
 	const recommendedProducts = PRODUCTS.slice(0, 3);
 
 	const jsonLd = {
@@ -47,7 +54,21 @@ export default async function BlogPostPage({ params }: { params: Params }) {
 		headline: post.title,
 		description: post.excerpt,
 		datePublished: post.publishedAt,
-		author: { "@type": "Organization", name: "RetroHouse" },
+		dateModified: post.publishedAt,
+		author: { "@type": "Organization", name: "RetroHouse", url: "https://sklep-retrohouse.pl/" },
+		publisher: {
+			"@type": "Organization",
+			name: "RetroHouse",
+			logo: {
+				"@type": "ImageObject",
+				url: "https://sklep-retrohouse.pl/og-image.png",
+			},
+		},
+		image: ["https://sklep-retrohouse.pl/og-image.png"],
+		mainEntityOfPage: {
+			"@type": "WebPage",
+			"@id": `https://sklep-retrohouse.pl/blog/${post.slug}`,
+		},
 	};
 
 	return (
@@ -101,38 +122,99 @@ export default async function BlogPostPage({ params }: { params: Params }) {
 			<Section spacing="md">
 				<Container size="md">
 					<article className="prose prose-lg max-w-none [&_h2]:font-display [&_h2]:text-3xl [&_h2]:mt-12 [&_h2]:mb-4 [&_p]:leading-relaxed [&_p]:text-foreground/80 [&_a]:text-foreground [&_a]:underline-offset-4 [&_a]:underline [&_a:hover]:text-brass">
-						<p>
-							To jest zarys artykułu wygenerowany na podstawie schematu z Notion. Treść finalną
-							dostarczy redakcja — tu jest miejsce na 600–1200 słów z H2 i H3, śródtytułami,
-							cytatami i CTA mid-article.
-						</p>
-						<h2>Wstęp</h2>
-						<p>
-							{post.excerpt} Pełna wersja zostanie dostarczona przez Sanity (CMS) — tu jest miejsce
-							na komponent <code>PortableText</code> z custom rendererami pod nagłówki, cytaty,
-							listy i embed produktów.
-						</p>
+						{post.bodyExtended ? (
+							<>
+								<p>{post.bodyExtended.intro}</p>
 
-						<aside className="not-prose my-10 grid gap-3 rounded-2xl border border-brass/40 bg-terracotta/15 p-6 md:grid-cols-[1fr_auto] md:items-center">
-							<div>
-								<p className="font-display text-xl">Polecane do tego artykułu</p>
-								<p className="text-sm text-foreground/70">
-									3 przedmioty z naszego sklepu pasujące do tematu wpisu.
+								{post.bodyExtended.sections.slice(0, 2).map((section) => (
+									<section key={section.heading}>
+										<h2>{section.heading}</h2>
+										{section.paragraphs.map((paragraph) => (
+											<p key={paragraph.slice(0, 40)}>{paragraph}</p>
+										))}
+									</section>
+								))}
+
+								{relatedProduct ? (
+									<ArticleProductCta
+										href={`/sklep/${relatedProduct.slug}?source=%2Fblog`}
+										articleSlug={post.slug}
+										eyebrow={post.bodyExtended.cta.eyebrow}
+										title={post.bodyExtended.cta.title}
+										description={post.bodyExtended.cta.description}
+										buttonLabel={post.bodyExtended.cta.buttonLabel}
+									/>
+								) : null}
+
+								{post.bodyExtended.sections.slice(2).map((section) => (
+									<section key={section.heading}>
+										<h2>{section.heading}</h2>
+										{section.paragraphs.map((paragraph) => (
+											<p key={paragraph.slice(0, 40)}>{paragraph}</p>
+										))}
+									</section>
+								))}
+
+								<h2>Podsumowanie</h2>
+								<p>{post.bodyExtended.conclusion}</p>
+
+								<aside className="not-prose my-10 grid gap-3 rounded-2xl border border-border bg-cream p-6 md:grid-cols-[1fr_auto] md:items-center">
+									<div>
+										<p className="font-sans text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-brass">
+											Następny krok
+										</p>
+										<p className="mt-2 font-display text-xl">
+											Wszystkie skarby z wiedeńskich kamienic
+										</p>
+										<p className="mt-1 text-sm text-foreground/75">
+											Zobacz pełną kolekcję — porcelana, szkło, lampy, krzesła, obrazy.
+										</p>
+									</div>
+									<ArticleGenericCta
+										href="/sklep"
+										articleSlug={post.slug}
+										ctaType="category"
+										className="inline-flex h-11 items-center gap-2 self-start rounded-full border border-border bg-background px-5 text-sm font-semibold uppercase tracking-[0.08em] text-foreground transition-colors hover:border-terracotta hover:text-terracotta"
+									>
+										Otwórz sklep
+									</ArticleGenericCta>
+								</aside>
+							</>
+						) : (
+							<>
+								<p>
+									To jest zarys artykułu wygenerowany na podstawie schematu z Notion. Treść finalną
+									dostarczy redakcja — tu jest miejsce na 600–1200 słów z H2 i H3, śródtytułami,
+									cytatami i CTA mid-article.
 								</p>
-							</div>
-							<CtaLink href="/sklep" variant="secondary">
-								Zobacz w sklepie
-							</CtaLink>
-						</aside>
+								<h2>Wstęp</h2>
+								<p>
+									{post.excerpt} Pełna wersja zostanie dostarczona przez Sanity (CMS) — tu jest
+									miejsce na komponent <code>PortableText</code> z custom rendererami pod nagłówki,
+									cytaty, listy i embed produktów.
+								</p>
 
-						<h2>Główna teza</h2>
-						<p>
-							Tu redakcja rozwinie tezę główną z eyebrowa. Każdy artykuł powinien mieć min. 1 CTA
-							mid-article do produktu/kategorii i 1 CTA end do newslettera lub /sklep.
-						</p>
+								<aside className="not-prose my-10 grid gap-3 rounded-2xl border border-brass/40 bg-terracotta/15 p-6 md:grid-cols-[1fr_auto] md:items-center">
+									<div>
+										<p className="font-display text-xl">Polecane do tego artykułu</p>
+										<p className="text-sm text-foreground/70">
+											Zobacz aktualną kolekcję pasującą do tematu wpisu.
+										</p>
+									</div>
+									<ArticleGenericCta
+										href="/sklep"
+										articleSlug={post.slug}
+										ctaType="category"
+										className="inline-flex h-11 items-center gap-2 self-start rounded-full bg-terracotta px-5 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground"
+									>
+										Zobacz w sklepie
+									</ArticleGenericCta>
+								</aside>
 
-						<h2>Podsumowanie</h2>
-						<p>Zamknięcie z odwołaniem do CTA — newsletter, sklep, IG.</p>
+								<h2>Podsumowanie</h2>
+								<p>Zamknięcie z odwołaniem do CTA — newsletter, sklep, IG.</p>
+							</>
+						)}
 					</article>
 				</Container>
 			</Section>
@@ -146,8 +228,13 @@ export default async function BlogPostPage({ params }: { params: Params }) {
 						</h2>
 					</header>
 					<div className="grid gap-6 sm:grid-cols-3">
-						{recommendedProducts.map((product) => (
-							<ProductCard key={product.slug} product={product} source="/blog" />
+						{recommendedProducts.map((product, index) => (
+							<ProductCard
+								key={product.slug}
+								product={product}
+								source="/blog"
+								position={index + 1}
+							/>
 						))}
 					</div>
 				</Container>
@@ -155,52 +242,11 @@ export default async function BlogPostPage({ params }: { params: Params }) {
 
 			<Section spacing="md">
 				<Container size="md">
-					<div className="grid gap-6 rounded-3xl border border-border bg-card p-8 md:grid-cols-[1.4fr_1fr] md:items-center md:p-12">
-						<div>
-							<Eyebrow>Newsletter RetroHouse</Eyebrow>
-							<h2 className="mt-3 font-display text-3xl font-semibold leading-tight md:text-4xl">
-								Spodobało się? Daj znać przy następnym tekście
-							</h2>
-							<p className="mt-2 text-foreground/70">
-								Co 2 tygodnie nowy artykuł i lista nowych przedmiotów z Wiednia.
-							</p>
-						</div>
-						<form
-							action="/api/newsletter"
-							method="post"
-							className="flex flex-col gap-2 sm:flex-row"
-						>
-							<label htmlFor="post-news" className="sr-only">
-								E-mail
-							</label>
-							<input
-								id="post-news"
-								name="email"
-								type="email"
-								required
-								placeholder="twój e-mail"
-								className="h-11 w-full rounded-full border border-border bg-background px-4 text-sm focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
-							/>
-							<button
-								type="submit"
-								className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-terracotta px-5 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground"
-							>
-								Zapisz mnie
-								<ArrowRightIcon className="size-4" />
-							</button>
-						</form>
-					</div>
-					<div className="mt-4 flex justify-end">
-						<Link
-							href="https://instagram.com/retrohouse"
-							target="_blank"
-							rel="noreferrer"
-							className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-terracotta"
-						>
-							<InstagramIcon className="size-4" />
-							Obserwuj @retrohouse
-						</Link>
-					</div>
+					<NewsletterForm
+						source="blog"
+						heading="Spodobało się? Daj znać przy następnym tekście"
+						description="Co 2 tygodnie nowy artykuł i lista nowych przedmiotów z Wiednia."
+					/>
 				</Container>
 			</Section>
 
@@ -215,9 +261,10 @@ export default async function BlogPostPage({ params }: { params: Params }) {
 						</header>
 						<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 							{related.map((item) => (
-								<Link
+								<RelatedArticleLink
 									key={item.slug}
 									href={`/blog/${item.slug}`}
+									articleSlug={item.slug}
 									className="group/related flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:-translate-y-0.5 hover:shadow-lg"
 								>
 									<div className="relative aspect-[5/3] overflow-hidden">
@@ -238,7 +285,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
 											{formatDate(item.publishedAt)} · {item.readingTime} min
 										</p>
 									</div>
-								</Link>
+								</RelatedArticleLink>
 							))}
 						</div>
 					</Container>

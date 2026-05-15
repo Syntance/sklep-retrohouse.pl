@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckoutProgress } from "@/components/checkout-progress";
-import { ArrowRightIcon, GiftIcon, HeartIcon, InstagramIcon, PinIcon } from "@/components/icons";
+import { HeartIcon, InstagramIcon, ArrowRightIcon } from "@/components/icons";
 import { STORE_INFO } from "@/components/layout/site-header/nav-data";
+import { NewsletterForm } from "@/components/newsletter-form";
 import { Container, CtaLink, Eyebrow, Section } from "@/components/primitives";
+import { PurchaseTracker, ReviewCard, UgcCtaCard } from "./thank-you-tracking";
 
 export const metadata: Metadata = {
 	title: "Dziękujemy za zamówienie",
@@ -12,19 +14,29 @@ export const metadata: Metadata = {
 	robots: { index: false, follow: false },
 };
 
-type SearchParams = Promise<{ order?: string }>;
+type SearchParams = Promise<{ order?: string; value?: string; items?: string }>;
 
 export default async function ThankYouPage({ searchParams }: { searchParams: SearchParams }) {
 	const params = await searchParams;
 	const orderId = params.order ?? "—";
+	const value = Number.parseFloat(params.value ?? "0");
+	const itemsCount = Number.parseInt(params.items ?? "0", 10);
 
 	return (
 		<main id="main" className="flex flex-col">
+			{orderId !== "—" ? (
+				<PurchaseTracker
+					orderId={orderId}
+					value={Number.isFinite(value) ? value : 0}
+					itemsCount={Number.isFinite(itemsCount) ? itemsCount : 0}
+				/>
+			) : null}
+
 			<Section spacing="md">
 				<Container size="md">
-					<CheckoutProgress step={4} />
+					<CheckoutProgress step={3} />
 					<div className="mt-8">
-						<Eyebrow>Krok 4 z 4 · Gotowe</Eyebrow>
+						<Eyebrow>Krok 3 z 3 · Gotowe</Eyebrow>
 						<h1 className="mt-3 font-display text-5xl font-semibold leading-tight md:text-6xl">
 							Dziękujemy za zamówienie!
 						</h1>
@@ -59,61 +71,16 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Sea
 								/>
 							</ol>
 						</div>
-						<div className="rounded-2xl border border-border bg-cream p-5">
-							<div className="flex items-start gap-3">
-								<span className="grid size-10 place-items-center rounded-full bg-terracotta text-terracotta-foreground">
-									<GiftIcon className="size-5" />
-								</span>
-								<div>
-									<p className="font-display text-lg">Wrzuć zdjęcie z otwarcia paczki</p>
-									<p className="mt-1 text-sm text-foreground/70">
-										Oznacz <strong>@retrohouse</strong> na IG, a my odpowiemy kodem rabatowym -10%
-										na kolejne zakupy.
-									</p>
-								</div>
-							</div>
-							<Link
-								href={STORE_INFO.instagramHref}
-								target="_blank"
-								rel="noreferrer"
-								className="mt-4 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:text-terracotta"
-							>
-								<InstagramIcon className="size-4" />
-								Otwórz Instagrama
-							</Link>
-						</div>
+						<UgcCtaCard href={STORE_INFO.instagramHref} />
 					</div>
 
-					<form
-						action="/api/newsletter"
-						method="post"
-						className="mt-6 flex flex-col items-start gap-4 rounded-3xl border border-border bg-card p-6 md:flex-row md:items-end md:p-8"
-					>
-						<div className="flex-1">
-							<p className="font-display text-2xl">Chcesz wiedzieć o nowych dostawach z Wiednia?</p>
-							<p className="mt-1 text-sm text-foreground/70">
-								Maila wysyłamy raz na 2 tygodnie. Bez spamu, z linkiem do priorytetowej rezerwacji.
-							</p>
-						</div>
-						<label className="flex w-full max-w-md flex-col gap-2 sm:flex-row">
-							<span className="sr-only">E-mail</span>
-							<input
-								type="email"
-								name="email"
-								required
-								autoComplete="email"
-								placeholder="twój e-mail"
-								className="h-11 w-full rounded-full border border-border bg-background px-4 text-sm focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
-							/>
-							<button
-								type="submit"
-								className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-terracotta px-5 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground"
-							>
-								Zapisz mnie
-								<ArrowRightIcon className="size-4" />
-							</button>
-						</label>
-					</form>
+					<div className="mt-6">
+						<NewsletterForm
+							source="popup"
+							heading="Chcesz wiedzieć o nowych dostawach z Wiednia?"
+							description="Maila wysyłamy raz na 2 tygodnie. Bez spamu, z linkiem do priorytetowej rezerwacji."
+						/>
+					</div>
 				</Container>
 			</Section>
 
@@ -140,27 +107,7 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Sea
 								<ArrowRightIcon className="size-4 transition-transform group-hover/card:translate-x-0.5" />
 							</span>
 						</Link>
-						<Link
-							href={STORE_INFO.mapsHref}
-							target="_blank"
-							rel="noreferrer"
-							className="group/card flex h-full flex-col justify-between gap-3 rounded-2xl border border-border bg-card p-6 transition-colors hover:border-terracotta"
-						>
-							<div className="flex items-center gap-2 text-brass">
-								<PinIcon className="size-5" />
-								<span className="font-sans text-[0.65rem] font-semibold uppercase tracking-[0.18em]">
-									Odbiór osobisty?
-								</span>
-							</div>
-							<p className="font-display text-2xl">Zostaw opinię w Google</p>
-							<p className="text-sm text-foreground/70">
-								30 sekund — pomożesz innym znaleźć nasz sklep w Nowym Targu.
-							</p>
-							<span className="inline-flex items-center gap-1 text-sm font-semibold text-foreground">
-								Otwórz wizytówkę
-								<ArrowRightIcon className="size-4 transition-transform group-hover/card:translate-x-0.5" />
-							</span>
-						</Link>
+						<ReviewCard href={STORE_INFO.googleReviewsHref} />
 					</div>
 
 					<div className="mt-8 flex flex-wrap items-center justify-center gap-3">

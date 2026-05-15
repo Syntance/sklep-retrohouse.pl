@@ -12,6 +12,8 @@ import {
 import { JsonLd } from "@/components/json-ld";
 import { STORE_INFO } from "@/components/layout/site-header/nav-data";
 import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/components/primitives";
+import { ContactForm } from "./contact-form";
+import { MapDirectionsLink, PhoneLink, WhatsAppLink } from "./contact-cta";
 
 export const metadata: Metadata = {
 	title: "Sklep z antykami w Nowym Targu — kontakt",
@@ -44,21 +46,47 @@ const FAQS = [
 ];
 
 export default function KontaktPage() {
+	const phoneHref = `tel:${STORE_INFO.phone.replace(/\s/g, "")}`;
+	const whatsappHref = `https://wa.me/${STORE_INFO.whatsapp.replace(/\s|\+/g, "")}`;
+
 	const localBusiness = {
 		"@context": "https://schema.org",
 		"@type": "LocalBusiness",
+		"@id": "https://sklep-retrohouse.pl/#shop",
 		name: STORE_INFO.name,
+		url: "https://sklep-retrohouse.pl/",
+		image: "https://sklep-retrohouse.pl/og-image.png",
 		address: {
 			"@type": "PostalAddress",
-			addressLocality: "Nowy Targ",
+			streetAddress: STORE_INFO.streetAddress,
+			postalCode: STORE_INFO.postalCode,
+			addressLocality: STORE_INFO.city,
 			addressRegion: "Małopolska",
-			addressCountry: "PL",
+			addressCountry: STORE_INFO.country,
+		},
+		geo: {
+			"@type": "GeoCoordinates",
+			latitude: STORE_INFO.geo.lat,
+			longitude: STORE_INFO.geo.lng,
 		},
 		telephone: STORE_INFO.phone,
 		email: STORE_INFO.email,
-		openingHours: ["Tu-Fr 11:00-18:00", "Sa 10:00-14:00"],
+		openingHoursSpecification: [
+			{
+				"@type": "OpeningHoursSpecification",
+				dayOfWeek: ["Tuesday", "Wednesday", "Thursday", "Friday"],
+				opens: "11:00",
+				closes: "18:00",
+			},
+			{
+				"@type": "OpeningHoursSpecification",
+				dayOfWeek: "Saturday",
+				opens: "10:00",
+				closes: "14:00",
+			},
+		],
 		priceRange: "20–5000 PLN",
-		url: "/",
+		sameAs: [STORE_INFO.instagramHref, STORE_INFO.facebookHref],
 	};
 
 	return (
@@ -77,8 +105,8 @@ export default function KontaktPage() {
 							Sklep z antykami w Nowym Targu — RetroHouse
 						</h1>
 						<Lead className="mt-4">
-							Napisz do nas lub odwiedź nas osobiście. Odpowiadamy w ciągu 12 godzin (średnia z
-							ostatnich 30 dni).
+							Napisz do nas lub odwiedź nas osobiście. Odpowiadamy w ciągu 12 godzin (średnia 4h
+							z ostatnich 30 dni).
 						</Lead>
 					</div>
 				</Container>
@@ -90,9 +118,10 @@ export default function KontaktPage() {
 						<div className="relative aspect-[16/7] w-full">
 							<iframe
 								title="Lokalizacja sklepu RetroHouse w Nowym Targu"
-								src="https://www.google.com/maps?q=Nowy+Targ&output=embed"
+								src={STORE_INFO.googleMapsEmbedSrc}
 								className="absolute inset-0 size-full border-0"
 								loading="lazy"
+								referrerPolicy="no-referrer-when-downgrade"
 								allowFullScreen
 							/>
 						</div>
@@ -101,15 +130,13 @@ export default function KontaktPage() {
 								<strong>Jak do nas dojechać:</strong> 4 minuty pieszo od rynku Nowego Targu, parking
 								100 m. Wyznaczamy najlepszą trasę z Twojej lokalizacji.
 							</p>
-							<Link
+							<MapDirectionsLink
 								href={STORE_INFO.mapsHref}
-								target="_blank"
-								rel="noreferrer"
 								className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground hover:text-terracotta"
 							>
 								Otwórz w Google Maps
 								<ArrowRightIcon className="size-4" />
-							</Link>
+							</MapDirectionsLink>
 						</div>
 					</div>
 				</Container>
@@ -118,90 +145,7 @@ export default function KontaktPage() {
 			<Section spacing="md">
 				<Container size="xl">
 					<div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
-						<form
-							action="/api/contact"
-							method="post"
-							className="rounded-3xl border border-border bg-card p-6 md:p-8"
-						>
-							<Eyebrow>Formularz kontaktowy</Eyebrow>
-							<h2 className="mt-3 font-display text-3xl font-semibold leading-tight">
-								Napisz do nas
-							</h2>
-							<p className="mt-2 max-w-xl text-foreground/70">
-								Odpowiadamy w 12 godzin roboczych. W weekendy i święta — w poniedziałek rano.
-							</p>
-
-							<div className="mt-6 grid gap-4 sm:grid-cols-2">
-								<TextField label="Imię" name="name" required />
-								<TextField label="E-mail" name="email" type="email" required />
-								<label className="sm:col-span-2">
-									<span className="text-xs font-semibold uppercase tracking-[0.14em] text-foreground/60">
-										Temat *
-									</span>
-									<select
-										name="topic"
-										required
-										className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-3 text-sm focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
-										defaultValue=""
-									>
-										<option value="" disabled>
-											Wybierz…
-										</option>
-										<option value="produkt">Pytanie o produkt</option>
-										<option value="b2b">Współpraca B2B</option>
-										<option value="wysylka">Wysyłka i zwroty</option>
-										<option value="inne">Inne</option>
-									</select>
-								</label>
-								<label className="sm:col-span-2">
-									<span className="text-xs font-semibold uppercase tracking-[0.14em] text-foreground/60">
-										Wiadomość *
-									</span>
-									<textarea
-										name="message"
-										rows={5}
-										required
-										minLength={20}
-										placeholder="Napisz, czego szukasz — dopasujemy z najnowszej dostawy z Wiednia."
-										className="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
-									/>
-								</label>
-							</div>
-
-							<button
-								type="submit"
-								className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-terracotta px-6 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground"
-							>
-								Wyślij
-								<ArrowRightIcon className="size-4" />
-							</button>
-
-							<p className="mt-3 text-xs text-foreground/60">
-								Wysyłając formularz akceptujesz{" "}
-								<Link
-									href="/polityka-prywatnosci"
-									className="underline underline-offset-4 hover:text-terracotta"
-								>
-									politykę prywatności
-								</Link>
-								.
-							</p>
-
-							<aside className="mt-6 rounded-2xl border border-brass/40 bg-terracotta/15 p-4 text-sm">
-								<p className="font-display text-base">Jesteś projektantem wnętrz / architektem?</p>
-								<p className="mt-1 text-foreground/80">
-									Przejdź na{" "}
-									<Link
-										href="/dla-projektantow"
-										className="font-semibold text-foreground underline underline-offset-4 hover:text-terracotta"
-									>
-										/dla-projektantow
-									</Link>
-									— tam jest dedykowany formularz briefu B2B (mood board, budżet, termin, rezerwacja
-									14 dni). Odpowiemy szybciej niż tutaj.
-								</p>
-							</aside>
-						</form>
+						<ContactForm />
 
 						<aside className="space-y-4">
 							<div className="rounded-2xl border border-border bg-card p-6">
@@ -210,7 +154,7 @@ export default function KontaktPage() {
 									<ContactRow
 										icon={<PinIcon className="size-4" />}
 										label="Adres"
-										value={STORE_INFO.address}
+										value={`${STORE_INFO.streetAddress}, ${STORE_INFO.postalCode} ${STORE_INFO.city}`}
 									/>
 									<ContactRow
 										icon={<ClockIcon className="size-4" />}
@@ -227,13 +171,15 @@ export default function KontaktPage() {
 										icon={<PhoneIcon className="size-4" />}
 										label="Telefon"
 										value={STORE_INFO.phone}
-										href={`tel:${STORE_INFO.phone.replace(/\s/g, "")}`}
+										href={phoneHref}
+										kind="phone"
 									/>
 									<ContactRow
 										icon={<WhatsAppIcon className="size-4" />}
 										label="WhatsApp"
 										value="szybka odpowiedź"
-										href={`https://wa.me/${STORE_INFO.whatsapp.replace(/\s|\+/g, "")}`}
+										href={whatsappHref}
+										kind="whatsapp"
 									/>
 									<ContactRow
 										icon={<InstagramIcon className="size-4" />}
@@ -254,12 +200,12 @@ export default function KontaktPage() {
 									<CtaLink href={STORE_INFO.instagramHref} variant="secondary">
 										DM na IG
 									</CtaLink>
-									<CtaLink
-										href={`https://wa.me/${STORE_INFO.whatsapp.replace(/\s|\+/g, "")}`}
-										variant="ghost"
+									<WhatsAppLink
+										href={whatsappHref}
+										className="inline-flex h-11 items-center gap-2 rounded-full border border-border bg-background px-5 text-xs font-semibold uppercase tracking-[0.08em] text-foreground transition-colors hover:border-terracotta hover:text-terracotta"
 									>
 										WhatsApp
-									</CtaLink>
+									</WhatsAppLink>
 								</div>
 							</div>
 						</aside>
@@ -305,11 +251,13 @@ function ContactRow({
 	label,
 	value,
 	href,
+	kind,
 }: {
 	icon: React.ReactNode;
 	label: string;
 	value: string;
 	href?: string;
+	kind?: "phone" | "whatsapp";
 }) {
 	const inner = (
 		<div className="flex-1">
@@ -319,51 +267,43 @@ function ContactRow({
 			<p className="mt-0.5 text-foreground">{value}</p>
 		</div>
 	);
+
+	if (!href) {
+		return (
+			<li className="flex items-start gap-3">
+				<span className="mt-0.5 grid size-8 place-items-center rounded-full bg-cream text-brass">
+					{icon}
+				</span>
+				{inner}
+			</li>
+		);
+	}
+
+	const linkClass = "flex-1 hover:text-terracotta";
+
 	return (
 		<li className="flex items-start gap-3">
 			<span className="mt-0.5 grid size-8 place-items-center rounded-full bg-cream text-brass">
 				{icon}
 			</span>
-			{href ? (
+			{kind === "phone" ? (
+				<PhoneLink href={href} className={linkClass}>
+					{inner}
+				</PhoneLink>
+			) : kind === "whatsapp" ? (
+				<WhatsAppLink href={href} className={linkClass}>
+					{inner}
+				</WhatsAppLink>
+			) : (
 				<Link
 					href={href}
 					target={href.startsWith("http") ? "_blank" : undefined}
 					rel={href.startsWith("http") ? "noreferrer" : undefined}
-					className="flex-1 hover:text-terracotta"
+					className={linkClass}
 				>
 					{inner}
 				</Link>
-			) : (
-				inner
 			)}
 		</li>
-	);
-}
-
-function TextField({
-	label,
-	name,
-	type = "text",
-	required,
-}: {
-	label: string;
-	name: string;
-	type?: string;
-	required?: boolean;
-}) {
-	const id = `field-${name}`;
-	return (
-		<label htmlFor={id}>
-			<span className="text-xs font-semibold uppercase tracking-[0.14em] text-foreground/60">
-				{label} {required ? <span aria-hidden>*</span> : null}
-			</span>
-			<input
-				id={id}
-				name={name}
-				type={type}
-				required={required}
-				className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-3 text-sm focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
-			/>
-		</label>
 	);
 }
