@@ -267,3 +267,30 @@ export function ScrollIcon(props: IconProps) {
 		</Svg>
 	);
 }
+
+export function CalendarIcon(props: IconProps) {
+	return (
+		<Svg {...props}>
+			<rect x="3" y="5" width="18" height="16" rx="2" />
+			<path d="M3 10h18" />
+			<path d="M8 3v4M16 3v4" />
+		</Svg>
+	);
+}
+
+export function StarIcon(props: IconProps) {
+	return (
+		<Svg {...props}>
+			<path d="M12 3.5l2.5 5.4 5.9.6-4.4 4 1.3 5.8L12 16.6l-5.3 2.7 1.3-5.8-4.4-4 5.9-.6L12 3.5Z" />
+		</Svg>
+	);
+}
+
+export function QuoteIcon(props: IconProps) {
+	return (
+		<Svg {...props}>
+			<path d="M7 8c-2 0-3 1.6-3 4 0 2.2 1.4 3.5 3 3.5L5 19" />
+			<path d="M17 8c-2 0-3 1.6-3 4 0 2.2 1.4 3.5 3 3.5L15 19" />
+		</Svg>
+	);
+}

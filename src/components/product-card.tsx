@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { formatPrice } from "@/lib/format";
 import type { Product } from "@/lib/mock/products";
+import type { ProductSource } from "@/lib/analytics/events";
+import { track } from "@/lib/analytics/posthog";
 import { cn } from "@/lib/utils";
 
 const BADGE_LABELS: Record<NonNullable<Product["badges"][number]>, string> = {
@@ -18,7 +22,8 @@ const BADGE_TONE: Record<NonNullable<Product["badges"][number]>, string> = {
 type ProductCardProps = {
 	product: Product;
 	className?: string;
-	source?: string;
+	source?: ProductSource;
+	position?: number;
 };
 
 /**
@@ -26,15 +31,41 @@ type ProductCardProps = {
  *  - max jeden badge (priorytet bestseller > unikat > fresh — sortowanie po stronie produktu)
  *  - bez overlay tekstu na zdjęciu (epoka, dzielnica idą do bloku tekstowego)
  *  - bez noise pattern; tylko czysty radial gradient zbudowany z palety produktu
- *  - delikatne podniesienie + cieplejszy shadow zamiast animowanej strzałki overlay
+ *
+ * Instrumentacja:
+ *  - `source: "hp-bestsellers"` → emituje `bestseller_clicked` (Notion: BOFU bestsellers).
+ *  - inne źródła → `product_card_clicked` z position.
  */
-export function ProductCard({ product, className, source = "/sklep" }: ProductCardProps) {
+export function ProductCard({
+	product,
+	className,
+	source = "/sklep",
+	position,
+}: ProductCardProps) {
 	const [primary, secondary, accent] = product.imageHues;
 	const url =
 		source && source !== "/sklep"
 			? `/sklep/${product.slug}?source=${encodeURIComponent(source)}`
 			: `/sklep/${product.slug}`;
 	const primaryBadge = product.badges[0];
+
+	const handleClick = () => {
+		if (source === "hp-bestsellers") {
+			track({
+				name: "bestseller_clicked",
+				properties: { product_id: product.slug, position: position ?? 0 },
+			});
+			return;
+		}
+		track({
+			name: "product_card_clicked",
+			properties: {
+				product_id: product.slug,
+				position: position ?? 0,
+				source,
+			},
+		});
+	};
 
 	return (
 		<article
@@ -46,6 +77,7 @@ export function ProductCard({ product, className, source = "/sklep" }: ProductCa
 		>
 			<Link
 				href={url}
+				onClick={handleClick}
 				className="relative block aspect-4/5 w-full overflow-hidden focus-visible:outline-none"
 				aria-label={`Zobacz: ${product.name}`}
 			>
@@ -73,6 +105,7 @@ export function ProductCard({ product, className, source = "/sklep" }: ProductCa
 				<h3 className="font-display text-lg leading-snug text-foreground">
 					<Link
 						href={url}
+						onClick={handleClick}
 						className="rounded-sm transition-colors hover:text-terracotta focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
 					>
 						<span className="line-clamp-2">{product.name}</span>
