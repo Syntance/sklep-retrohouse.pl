@@ -24,6 +24,11 @@ type ProductCardProps = {
 	className?: string;
 	source?: ProductSource;
 	position?: number;
+	/**
+	 * Wymagane gdy `source === "pdp-related"` — bez tego event
+	 * `related_product_clicked` nie ma `from_product_id`.
+	 */
+	fromProductId?: string;
 };
 
 /**
@@ -41,6 +46,7 @@ export function ProductCard({
 	className,
 	source = "/sklep",
 	position,
+	fromProductId,
 }: ProductCardProps) {
 	const [primary, secondary, accent] = product.imageHues;
 	const url =
@@ -54,6 +60,13 @@ export function ProductCard({
 			track({
 				name: "bestseller_clicked",
 				properties: { product_id: product.slug, position: position ?? 0 },
+			});
+			return;
+		}
+		if (source === "pdp-related" && fromProductId) {
+			track({
+				name: "related_product_clicked",
+				properties: { product_id: product.slug, from_product_id: fromProductId },
 			});
 			return;
 		}

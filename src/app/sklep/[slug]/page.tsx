@@ -3,25 +3,50 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
 	ArrowRightIcon,
-	CartIcon,
 	CheckIcon,
 	InstagramIcon,
 	PackageIcon,
 	ShieldIcon,
-	ZoomIcon,
 } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
 import { Breadcrumbs, Container, CtaLink, Eyebrow, Section } from "@/components/primitives";
 import { ProductCard } from "@/components/product-card";
-import { formatPrice } from "@/lib/format";
+import { ProductCtaBlock } from "@/components/product-cta-block";
+import { ProductLightbox, type GallerySlot } from "@/components/product-lightbox";
+import type { ProductSource } from "@/lib/analytics/events";
+import { daysSince, formatPrice } from "@/lib/format";
 import { getProductBySlug, getRelatedProducts, PRODUCTS, type Product } from "@/lib/mock/products";
 import { cn } from "@/lib/utils";
+
+const GALLERY_SLOTS: GallerySlot[] = [
+	{ label: "Całość", hueIndex: 0, weight: 1 },
+	{ label: "Detal", hueIndex: 1, weight: 0.85 },
+	{ label: "Skala", hueIndex: 2, weight: 0.7 },
+	{ label: "Aranżacja", hueIndex: 0, weight: 0.55 },
+	{ label: "Patyna", hueIndex: 1, weight: 0.4 },
+];
+
+const FRESH_THRESHOLD_DAYS = 14;
+const KNOWN_SOURCES = new Set<ProductSource>([
+	"/sklep",
+	"/prezent",
+	"hp-bestsellers",
+	"/blog",
+	"pdp-related",
+	"/",
+]);
+
+function resolveSource(raw: string | string[] | undefined): ProductSource | "direct" {
+	if (typeof raw !== "string") return "direct";
+	return KNOWN_SOURCES.has(raw as ProductSource) ? (raw as ProductSource) : "direct";
+}
 
 export function generateStaticParams() {
 	return PRODUCTS.map((product) => ({ slug: product.slug }));
 }
 
 type Params = Promise<{ slug: string }>;
+type SearchParams = Promise<{ source?: string | string[] }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
 	const { slug } = await params;
@@ -39,12 +64,21 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 	};
 }
 
-export default async function ProduktPage({ params }: { params: Params }) {
+export default async function ProduktPage({
+	params,
+	searchParams,
+}: {
+	params: Params;
+	searchParams: SearchParams;
+}) {
 	const { slug } = await params;
+	const { source: rawSource } = await searchParams;
 	const product = getProductBySlug(slug);
 	if (!product) notFound();
 
+	const source = resolveSource(rawSource);
 	const related = getRelatedProducts(slug, 4);
+	const isFresh = daysSince(product.addedAt) < FRESH_THRESHOLD_DAYS;
 
 	const jsonLd = {
 		"@context": "https://schema.org",
@@ -83,8 +117,12 @@ export default async function ProduktPage({ params }: { params: Params }) {
 			<Section spacing="md" bleed className="pb-16 md:pb-24">
 				<Container size="xl">
 					<div className="grid gap-10 lg:grid-cols-[1.2fr_0.9fr]">
-						<Gallery product={product} />
-						<InfoPanel product={product} />
+						<ProductLightbox
+							productName={product.name}
+							hues={product.imageHues}
+							slots={GALLERY_SLOTS}
+						/>
+						<InfoPanel product={product} source={source} isFresh={isFresh} />
 					</div>
 				</Container>
 			</Section>
@@ -162,7 +200,12 @@ export default async function ProduktPage({ params }: { params: Params }) {
 						</header>
 						<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
 							{related.map((item) => (
-								<ProductCard key={item.slug} product={item} />
+								<ProductCard
+									key={item.slug}
+									product={item}
+									source="pdp-related"
+									fromProductId={product.slug}
+								/>
 							))}
 						</div>
 					</Container>
@@ -204,65 +247,20 @@ function manufacturerEra(product: Product) {
 	return product.story.match(/\d{4}/)?.[0] ?? year;
 }
 
-function Gallery({ product }: { product: Product }) {
-	const [primary, secondary, accent] = product.imageHues;
-	const slots = [
-		{ label: "Całość", weight: 1 },
-		{ label: "Detal", weight: 0.85 },
-		{ label: "Skala", weight: 0.7 },
-		{ label: "Aranżacja", weight: 0.55 },
-		{ label: "Patyna", weight: 0.4 },
-	];
-	return (
-		<div className="grid gap-3">
-			<figure className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-border bg-card">
-				<div
-					aria-hidden
-					className="absolute inset-0"
-					style={{
-						backgroundImage: `radial-gradient(120% 80% at 30% 20%, ${primary}, transparent 60%), radial-gradient(80% 80% at 80% 90%, ${secondary}, transparent 70%), linear-gradient(135deg, ${accent}, ${primary})`,
-					}}
-				/>
-				<div className="absolute right-4 top-4 inline-flex items-center gap-2 rounded-full bg-ink-foreground/85 px-3 py-1.5 text-xs font-semibold text-foreground backdrop-blur">
-					<ZoomIcon className="size-3.5" />
-					Zoom on hover
-				</div>
-				<figcaption className="absolute bottom-4 left-4 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-ink-foreground drop-shadow">
-					Główne zdjęcie · {product.name}
-				</figcaption>
-			</figure>
-			<ul className="grid grid-cols-5 gap-2">
-				{slots.map((slot, index) => (
-					<li
-						key={slot.label}
-						className="relative aspect-square overflow-hidden rounded-xl border border-border bg-card"
-					>
-						<div
-							aria-hidden
-							className="absolute inset-0"
-							style={{
-								backgroundImage: `linear-gradient(${index * 30}deg, ${primary}, ${secondary} 60%, ${accent})`,
-								opacity: slot.weight,
-							}}
-						/>
-						<span className="absolute inset-x-1 bottom-1 rounded bg-ink-foreground/80 px-1.5 py-0.5 text-center text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-foreground">
-							{slot.label}
-						</span>
-					</li>
-				))}
-			</ul>
-		</div>
-	);
-}
+type InfoPanelProps = {
+	product: Product;
+	source: ProductSource | "direct";
+	isFresh: boolean;
+};
 
-function InfoPanel({ product }: { product: Product }) {
+function InfoPanel({ product, source, isFresh }: InfoPanelProps) {
 	return (
 		<aside className="flex flex-col gap-6 lg:sticky lg:top-24 lg:self-start">
 			<div className="flex flex-wrap gap-2">
 				<span className="rounded-full bg-ink px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-ink-foreground">
 					Unikat — 1 z 1
 				</span>
-				{product.badges.includes("fresh") ? (
+				{isFresh ? (
 					<span className="rounded-full bg-success px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-success-foreground">
 						Świeża dostawa
 					</span>
@@ -291,29 +289,7 @@ function InfoPanel({ product }: { product: Product }) {
 				{formatPrice(product.price)}
 			</p>
 
-			<form action="/api/cart" method="post" className="flex flex-col gap-3">
-				<input type="hidden" name="slug" value={product.slug} />
-				<button
-					type="submit"
-					className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-terracotta px-6 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground shadow-md transition-transform hover:translate-y-[-1px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-				>
-					<CartIcon className="size-4" />
-					Dodaj do koszyka
-				</button>
-				<Link
-					href={`/kontakt?subject=produkt&slug=${product.slug}`}
-					className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-border bg-card text-sm font-semibold uppercase tracking-[0.16em] text-foreground transition-colors hover:border-terracotta hover:text-terracotta"
-				>
-					Zapytaj o ten przedmiot
-				</Link>
-				<Link
-					href={`/dla-projektantow#brief?slug=${product.slug}`}
-					className="inline-flex items-center gap-1.5 self-start text-xs font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-terracotta"
-				>
-					Jesteś projektantem? Rezerwacja 14 dni i FV
-					<ArrowRightIcon className="size-3" />
-				</Link>
-			</form>
+			<ProductCtaBlock product={product} source={source} />
 
 			<ul className="grid gap-2.5 rounded-2xl border border-border bg-cream p-4 text-sm">
 				<TrustItem
