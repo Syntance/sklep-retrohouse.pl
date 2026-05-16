@@ -63,7 +63,7 @@ const CATEGORIES: Category[] = [
  */
 export function CategoriesSection() {
 	return (
-		<Section spacing="lg" tone="default">
+		<Section spacing="lg" tone="default" id="home-kategorie" className="scroll-mt-24">
 			<Container size="lg">
 				<header className="mb-8 max-w-xl">
 					<Eyebrow>Kategorie</Eyebrow>

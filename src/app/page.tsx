@@ -7,11 +7,12 @@ import { SocialProofSection } from "@/components/sections/social-proof";
 import { StorySection } from "@/components/sections/story";
 import { Container, Section } from "@/components/primitives";
 import { env } from "@/env";
+import { getHomeHeroProduct } from "@/lib/sanity/home-hero";
 import { PRODUCTS } from "@/lib/mock/products";
 
 /**
  * Homepage — 7 sekcji wg strategii Notion (RetroHouse 2026):
- *  1. Hero        — headline + 2 CTA + opcjonalny pasek live
+ *  1. Hero        — headline + obraz produktu z Sanity (`homePage`) lub panel pochodzenia
  *  2. Categories  — 6 kafli, drugi entry point
  *  3. Bestsellers — 4 karty (BOFU)
  *  4. Live banner — warunkowy (LIVE_SCHEDULED=true)
@@ -19,8 +20,10 @@ import { PRODUCTS } from "@/lib/mock/products";
  *  6. SocialProof — 3 opinie
  *  7. FooterCta   — newsletter + pasek B2B
  */
-export default function HomePage() {
+export default async function HomePage() {
 	const bestsellers = [...PRODUCTS].sort((a, b) => b.popularity - a.popularity).slice(0, 4);
+
+	const heroProduct = await getHomeHeroProduct();
 
 	const liveScheduled =
 		env.NEXT_PUBLIC_LIVE_SCHEDULED &&
@@ -36,7 +39,7 @@ export default function HomePage() {
 
 	return (
 		<main id="main" className="flex flex-col">
-			<HeroSection liveBadge={liveBadge} />
+			<HeroSection liveBadge={liveBadge} heroProduct={heroProduct} />
 			<CategoriesSection />
 			<BestsellersSection products={bestsellers} />
 			{liveScheduled && env.NEXT_PUBLIC_LIVE_DATE ? (

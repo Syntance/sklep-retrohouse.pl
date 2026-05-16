@@ -47,6 +47,9 @@ const variantMap: Record<Variant, string> = {
 	),
 };
 
+/** Klasy wizualne CTA primary — do `<button>` (np. scroll w obrębie strony) bez duplikacji. */
+export const ctaPrimaryButtonClassName = variantMap.primary;
+
 type CtaLinkProps = ComponentProps<typeof Link> & {
 	variant?: Variant;
 	withArrow?: boolean;

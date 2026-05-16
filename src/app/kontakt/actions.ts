@@ -1,6 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
+import { sendContactNotification } from "@/lib/email/send-contact-notification";
 import { rateLimit } from "@/lib/rate-limit";
 import { type CONTACT_TOPICS, ContactSchema } from "@/lib/validation/contact";
 
@@ -42,6 +43,10 @@ export async function submitContact(
 		return { status: "error", errors };
 	}
 
-	// TODO(etap 2): Resend transactional + Slack #contact webhook (po DPA + RESEND_API_KEY).
+	const mail = await sendContactNotification(parsed.data);
+	if (!mail.ok) {
+		return { status: "error", errors: {}, message: mail.message };
+	}
+
 	return { status: "success", topic: parsed.data.topic };
 }

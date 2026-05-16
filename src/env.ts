@@ -19,6 +19,13 @@ export const env = createEnv({
 		SENTRY_AUTH_TOKEN: z.string().optional(),
 		SENTRY_ORG: z.string().optional(),
 		SENTRY_PROJECT: z.string().optional(),
+
+		/** Transactional — formularz /kontakt (Resend). Bez klucza akcja kończy się sukcesem bez wysyłki (preview / CI). */
+		RESEND_API_KEY: z.string().optional(),
+		/** Zweryfikowany nadawca w Resend. Domyślnie w kodzie: onboarding@resend.dev (tylko sandbox). */
+		RESEND_FROM_EMAIL: z.string().email().optional(),
+		/** Skrzynka zespołu (odbiorca zgłoszeń z formularza kontaktowego). */
+		RESEND_CONTACT_TO: z.string().email().optional(),
 	},
 	client: {
 		NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: z.string().optional(),
@@ -63,6 +70,10 @@ export const env = createEnv({
 		SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
 		SENTRY_ORG: process.env.SENTRY_ORG,
 		SENTRY_PROJECT: process.env.SENTRY_PROJECT,
+
+		RESEND_API_KEY: process.env.RESEND_API_KEY,
+		RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL,
+		RESEND_CONTACT_TO: process.env.RESEND_CONTACT_TO,
 
 		NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
 

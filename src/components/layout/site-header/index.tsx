@@ -62,6 +62,22 @@ export function SiteHeader() {
 		closeTimer.current = setTimeout(() => setShopOpen(false), 120);
 	};
 
+	const handleBrandClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+		if (pathname !== "/") return;
+		event.preventDefault();
+		setMobileOpen(false);
+		setShopOpen(false);
+		const el = document.getElementById("hero");
+		if (!el) return;
+		const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		requestAnimationFrame(() => {
+			el.scrollIntoView({
+				behavior: prefersReduced ? "auto" : "smooth",
+				block: "start",
+			});
+		});
+	};
+
 	return (
 		<header
 			data-scrolled={scrolled || mobileOpen ? "true" : "false"}
@@ -73,6 +89,7 @@ export function SiteHeader() {
 			<div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-5 sm:px-8 lg:px-12">
 				<Link
 					href="/"
+					onClick={handleBrandClick}
 					aria-label="RetroHouse — strona główna"
 					className="group flex items-center gap-2 font-display text-xl font-semibold tracking-tight text-foreground"
 				>

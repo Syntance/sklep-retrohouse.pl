@@ -1,35 +1,44 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import {
-	ArrowRightIcon,
-	CheckIcon,
-	PackageIcon,
-	PinIcon,
-	ShieldIcon,
-} from "@/components/icons";
-import { Container, CtaLink, Eyebrow, Section } from "@/components/primitives";
+import { ArrowRightIcon, ChevronDownIcon } from "@/components/icons";
+import { Container, CtaLink, Eyebrow, Section, ctaPrimaryButtonClassName } from "@/components/primitives";
 import { track } from "@/lib/analytics/posthog";
+import type { HeroProductImage } from "@/lib/sanity/home-hero";
+import { cn } from "@/lib/utils";
 
-const HERO_HEADLINE = "Ratujemy skarby z\u00a0wiedeńskich kamienic.";
-const HERO_SUB_LEAD = "Każdy przedmiot z\u00a0prawdziwą historią.";
+const HERO_HEADLINE = "Antyki z\u00a0prawdziwą historią";
+const HERO_SUB_LEAD = "Prosto z\u00a0Wiednia";
 const HERO_SUB =
 	"Zero pośredników, 100% pewność pochodzenia. Sklep w\u00a0Nowym Targu i\u00a0wysyłka po\u00a0całej Polsce.";
 
 type HeroSectionProps = {
 	liveBadge?: { dateLabel: string; dropTitle: string } | null;
+	heroProduct?: HeroProductImage | null;
 };
 
 /**
- * Hero homepage — copy 1:1 ze schematu Notion „Homepage / (strona główna)"
- * (filar 2 marki + archetyp Odkrywca-Ratownik z brandbooka).
+ * Hero homepage — H1 + podtytuł + lead, CTA scroll / sklep.
  *
- * Prawa kolumna: panel pochodzenia (Wiedeń → NT → Twój dom) + 3 trust signals.
+ * Prawa kolumna: zdjęcie produktu z Sanity (`homePage`), albo placeholder gdy brak obrazu / CMS.
+ * Pierwszy CTA: „POZNAJ NAS” → smooth scroll do `#home-kategorie`.
  * Bez fabricated cytatów klientów — Social proof przeniesiony do dedykowanej sekcji.
  */
-export function HeroSection({ liveBadge }: HeroSectionProps) {
+export function HeroSection({ liveBadge, heroProduct }: HeroSectionProps) {
+	const scrollToDiscoverSection = () => {
+		track({ name: "hero_cta_clicked", properties: { variant: "primary" } });
+		const el = document.getElementById("home-kategorie");
+		if (!el) return;
+		const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		el.scrollIntoView({
+			behavior: prefersReduced ? "auto" : "smooth",
+			block: "start",
+		});
+	};
+
 	return (
-		<Section spacing="lg" tone="paper" className="overflow-hidden">
+		<Section spacing="lg" tone="paper" id="hero" className="scroll-mt-16 overflow-hidden">
 			<div
 				aria-hidden="true"
 				className="absolute inset-0 -z-10"
@@ -50,30 +59,29 @@ export function HeroSection({ liveBadge }: HeroSectionProps) {
 							{HERO_SUB}
 						</p>
 						<div className="mt-1 flex flex-wrap items-center gap-3">
+							<button
+								type="button"
+								onClick={scrollToDiscoverSection}
+								className={cn(ctaPrimaryButtonClassName)}
+								aria-label="Przewiń do sekcji poniżej — Poznaj nas"
+							>
+								<span className="flex items-center gap-2">POZNAJ NAS</span>
+								<ChevronDownIcon
+									className="size-4 motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover/cta:translate-y-0.5"
+									aria-hidden="true"
+								/>
+							</button>
 							<CtaLink
 								href="/sklep"
-								variant="primary"
-								onClick={() =>
-									track({ name: "hero_cta_clicked", properties: { variant: "primary" } })
-								}
-							>
-								Zobacz, co dziś znaleźliśmy
-							</CtaLink>
-							<CtaLink
-								href="/kontakt"
 								variant="secondary"
-								onClick={() => {
+								onClick={() =>
 									track({
 										name: "hero_cta_clicked",
 										properties: { variant: "secondary" },
-									});
-									track({
-										name: "visit_store_cta_clicked",
-										properties: { source: "homepage" },
-									});
-								}}
+									})
+								}
 							>
-								Odwiedź nas w Nowym Targu
+								ZOBACZ SKLEP
 							</CtaLink>
 						</div>
 
@@ -100,81 +108,47 @@ export function HeroSection({ liveBadge }: HeroSectionProps) {
 						) : null}
 					</div>
 
-					<HeroProvenance />
+					{heroProduct ? (
+						<HeroProductPhoto image={heroProduct} />
+					) : (
+						<HeroProductPlaceholder />
+					)}
 				</div>
 			</Container>
 		</Section>
 	);
 }
 
-function HeroProvenance() {
+function HeroProductPlaceholder() {
 	return (
-		<aside
-			className="relative w-full overflow-hidden rounded-2xl border border-walnut/15 bg-card p-7 shadow-card md:p-8"
-			aria-label="Pochodzenie i gwarancje"
+		<div
+			className="relative mx-auto flex aspect-4/5 w-full max-w-md flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-walnut/30 bg-foreground/[0.035] px-6 py-10 text-center lg:mx-0 lg:max-w-none"
+			role="img"
+			aria-label="Placeholder: zdjęcie produktu na hero — do uzupełnienia w Sanity"
 		>
-			<div
-				aria-hidden="true"
-				className="absolute inset-0 -z-10"
-				style={{
-					backgroundImage:
-						"radial-gradient(80% 60% at 30% 10%, oklch(0.92 0.04 80 / 0.55), transparent 60%)",
-				}}
-			/>
-
-			<div className="flex items-center gap-2 text-brass">
-				<span
-					aria-hidden="true"
-					className="inline-flex size-7 items-center justify-center rounded-full bg-brass/15"
-				>
-					<PinIcon className="size-3.5" />
-				</span>
-				<span className="cta-text text-[0.7rem]">Pochodzenie 100%</span>
-			</div>
-
-			<p className="mt-4 font-display text-xl leading-snug text-foreground md:text-2xl">
-				Z&nbsp;wiedeńskich kamienic, prosto do&nbsp;Twojego domu.
+			<span aria-hidden="true" className="font-display text-3xl text-walnut/35">
+				◆
+			</span>
+			<p className="max-w-56 text-pretty text-sm leading-relaxed text-foreground/55">
+				Tu wyświetli się zdjęcie produktu ustawione w Sanity (Strona główna).
 			</p>
-
-			<ol
-				aria-label="Trasa przedmiotu"
-				className="mt-5 flex flex-wrap items-center gap-2 text-[0.7rem] uppercase tracking-[0.14em] text-foreground/65"
-			>
-				<li className="font-semibold text-foreground">🇦🇹&nbsp;Wiedeń</li>
-				<li aria-hidden="true" className="text-walnut/40">→</li>
-				<li>Nowy Targ</li>
-				<li aria-hidden="true" className="text-walnut/40">→</li>
-				<li>Twój dom</li>
-			</ol>
-
-			<ul className="mt-6 space-y-2.5 border-t border-walnut/15 pt-5 text-sm">
-				<TrustItem
-					icon={<CheckIcon className="size-3.5" />}
-					text="Karta historii przy każdym przedmiocie"
-				/>
-				<TrustItem
-					icon={<PackageIcon className="size-3.5" />}
-					text="Bibułka, ubezpieczona wysyłka"
-				/>
-				<TrustItem
-					icon={<ShieldIcon className="size-3.5" />}
-					text="14 dni na zwrot bez tłumaczenia"
-				/>
-			</ul>
-		</aside>
+		</div>
 	);
 }
 
-function TrustItem({ icon, text }: { icon: React.ReactNode; text: string }) {
+function HeroProductPhoto({ image }: { image: HeroProductImage }) {
 	return (
-		<li className="flex items-start gap-2.5 text-foreground/80">
-			<span
-				aria-hidden="true"
-				className="mt-0.5 grid size-5 place-items-center rounded-full bg-terracotta/15 text-terracotta"
-			>
-				{icon}
-			</span>
-			<span className="leading-snug">{text}</span>
-		</li>
+		<figure className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
+			<Image
+				src={image.src}
+				alt={image.alt}
+				width={image.width}
+				height={image.height}
+				className="h-auto w-full rounded-2xl border border-walnut/15 object-cover shadow-card"
+				sizes="(min-width: 1024px) 34vw, min(22rem, 92vw)"
+				priority
+				fetchPriority="high"
+			/>
+		</figure>
 	);
 }

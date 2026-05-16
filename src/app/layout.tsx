@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 		template: "%s · RetroHouse",
 	},
 	description:
-		"Antyki i vintage prosto z wiedeńskich kamienic. Bez pośredników, z gwarancją pochodzenia. Sklep w Nowym Targu + wysyłka w Polsce.",
+		"Antyki z prawdziwą historią. Prosto z Wiednia. Bez pośredników, z gwarancją pochodzenia. Sklep w Nowym Targu + wysyłka w Polsce.",
 	applicationName: "RetroHouse",
 	authors: [{ name: "RetroHouse" }],
 	creator: "RetroHouse",
@@ -64,13 +64,13 @@ export const metadata: Metadata = {
 		locale: "pl_PL",
 		siteName: "RetroHouse",
 		title: "RetroHouse — antyki i vintage z Wiednia",
-		description: "Ratujemy skarby z wiedeńskich mieszkań. Każdy przedmiot z prawdziwą historią.",
+		description: "Antyki z prawdziwą historią. Prosto z Wiednia.",
 		url: "/",
 	},
 	twitter: {
 		card: "summary_large_image",
 		title: "RetroHouse — antyki i vintage z Wiednia",
-		description: "Ratujemy skarby z wiedeńskich mieszkań. Każdy przedmiot z prawdziwą historią.",
+		description: "Antyki z prawdziwą historią. Prosto z Wiednia.",
 	},
 };
 
