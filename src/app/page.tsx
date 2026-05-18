@@ -16,7 +16,7 @@ import { PRODUCTS } from "@/lib/mock/products";
  *  2. Categories  — 6 kafli, drugi entry point
  *  3. Bestsellers — 4 karty (BOFU)
  *  4. Live banner — warunkowy (LIVE_SCHEDULED=true)
- *  5. Story       — 6-step proces + scroll_depth tracker
+ *  5. Story       — pochodzenie (typografia + oś procesu), scroll_depth → story_section_scrolled
  *  6. SocialProof — 3 opinie
  *  7. FooterCta   — newsletter + pasek B2B
  */

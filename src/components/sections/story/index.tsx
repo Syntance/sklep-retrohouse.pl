@@ -1,94 +1,97 @@
 "use client";
 
-import {
-	CompassIcon,
-	HeartIcon,
-	PackageIcon,
-	PaletteIcon,
-	PinIcon,
-	ScrollIcon,
-} from "@/components/icons";
-import { BrassRule, Container, CtaLink, Eyebrow, Section } from "@/components/primitives";
+import { Container, Section } from "@/components/primitives";
 import { useScrollDepth } from "@/lib/analytics/scroll-depth";
 
-const STORY_STEPS = [
-	{ icon: <PinIcon className="size-4" />, title: "Wiedeń", copy: "Pukamy do drzwi prywatnych kamienic." },
-	{ icon: <ScrollIcon className="size-4" />, title: "Odkup", copy: "Bezpośrednio od właściciela — bez hurtowni." },
-	{ icon: <CompassIcon className="size-4" />, title: "Selekcja", copy: "Tylko unikaty z udokumentowaną historią." },
-	{ icon: <PackageIcon className="size-4" />, title: "Transport", copy: "Bibułka, ubezpieczenie, opieka nad każdą sztuką." },
-	{ icon: <PaletteIcon className="size-4" />, title: "Nowy Targ", copy: "Inwentarz, opisy, fotografia w naturalnym świetle." },
-	{ icon: <HeartIcon className="size-4" />, title: "Twój dom", copy: "Drugie życie — z kartą historii." },
-];
+const STEPS = [
+	{ label: "Odkup", copy: "Bezpośrednio od właścicieli wiedeńskich mieszkań." },
+	{ label: "Transport", copy: "Bibułka, ubezpieczenie, 480 km do Nowego Targu." },
+	{ label: "Nowy Targ", copy: "Atrybucja, opisy i wysyłka w 48 h." },
+] as const;
 
 /**
- * Story — 6-step proces (Notion: "Skąd to wszystko").
- * useScrollDepth(section: "story") emituje `story_section_scrolled`
- * gdy user widzi sekcję w 25/50/75/100%.
+ * Story — sekcja pochodzenia.
+ * Eyebrow → H2 → sub → 3-punktowa oś procesu.
  */
 export function StorySection() {
 	const ref = useScrollDepth<HTMLDivElement>("story");
 
 	return (
-		<Section spacing="lg" id="historia">
-			<Container size="lg">
-				<div ref={ref} className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-					<div className="order-2 lg:order-1">
-						<div className="relative aspect-4/5 overflow-hidden rounded-2xl border border-walnut/15 shadow-card">
-							<div
-								aria-hidden="true"
-								className="absolute inset-0"
-								style={{
-									backgroundImage:
-										"radial-gradient(70% 60% at 30% 20%, oklch(0.92 0.04 80), transparent 60%), linear-gradient(160deg, oklch(0.78 0.04 70), oklch(0.39 0.07 45))",
-								}}
-							/>
-							<div className="relative flex h-full items-end p-6">
-								<p className="rounded-2xl border border-ink-foreground/30 bg-ink-foreground/25 p-5 font-display text-lg italic leading-snug text-ink backdrop-blur">
-									Pukamy do drzwi prywatnych mieszkań. Słuchamy historii. Wybieramy najpiękniejsze
-									przedmioty i przywozimy do Nowego Targu.
-								</p>
-							</div>
-						</div>
-					</div>
+		<Section
+			id="historia"
+			tone="paper"
+			aria-labelledby="story-heading"
+			className="py-20 md:py-28"
+		>
+			<Container size="md">
+				<div ref={ref} className="flex flex-col items-center gap-14 text-center">
 
-					<div className="order-1 lg:order-2">
-						<Eyebrow>Skąd to wszystko</Eyebrow>
-						<h2 className="mt-3 font-display text-3xl font-medium leading-tight md:text-4xl">
-							Bezpośrednio od wiedeńczyków, prosto z&nbsp;ich kamienic.
+					{/* ── Nagłówek ─────────────────────────────────────────── */}
+					<div className="flex flex-col items-center gap-4">
+						<span className="font-sans text-[0.68rem] font-semibold uppercase tracking-[0.25em] text-terracotta">
+							Skąd pochodzą nasze antyki
+						</span>
+
+						<h2
+							id="story-heading"
+							className="font-display text-4xl font-medium leading-[1.15] tracking-tight text-paper-foreground md:text-5xl"
+						>
+							Z prywatnych mieszkań w Wiedniu.
+							<br />
+							Prosto do Twojego domu.
 						</h2>
-						<p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-foreground/75">
-							Pukamy do drzwi prywatnych mieszkań przy Ringstraße, w&nbsp;Leopoldstadt
-							i&nbsp;na&nbsp;Mariahilf. Słuchamy historii, sprawdzamy sygnatury. Najpiękniejsze
-							przedmioty ratujemy przed strychem albo śmietnikiem — i&nbsp;przywozimy do Nowego
-							Targu z&nbsp;kartą pochodzenia.
+
+						<p className="max-w-sm text-pretty text-base leading-relaxed text-paper-foreground/60">
+							Bez hurtowni, bez pośredników, bez aukcji.
 						</p>
+					</div>
 
-						<BrassRule className="my-8 max-w-[140px]" />
-
-						<ol className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
-							{STORY_STEPS.map((step, index) => (
-								<li key={step.title} className="flex flex-col gap-1.5">
-									<div className="flex items-center gap-2 text-terracotta">
-										{step.icon}
-										<span className="cta-text text-[0.65rem] text-foreground/55">
-											{String(index + 1).padStart(2, "0")}
-										</span>
-									</div>
-									<p className="font-display text-base font-medium leading-snug">{step.title}</p>
-									<p className="text-sm text-foreground/65">{step.copy}</p>
-								</li>
+					{/* ── Oś procesu — desktop ─────────────────────────────── */}
+					<div className="hidden w-full md:block" aria-hidden="true">
+						{/* Kropki + linia */}
+						<div className="relative flex items-center justify-between">
+							<div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-walnut/20" />
+							{STEPS.map((s) => (
+								<span
+									key={s.label}
+									className="relative z-10 size-2.5 shrink-0 rounded-full bg-brass/80 ring-[6px] ring-paper"
+								/>
 							))}
-						</ol>
+						</div>
 
-						<div className="mt-8 flex flex-wrap gap-3">
-							<CtaLink href="/o-nas" variant="primary">
-								Poznaj całą historię
-							</CtaLink>
-							<CtaLink href="/dla-projektantow" variant="ghost">
-								Współpraca B2B
-							</CtaLink>
+						{/* Etykiety */}
+						<div className="mt-7 grid grid-cols-3">
+							{STEPS.map((s) => (
+								<div key={s.label} className="flex flex-col items-center gap-2 px-6">
+									<p className="font-display text-xl font-semibold text-paper-foreground">
+										{s.label}
+									</p>
+									<p className="text-pretty text-sm leading-snug text-paper-foreground/60">
+										{s.copy}
+									</p>
+								</div>
+							))}
 						</div>
 					</div>
+
+					{/* ── Oś procesu — mobile ──────────────────────────────── */}
+					<ol className="w-full md:hidden" aria-label="Odkup, transport, Nowy Targ">
+						{STEPS.map((s) => (
+							<li
+								key={s.label}
+								className="flex items-start gap-4 py-4 text-left [&+&]:border-t [&+&]:border-walnut/15"
+							>
+								<span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-brass/80" aria-hidden="true" />
+								<div>
+									<p className="font-display text-base font-semibold text-paper-foreground">
+										{s.label}
+									</p>
+									<p className="mt-0.5 text-sm leading-snug text-paper-foreground/60">{s.copy}</p>
+								</div>
+							</li>
+						))}
+					</ol>
+
 				</div>
 			</Container>
 		</Section>
