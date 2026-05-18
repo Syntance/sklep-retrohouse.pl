@@ -1,14 +1,24 @@
+"use client";
+
+import { useActionState, useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
-import { InstagramIcon, StarIcon } from "@/components/icons";
+import { ArrowRightIcon, InstagramIcon, StarIcon } from "@/components/icons";
 import { BrassRule, Container, Eyebrow, Section } from "@/components/primitives";
+import { track } from "@/lib/analytics/posthog";
+import type { ContactTopic } from "@/lib/analytics/events";
+import { submitContact, type ContactState } from "@/app/kontakt/actions";
 import { TESTIMONIALS } from "@/lib/mock/testimonials";
+
+const TOPIC_OPTIONS: Array<{ value: ContactTopic; label: string }> = [
+	{ value: "produkt", label: "Pytanie o produkt" },
+	{ value: "wysylka", label: "Wysyłka i zwroty" },
+	{ value: "b2b", label: "Współpraca B2B" },
+	{ value: "inne", label: "Inne" },
+];
 
 /**
  * Social proof — opinie z DM / IG / Google (po zgodzie klientki).
- *
- * Uczciwy stan pre-launch: gdy lista pusta, pokazujemy zaproszenie
- * do Instagrama (gdzie żyje rzeczywista społeczność) zamiast wymyślonych
- * opinii. To zgodne z brandbookiem („autentyczność > pozory dojrzałości").
+ * Pre-launch: zamiast pustej sekcji pokazuje mini formularz kontaktowy.
  */
 export function SocialProofSection() {
 	const hasReviews = TESTIMONIALS.length > 0;
@@ -17,18 +27,20 @@ export function SocialProofSection() {
 		<Section spacing="lg" tone="default">
 			<Container size="lg">
 				<header className="mb-10 flex flex-col items-center gap-3 text-center">
-					<Eyebrow variant="script">co mówią</Eyebrow>
+					<Eyebrow variant="script">{hasReviews ? "co mówią" : "napisz do nas"}</Eyebrow>
 					<h2 className="max-w-xl font-display text-3xl font-medium leading-tight md:text-4xl">
-						{hasReviews ? "Twoje listy po odbiorze paczki." : "Społeczność na Instagramie"}
+						{hasReviews ? "Twoje listy po odbiorze paczki." : "Odpowiemy w 12 godzin."}
 					</h2>
 					<BrassRule className="my-2 max-w-[140px]" />
 				</header>
 
-				{hasReviews ? <ReviewsGrid /> : <PreLaunchInvite />}
+				{hasReviews ? <ReviewsGrid /> : <ContactCard />}
 			</Container>
 		</Section>
 	);
 }
+
+/* ── Opinie ────────────────────────────────────────────────────────────── */
 
 function ReviewsGrid() {
 	return (
@@ -76,26 +88,204 @@ function ReviewsGrid() {
 	);
 }
 
-function PreLaunchInvite() {
+/* ── Mini formularz kontaktowy ─────────────────────────────────────────── */
+
+const INITIAL: ContactState = { status: "idle" };
+
+function ContactCard() {
+	const [state, formAction, isPending] = useActionState(submitContact, INITIAL);
+	const [topic, setTopic] = useState<ContactTopic | "">("");
+	const lastTopicRef = useRef<ContactTopic | null>(null);
+
+	useEffect(() => {
+		if (state.status === "success" && lastTopicRef.current !== state.topic) {
+			lastTopicRef.current = state.topic;
+			track({ name: "contact_form_submitted", properties: { topic: state.topic } });
+		}
+	}, [state]);
+
+	const handleTopicChange = (value: ContactTopic) => {
+		setTopic(value);
+		track({ name: "contact_topic_selected", properties: { topic: value } });
+		if (value === "b2b") track({ name: "b2b_topic_selected", properties: {} });
+	};
+
+	const errors = state.status === "error" ? state.errors : {};
+	const formError = state.status === "error" ? state.message : undefined;
+
+	if (state.status === "success") {
+		return (
+			<div className="mx-auto max-w-xl rounded-3xl border border-walnut/15 bg-card p-8 text-center shadow-card md:p-10">
+				<p className="font-display text-2xl font-medium">Dziękujemy — wiadomość przyjęta.</p>
+				<p className="mt-3 text-pretty text-sm leading-relaxed text-foreground/70">
+					Odpowiadamy w 12 godzin roboczych. Potwierdzenie leci na Twoją skrzynkę.
+				</p>
+			</div>
+		);
+	}
+
 	return (
-		<div className="mx-auto max-w-3xl rounded-3xl border border-walnut/15 bg-card p-8 text-center shadow-card md:p-10">
-			<p className="text-pretty text-base leading-relaxed text-foreground/80 md:text-lg">
-				Pierwsze opinie zbieramy bezpośrednio od klientek, które otrzymały paczki w&nbsp;tym
-				kwartale. Do&nbsp;tego czasu zapraszamy do&nbsp;społeczności na&nbsp;Instagramie —
-				to&nbsp;tam pokazujemy, co&nbsp;dziś przywieźliśmy z&nbsp;Wiednia.
-			</p>
-			<Link
-				href="https://instagram.com/retrohouse"
-				target="_blank"
-				rel="noreferrer"
-				className="mt-6 inline-flex items-center gap-2 rounded-full border border-walnut/25 bg-background px-5 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-foreground transition-colors hover:border-terracotta hover:text-terracotta"
-			>
-				<InstagramIcon className="size-4" />
-				@retrohouse
-			</Link>
-			<p className="mt-4 text-xs uppercase tracking-[0.14em] text-foreground/55">
-				Po dostarczeniu paczki napiszemy z prośbą o opinię — zawsze za zgodą, zawsze anonimowo.
-			</p>
+		<div className="mx-auto max-w-xl rounded-3xl border border-walnut/15 bg-card p-8 shadow-card md:p-10">
+			<form action={formAction} noValidate className="flex flex-col gap-4">
+				<div className="grid gap-4 sm:grid-cols-2">
+					<Field label="Imię" name="name" required error={errors.name} />
+					<Field label="E-mail" name="email" type="email" required error={errors.email} />
+				</div>
+
+				<TopicField value={topic} error={errors.topic} onChange={handleTopicChange} />
+
+				<Field
+					label="Wiadomość"
+					name="message"
+					textarea
+					rows={4}
+					required
+					placeholder="Napisz, czego szukasz — dopasujemy z najnowszej dostawy."
+					error={errors.message}
+				/>
+
+				{formError ? (
+					<p
+						role="alert"
+						className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+					>
+						{formError}
+					</p>
+				) : null}
+
+				<div className="flex items-center justify-between gap-4">
+					<button
+						type="submit"
+						disabled={isPending}
+						className="inline-flex h-11 items-center gap-2 rounded-full bg-terracotta px-6 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+					>
+						{isPending ? "Wysyłamy…" : "Wyślij"}
+						<ArrowRightIcon className="size-4" />
+					</button>
+
+					<Link
+						href="https://instagram.com/retrohouse"
+						target="_blank"
+						rel="noreferrer"
+						className="flex items-center gap-1.5 text-xs text-foreground/50 transition-colors hover:text-terracotta"
+					>
+						<InstagramIcon className="size-3.5" />
+						@retrohouse
+					</Link>
+				</div>
+
+				<p className="text-xs text-foreground/45">
+					Wysyłając akceptujesz{" "}
+					<Link href="/polityka-prywatnosci" className="underline underline-offset-4 hover:text-terracotta">
+						politykę prywatności
+					</Link>
+					.
+				</p>
+			</form>
 		</div>
+	);
+}
+
+/* ── Pola formularza ───────────────────────────────────────────────────── */
+
+type FieldProps = {
+	label: string;
+	name: string;
+	type?: string;
+	required?: boolean;
+	textarea?: boolean;
+	rows?: number;
+	placeholder?: string;
+	error?: string;
+};
+
+function Field({ label, name, type = "text", required, textarea, rows = 4, placeholder, error }: FieldProps) {
+	const id = useId();
+	const errId = `${id}-err`;
+	const base =
+		"mt-1.5 w-full rounded-xl border bg-background px-3 text-sm text-foreground placeholder:text-foreground/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta";
+	const border = error ? "border-destructive" : "border-border focus-visible:border-terracotta/60";
+
+	return (
+		<label htmlFor={id} className="flex flex-col">
+			<span className="text-xs font-semibold uppercase tracking-[0.14em] text-foreground/55">
+				{label}
+				{required ? <span aria-hidden> *</span> : null}
+			</span>
+			{textarea ? (
+				<textarea
+					id={id}
+					name={name}
+					required={required}
+					rows={rows}
+					placeholder={placeholder}
+					aria-invalid={Boolean(error)}
+					aria-describedby={error ? errId : undefined}
+					className={`${base} ${border} py-2.5`}
+				/>
+			) : (
+				<input
+					id={id}
+					name={name}
+					type={type}
+					required={required}
+					placeholder={placeholder}
+					aria-invalid={Boolean(error)}
+					aria-describedby={error ? errId : undefined}
+					className={`${base} ${border} h-11`}
+				/>
+			)}
+			{error ? (
+				<span id={errId} className="mt-1 text-xs text-destructive">
+					{error}
+				</span>
+			) : null}
+		</label>
+	);
+}
+
+function TopicField({
+	value,
+	error,
+	onChange,
+}: {
+	value: ContactTopic | "";
+	error?: string;
+	onChange: (v: ContactTopic) => void;
+}) {
+	const id = useId();
+	const errId = `${id}-err`;
+	const border = error ? "border-destructive" : "border-border focus-visible:border-terracotta/60";
+
+	return (
+		<label htmlFor={id} className="flex flex-col">
+			<span className="text-xs font-semibold uppercase tracking-[0.14em] text-foreground/55">
+				Temat <span aria-hidden>*</span>
+			</span>
+			<select
+				id={id}
+				name="topic"
+				required
+				value={value}
+				aria-invalid={Boolean(error)}
+				aria-describedby={error ? errId : undefined}
+				onChange={(e) => onChange(e.target.value as ContactTopic)}
+				className={`mt-1.5 h-11 w-full rounded-xl border bg-background px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta ${border}`}
+			>
+				<option value="" disabled>
+					Wybierz temat…
+				</option>
+				{TOPIC_OPTIONS.map((o) => (
+					<option key={o.value} value={o.value}>
+						{o.label}
+					</option>
+				))}
+			</select>
+			{error ? (
+				<span id={errId} className="mt-1 text-xs text-destructive">
+					{error}
+				</span>
+			) : null}
+		</label>
 	);
 }
