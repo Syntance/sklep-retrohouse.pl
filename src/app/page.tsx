@@ -1,6 +1,5 @@
 import { BestsellersSection } from "@/components/sections/bestsellers";
 import { CategoriesSection } from "@/components/sections/categories";
-import { FooterCtaSection } from "@/components/sections/footer-cta";
 import { HeroSection } from "@/components/sections/hero";
 import { LiveBanner } from "@/components/sections/live-banner";
 import { SocialProofSection } from "@/components/sections/social-proof";
@@ -18,7 +17,7 @@ import { PRODUCTS } from "@/lib/mock/products";
  *  4. Live banner — warunkowy (LIVE_SCHEDULED=true)
  *  5. Story       — pochodzenie (typografia + oś procesu), scroll_depth → story_section_scrolled
  *  6. SocialProof — 3 opinie
- *  7. FooterCta   — newsletter + pasek B2B
+ *  7. SocialProof — formularz kontaktowy (pre-launch) / opinie (po zebraniu)
  */
 export default async function HomePage() {
 	const bestsellers = [...PRODUCTS].sort((a, b) => b.popularity - a.popularity).slice(0, 4);
@@ -54,8 +53,7 @@ export default async function HomePage() {
 				</Section>
 			) : null}
 			<StorySection />
-			<SocialProofSection />
-			<FooterCtaSection />
+		<SocialProofSection />
 		</main>
 	);
 }
