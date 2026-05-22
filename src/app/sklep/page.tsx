@@ -16,6 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 import { PriceRangeFilter } from "./price-range-filter";
 import { ShopCategoryAutoScroll } from "./shop-category-scroll";
+import { SortDropdown } from "./sort-dropdown";
 import {
 	mergeShopParams,
 	normalizePriceRange,
@@ -87,51 +88,11 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 			<Section spacing="md" tone="muted">
 				<Container size="xl">
 					<Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Sklep" }]} />
-					<div className="mt-6 grid gap-6 md:grid-cols-[1.4fr_1fr] md:items-end">
-						<div>
-							<Eyebrow>Co aktualnie mamy</Eyebrow>
-							<h1 className="mt-3 font-display text-5xl font-semibold leading-tight md:text-6xl">
-								Nasze antyki
-							</h1>
-							<Lead className="mt-4">
-								{filtered.length}{" "}
-								{filtered.length === 1 ? "unikat" : filtered.length < 5 ? "unikaty" : "unikatów"}{" "}
-								{isFiltered ? "po wybranych filtrach" : "z wiedeńskich kamienic"}. Każdy z nich
-								istnieje tylko raz — gdy zniknie, więcej go nie będzie.
-							</Lead>
-						</div>
-						<form className="md:justify-self-end">
-							<label
-								htmlFor="sort"
-								className="block text-xs font-semibold uppercase tracking-[0.16em] text-foreground/60"
-							>
-								Sortowanie
-							</label>
-							<div className="mt-2 grid gap-2 md:flex">
-								{SORT_OPTIONS.map((option) => {
-									const next = mergeShopParams(params, {
-										sort: option.value === "najnowsze" ? undefined : option.value,
-									});
-									const isActive = activeSort === option.value;
-									return (
-										<Link
-											key={option.value}
-											href={`/sklep${next}`}
-											scroll={false}
-											aria-current={isActive ? "true" : undefined}
-											className={cn(
-												"inline-flex items-center justify-center rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] transition-colors",
-												isActive
-													? "border-ink bg-terracotta text-terracotta-foreground"
-													: "border-border bg-card text-foreground/70 hover:border-foreground hover:text-foreground",
-											)}
-										>
-											{option.label}
-										</Link>
-									);
-								})}
-							</div>
-						</form>
+					<div className="mt-8 flex flex-col items-center text-center">
+						<h1 className="max-w-2xl font-display text-5xl font-semibold leading-tight md:text-6xl">
+							Nasza kolekcja
+						</h1>
+						<Lead className="mt-4 max-w-xl">Antyki, które już się nie powtórzą.</Lead>
 					</div>
 				</Container>
 			</Section>
@@ -169,15 +130,18 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 							) : null}
 						</aside>
 
-						{filtered.length > 0 ? (
-							<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-								{filtered.map((product) => (
-									<ProductCard key={product.slug} product={product} />
-								))}
-							</div>
-						) : (
-							<EmptyState />
-						)}
+						<div className="flex min-w-0 flex-col gap-6">
+							<SortDropdown params={params} activeSort={activeSort} options={SORT_OPTIONS} />
+							{filtered.length > 0 ? (
+								<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+									{filtered.map((product) => (
+										<ProductCard key={product.slug} product={product} />
+									))}
+								</div>
+							) : (
+								<EmptyState />
+							)}
+						</div>
 					</div>
 				</Container>
 			</Section>
@@ -188,7 +152,7 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 						<div>
 							<Eyebrow>Nie widzisz tego, czego szukasz?</Eyebrow>
 							<h2 className="mt-3 font-display text-3xl font-semibold leading-tight md:text-4xl">
-								Napisz — doradzimy z naszej kolejnej dostawy
+								Napisz — doradzimy.
 							</h2>
 							<p className="mt-3 max-w-lg text-foreground/70">
 								Co 2 tygodnie wracamy z Wiednia z 30–50 nowymi przedmiotami. Powiedz, czego szukasz
