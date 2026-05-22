@@ -21,7 +21,7 @@ export function BestsellersSection({ products }: BestsellersSectionProps) {
 					<div className="max-w-xl">
 						<Eyebrow>NASZ WYBÓR</Eyebrow>
 						<h2 className="mt-3 font-display text-3xl font-medium leading-tight md:text-4xl">
-							Sześć rzeczy, na które warto spojrzeć.
+							Rzeczy, na które warto spojrzeć.
 						</h2>
 						<p className="mt-3 text-base leading-relaxed text-foreground/70">
 							Cotygodniowy przekrój kolekcji — od porcelany po meble, od kilkuset złotych po
