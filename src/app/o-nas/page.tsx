@@ -23,7 +23,7 @@ const TIMELINE = [
 	{
 		icon: <PinIcon className="size-5" />,
 		label: "Wiedeń",
-		description: "Pukamy do drzwi prywatnych mieszkań w 9 dzielnicach.",
+		description: "Pukamy do drzwi prywatnych mieszkań we Wiedniu.",
 	},
 	{
 		icon: <ScrollIcon className="size-5" />,
@@ -69,14 +69,14 @@ const FOUNDER_ROLES = [
 		eyebrow: "Wiedeń",
 		title: "Selekcja u źródła",
 		description:
-			"Pukamy do drzwi prywatnych mieszkań, słuchamy historii, sprawdzamy sygnatury i pochodzenie. Każda dostawa to 30–50 godzin rozmów w 2–3 dzielnicach.",
+			"Pukamy do drzwi prywatnych mieszkań, słuchamy historii, sprawdzamy sygnatury. Każda dostawa to 30–50 godzin rozmów u właścicieli.",
 		hue: "oklch(0.74 0.10 80)",
 	},
 	{
 		eyebrow: "Nowy Targ",
 		title: "Karta historii i pakowanie",
 		description:
-			"Inwentaryzacja, fotografia w naturalnym świetle, opis stanu, karta pochodzenia. Każda paczka pakowana ręcznie z bibułką i wizytówką.",
+			"Inwentaryzacja, fotografia w naturalnym świetle, opis stanu, karta historii. Każda paczka pakowana ręcznie z bibułką i wizytówką.",
 		hue: "oklch(0.39 0.07 45)",
 	},
 ];

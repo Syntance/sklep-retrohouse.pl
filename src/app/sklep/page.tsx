@@ -6,7 +6,6 @@ import { MobileCartFab } from "@/components/mobile-cart-fab";
 import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/components/primitives";
 import { ProductCard } from "@/components/product-card";
 import {
-	PRICE_BUCKETS,
 	PRODUCT_CATEGORIES,
 	PRODUCT_EPOCHS,
 	PRODUCTS,
@@ -15,7 +14,14 @@ import {
 	type ProductEpoch,
 } from "@/lib/mock/products";
 import { cn } from "@/lib/utils";
+import { PriceRangeFilter } from "./price-range-filter";
 import { ShopCategoryAutoScroll } from "./shop-category-scroll";
+import {
+	mergeShopParams,
+	normalizePriceRange,
+	parsePriceParam,
+	type ShopSearchParams,
+} from "./shop-params";
 
 export const metadata: Metadata = {
 	title: "Sklep z antykami i vintage",
@@ -32,12 +38,7 @@ const SORT_OPTIONS: Array<{ value: SortKey; label: string }> = [
 	{ value: "popularne", label: "Popularne" },
 ];
 
-type SearchParams = {
-	kategoria?: string;
-	cena?: string;
-	epoka?: string;
-	sort?: string;
-};
+type SearchParams = ShopSearchParams;
 
 export default async function SklepPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
 	const params = await searchParams;
@@ -49,7 +50,10 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 		params.epoka,
 		PRODUCT_EPOCHS.map((e) => e.value),
 	);
-	const activePrice = PRICE_BUCKETS.find((bucket) => bucket.id === params.cena);
+	const { min: priceMin, max: priceMax } = normalizePriceRange(
+		parsePriceParam(params.cenaOd),
+		parsePriceParam(params.cenaDo),
+	);
 	const activeSort = parseEnum<SortKey>(
 		params.sort,
 		SORT_OPTIONS.map((s) => s.value),
@@ -60,17 +64,19 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 		PRODUCTS.filter((product) => {
 			if (activeCategory && product.category !== activeCategory) return false;
 			if (activeEpoch && product.epoch !== activeEpoch) return false;
-			if (activePrice) {
-				if (product.price < activePrice.min) return false;
-				if (typeof activePrice.max === "number" && product.price >= activePrice.max) return false;
-			}
+			if (priceMin !== undefined && product.price < priceMin) return false;
+			if (priceMax !== undefined && product.price > priceMax) return false;
 			return true;
 		}),
 		activeSort,
 	);
 
 	const isFiltered = Boolean(
-		activeCategory || activeEpoch || activePrice || activeSort !== "najnowsze",
+		activeCategory ||
+			activeEpoch ||
+			priceMin !== undefined ||
+			priceMax !== undefined ||
+			activeSort !== "najnowsze",
 	);
 
 	return (
@@ -103,7 +109,7 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 							</label>
 							<div className="mt-2 grid gap-2 md:flex">
 								{SORT_OPTIONS.map((option) => {
-									const next = mergeParams(params, {
+									const next = mergeShopParams(params, {
 										sort: option.value === "najnowsze" ? undefined : option.value,
 									});
 									const isActive = activeSort === option.value;
@@ -144,16 +150,7 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 								paramKey="kategoria"
 								params={params}
 							/>
-							<FilterGroup
-								title="Cena"
-								options={PRICE_BUCKETS.map((b) => ({
-									value: b.id,
-									label: b.label,
-								}))}
-								active={params.cena}
-								paramKey="cena"
-								params={params}
-							/>
+							<PriceRangeFilter params={params} priceMin={priceMin} priceMax={priceMax} />
 							<FilterGroup
 								title="Epoka"
 								options={PRODUCT_EPOCHS}
@@ -241,7 +238,7 @@ function FilterGroup({
 			<ul className="space-y-1.5">
 				{options.map((option) => {
 					const isActive = active === option.value;
-					const next = mergeParams(params, {
+					const next = mergeShopParams(params, {
 						[paramKey]: isActive ? undefined : option.value,
 					});
 					return (
@@ -326,14 +323,4 @@ function parseEnum<T extends string>(
 ): T | undefined {
 	if (value && (allowed as readonly string[]).includes(value)) return value as T;
 	return fallback;
-}
-
-function mergeParams(current: SearchParams, next: Partial<SearchParams>): string {
-	const result = { ...current, ...next };
-	const search = new URLSearchParams();
-	for (const [key, value] of Object.entries(result)) {
-		if (value && typeof value === "string") search.set(key, value);
-	}
-	const stringified = search.toString();
-	return stringified ? `?${stringified}` : "";
 }

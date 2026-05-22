@@ -34,7 +34,7 @@ type ProductCardProps = {
 /**
  * ProductCard — wersja „retro-przytulna" (2026-05-03):
  *  - max jeden badge (priorytet bestseller > unikat > fresh — sortowanie po stronie produktu)
- *  - bez overlay tekstu na zdjęciu (epoka, dzielnica idą do bloku tekstowego)
+ *  - bez overlay tekstu na zdjęciu (epoka idzie do bloku tekstowego)
  *  - bez noise pattern; tylko czysty radial gradient zbudowany z palety produktu
  *
  * Instrumentacja:
@@ -124,12 +124,9 @@ export function ProductCard({
 						<span className="line-clamp-2">{product.name}</span>
 					</Link>
 				</h3>
-				<div className="mt-auto flex items-baseline justify-between gap-3 pt-2">
+				<div className="mt-auto pt-2">
 					<span className="font-display text-xl font-semibold tabular text-terracotta">
 						{formatPrice(product.price)}
-					</span>
-					<span className="text-[0.72rem] text-foreground/55">
-						{product.districtVienna.split("(")[0].trim()}
 					</span>
 				</div>
 			</div>

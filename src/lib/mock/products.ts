@@ -13,7 +13,6 @@ export type ProductBadge = "unikat" | "fresh" | "bestseller";
 export type Product = {
 	slug: string;
 	name: string;
-	priceSpread: string; // "Wiedeń, 3. dzielnica"
 	price: number;
 	category: ProductCategory;
 	categoryLabel: string;
@@ -21,7 +20,6 @@ export type Product = {
 	epochLabel: string;
 	manufacturer: string;
 	signature?: string;
-	districtVienna: string;
 	dimensions: string;
 	condition: string;
 	badges: ProductBadge[];
@@ -80,7 +78,7 @@ function epochLabel(epoch: ProductEpoch) {
 }
 
 const RAW_PRODUCTS: Array<
-	Omit<Product, "categoryLabel" | "epochLabel" | "imageHues" | "priceSpread">
+	Omit<Product, "categoryLabel" | "epochLabel" | "imageHues">
 > = [
 	{
 		slug: "filizanka-augarten-secesja-1910",
@@ -90,15 +88,14 @@ const RAW_PRODUCTS: Array<
 		epoch: "secesja",
 		manufacturer: "Augarten",
 		signature: "Niebieska tarcza Augarten",
-		districtVienna: "3. dzielnica (Landstraße)",
 		dimensions: "wys. 6 cm · ø 8 cm",
 		condition: "Stan idealny, złocenia oryginalne, drobna patyna na uchu.",
 		badges: ["unikat", "fresh"],
 		addedAt: "2026-04-22",
 		story:
-			"Odkupiona od właściciela mieszkania w 3. dzielnicy Wiednia. Filiżanka stała w witrynie obok serwisu od 1910 roku — została w rodzinie do 2025.",
+			"Odkupiona od właściciela prywatnego mieszkania. Filiżanka stała w witrynie obok serwisu od 1910 roku — została w rodzinie do 2025.",
 		shortDescription:
-			"Porcelana Augarten z secesyjnym dekorem. 100% wiedeńskie pochodzenie, sygnatura niebieskiej tarczy.",
+			"Porcelana Augarten z secesyjnym dekorem. Sygnatura niebieskiej tarczy.",
 		popularity: 87,
 		giftBestseller: true,
 	},
@@ -110,15 +107,14 @@ const RAW_PRODUCTS: Array<
 		epoch: "art-deco",
 		manufacturer: "Rosenthal",
 		signature: "Rosenthal Selb · Ivory",
-		districtVienna: "1. dzielnica (Innere Stadt)",
 		dimensions: "wys. 24 cm · ø 12 cm",
 		condition: "Drobne ślady użytkowania na podstawie — potwierdzają autentyczność. Bez pęknięć.",
 		badges: ["unikat", "bestseller"],
 		addedAt: "2026-04-12",
 		story:
-			"Z apartamentu przy Ringstraße. Właściciel — kolekcjoner ceramiki — sprzedał całą kolekcję przed przeprowadzką do domu seniora.",
+			"Z apartamentu kolekcjonera ceramiki — sprzedał całą kolekcję przed przeprowadzką do domu seniora.",
 		shortDescription:
-			"Wazon Rosenthal w serii Ivory, Art Deco lata 30. Pochodzenie udokumentowane w rachunku zakupu.",
+			"Wazon Rosenthal w serii Ivory, Art Deco lata 30. Historia udokumentowana w rachunku zakupu.",
 		popularity: 95,
 	},
 	{
@@ -128,13 +124,12 @@ const RAW_PRODUCTS: Array<
 		category: "szklo",
 		epoch: "lata-50",
 		manufacturer: "Lobmeyr (atrybucja)",
-		districtVienna: "9. dzielnica (Alsergrund)",
 		dimensions: "wys. 26 cm · poj. 0,8 l",
 		condition: "Bez ubytków, drobne mikrorysy w spodzie (norma).",
 		badges: ["unikat"],
 		addedAt: "2026-03-29",
 		story:
-			"Kupiona od pary z 9. dzielnicy. Karafka stała na bufecie podczas niedzielnych obiadów przez 80 lat.",
+			"Kupiona od pary kolekcjonerów. Karafka stała na bufecie podczas niedzielnych obiadów przez 80 lat.",
 		shortDescription:
 			"Karafka z grubego kryształu, ręcznie cięte motywy diamentowe. Zachowuje wagę i klasę okresu międzywojennego.",
 		popularity: 70,
@@ -147,13 +142,12 @@ const RAW_PRODUCTS: Array<
 		category: "meble",
 		epoch: "lata-60-70",
 		manufacturer: "Kalmar Wien",
-		districtVienna: "7. dzielnica (Neubau)",
 		dimensions: "wys. 38 cm · ø klosza 18 cm",
 		condition: "Po pełnej elektrokonserwacji — nowy kabel, oryginalna oprawka.",
 		badges: ["unikat", "fresh"],
 		addedAt: "2026-04-25",
 		story:
-			"Z mieszkania architekta z Neubau — projektowała tam swoje portfolio od lat 60. Lampka pracowała na biurku do dnia odsprzedaży.",
+			"Z mieszkania architekta — projektowała tam swoje portfolio od lat 60. Lampka pracowała na biurku do dnia odsprzedaży.",
 		shortDescription:
 			"Lampka Kalmar Wien — chłodny mosiądz, ciepłe opalowe światło. Ikoniczny design wiedeński.",
 		popularity: 90,
@@ -166,7 +160,6 @@ const RAW_PRODUCTS: Array<
 		category: "dekoracje",
 		epoch: "lata-50",
 		manufacturer: "Wiener Manufaktur",
-		districtVienna: "4. dzielnica (Wieden)",
 		dimensions: "wys. 18 cm",
 		condition: "Bez ubytków, oryginalna polichromia.",
 		badges: ["fresh"],
@@ -186,14 +179,13 @@ const RAW_PRODUCTS: Array<
 		epoch: "art-deco",
 		manufacturer: "F. Kessler",
 		signature: "F. Kessler '28",
-		districtVienna: "1. dzielnica (Innere Stadt)",
 		dimensions: "30 × 42 cm (z ramą)",
 		condition: "Oryginalna rama, drobne otarcia złoceń. Akwarela bez przebarwień.",
 		badges: ["unikat"],
 		addedAt: "2026-03-15",
 		story:
-			"Akwarela wisiała w gabinecie adwokata przy Graben. Spadkobiercy zdecydowali o sprzedaży kolekcji.",
-		shortDescription: "Sygnowana akwarela wiedeńska — fragment Graben w godzinie błękitnej.",
+			"Akwarela wisiała w gabinecie adwokata. Spadkobiercy zdecydowali o sprzedaży kolekcji.",
+		shortDescription: "Sygnowana akwarela — miejski pejzaż w godzinie błękitnej.",
 		popularity: 78,
 	},
 	{
@@ -203,13 +195,12 @@ const RAW_PRODUCTS: Array<
 		category: "dekoracje",
 		epoch: "secesja",
 		manufacturer: "Lenzkirch",
-		districtVienna: "8. dzielnica (Josefstadt)",
 		dimensions: "wys. 42 cm · szer. 32 cm",
 		condition: "Mechanizm po przeglądzie zegarmistrza, gra dwa razy na godzinę.",
 		badges: ["unikat", "bestseller"],
 		addedAt: "2026-04-02",
 		story:
-			"Z mieszkania profesora literatury z Josefstadt. Zegar bił przez ponad 110 lat — i nadal bije.",
+			"Z mieszkania profesora literatury. Zegar bił przez ponad 110 lat — i nadal bije.",
 		shortDescription:
 			"Secesyjny zegar kominkowy z mechanizmem Lenzkirch. Premium element gabinetu.",
 		popularity: 92,
@@ -222,15 +213,14 @@ const RAW_PRODUCTS: Array<
 		epoch: "art-deco",
 		manufacturer: "Thonet",
 		signature: "Thonet · pieczęć na ramie",
-		districtVienna: "6. dzielnica (Mariahilf)",
 		dimensions: "wys. 92 cm · siedzisko 45 cm",
 		condition: "Po renowacji ramy, plecionka oryginalna, drobne ślady używania.",
 		badges: ["fresh"],
 		addedAt: "2026-04-26",
 		story:
-			"Krzesło z wiedeńskiej kawiarni przy Mariahilf, która zamknęła się w 2024 roku po 99 latach. Uratowane przed wystawieniem na śmietnik.",
+			"Krzesło z wiedeńskiej kawiarni, która zamknęła się w 2024 roku po 99 latach. Uratowane przed wystawieniem na śmietnik.",
 		shortDescription:
-			"Klasyczne Thonet z plecionką wiedeńską — siadało na nim pokolenie pisarzy z Mariahilf.",
+			"Klasyczne Thonet z plecionką wiedeńską — siadało na nim pokolenie stałych bywalców.",
 		popularity: 80,
 	},
 	{
@@ -240,12 +230,11 @@ const RAW_PRODUCTS: Array<
 		category: "dekoracje",
 		epoch: "secesja",
 		manufacturer: "Atelier Wien",
-		districtVienna: "2. dzielnica (Leopoldstadt)",
 		dimensions: "12 × 17 cm",
 		condition: "Drobne otarcia złoceń, mosiądz w pełnej formie.",
 		badges: ["fresh"],
 		addedAt: "2026-04-27",
-		story: "Z mieszkania na Praterstraße — ramka stała na komodzie z portretem prababki.",
+		story: "Z prywatnego mieszkania — ramka stała na komodzie z portretem prababki.",
 		shortDescription:
 			"Drobny prezent z duszą — secesyjna ramka mosiężna, idealna pod portret rodzinny.",
 		popularity: 55,
@@ -259,13 +248,12 @@ const RAW_PRODUCTS: Array<
 		epoch: "art-deco",
 		manufacturer: "Augarten",
 		signature: "Augarten · niebieska tarcza",
-		districtVienna: "1. dzielnica (Innere Stadt)",
 		dimensions: "21 elementów",
 		condition: "Komplet, bez wyszczerbień. Drobna patyna na spodkach.",
 		badges: ["unikat", "bestseller"],
 		addedAt: "2026-03-08",
 		story:
-			"Serwis ślubny z 1934, używany przy świątecznych okazjach. Sprzedany przez wnuczkę po przeprowadzce z Innere Stadt.",
+			"Serwis ślubny z 1934, używany przy świątecznych okazjach. Sprzedany przez wnuczkę po przeprowadzce rodziny.",
 		shortDescription:
 			"Pełny komplet Augarten Art Deco — niedostępny na rynku wtórnym przez ostatnie 6 miesięcy.",
 		popularity: 98,
@@ -277,13 +265,12 @@ const RAW_PRODUCTS: Array<
 		category: "szklo",
 		epoch: "lata-50",
 		manufacturer: "Bohemia Glass",
-		districtVienna: "10. dzielnica (Favoriten)",
 		dimensions: "wys. 14 cm · poj. 80 ml",
 		condition: "Komplet 6 sztuk, jeden z drobnym mikrorysem (norma).",
 		badges: ["fresh"],
 		addedAt: "2026-04-19",
 		story:
-			"Z bufetu wiedeńskiej rodziny. Kieliszki używane wyłącznie na święta, dlatego ich stan jest tak dobry.",
+			"Z bufetu prywatnej rodziny. Kieliszki używane wyłącznie na święta, dlatego ich stan jest tak dobry.",
 		shortDescription: "Komplet 6 sztuk — głęboka butelkowa zieleń, idealny pod czarne wnętrza.",
 		popularity: 60,
 		giftBestseller: true,
@@ -296,13 +283,12 @@ const RAW_PRODUCTS: Array<
 		epoch: "lata-60-70",
 		manufacturer: "M. Hauser",
 		signature: "M. Hauser · 1962",
-		districtVienna: "13. dzielnica (Hietzing)",
 		dimensions: "60 × 80 cm (z ramą)",
 		condition: "Bez retuszy, oryginalna rama, lekko zakurzony werniks.",
 		badges: ["unikat"],
 		addedAt: "2026-02-28",
 		story:
-			"Wisiał w salonie willi w Hietzing — 100 metrów od bramy parku Schönbrunn. Sprzedany przez córkę po przeprowadzce do Włoch.",
+			"Wisiał w salonie prywatnej willi. Sprzedany przez córkę po przeprowadzce do Włoch.",
 		shortDescription: "Sygnowany olej z 1962 — fragment Schönbrunn w pastelowym świetle.",
 		popularity: 73,
 	},
@@ -312,7 +298,6 @@ export const PRODUCTS: Product[] = RAW_PRODUCTS.map((product) => ({
 	...product,
 	categoryLabel: categoryLabel(product.category),
 	epochLabel: epochLabel(product.epoch),
-	priceSpread: product.districtVienna,
 	imageHues: HUE_TRIADS[product.category],
 }));
 

@@ -57,7 +57,7 @@ export function ProductMobileBar({ product }: ProductMobileBarProps) {
 				</form>
 			</div>
 			<div className="mx-auto flex max-w-2xl items-center justify-between gap-2 border-t border-border px-4 py-1.5 text-[0.7rem] text-foreground/65">
-				<span>🇦🇹 Wiedeń · Unikat 1/1</span>
+				<span>Unikat 1/1</span>
 				<Link
 					href={`/kontakt?subject=produkt&slug=${product.slug}`}
 					onClick={() =>

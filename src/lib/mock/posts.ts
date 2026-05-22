@@ -75,7 +75,7 @@ export const POSTS: Post[] = [
 				{
 					heading: "2. Storytelling automatyzuje rozmowy z gośćmi",
 					paragraphs: [
-						"Każdy nasz przedmiot ma kartę historii — gdzie kupiliśmy, w której dzielnicy, jaką drogą trafił do Nowego Targu. To nie jest copywriting na siłę, to surowa dokumentacja. Klienci mówią nam, że karta historii zostaje przy przedmiocie i staje się dyżurną opowieścią dla gości: „Ten wazon? Augarten, 1934, kupiliśmy go w mieszkaniu wnuczki kolekcjonera w 3. dzielnicy Wiednia”.",
+						"Każdy nasz przedmiot ma kartę historii — kiedy go odkupiliśmy, jaką drogą trafił do Nowego Targu. To nie jest copywriting na siłę, to surowa dokumentacja. Klienci mówią nam, że karta historii zostaje przy przedmiocie i staje się dyżurną opowieścią dla gości: „Ten wazon? Augarten, 1934, odkupiony bezpośrednio od wnuczki kolekcjonera”.",
 						"Z perspektywy biznesowej to klasyczny endowment effect — przedmiot z opowieścią staje się trudniejszy do oddania, bo emocjonalnie kosztuje więcej. Z perspektywy użytkownika: w kilka sekund masz gotową anegdotę, która podkreśla Twój gust bez przechwałek.",
 					],
 				},
@@ -149,7 +149,7 @@ export const POSTS: Post[] = [
 				eyebrow: "Sprawdzony autentyk",
 				title: "Filiżanka Augarten — Wiedeń, ok. 1910",
 				description:
-					"Sygnatura skrzyżowane szpady, secesyjny wzór, w idealnym stanie. Kupiona przez nas bezpośrednio w mieszkaniu w 3. dzielnicy.",
+					"Sygnatura skrzyżowane szpady, secesyjny wzór, w idealnym stanie. Odkupiona przez nas bezpośrednio od prywatnego właściciela.",
 				buttonLabel: "Zobacz filiżankę",
 			},
 		},

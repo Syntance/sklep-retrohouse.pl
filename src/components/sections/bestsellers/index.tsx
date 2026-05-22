@@ -24,8 +24,7 @@ export function BestsellersSection({ products }: BestsellersSectionProps) {
 							Rzeczy, na które warto spojrzeć.
 						</h2>
 						<p className="mt-3 text-base leading-relaxed text-foreground/70">
-							Cotygodniowy przekrój kolekcji — od porcelany po meble, od kilkuset złotych po
-							unikaty za kilka tysięcy.
+							Cotygodniowy przekrój kolekcji.
 						</p>
 					</div>
 					<CtaLink href="/sklep" variant="underline" withArrow={false}>

@@ -132,7 +132,7 @@ export default async function ProduktPage({
 				<Container size="md">
 					<div className="grid gap-8 md:grid-cols-[1fr_1.3fr] md:items-start">
 						<div>
-							<Eyebrow>Pochodzenie</Eyebrow>
+							<Eyebrow>Historia</Eyebrow>
 							<h2 className="mt-3 font-display text-3xl font-semibold leading-tight md:text-4xl">
 								Historia tego przedmiotu
 							</h2>
@@ -140,10 +140,6 @@ export default async function ProduktPage({
 						<div className="space-y-4 text-pretty text-base leading-relaxed text-foreground/80 md:text-lg">
 							<p>{product.story}</p>
 							<dl className="grid gap-3 rounded-2xl border border-border bg-card p-5 text-sm md:grid-cols-2">
-								<DetailRow
-									label="Skąd"
-									value={`Odkupiony od właściciela kamienicy w ${product.districtVienna}`}
-								/>
 								<DetailRow
 									label="Epoka"
 									value={`${product.epochLabel}, ${manufacturerEra(product)}`}
@@ -171,7 +167,6 @@ export default async function ProduktPage({
 							value={`${product.epochLabel} · ${manufacturerEra(product)}`}
 						/>
 						<DefinitionRow label="Producent" value={product.manufacturer} />
-						<DefinitionRow label="Pochodzenie" value={product.districtVienna} />
 						<DefinitionRow label="Wymiary" value={product.dimensions} />
 						<DefinitionRow label="Stan" value={product.condition} />
 						{product.signature ? (
