@@ -3,21 +3,18 @@ import { CategoriesSection } from "@/components/sections/categories";
 import { HeroSection } from "@/components/sections/hero";
 import { LiveBanner } from "@/components/sections/live-banner";
 import { SocialProofSection } from "@/components/sections/social-proof";
-import { StorySection } from "@/components/sections/story";
 import { Container, Section } from "@/components/primitives";
 import { env } from "@/env";
 import { getHomeHeroProduct } from "@/lib/sanity/home-hero";
 import { PRODUCTS } from "@/lib/mock/products";
 
 /**
- * Homepage — 7 sekcji wg strategii Notion (RetroHouse 2026):
- *  1. Hero        — headline + obraz produktu z Sanity (`homePage`) lub panel pochodzenia
+ * Homepage:
+ *  1. Hero        — headline + obraz produktu z Sanity (`homePage`) lub placeholder
  *  2. Categories  — 6 kafli, drugi entry point
  *  3. Bestsellers — 4 karty (BOFU)
  *  4. Live banner — warunkowy (LIVE_SCHEDULED=true)
- *  5. Story       — pochodzenie (typografia + oś procesu), scroll_depth → story_section_scrolled
- *  6. SocialProof — 3 opinie
- *  7. SocialProof — formularz kontaktowy (pre-launch) / opinie (po zebraniu)
+ *  5. SocialProof — formularz kontaktowy (pre-launch) / opinie (po zebraniu)
  */
 export default async function HomePage() {
 	const bestsellers = [...PRODUCTS].sort((a, b) => b.popularity - a.popularity).slice(0, 4);
@@ -52,8 +49,7 @@ export default async function HomePage() {
 					</Container>
 				</Section>
 			) : null}
-			<StorySection />
-		<SocialProofSection />
+			<SocialProofSection />
 		</main>
 	);
 }

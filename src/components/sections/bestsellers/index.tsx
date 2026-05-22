@@ -19,12 +19,13 @@ export function BestsellersSection({ products }: BestsellersSectionProps) {
 			<Container size="lg">
 				<header className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
 					<div className="max-w-xl">
-						<Eyebrow>Co dziś znaleźliśmy</Eyebrow>
+						<Eyebrow>NASZ WYBÓR</Eyebrow>
 						<h2 className="mt-3 font-display text-3xl font-medium leading-tight md:text-4xl">
-							Każdy przedmiot — jeden raz.
+							Sześć rzeczy, na które warto spojrzeć.
 						</h2>
 						<p className="mt-3 text-base leading-relaxed text-foreground/70">
-							Ratujemy konkretne sztuki. Gdy znikają z&nbsp;półki, nie wracają.
+							Cotygodniowy przekrój kolekcji — od porcelany po meble, od kilkuset złotych po
+							unikaty za kilka tysięcy.
 						</p>
 					</div>
 					<CtaLink href="/sklep" variant="underline" withArrow={false}>
