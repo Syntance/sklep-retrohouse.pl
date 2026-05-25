@@ -12,6 +12,7 @@ import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/compo
 import { ProductCard } from "@/components/product-card";
 import { GiftBudgetTiles } from "@/components/sections/gift-budget-tiles";
 import { GiftThemes } from "@/components/sections/gift-themes";
+import { GiftHeroProduct, pickGiftHeroProduct } from "./gift-hero-product";
 import { PRICE_BUCKETS, PRODUCTS } from "@/lib/mock/products";
 
 export const metadata: Metadata = {
@@ -42,16 +43,11 @@ function bucketCaption(id: string) {
 
 export default function PrezentPage() {
 	const giftPicks = PRODUCTS.filter((product) => product.giftBestseller).slice(0, 6);
+	const heroProduct = pickGiftHeroProduct(PRODUCTS);
 
 	return (
 		<main id="main" className="flex flex-col">
-			<Section spacing="sm">
-				<Container size="xl">
-					<Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Prezent z duszą" }]} />
-				</Container>
-			</Section>
-
-			<Section spacing="lg" className="overflow-hidden">
+			<Section spacing="md" className="overflow-hidden bg-transparent !pt-10 md:!pt-12">
 				<div
 					aria-hidden
 					className="absolute inset-0 -z-10"
@@ -61,15 +57,19 @@ export default function PrezentPage() {
 					}}
 				/>
 				<Container size="xl">
-					<div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
-						<div>
+					<div className="grid gap-x-12 gap-y-8 lg:grid-cols-[1.1fr_0.9fr]">
+						<Breadcrumbs
+							className="lg:col-start-1 lg:row-start-1 lg:self-start"
+							items={[{ label: "Home", href: "/" }, { label: "Prezent z duszą" }]}
+						/>
+						<div className="lg:col-start-1 lg:row-start-2">
 							<Eyebrow>Prezent z duszą</Eyebrow>
 							<h1 className="mt-3 font-display text-[clamp(2.4rem,5.5vw,4.4rem)] font-semibold leading-[1.04]">
-								Prezent z duszą — nie z fabryki
+								Podaruj upominek z historią
 							</h1>
 							<Lead className="mt-6">
-								Każdy nasz przedmiot ma prawdziwą historię. Podaruj coś wyjątkowego — z bibułką,
-								kartą historii i opcjonalną dedykacją.
+								Każdy przedmiot ma za sobą kilkadziesiąt lat życia w Wiedniu. Dajesz w prezencie coś,
+								co przetrwało epoki — i ma jeszcze co opowiedzieć.
 							</Lead>
 							<div className="mt-8 flex flex-wrap items-center gap-3">
 								<CtaLink href="#budzet" variant="primary">
@@ -80,25 +80,10 @@ export default function PrezentPage() {
 								</CtaLink>
 							</div>
 						</div>
-						<div className="relative aspect-[5/6] w-full overflow-hidden rounded-3xl border border-border bg-card shadow-xl">
-							<div
-								aria-hidden
-								className="absolute inset-0"
-								style={{
-									backgroundImage:
-										"radial-gradient(70% 60% at 30% 20%, oklch(0.92 0.04 80), transparent 60%), linear-gradient(160deg, oklch(0.74 0.10 80), oklch(0.39 0.07 45))",
-								}}
-							/>
-							<div className="relative flex h-full flex-col justify-between p-6 text-ink-foreground sm:p-8">
-								<span className="rounded-full bg-ink/85 px-3 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-ink-foreground backdrop-blur">
-									Pakowanie · bibułka + karta historii
-								</span>
-								<p className="rounded-2xl border border-ink-foreground/30 bg-ink-foreground/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
-									Bibułka, karta z historią przedmiotu, wizytówka. Paczka jak prezent — sama
-									w&nbsp;sobie.
-								</p>
-							</div>
-						</div>
+						<GiftHeroProduct
+							product={heroProduct}
+							className="lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-start"
+						/>
 					</div>
 				</Container>
 			</Section>
