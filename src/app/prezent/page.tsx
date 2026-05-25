@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
 	ArrowRightIcon,
 	CheckIcon,
+	ChevronDownIcon,
 	GiftIcon,
 	HeartIcon,
 	InstagramIcon,
@@ -13,6 +14,7 @@ import { ProductCard } from "@/components/product-card";
 import { GiftBudgetTiles } from "@/components/sections/gift-budget-tiles";
 import { GiftThemes } from "@/components/sections/gift-themes";
 import { GiftHeroProduct, pickGiftHeroProduct } from "./gift-hero-product";
+import { SmoothScrollAnchor } from "./smooth-scroll-anchor";
 import { PRICE_BUCKETS, PRODUCTS } from "@/lib/mock/products";
 
 export const metadata: Metadata = {
@@ -72,12 +74,13 @@ export default function PrezentPage() {
 								co przetrwało epoki — i ma jeszcze co opowiedzieć.
 							</Lead>
 							<div className="mt-8 flex flex-wrap items-center gap-3">
-								<CtaLink href="#budzet" variant="primary">
+								<CtaLink href="/sklep" variant="primary">
+									Zobacz sklep
+								</CtaLink>
+								<SmoothScrollAnchor href="#budzet">
 									Wybierz po budżecie
-								</CtaLink>
-								<CtaLink href="/kontakt" variant="ghost">
-									Nie wiem co wybrać — doradźcie
-								</CtaLink>
+									<ChevronDownIcon className="size-4" aria-hidden="true" />
+								</SmoothScrollAnchor>
 							</div>
 						</div>
 						<GiftHeroProduct
@@ -88,7 +91,7 @@ export default function PrezentPage() {
 				</Container>
 			</Section>
 
-			<Section spacing="lg" id="budzet">
+			<Section spacing="lg" id="budzet" className="scroll-mt-24">
 				<Container size="xl">
 					<header className="mb-10 max-w-2xl">
 						<Eyebrow>Filtr budżetowy</Eyebrow>

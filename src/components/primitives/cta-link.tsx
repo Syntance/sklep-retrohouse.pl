@@ -49,6 +49,7 @@ const variantMap: Record<Variant, string> = {
 
 /** Klasy wizualne CTA primary — do `<button>` (np. scroll w obrębie strony) bez duplikacji. */
 export const ctaPrimaryButtonClassName = variantMap.primary;
+export const ctaSecondaryButtonClassName = variantMap.secondary;
 
 type CtaLinkProps = ComponentProps<typeof Link> & {
 	variant?: Variant;
