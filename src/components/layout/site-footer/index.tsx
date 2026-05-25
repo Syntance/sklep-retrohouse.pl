@@ -29,7 +29,7 @@ export function SiteFooter() {
 						>
 							RetroHouse
 							<span className="font-sans text-xs uppercase tracking-[0.2em] text-brass">
-								est. 2024
+								est. 2026
 							</span>
 						</Link>
 						<p className="mt-4 max-w-xs text-sm leading-relaxed text-ink-foreground/70">

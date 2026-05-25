@@ -6,7 +6,6 @@ import {
 	ChevronDownIcon,
 	GiftIcon,
 	HeartIcon,
-	InstagramIcon,
 	PackageIcon,
 } from "@/components/icons";
 import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/components/primitives";
@@ -74,13 +73,13 @@ export default function PrezentPage() {
 								co przetrwało epoki — i ma jeszcze co opowiedzieć.
 							</Lead>
 							<div className="mt-8 flex flex-wrap items-center gap-3">
-								<CtaLink href="/sklep" variant="primary">
-									Zobacz sklep
-								</CtaLink>
 								<SmoothScrollAnchor href="#budzet">
 									Wybierz po budżecie
 									<ChevronDownIcon className="size-4" aria-hidden="true" />
 								</SmoothScrollAnchor>
+								<CtaLink href="/sklep" variant="primary">
+									Zobacz sklep
+								</CtaLink>
 							</div>
 						</div>
 						<GiftHeroProduct
@@ -99,8 +98,8 @@ export default function PrezentPage() {
 							Wybierz po budżecie
 						</h2>
 						<p className="mt-3 text-foreground/70">
-							Progi zsynchronizowane z filtrami /sklep i z progiem decyzyjnym „impuls solo" segmentu
-							B (300 zł).
+							Od drobnej niespodzianki po wyjątkowy unikat — wybierz widełki, które pasują do okazji
+							i portfela.
 						</p>
 					</header>
 					<GiftBudgetTiles tiles={BUDGET_TILES} />
@@ -229,10 +228,9 @@ export default function PrezentPage() {
 								href="https://instagram.com/retrohouse"
 								target="_blank"
 								rel="noreferrer"
-								className="inline-flex items-center justify-center gap-2 rounded-full border border-ink-foreground/20 px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-ink-foreground/80 hover:border-terracotta hover:text-terracotta"
+								className="inline-flex items-center justify-center rounded-full border border-ink-foreground/20 px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-ink-foreground/80 hover:border-terracotta hover:text-terracotta"
 							>
-								<InstagramIcon className="size-4" />
-								DM @retrohouse
+								@retrohouse
 							</Link>
 						</div>
 					</div>

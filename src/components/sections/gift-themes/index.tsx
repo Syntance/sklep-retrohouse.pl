@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { GiftIcon, HeartIcon, PackageIcon, ScrollIcon } from "@/components/icons";
+import { GiftIcon, HeartIcon, HouseIcon, PackageIcon } from "@/components/icons";
 import { track } from "@/lib/analytics/posthog";
 
 const THEMES: Array<{ id: string; label: string; description: string; icon: React.ReactNode; href: string }> = [
@@ -16,7 +16,7 @@ const THEMES: Array<{ id: string; label: string; description: string; icon: Reac
 		id: "parapetowka",
 		label: "Parapetówka",
 		description: "Lampka, lustro lub ramka — wnosisz duszę, nie kolejny gadżet.",
-		icon: <ScrollIcon className="size-5" />,
+		icon: <HouseIcon className="size-5" />,
 		href: "/sklep?kategoria=dekoracje",
 	},
 	{

@@ -268,6 +268,16 @@ export function ScrollIcon(props: IconProps) {
 	);
 }
 
+export function HouseIcon(props: IconProps) {
+	return (
+		<Svg {...props}>
+			<path d="M4 10.5 12 4l8 6.5" />
+			<path d="M6 10v10h12V10" />
+			<path d="M10 20v-4h4v4" />
+		</Svg>
+	);
+}
+
 export function CalendarIcon(props: IconProps) {
 	return (
 		<Svg {...props}>
