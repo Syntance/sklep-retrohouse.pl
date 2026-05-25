@@ -140,21 +140,12 @@ export default function PrezentPage() {
 					</header>
 					<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 						{giftPicks.map((product, index) => (
-							<div key={product.slug} className="relative">
-								<span
-									role="img"
-									aria-label="Wybór curatorski na prezent"
-									className="absolute -top-2 left-3 z-10 inline-flex items-center gap-1 rounded-full bg-terracotta/15 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-terracotta"
-								>
-									<GiftIcon className="size-3.5" aria-hidden="true" />
-									<span>prezent z duszą</span>
-								</span>
-								<ProductCard
-									product={product}
-									source="/prezent"
-									position={index + 1}
-								/>
-							</div>
+							<ProductCard
+								key={product.slug}
+								product={product}
+								source="/prezent"
+								position={index + 1}
+							/>
 						))}
 					</div>
 				</Container>
