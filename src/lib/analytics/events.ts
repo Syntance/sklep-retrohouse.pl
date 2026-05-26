@@ -31,7 +31,7 @@ export type ShippingMethod = "inpost" | "dpd" | "dhl" | "pickup_nt";
 
 export type PaymentMethod = "blik" | "card" | "transfer";
 
-export type CheckoutStep = "data" | "shipping" | "payment";
+export type CheckoutStep = "data" | "shipping" | "payment" | "acceptance";
 
 export type ContactTopic = "produkt" | "b2b" | "wysylka" | "inne";
 
@@ -92,6 +92,10 @@ export type AnalyticsEvent =
 	| { name: "gift_wrapping_selected"; properties: Record<string, never> }
 	| { name: "purchase"; properties: { value: number; currency: "PLN"; order_id: string; items: number } }
 	| { name: "cart_abandoned"; properties: { cart_value: number; last_step: CheckoutStep | "cart" } }
+	// Compliance — UPK akceptacje (Krok 4 checkoutu)
+	| { name: "item_acceptance_checked"; properties: { product_id: string; order_draft_id: string } }
+	| { name: "terms_accepted"; properties: { terms_version: string; order_draft_id: string } }
+	| { name: "privacy_accepted"; properties: { privacy_version: string; order_draft_id: string } }
 	// Prezent (Flow 4)
 	| { name: "gift_budget_filter_selected"; properties: { budget_bucket: GiftBudgetBucket } }
 	| { name: "gift_theme_selected"; properties: { theme: string } }
@@ -179,4 +183,7 @@ export const KNOWN_EVENT_NAMES = [
 	"ugc_cta_clicked",
 	"review_google_clicked",
 	"story_section_scrolled",
+	"item_acceptance_checked",
+	"terms_accepted",
+	"privacy_accepted",
 ] as const satisfies ReadonlyArray<AnalyticsEventName>;

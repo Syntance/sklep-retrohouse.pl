@@ -97,6 +97,7 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 		data: false,
 		shipping: false,
 		payment: false,
+		acceptance: false,
 	});
 
 	const handleStepCompleted = (step: CheckoutStep) => {
