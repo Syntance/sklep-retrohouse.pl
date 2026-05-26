@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { CheckIcon, GiftIcon, PackageIcon, ShieldIcon } from "@/components/icons";
 import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/components/primitives";
 
@@ -167,8 +168,16 @@ export default function WysylkaPage() {
 							</div>
 							<h2 className="mt-3 font-display text-2xl">Każdą przesyłkę ubezpieczamy</h2>
 							<p className="mt-2 text-foreground/80">
-								Jeśli przedmiot dotrze uszkodzony — wymieniamy lub zwracamy pieniądze. Procedura
-								zgłoszenia: zdjęcia paczki + treść przedmiotu w ciągu 24 h od dostawy.
+								Wszystkie przesyłki są ubezpieczone. Jeśli przedmiot dotrze uszkodzony —
+								zwracamy pieniądze lub obniżamy cenę. Wymiana jest niemożliwa, bo każdy antyk
+								to unikat. Szczegóły procedury:{" "}
+								<Link
+									href="/reklamacje"
+									className="font-semibold underline-offset-4 hover:underline hover:text-terracotta"
+								>
+									/reklamacje
+								</Link>
+								.
 							</p>
 						</article>
 						<article className="rounded-2xl border border-border bg-card p-6">
@@ -190,12 +199,52 @@ export default function WysylkaPage() {
 				</Container>
 			</Section>
 
-			<Section spacing="md" tone="muted">
-				<Container size="md">
-					<Eyebrow>FAQ</Eyebrow>
-					<h2 className="mt-3 font-display text-3xl font-semibold leading-tight md:text-4xl">
-						Najczęstsze pytania o logistykę
-					</h2>
+		{/* Sekcja 4: Odstąpienie od umowy (art. 27 UPK) */}
+		<Section spacing="md">
+			<Container size="md">
+				<Eyebrow>Twoje prawa</Eyebrow>
+				<h2 className="mt-3 font-display text-3xl font-semibold leading-tight md:text-4xl">
+					Odstąpienie od umowy
+				</h2>
+				<div className="mt-6 space-y-4 rounded-2xl border border-border bg-card p-6 text-foreground/80 leading-relaxed md:p-8">
+					<p>
+						Masz{" "}
+						<strong className="font-semibold text-foreground">
+							14 dni na odstąpienie od umowy
+						</strong>{" "}
+						od dnia otrzymania przesyłki — to Twoje ustawowe prawo (art. 27 UPK).
+					</p>
+					<p>
+						Antyki to rzeczy używane. Przed zakupem zapoznajesz się z opisem stanu przedmiotu
+						i akceptujesz go w koszyku — opisane ślady użytkowania nie są podstawą reklamacji.
+					</p>
+					<p>
+						Odpowiadasz finansowo za zmniejszenie wartości przedmiotu wynikłe z korzystania
+						ponad to, co konieczne do sprawdzenia (art. 34 ust. 4 UPK). Dla unikatów oznacza
+						to, że ekspozycja, używanie czy próby renowacji mogą zostać wycenione i odjęte od
+						zwrotu.
+					</p>
+					<p>
+						Pełna procedura, koszty i formularz:{" "}
+						<Link
+							href="/odstapienie"
+							className="font-semibold underline-offset-4 hover:underline hover:text-terracotta"
+						>
+							/odstapienie
+						</Link>
+						.
+					</p>
+				</div>
+			</Container>
+		</Section>
+
+		{/* Sekcja 5: FAQ */}
+		<Section spacing="md" tone="muted">
+			<Container size="md">
+				<Eyebrow>FAQ</Eyebrow>
+				<h2 className="mt-3 font-display text-3xl font-semibold leading-tight md:text-4xl">
+					Najczęstsze pytania o logistykę
+				</h2>
 					<dl className="mt-6 divide-y divide-border rounded-2xl border border-border bg-card">
 						{FAQS.map((faq) => (
 							<details
