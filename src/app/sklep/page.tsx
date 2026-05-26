@@ -134,8 +134,14 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 							<SortDropdown params={params} activeSort={activeSort} options={SORT_OPTIONS} />
 							{filtered.length > 0 ? (
 								<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-									{filtered.map((product) => (
-										<ProductCard key={product.slug} product={product} />
+									{filtered.map((product, index) => (
+										<ProductCard
+											key={product.slug}
+											product={product}
+											source="/sklep"
+											position={index + 1}
+											showShopActions
+										/>
 									))}
 								</div>
 							) : (

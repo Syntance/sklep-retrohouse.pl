@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import Link from "next/link";
 import { ClipboardIcon } from "@/components/icons";
+import { ProductConditionModal } from "@/components/product-condition-modal";
 import { track } from "@/lib/analytics/posthog";
 import { hashConditionDescriptionSync } from "@/lib/condition-hash";
 import { TERMS_VERSION, PRIVACY_VERSION } from "@/lib/legal-versions";
@@ -204,7 +205,7 @@ export function AcceptanceStep({ items, onComplete, onIncomplete }: AcceptanceSt
 
 			{/* Modal / drawer opisu stanu */}
 			{modal.open && modal.product ? (
-				<ConditionModal
+				<ProductConditionModal
 					product={modal.product}
 					onClose={() => setModal({ open: false, product: null })}
 				/>
@@ -280,50 +281,5 @@ function GlobalCheckbox({
 			/>
 			<span className="leading-snug">{label}</span>
 		</label>
-	);
-}
-
-function ConditionModal({
-	product,
-	onClose,
-}: {
-	product: Product;
-	onClose: () => void;
-}) {
-	return (
-		<div
-			role="dialog"
-			aria-modal="true"
-			aria-labelledby="condition-modal-title"
-			className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center"
-		>
-			<div
-				className="absolute inset-0 bg-ink/60 backdrop-blur-sm"
-				onClick={onClose}
-				aria-hidden="true"
-			/>
-			<div className="relative z-10 w-full max-w-lg rounded-2xl border border-border bg-card p-6 shadow-xl sm:p-8">
-				<h2
-					id="condition-modal-title"
-					className="font-display text-2xl font-semibold leading-tight"
-				>
-					Opis stanu: {product.name}
-				</h2>
-				<p className="mt-4 leading-relaxed text-foreground/80">{product.condition}</p>
-				<p className="mt-3 text-xs text-foreground/55">
-					Wersja opisu:{" "}
-					<code className="font-mono">
-						{hashConditionDescriptionSync(product.condition)}
-					</code>
-				</p>
-				<button
-					type="button"
-					onClick={onClose}
-					className="mt-6 inline-flex h-11 w-full items-center justify-center rounded-full bg-ink px-6 text-sm font-semibold uppercase tracking-[0.08em] text-ink-foreground hover:bg-ink/90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-				>
-					Zamknij
-				</button>
-			</div>
-		</div>
 	);
 }

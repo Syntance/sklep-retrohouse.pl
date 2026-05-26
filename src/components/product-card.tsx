@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { AddToCartButton } from "@/components/add-to-cart-button";
 import { formatPrice } from "@/lib/format";
 import type { Product } from "@/lib/mock/products";
 import type { ProductSource } from "@/lib/analytics/events";
@@ -29,6 +30,8 @@ type ProductCardProps = {
 	 * `related_product_clicked` nie ma `from_product_id`.
 	 */
 	fromProductId?: string;
+	/** CTA „Zobacz produkt" + ikona dodaj do koszyka — tylko grid /sklep. */
+	showShopActions?: boolean;
 };
 
 /**
@@ -47,6 +50,7 @@ export function ProductCard({
 	source = "/sklep",
 	position,
 	fromProductId,
+	showShopActions = false,
 }: ProductCardProps) {
 	const [primary, secondary, accent] = product.imageHues;
 	const url =
@@ -124,11 +128,37 @@ export function ProductCard({
 						<span className="line-clamp-2">{product.name}</span>
 					</Link>
 				</h3>
-				<div className="mt-auto pt-2">
-					<span className="font-display text-xl font-semibold tabular text-terracotta">
-						{formatPrice(product.price)}
-					</span>
-				</div>
+				{showShopActions ? (
+					<div className="mt-auto flex items-center gap-2 pt-2">
+						<Link
+							href={url}
+							onClick={handleClick}
+							className="relative inline-flex h-11 min-w-0 flex-1 cursor-pointer overflow-hidden rounded-full border border-walnut/25 bg-background px-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring group-hover/card:border-terracotta"
+							aria-label={`Zobacz produkt: ${product.name}, ${formatPrice(product.price)}`}
+						>
+							<span
+								aria-hidden
+								className="absolute inset-0 grid place-items-center transition-opacity duration-300 group-hover/card:opacity-0 group-focus-within/card:opacity-0 motion-reduce:transition-none"
+							>
+								<span className="block -translate-y-[3px] font-display text-xl font-semibold leading-none tabular text-terracotta">
+									{formatPrice(product.price)}
+								</span>
+							</span>
+							<span
+								className="absolute inset-0 grid place-items-center text-[0.65rem] font-semibold uppercase leading-none tracking-[0.1em] text-foreground opacity-0 transition-opacity duration-300 group-hover/card:opacity-100 group-hover/card:text-terracotta group-focus-within/card:opacity-100 group-focus-within/card:text-terracotta motion-reduce:transition-none"
+							>
+								Zobacz produkt
+							</span>
+						</Link>
+						<AddToCartButton product={product} source="/sklep" iconOnly className="size-11" />
+					</div>
+				) : (
+					<div className="mt-auto pt-2">
+						<span className="font-display text-xl font-semibold tabular text-terracotta">
+							{formatPrice(product.price)}
+						</span>
+					</div>
+				)}
 			</div>
 		</article>
 	);

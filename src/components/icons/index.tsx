@@ -63,6 +63,17 @@ export function CartIcon(props: IconProps) {
 	);
 }
 
+export function CartPlusIcon(props: IconProps) {
+	return (
+		<Svg {...props}>
+			<path d="M4 5h2.2l2.1 11a2 2 0 0 0 2 1.6h7.4a2 2 0 0 0 2-1.5L21.5 9H7" />
+			<circle cx="10" cy="20" r="1.2" />
+			<circle cx="17" cy="20" r="1.2" />
+			<path d="M19 4v4M17 6h4" />
+		</Svg>
+	);
+}
+
 export function SearchIcon(props: IconProps) {
 	return (
 		<Svg {...props}>

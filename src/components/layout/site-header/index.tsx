@@ -5,18 +5,15 @@ import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
-	CartIcon,
 	ChevronDownIcon,
 	CloseIcon,
 	GiftIcon,
 	MenuIcon,
 	SearchIcon,
 } from "@/components/icons";
+import { CartDrawer } from "@/components/cart-drawer";
 import { cn } from "@/lib/utils";
 import { PRIMARY_NAV, SHOP_MEGA_MENU } from "./nav-data";
-
-// TODO: zastąpić Medusa cart hookiem (`useCart` z Medusa.js).
-const CART_ITEMS: number = 0;
 
 export function SiteHeader() {
 	const pathname = usePathname();
@@ -181,18 +178,7 @@ export function SiteHeader() {
 					>
 						<SearchIcon className="size-5" />
 					</Link>
-					<Link
-						href="/koszyk"
-						aria-label={`Koszyk (${CART_ITEMS} ${CART_ITEMS === 1 ? "pozycja" : "pozycji"})`}
-						className="relative grid size-10 place-items-center rounded-full text-foreground/80 transition-colors hover:bg-cream hover:text-terracotta focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-					>
-						<CartIcon className="size-5" />
-						{CART_ITEMS > 0 ? (
-							<span className="absolute -right-0.5 -top-0.5 grid min-w-5 place-items-center rounded-full bg-terracotta px-1 text-[0.65rem] font-semibold tabular text-terracotta-foreground">
-								{CART_ITEMS}
-							</span>
-						) : null}
-					</Link>
+					<CartDrawer />
 					<button
 						type="button"
 						aria-label={mobileOpen ? "Zamknij menu" : "Otwórz menu"}

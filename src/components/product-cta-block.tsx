@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
-import { ArrowRightIcon, CartIcon } from "@/components/icons";
+import { ArrowRightIcon } from "@/components/icons";
+import { AddToCartButton } from "@/components/add-to-cart-button";
 import { track } from "@/lib/analytics/posthog";
 import type { ProductSource } from "@/lib/analytics/events";
 import type { Product } from "@/lib/mock/products";
@@ -15,11 +16,7 @@ type ProductCtaBlockProps = {
 /**
  * Klienckie CTA bloku PDP — emituje:
  *  - product_viewed (na mount, raz; deps: slug)
- *  - add_to_cart (na submit form Dodaj do koszyka)
- *  - product_ask_clicked (kontakt z subject=produkt)
- *
- * Form action="/api/cart" zostaje — dopiero gdy podepniemy backend
- * koszyka, zamienimy na Server Action z optimistic UI.
+ *  - add_to_cart (przez AddToCartButton — bez nawigacji)
  */
 export function ProductCtaBlock({ product, source }: ProductCtaBlockProps) {
 	useEffect(() => {
@@ -34,28 +31,13 @@ export function ProductCtaBlock({ product, source }: ProductCtaBlockProps) {
 		});
 	}, [product.slug, product.category, product.price, source]);
 
-	const handleAddToCart = () => {
-		track({
-			name: "add_to_cart",
-			properties: { product_id: product.slug, price: product.price, source: "pdp" },
-		});
-	};
-
 	const handleAsk = () => {
 		track({ name: "product_ask_clicked", properties: { channel: "form" } });
 	};
 
 	return (
-		<form action="/api/cart" method="post" className="flex flex-col gap-3">
-			<input type="hidden" name="slug" value={product.slug} />
-			<button
-				type="submit"
-				onClick={handleAddToCart}
-				className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-terracotta px-6 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground shadow-md transition-transform hover:translate-y-[-1px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-			>
-				<CartIcon className="size-4" />
-				Dodaj do koszyka
-			</button>
+		<div className="flex flex-col gap-3">
+			<AddToCartButton product={product} source="pdp" />
 			<Link
 				href={`/kontakt?subject=produkt&slug=${product.slug}`}
 				onClick={handleAsk}
@@ -70,6 +52,6 @@ export function ProductCtaBlock({ product, source }: ProductCtaBlockProps) {
 				Jesteś projektantem? Rezerwacja 14 dni i FV
 				<ArrowRightIcon className="size-3" />
 			</Link>
-		</form>
+		</div>
 	);
 }
