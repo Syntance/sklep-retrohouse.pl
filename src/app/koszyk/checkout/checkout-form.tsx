@@ -2,6 +2,8 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { CheckIcon, ShieldIcon } from "@/components/icons";
+import { CheckboxInput } from "@/components/ui/checkbox-input";
+import { RadioInput } from "@/components/ui/radio-input";
 import { track } from "@/lib/analytics/posthog";
 import type {
 	CheckoutStep,
@@ -12,6 +14,7 @@ import { formatPrice } from "@/lib/format";
 import type { Product } from "@/lib/mock/products";
 import type { OrderAcceptance } from "@/lib/order-acceptance";
 import { AcceptanceStep } from "./acceptance-step";
+import { CheckoutSectionFieldset } from "./checkout-section-fieldset";
 
 type CheckoutFormProps = {
 	items: Product[];
@@ -153,8 +156,9 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 			}}
 		>
 			<div className="space-y-10">
-				<FieldSet
-					title="1 · Dane dostawy"
+				<CheckoutSectionFieldset
+					step={1}
+					title="Dane dostawy"
 					eyebrow="Wysyłka"
 					dataStep="data"
 				>
@@ -173,12 +177,10 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 						<TextField label="Miasto" name="city" required />
 					</div>
 					<label className="mt-4 flex items-center gap-2 text-sm">
-						<input
-							type="checkbox"
+						<CheckboxInput
 							name="invoice"
 							checked={invoice}
 							onChange={(event) => handleInvoiceToggle(event.target.checked)}
-							className="size-4 rounded border-border text-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
 						/>
 						<span>Chcę fakturę VAT (B2B)</span>
 					</label>
@@ -199,9 +201,9 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 							</div>
 						</div>
 					) : null}
-				</FieldSet>
+				</CheckoutSectionFieldset>
 
-				<FieldSet title="2 · Wybór dostawy" eyebrow="Logistyka">
+				<CheckoutSectionFieldset step={2} title="Wybór dostawy" eyebrow="Logistyka">
 					{SHIPPING_OPTIONS.map((option) => (
 						<RadioCard
 							key={option.value}
@@ -214,9 +216,9 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 							onSelect={() => handleShippingChange(option.value)}
 						/>
 					))}
-				</FieldSet>
+				</CheckoutSectionFieldset>
 
-				<FieldSet title="3 · Płatność" eyebrow="Bezpieczne 256-bit">
+				<CheckoutSectionFieldset step={3} title="Płatność" eyebrow="Bezpieczne 256-bit">
 					{PAYMENT_OPTIONS.map((option) => (
 						<RadioCard
 							key={option.value}
@@ -229,7 +231,7 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 							onSelect={() => handlePaymentChange(option.value)}
 						/>
 					))}
-				</FieldSet>
+				</CheckoutSectionFieldset>
 
 				<AcceptanceStep
 					items={items}
@@ -303,33 +305,6 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 	);
 }
 
-function FieldSet({
-	title,
-	eyebrow,
-	children,
-	dataStep,
-}: {
-	title: string;
-	eyebrow?: string;
-	children: React.ReactNode;
-	dataStep?: CheckoutStep;
-}) {
-	return (
-		<fieldset
-			data-step={dataStep}
-			className="rounded-2xl border border-border bg-card p-6 md:p-8"
-		>
-			{eyebrow ? (
-				<p className="font-sans text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-brass">
-					{eyebrow}
-				</p>
-			) : null}
-			<legend className="mt-2 font-display text-2xl">{title}</legend>
-			<div className="mt-6 space-y-3">{children}</div>
-		</fieldset>
-	);
-}
-
 function TextField({
 	label,
 	name,
@@ -387,13 +362,12 @@ function RadioCard({
 			}`}
 		>
 			<span className="flex items-start gap-3">
-				<input
-					type="radio"
+				<RadioInput
 					name={name}
 					value={value}
 					checked={checked}
 					onChange={onSelect}
-					className="mt-1 size-4 border-border text-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
+					className="mt-1"
 				/>
 				<span>
 					<span className="block font-semibold">{title}</span>

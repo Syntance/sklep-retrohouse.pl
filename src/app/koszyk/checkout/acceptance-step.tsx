@@ -3,12 +3,14 @@
 import { useId, useState } from "react";
 import Link from "next/link";
 import { ClipboardIcon } from "@/components/icons";
+import { CheckboxInput } from "@/components/ui/checkbox-input";
 import { ProductConditionModal } from "@/components/product-condition-modal";
 import { track } from "@/lib/analytics/posthog";
 import { hashConditionDescriptionSync } from "@/lib/condition-hash";
 import { TERMS_VERSION, PRIVACY_VERSION } from "@/lib/legal-versions";
 import type { Product } from "@/lib/mock/products";
 import type { OrderAcceptance, LineItemAcceptance } from "@/lib/order-acceptance";
+import { CheckoutSectionFieldset } from "./checkout-section-fieldset";
 
 type AcceptanceStepProps = {
 	items: Product[];
@@ -109,13 +111,8 @@ export function AcceptanceStep({ items, onComplete, onIncomplete }: AcceptanceSt
 
 	return (
 		<>
-			<fieldset className="rounded-2xl border border-border bg-card p-6 md:p-8">
-				<p className="font-sans text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-brass">
-					Akceptacje
-				</p>
-				<legend className="mt-2 font-display text-2xl">4 · Potwierdzenia przed zakupem</legend>
-
-				<div className="mt-6 space-y-5">
+			<CheckoutSectionFieldset step={4} title="Potwierdzenia przed zakupem" eyebrow="Akceptacje">
+				<div className="space-y-5">
 					{/* Per-przedmiot */}
 					<div className="space-y-3">
 						<p className="text-sm font-semibold text-foreground/70">
@@ -201,7 +198,7 @@ export function AcceptanceStep({ items, onComplete, onIncomplete }: AcceptanceSt
 						Zaznacz wszystkie pola, aby przejść do płatności.
 					</p>
 				) : null}
-			</fieldset>
+			</CheckoutSectionFieldset>
 
 			{/* Modal / drawer opisu stanu */}
 			{modal.open && modal.product ? (
@@ -232,12 +229,11 @@ function ItemAcceptanceRow({
 	const id = useId();
 	return (
 		<div className="flex items-start gap-3 rounded-xl border border-border bg-background p-4">
-			<input
+			<CheckboxInput
 				id={id}
-				type="checkbox"
 				checked={checked}
 				onChange={(e) => onChange(e.target.checked)}
-				className="mt-1 size-4 shrink-0 rounded border-border text-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
+				className="mt-1"
 				aria-describedby={`${id}-desc`}
 			/>
 			<div className="min-w-0 flex-1">
@@ -272,12 +268,11 @@ function GlobalCheckbox({
 }) {
 	return (
 		<label htmlFor={id} className="flex cursor-pointer items-start gap-3 text-sm">
-			<input
+			<CheckboxInput
 				id={id}
-				type="checkbox"
 				checked={checked}
 				onChange={(e) => onChange(e.target.checked)}
-				className="mt-0.5 size-4 shrink-0 rounded border-border text-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
+				className="mt-0.5"
 			/>
 			<span className="leading-snug">{label}</span>
 		</label>
