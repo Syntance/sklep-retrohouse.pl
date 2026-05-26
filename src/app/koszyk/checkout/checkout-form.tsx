@@ -10,6 +10,8 @@ import type {
 } from "@/lib/analytics/events";
 import { formatPrice } from "@/lib/format";
 import type { Product } from "@/lib/mock/products";
+import type { OrderAcceptance } from "@/lib/order-acceptance";
+import { AcceptanceStep } from "./acceptance-step";
 
 type CheckoutFormProps = {
 	items: Product[];
@@ -90,6 +92,7 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 	const [payment, setPayment] = useState<PaymentMethod>("blik");
 	const [invoice, setInvoice] = useState(false);
 	const [nipFilled, setNipFilled] = useState(false);
+	const [acceptance, setAcceptance] = useState<OrderAcceptance | null>(null);
 	const completedRef = useRef<Record<CheckoutStep, boolean>>({
 		data: false,
 		shipping: false,
@@ -225,32 +228,13 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 							onSelect={() => handlePaymentChange(option.value)}
 						/>
 					))}
-					<label className="mt-3 flex items-start gap-2 text-sm text-foreground/80">
-						<input
-							type="checkbox"
-							name="terms"
-							required
-							className="mt-1 size-4 rounded border-border text-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
-						/>
-						<span>
-							Akceptuję{" "}
-							<a
-								href="/regulamin"
-								className="font-semibold text-foreground underline-offset-4 hover:underline"
-							>
-								regulamin
-							</a>{" "}
-							i{" "}
-							<a
-								href="/polityka-prywatnosci"
-								className="font-semibold text-foreground underline-offset-4 hover:underline"
-							>
-								politykę prywatności
-							</a>
-							. Potwierdzam, że odebrałem informację o prawie do odstąpienia w 14 dni.
-						</span>
-					</label>
 				</FieldSet>
+
+				<AcceptanceStep
+					items={items}
+					onComplete={(a) => setAcceptance(a)}
+					onIncomplete={() => setAcceptance(null)}
+				/>
 			</div>
 
 			<aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
@@ -282,9 +266,19 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 					</div>
 				</div>
 
+				{/* Acceptance payload przekazywany do action jako JSON */}
+				{acceptance ? (
+					<input
+						type="hidden"
+						name="acceptance"
+						value={JSON.stringify(acceptance)}
+					/>
+				) : null}
 				<button
 					type="submit"
-					className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-terracotta px-6 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground shadow-md transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+					disabled={!acceptance}
+					aria-disabled={!acceptance}
+					className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-terracotta px-6 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground shadow-md transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
 				>
 					<ShieldIcon className="size-4 text-brass" />
 					Zapłać bezpiecznie
