@@ -12,20 +12,17 @@ import { JsonLd } from "@/components/json-ld";
 import { Breadcrumbs, Container, CtaLink, Eyebrow, Section } from "@/components/primitives";
 import { ProductCard } from "@/components/product-card";
 import { ProductCtaBlock } from "@/components/product-cta-block";
-import { ProductLightbox, type GallerySlot } from "@/components/product-lightbox";
+import { ProductLightbox } from "@/components/product-lightbox";
 import { ProductMobileBar } from "@/components/product-mobile-bar";
 import type { ProductSource } from "@/lib/analytics/events";
 import { daysSince, formatPrice } from "@/lib/format";
-import { getProductBySlug, getRelatedProducts, PRODUCTS, type Product } from "@/lib/mock/products";
+import {
+	getProductBySlug,
+	getProductSlugs,
+	getRelatedProducts,
+} from "@/lib/products/queries";
+import type { Product } from "@/lib/products/types";
 import { cn } from "@/lib/utils";
-
-const GALLERY_SLOTS: GallerySlot[] = [
-	{ label: "Całość", hueIndex: 0, weight: 1 },
-	{ label: "Detal", hueIndex: 1, weight: 0.85 },
-	{ label: "Skala", hueIndex: 2, weight: 0.7 },
-	{ label: "Aranżacja", hueIndex: 0, weight: 0.55 },
-	{ label: "Patyna", hueIndex: 1, weight: 0.4 },
-];
 
 const FRESH_THRESHOLD_DAYS = 14;
 const KNOWN_SOURCES = new Set<ProductSource>([
@@ -42,8 +39,11 @@ function resolveSource(raw: string | string[] | undefined): ProductSource | "dir
 	return KNOWN_SOURCES.has(raw as ProductSource) ? (raw as ProductSource) : "direct";
 }
 
-export function generateStaticParams() {
-	return PRODUCTS.map((product) => ({ slug: product.slug }));
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+	const slugs = await getProductSlugs();
+	return slugs.map((slug) => ({ slug }));
 }
 
 type Params = Promise<{ slug: string }>;
@@ -51,7 +51,7 @@ type SearchParams = Promise<{ source?: string | string[] }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
 	const { slug } = await params;
-	const product = getProductBySlug(slug);
+	const product = await getProductBySlug(slug);
 	if (!product) return {};
 	return {
 		title: `${product.name} — ${product.epochLabel}`,
@@ -74,11 +74,11 @@ export default async function ProduktPage({
 }) {
 	const { slug } = await params;
 	const { source: rawSource } = await searchParams;
-	const product = getProductBySlug(slug);
+	const product = await getProductBySlug(slug);
 	if (!product) notFound();
 
 	const source = resolveSource(rawSource);
-	const related = getRelatedProducts(slug, 4);
+	const related = await getRelatedProducts(slug, 4);
 	const isFresh = daysSince(product.addedAt) < FRESH_THRESHOLD_DAYS;
 
 	const jsonLd = {
@@ -121,7 +121,7 @@ export default async function ProduktPage({
 						<ProductLightbox
 							productName={product.name}
 							hues={product.imageHues}
-							slots={GALLERY_SLOTS}
+							images={product.images}
 						/>
 						<InfoPanel product={product} source={source} isFresh={isFresh} />
 					</div>
@@ -283,7 +283,7 @@ function InfoPanel({ product, source, isFresh }: InfoPanelProps) {
 			</p>
 
 			<p className="font-display text-4xl font-semibold tabular text-foreground">
-				{formatPrice(product.price)}
+				{formatPrice(product.price, product.currencyCode)}
 			</p>
 
 		<ProductCtaBlock product={product} source={source} />

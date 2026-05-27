@@ -6,7 +6,7 @@ import { Breadcrumbs, Container, Eyebrow, Section } from "@/components/primitive
 import { ProductCard } from "@/components/product-card";
 import { formatDate } from "@/lib/format";
 import { getPostBySlug, getRelatedPosts, POSTS } from "@/lib/mock/posts";
-import { getProductBySlug, PRODUCTS } from "@/lib/mock/products";
+import { getProductBySlug, listProducts } from "@/lib/products/queries";
 import {
 	ArticleGenericCta,
 	ArticleProductCta,
@@ -44,9 +44,10 @@ export default async function BlogPostPage({ params }: { params: Params }) {
 
 	const related = getRelatedPosts(slug, 3);
 	const relatedProduct = post.relatedProductSlug
-		? getProductBySlug(post.relatedProductSlug)
+		? await getProductBySlug(post.relatedProductSlug)
 		: undefined;
-	const recommendedProducts = PRODUCTS.slice(0, 3);
+	const allProducts = await listProducts();
+	const recommendedProducts = allProducts.slice(0, 3);
 
 	const jsonLd = {
 		"@context": "https://schema.org",

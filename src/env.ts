@@ -29,7 +29,12 @@ export const env = createEnv({
 	},
 	client: {
 		/** URL backendu Medusa (Railway). Używany przez Medusa JS SDK. */
-		NEXT_PUBLIC_MEDUSA_BACKEND_URL: z.string().url().default("http://localhost:9000"),
+		NEXT_PUBLIC_MEDUSA_BACKEND_URL: z
+			.string()
+			.url()
+			.default("https://medusa-backend-production-9270.up.railway.app"),
+		/** Publishable API key ze sklepu Medusa (Settings → Publishable API Keys). */
+		NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: z.string().min(1),
 
 		NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: z.string().optional(),
 
@@ -61,6 +66,7 @@ export const env = createEnv({
 		CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
 		CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
 		NEXT_PUBLIC_MEDUSA_BACKEND_URL: process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL,
+		NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
 
 		NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
 

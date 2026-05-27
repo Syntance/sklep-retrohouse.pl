@@ -1,17 +1,15 @@
-const PRICE_FORMATTER = new Intl.NumberFormat("pl-PL", {
-	style: "currency",
-	currency: "PLN",
-	maximumFractionDigits: 0,
-});
-
 const DATE_FORMATTER = new Intl.DateTimeFormat("pl-PL", {
 	day: "numeric",
 	month: "long",
 	year: "numeric",
 });
 
-export function formatPrice(value: number): string {
-	return PRICE_FORMATTER.format(value);
+export function formatPrice(value: number, currencyCode = "PLN"): string {
+	return new Intl.NumberFormat("pl-PL", {
+		style: "currency",
+		currency: currencyCode.toUpperCase(),
+		maximumFractionDigits: currencyCode.toUpperCase() === "PLN" ? 0 : 2,
+	}).format(value);
 }
 
 export function formatDate(value: Date | string): string {

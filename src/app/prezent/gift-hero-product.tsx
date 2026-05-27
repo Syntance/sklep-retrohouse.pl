@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Product } from "@/lib/mock/products";
+import type { Product } from "@/lib/products/types";
 import { cn } from "@/lib/utils";
 
 const GIFT_HERO_MAX_PRICE = 1000;

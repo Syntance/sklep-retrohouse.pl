@@ -1,12 +1,9 @@
 import { NextResponse } from "next/server";
-import { getProductBySlug } from "@/lib/mock/products";
+import { getProductBySlug } from "@/lib/products/queries";
 import { AddToCartSchema } from "@/lib/validation/cart";
 
 /**
- * POST /api/cart — walidacja slug + JSON (bez redirectu).
- *
- * Koszyk MVP trzymany po stronie klienta (Zustand + localStorage).
- * Endpoint zostaje na przyszłą integrację z Medusa / cookie sync.
+ * POST /api/cart — walidacja slug względem katalogu Medusa.
  */
 export async function POST(request: Request) {
 	let formData: FormData;
@@ -25,7 +22,7 @@ export async function POST(request: Request) {
 		return NextResponse.json({ ok: false, error: "invalid" }, { status: 400 });
 	}
 
-	const product = getProductBySlug(parsed.data.slug);
+	const product = await getProductBySlug(parsed.data.slug);
 	if (!product) {
 		return NextResponse.json({ ok: false, error: "not_found" }, { status: 404 });
 	}

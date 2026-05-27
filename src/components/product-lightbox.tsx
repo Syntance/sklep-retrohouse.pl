@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CloseIcon, ZoomIcon } from "@/components/icons";
 import { track } from "@/lib/analytics/posthog";
@@ -11,25 +12,33 @@ export type GallerySlot = {
 	weight: number;
 };
 
+const FALLBACK_SLOTS: GallerySlot[] = [
+	{ label: "Całość", hueIndex: 0, weight: 1 },
+	{ label: "Detal", hueIndex: 1, weight: 0.85 },
+	{ label: "Skala", hueIndex: 2, weight: 0.7 },
+	{ label: "Aranżacja", hueIndex: 0, weight: 0.55 },
+	{ label: "Patyna", hueIndex: 1, weight: 0.4 },
+];
+
 type ProductLightboxProps = {
 	productName: string;
 	hues: readonly [string, string, string];
-	slots: GallerySlot[];
+	/** URL-e z Medusa — gdy brak, fallback na gradienty (dev / brak zdjęć). */
+	images?: string[];
 };
 
 /**
- * Lightbox PDP — natywny <dialog>, focus trap (przeglądarka), Esc zamyka,
- * ←/→ zmiana zdjęcia. Zero zewnętrznych deps.
- *
- * Eventy:
- *  - image_zoom przy KAŻDYM otwarciu (z aktualnym index).
- *
- * Pełen ekran (--w-full --h-full) przez `dialog[open]:flex` i `m-0`.
+ * Galeria PDP — zdjęcia z Medusa + lightbox (natywny `<dialog>`).
+ * Event: `image_zoom` przy każdym otwarciu.
  */
-export function ProductLightbox({ productName, hues, slots }: ProductLightboxProps) {
+export function ProductLightbox({ productName, hues, images = [] }: ProductLightboxProps) {
 	const dialogRef = useRef<HTMLDialogElement>(null);
 	const [index, setIndex] = useState(0);
 	const [isOpen, setIsOpen] = useState(false);
+	const hasPhotos = images.length > 0;
+	const slotCount = hasPhotos ? images.length : FALLBACK_SLOTS.length;
+	const [primary, secondary, accent] = hues;
+	const huePalette = [primary, secondary, accent];
 
 	const open = useCallback((nextIndex: number) => {
 		setIndex(nextIndex);
@@ -51,71 +60,110 @@ export function ProductLightbox({ productName, hues, slots }: ProductLightboxPro
 		const handler = (event: KeyboardEvent) => {
 			if (event.key === "ArrowRight") {
 				event.preventDefault();
-				setIndex((prev) => (prev + 1) % slots.length);
+				setIndex((prev) => (prev + 1) % slotCount);
 			} else if (event.key === "ArrowLeft") {
 				event.preventDefault();
-				setIndex((prev) => (prev - 1 + slots.length) % slots.length);
+				setIndex((prev) => (prev - 1 + slotCount) % slotCount);
 			}
 		};
 		window.addEventListener("keydown", handler);
 		return () => window.removeEventListener("keydown", handler);
-	}, [isOpen, slots.length]);
+	}, [isOpen, slotCount]);
 
-	const [primary, secondary, accent] = hues;
-	const activeSlot = slots[index];
-	const huePalette = [primary, secondary, accent];
+	const activeLabel = hasPhotos
+		? `Zdjęcie ${index + 1}`
+		: (FALLBACK_SLOTS[index]?.label ?? `Zdjęcie ${index + 1}`);
 
 	return (
 		<>
 			<div className="grid gap-3">
 				<button
 					type="button"
-					onClick={() => open(0)}
+					onClick={() => open(index)}
 					className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-border bg-card text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-terracotta"
 					aria-label={`Powiększ zdjęcie: ${productName}`}
 				>
-					<div
-						aria-hidden="true"
-						className="absolute inset-0"
-						style={{
-							backgroundImage: `radial-gradient(120% 80% at 30% 20%, ${primary}, transparent 60%), radial-gradient(80% 80% at 80% 90%, ${secondary}, transparent 70%), linear-gradient(135deg, ${accent}, ${primary})`,
-						}}
-					/>
+					{hasPhotos ? (
+						<Image
+							src={images[index] ?? images[0] ?? ""}
+							alt={productName}
+							fill
+							className="object-cover"
+							sizes="(max-width: 1024px) 100vw, 60vw"
+							priority
+						/>
+					) : (
+						<div
+							aria-hidden="true"
+							className="absolute inset-0"
+							style={{
+								backgroundImage: `radial-gradient(120% 80% at 30% 20%, ${primary}, transparent 60%), radial-gradient(80% 80% at 80% 90%, ${secondary}, transparent 70%), linear-gradient(135deg, ${accent}, ${primary})`,
+							}}
+						/>
+					)}
 					<span className="absolute right-4 top-4 inline-flex items-center gap-2 rounded-full bg-ink-foreground/85 px-3 py-1.5 text-xs font-semibold text-foreground backdrop-blur">
 						<ZoomIcon className="size-3.5" />
 						Powiększ
 					</span>
 					<span className="absolute bottom-4 left-4 cta-text text-[0.7rem] text-ink-foreground drop-shadow">
-						Główne zdjęcie · {productName}
+						{activeLabel} · {productName}
 					</span>
 				</button>
 
-				<ul className="grid grid-cols-5 gap-2">
-					{slots.map((slot, i) => (
-						<li key={slot.label}>
-							<button
-								type="button"
-								onClick={() => open(i)}
-								aria-label={`Otwórz zdjęcie ${i + 1}: ${slot.label}`}
-								className={cn(
-									"relative block aspect-square w-full overflow-hidden rounded-xl border border-border bg-card transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta",
-								)}
-							>
-								<div
-									aria-hidden="true"
-									className="absolute inset-0"
-									style={{
-										backgroundImage: `linear-gradient(${i * 30}deg, ${primary}, ${secondary} 60%, ${accent})`,
-										opacity: slot.weight,
-									}}
-								/>
-								<span className="absolute inset-x-1 bottom-1 rounded bg-ink-foreground/80 px-1.5 py-0.5 text-center text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-foreground">
-									{slot.label}
-								</span>
-							</button>
-						</li>
-					))}
-				</ul>
+				{slotCount > 1 ? (
+					<ul
+						className={cn(
+							"grid gap-2",
+							hasPhotos ? "grid-cols-3 sm:grid-cols-4 md:grid-cols-5" : "grid-cols-5",
+						)}
+					>
+						{hasPhotos
+							? images.map((src, i) => (
+									<li key={src}>
+										<button
+											type="button"
+											onClick={() => setIndex(i)}
+											aria-label={`Pokaż zdjęcie ${i + 1}: ${productName}`}
+											aria-current={index === i ? "true" : undefined}
+											className={cn(
+												"relative block aspect-square w-full overflow-hidden rounded-xl border bg-card transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta",
+												index === i ? "border-terracotta ring-2 ring-terracotta/30" : "border-border",
+											)}
+										>
+											<Image
+												src={src}
+												alt=""
+												fill
+												className="object-cover"
+												sizes="80px"
+											/>
+										</button>
+									</li>
+								))
+							: FALLBACK_SLOTS.map((slot, i) => (
+									<li key={slot.label}>
+										<button
+											type="button"
+											onClick={() => open(i)}
+											aria-label={`Otwórz zdjęcie ${i + 1}: ${slot.label}`}
+											className="relative block aspect-square w-full overflow-hidden rounded-xl border border-border bg-card transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
+										>
+											<div
+												aria-hidden="true"
+												className="absolute inset-0"
+												style={{
+													backgroundImage: `linear-gradient(${i * 30}deg, ${primary}, ${secondary} 60%, ${accent})`,
+													opacity: slot.weight,
+												}}
+											/>
+											<span className="absolute inset-x-1 bottom-1 rounded bg-ink-foreground/80 px-1.5 py-0.5 text-center text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-foreground">
+												{slot.label}
+											</span>
+										</button>
+									</li>
+								))}
+					</ul>
+				) : null}
 			</div>
 
 			<dialog
@@ -134,35 +182,47 @@ export function ProductLightbox({ productName, hues, slots }: ProductLightboxPro
 						<CloseIcon className="size-5" />
 					</button>
 
-					<figure className="relative aspect-[4/3] w-full max-w-4xl overflow-hidden rounded-2xl border border-ink-foreground/15">
-						<div
-							aria-hidden="true"
-							className="absolute inset-0"
-							style={{
-								backgroundImage: `linear-gradient(${index * 24}deg, ${huePalette[index % 3]}, ${huePalette[(index + 1) % 3]} 60%, ${huePalette[(index + 2) % 3]})`,
-							}}
-						/>
+					<figure className="relative aspect-[4/3] w-full max-w-4xl overflow-hidden rounded-2xl border border-ink-foreground/15 bg-card">
+						{hasPhotos ? (
+							<Image
+								src={images[index] ?? images[0] ?? ""}
+								alt={`${productName} — ${activeLabel}`}
+								fill
+								className="object-contain"
+								sizes="100vw"
+							/>
+						) : (
+							<div
+								aria-hidden="true"
+								className="absolute inset-0"
+								style={{
+									backgroundImage: `linear-gradient(${index * 24}deg, ${huePalette[index % 3]}, ${huePalette[(index + 1) % 3]} 60%, ${huePalette[(index + 2) % 3]})`,
+								}}
+							/>
+						)}
 						<figcaption className="absolute bottom-4 left-4 cta-text text-xs text-ink-foreground">
-							{activeSlot?.label} · {index + 1}/{slots.length}
+							{activeLabel} · {index + 1}/{slotCount}
 						</figcaption>
 					</figure>
 
-					<nav aria-label="Nawigacja zdjęć" className="flex flex-wrap items-center justify-center gap-2">
-						<button
-							type="button"
-							onClick={() => setIndex((prev) => (prev - 1 + slots.length) % slots.length)}
-							className="cta-text inline-flex h-11 items-center justify-center rounded-full border border-ink-foreground/30 bg-ink-foreground/10 px-4 text-xs text-ink-foreground transition-colors hover:bg-ink-foreground/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink-foreground"
-						>
-							← Poprzednie
-						</button>
-						<button
-							type="button"
-							onClick={() => setIndex((prev) => (prev + 1) % slots.length)}
-							className="cta-text inline-flex h-11 items-center justify-center rounded-full border border-ink-foreground/30 bg-ink-foreground/10 px-4 text-xs text-ink-foreground transition-colors hover:bg-ink-foreground/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink-foreground"
-						>
-							Następne →
-						</button>
-					</nav>
+					{slotCount > 1 ? (
+						<nav aria-label="Nawigacja zdjęć" className="flex flex-wrap items-center justify-center gap-2">
+							<button
+								type="button"
+								onClick={() => setIndex((prev) => (prev - 1 + slotCount) % slotCount)}
+								className="cta-text inline-flex h-11 items-center justify-center rounded-full border border-ink-foreground/30 bg-ink-foreground/10 px-4 text-xs text-ink-foreground transition-colors hover:bg-ink-foreground/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink-foreground"
+							>
+								← Poprzednie
+							</button>
+							<button
+								type="button"
+								onClick={() => setIndex((prev) => (prev + 1) % slotCount)}
+								className="cta-text inline-flex h-11 items-center justify-center rounded-full border border-ink-foreground/30 bg-ink-foreground/10 px-4 text-xs text-ink-foreground transition-colors hover:bg-ink-foreground/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink-foreground"
+							>
+								Następne →
+							</button>
+						</nav>
+					) : null}
 				</div>
 			</dialog>
 		</>

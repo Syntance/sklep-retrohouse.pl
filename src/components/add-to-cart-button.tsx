@@ -5,7 +5,7 @@ import { CartIcon, CartPlusIcon, CheckIcon } from "@/components/icons";
 import { ConditionAcceptanceDialog } from "@/components/condition-acceptance-dialog";
 import { track } from "@/lib/analytics/posthog";
 import type { ProductSource } from "@/lib/analytics/events";
-import type { Product } from "@/lib/mock/products";
+import type { Product } from "@/lib/products/types";
 import { useCartStore } from "@/lib/cart/store";
 import { cn } from "@/lib/utils";
 

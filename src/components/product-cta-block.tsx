@@ -6,7 +6,7 @@ import { ArrowRightIcon } from "@/components/icons";
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { track } from "@/lib/analytics/posthog";
 import type { ProductSource } from "@/lib/analytics/events";
-import type { Product } from "@/lib/mock/products";
+import type { Product } from "@/lib/products/types";
 
 type ProductCtaBlockProps = {
 	product: Product;

@@ -23,6 +23,7 @@
 		"@base-ui/react": "^1.4.1",
 		"@gsap/react": "^2.1.2",
 		"@hookform/resolvers": "^5.2.2",
+		"@medusajs/js-sdk": "2.15.2",
 		"@portabletext/react": "^6.0.3",
 		"@react-three/drei": "^10.7.7",
 		"@react-three/fiber": "^9.6.1",

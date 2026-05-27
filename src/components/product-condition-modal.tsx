@@ -1,7 +1,7 @@
 "use client";
 
 import { hashConditionDescriptionSync } from "@/lib/condition-hash";
-import type { Product } from "@/lib/mock/products";
+import type { Product } from "@/lib/products/types";
 
 type ProductConditionModalProps = {
 	product: Product;

@@ -1,6 +1,32 @@
 import bundleAnalyzer from "@next/bundle-analyzer";
 import type { NextConfig } from "next";
 
+type RemotePattern = NonNullable<NonNullable<NextConfig["images"]>["remotePatterns"]>[number];
+
+function medusaImagePatterns(): RemotePattern[] {
+	const patterns: RemotePattern[] = [
+		{ protocol: "http", hostname: "localhost", port: "9000", pathname: "/static/**" },
+		{ protocol: "http", hostname: "127.0.0.1", port: "9000", pathname: "/static/**" },
+	];
+
+	const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
+	if (backendUrl) {
+		try {
+			const url = new URL(backendUrl);
+			patterns.push({
+				protocol: url.protocol.replace(":", "") as "http" | "https",
+				hostname: url.hostname,
+				...(url.port ? { port: url.port } : {}),
+				pathname: "/static/**",
+			});
+		} catch {
+			// ignore invalid env at build time
+		}
+	}
+
+	return patterns;
+}
+
 const securityHeaders = [
 	{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
 	{ key: "X-Content-Type-Options", value: "nosniff" },
@@ -31,6 +57,8 @@ const nextConfig: NextConfig = {
 		remotePatterns: [
 			{ protocol: "https", hostname: "res.cloudinary.com" },
 			{ protocol: "https", hostname: "cdn.sanity.io" },
+			{ protocol: "https", hostname: "medusa-public-images.s3.eu-west-1.amazonaws.com" },
+			...medusaImagePatterns(),
 		],
 	},
 	experimental: {

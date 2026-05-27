@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { ClipboardIcon } from "@/components/icons";
 import { hashConditionDescriptionSync } from "@/lib/condition-hash";
-import type { Product } from "@/lib/mock/products";
+import type { Product } from "@/lib/products/types";
 import { cn } from "@/lib/utils";
 
 type ConditionAcceptanceDialogProps = {

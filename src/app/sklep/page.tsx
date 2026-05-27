@@ -8,11 +8,11 @@ import { ProductCard } from "@/components/product-card";
 import {
 	PRODUCT_CATEGORIES,
 	PRODUCT_EPOCHS,
-	PRODUCTS,
 	type Product,
 	type ProductCategory,
 	type ProductEpoch,
-} from "@/lib/mock/products";
+} from "@/lib/products";
+import { listProducts } from "@/lib/products/queries";
 import { cn } from "@/lib/utils";
 import { PriceRangeFilter } from "./price-range-filter";
 import { ShopCategoryAutoScroll } from "./shop-category-scroll";
@@ -23,6 +23,8 @@ import {
 	parsePriceParam,
 	type ShopSearchParams,
 } from "./shop-params";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
 	title: "Sklep z antykami i vintage",
@@ -43,6 +45,7 @@ type SearchParams = ShopSearchParams;
 
 export default async function SklepPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
 	const params = await searchParams;
+	const PRODUCTS = await listProducts();
 	const activeCategory = parseEnum<ProductCategory>(
 		params.kategoria,
 		PRODUCT_CATEGORIES.map((c) => c.value),
@@ -101,7 +104,7 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 				<Container size="xl">
 					<div
 						id="sklep-filtry-start"
-						className="grid gap-10 scroll-mt-24 lg:grid-cols-[260px_1fr]"
+						className="grid gap-10 scroll-mt-24 lg:grid-cols-[220px_1fr]"
 					>
 						<aside aria-label="Filtry" className="sticky top-24 self-start">
 							<FilterGroup
@@ -133,7 +136,7 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 						<div className="flex min-w-0 flex-col gap-6">
 							<SortDropdown params={params} activeSort={activeSort} options={SORT_OPTIONS} />
 							{filtered.length > 0 ? (
-								<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+								<div className="grid grid-cols-1 gap-8 md:grid-cols-3">
 									{filtered.map((product, index) => (
 										<ProductCard
 											key={product.slug}

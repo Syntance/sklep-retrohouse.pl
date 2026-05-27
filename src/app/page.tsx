@@ -6,7 +6,7 @@ import { SocialProofSection } from "@/components/sections/social-proof";
 import { Container, Section } from "@/components/primitives";
 import { env } from "@/env";
 import { getHomeHeroProduct } from "@/lib/sanity/home-hero";
-import { PRODUCTS } from "@/lib/mock/products";
+import { listProducts } from "@/lib/products/queries";
 
 /**
  * Homepage:
@@ -17,7 +17,8 @@ import { PRODUCTS } from "@/lib/mock/products";
  *  5. SocialProof — formularz kontaktowy (pre-launch) / opinie (po zebraniu)
  */
 export default async function HomePage() {
-	const bestsellers = [...PRODUCTS].sort((a, b) => b.popularity - a.popularity).slice(0, 4);
+	const products = await listProducts();
+	const bestsellers = [...products].sort((a, b) => b.popularity - a.popularity).slice(0, 4);
 
 	const heroProduct = await getHomeHeroProduct();
 

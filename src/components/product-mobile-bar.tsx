@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { track } from "@/lib/analytics/posthog";
 import { formatPrice } from "@/lib/format";
-import type { Product } from "@/lib/mock/products";
+import type { Product } from "@/lib/products/types";
 
 type ProductMobileBarProps = {
 	product: Product;
@@ -29,7 +29,7 @@ export function ProductMobileBar({ product }: ProductMobileBarProps) {
 					<p className="truncate font-display text-sm">{product.name}</p>
 				</div>
 				<p className="font-display text-base font-semibold tabular text-foreground">
-					{formatPrice(product.price)}
+					{formatPrice(product.price, product.currencyCode)}
 				</p>
 				<AddToCartButton product={product} source="pdp" compact className="shrink-0" />
 			</div>

@@ -14,7 +14,8 @@ import { GiftBudgetTiles } from "@/components/sections/gift-budget-tiles";
 import { GiftThemes } from "@/components/sections/gift-themes";
 import { GiftHeroProduct, pickGiftHeroProduct } from "./gift-hero-product";
 import { SmoothScrollAnchor } from "./smooth-scroll-anchor";
-import { PRICE_BUCKETS, PRODUCTS } from "@/lib/mock/products";
+import { PRICE_BUCKETS } from "@/lib/products";
+import { listProducts } from "@/lib/products/queries";
 
 export const metadata: Metadata = {
 	title: "Prezent z duszą — antyki z Wiednia",
@@ -42,7 +43,8 @@ function bucketCaption(id: string) {
 	}
 }
 
-export default function PrezentPage() {
+export default async function PrezentPage() {
+	const PRODUCTS = await listProducts();
 	const giftPicks = PRODUCTS.filter((product) => product.giftBestseller).slice(0, 6);
 	const heroProduct = pickGiftHeroProduct(PRODUCTS);
 

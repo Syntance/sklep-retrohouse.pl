@@ -11,7 +11,7 @@ import type {
 	ShippingMethod,
 } from "@/lib/analytics/events";
 import { formatPrice } from "@/lib/format";
-import type { Product } from "@/lib/mock/products";
+import type { Product } from "@/lib/products/types";
 import type { OrderAcceptance } from "@/lib/order-acceptance";
 import { AcceptanceStep } from "./acceptance-step";
 import { CheckoutSectionFieldset } from "./checkout-section-fieldset";

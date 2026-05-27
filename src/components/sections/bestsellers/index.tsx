@@ -1,6 +1,6 @@
 import { Container, CtaLink, Eyebrow, Section } from "@/components/primitives";
 import { ProductCard } from "@/components/product-card";
-import type { Product } from "@/lib/mock/products";
+import type { Product } from "@/lib/products/types";
 
 type BestsellersSectionProps = {
 	products: ReadonlyArray<Product>;

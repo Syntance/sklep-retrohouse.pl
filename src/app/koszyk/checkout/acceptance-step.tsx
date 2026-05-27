@@ -8,7 +8,7 @@ import { ProductConditionModal } from "@/components/product-condition-modal";
 import { track } from "@/lib/analytics/posthog";
 import { hashConditionDescriptionSync } from "@/lib/condition-hash";
 import { TERMS_VERSION, PRIVACY_VERSION } from "@/lib/legal-versions";
-import type { Product } from "@/lib/mock/products";
+import type { Product } from "@/lib/products/types";
 import type { OrderAcceptance, LineItemAcceptance } from "@/lib/order-acceptance";
 import { CheckoutSectionFieldset } from "./checkout-section-fieldset";
 

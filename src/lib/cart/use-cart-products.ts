@@ -1,30 +1,51 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { getProductBySlug, type Product } from "@/lib/mock/products";
+import type { Product } from "@/lib/products/types";
 import { useCartStore } from "@/lib/cart/store";
 
 /**
- * Zwraca produkty z koszyka po rehydracji Zustand persist.
- * Przed hydracją [] — unikamy mismatch SSR/CSR na badge i liście.
- *
- * Selektor musi zwracać stabilną referencję (`state.items`), nie nową tablicę
- * z `.map()` — inaczej React 19 + useSyncExternalStore wchodzą w pętlę.
+ * Produkty koszyka z Medusa — fetch po rehydracji Zustand.
  */
 export function useCartProducts(): Product[] {
 	const items = useCartStore((state) => state.items);
 	const [mounted, setMounted] = useState(false);
+	const [products, setProducts] = useState<Product[]>([]);
 
 	useEffect(() => {
 		setMounted(true);
 	}, []);
 
+	useEffect(() => {
+		if (!mounted || items.length === 0) {
+			setProducts([]);
+			return;
+		}
+
+		const slugs = items.map((item) => item.slug).join(",");
+		const controller = new AbortController();
+
+		fetch(`/api/products?slugs=${encodeURIComponent(slugs)}`, {
+			signal: controller.signal,
+		})
+			.then((response) => response.json())
+			.then((data: { products?: Product[] }) => {
+				setProducts(data.products ?? []);
+			})
+			.catch(() => {
+				if (!controller.signal.aborted) setProducts([]);
+			});
+
+		return () => controller.abort();
+	}, [items, mounted]);
+
 	return useMemo(() => {
 		if (!mounted) return [];
+		const bySlug = new Map(products.map((product) => [product.slug, product]));
 		return items
-			.map((item) => getProductBySlug(item.slug))
+			.map((item) => bySlug.get(item.slug))
 			.filter((product): product is Product => product !== undefined);
-	}, [items, mounted]);
+	}, [items, mounted, products]);
 }
 
 export function useCartMounted(): boolean {

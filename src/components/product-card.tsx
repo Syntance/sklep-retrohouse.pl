@@ -1,9 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { formatPrice } from "@/lib/format";
-import type { Product } from "@/lib/mock/products";
+import type { Product } from "@/lib/products/types";
 import type { ProductSource } from "@/lib/analytics/events";
 import { track } from "@/lib/analytics/posthog";
 import { cn } from "@/lib/utils";
@@ -95,15 +96,29 @@ export function ProductCard({
 			<Link
 				href={url}
 				onClick={handleClick}
-				className="relative block aspect-4/5 w-full overflow-hidden focus-visible:outline-none"
+				className="relative block aspect-[4/3] w-full overflow-hidden focus-visible:outline-none"
 				aria-label={`Zobacz: ${product.name}`}
 			>
 				<div
 					className="absolute inset-0 transition-transform duration-700 group-hover/card:scale-[1.04]"
-					style={{
-						backgroundImage: `radial-gradient(120% 80% at 30% 20%, ${primary}, transparent 60%), radial-gradient(80% 80% at 80% 90%, ${secondary}, transparent 70%), linear-gradient(135deg, ${accent}, ${primary})`,
-					}}
-				/>
+					style={
+						product.imageUrl
+							? undefined
+							: {
+									backgroundImage: `radial-gradient(120% 80% at 30% 20%, ${primary}, transparent 60%), radial-gradient(80% 80% at 80% 90%, ${secondary}, transparent 70%), linear-gradient(135deg, ${accent}, ${primary})`,
+								}
+					}
+				>
+					{product.imageUrl ? (
+						<Image
+							src={product.imageUrl}
+							alt=""
+							fill
+							className="object-cover"
+							sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+						/>
+					) : null}
+				</div>
 				{primaryBadge ? (
 					<span
 						className={cn(
@@ -134,14 +149,14 @@ export function ProductCard({
 							href={url}
 							onClick={handleClick}
 							className="relative inline-flex h-11 min-w-0 flex-1 cursor-pointer overflow-hidden rounded-full border border-walnut/25 bg-background px-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring group-hover/card:border-terracotta"
-							aria-label={`Zobacz produkt: ${product.name}, ${formatPrice(product.price)}`}
+							aria-label={`Zobacz produkt: ${product.name}, ${formatPrice(product.price, product.currencyCode)}`}
 						>
 							<span
 								aria-hidden
 								className="absolute inset-0 grid place-items-center transition-opacity duration-300 group-hover/card:opacity-0 group-focus-within/card:opacity-0 motion-reduce:transition-none"
 							>
 								<span className="block -translate-y-[3px] font-display text-xl font-semibold leading-none tabular text-terracotta">
-									{formatPrice(product.price)}
+									{formatPrice(product.price, product.currencyCode)}
 								</span>
 							</span>
 							<span
@@ -155,7 +170,7 @@ export function ProductCard({
 				) : (
 					<div className="mt-auto pt-2">
 						<span className="font-display text-xl font-semibold tabular text-terracotta">
-							{formatPrice(product.price)}
+							{formatPrice(product.price, product.currencyCode)}
 						</span>
 					</div>
 				)}
