@@ -1,5 +1,4 @@
 import { Inbox } from "lucide-react";
-import Link from "next/link";
 import { loadAdmin } from "@/lib/admin/load";
 import {
 	BADGE_TONE_CLASS,
@@ -10,6 +9,7 @@ import {
 import { type AdminOrderRow, listAdminOrders } from "@/lib/admin/orders";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { OrderTableRow } from "./order-table-row";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -41,19 +41,17 @@ function OrderRow({ order }: { order: AdminOrderRow }) {
 	const status = orderStatusBadge(order.status);
 
 	return (
-		<tr className="bg-card transition-colors hover:bg-muted/30">
+		<OrderTableRow
+			orderId={order.id}
+			label={`Zamówienie #${order.displayId || "—"}, ${order.customerName || order.email}`}
+		>
 			<td className="px-4 py-3">
-				<Link
-					href={`/magazyn/zamowienia/${order.id}`}
-					className="block focus-visible:outline-none"
-				>
-					<span className="block text-sm font-semibold text-foreground">
-						#{order.displayId || "—"}
-					</span>
-					<span className="block text-xs text-muted-foreground">
-						{order.createdAt ? DATE_TIME.format(new Date(order.createdAt)) : "—"}
-					</span>
-				</Link>
+				<span className="block text-sm font-semibold text-foreground">
+					#{order.displayId || "—"}
+				</span>
+				<span className="block text-xs text-muted-foreground">
+					{order.createdAt ? DATE_TIME.format(new Date(order.createdAt)) : "—"}
+				</span>
 			</td>
 			<td className="px-4 py-3">
 				<span className="block truncate text-sm font-medium text-foreground">
@@ -76,7 +74,7 @@ function OrderRow({ order }: { order: AdminOrderRow }) {
 			<td className="px-4 py-3">
 				<StatusBadge label={status.label} tone={status.tone} />
 			</td>
-		</tr>
+		</OrderTableRow>
 	);
 }
 
