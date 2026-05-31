@@ -13,6 +13,14 @@ export type HeroProductImage = {
 	height: number;
 };
 
+/** Domyślne hero — gdy Sanity nie ma obrazu lub CMS nie jest podpięty. */
+export const DEFAULT_HERO_PRODUCT: HeroProductImage = {
+	src: "/images/hero-gallery.jpg",
+	alt: "Wnętrze sklepu RetroHouse — galeria antyków, grafiki i dekoracje na ścianie",
+	width: 1024,
+	height: 768,
+};
+
 /**
  * Dokument typu `homePage` w Sanity — pierwszy / najświeższy po `_updatedAt`.
  * Pole obrazu musi zostać referencją (bez „rozwiązywania” assetu w GROQ), żeby działał `@sanity/image-url`.

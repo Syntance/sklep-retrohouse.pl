@@ -26,6 +26,13 @@ export const env = createEnv({
 		RESEND_FROM_EMAIL: z.string().email().optional(),
 		/** Skrzynka zespołu (odbiorca zgłoszeń z formularza kontaktowego). */
 		RESEND_CONTACT_TO: z.string().email().optional(),
+
+		/**
+		 * Opcjonalne — odczyt konfiguracji katalogu (epoki) w SSR sklepu bez sesji admina.
+		 * Te same dane logowania co do panelu /magazyn.
+		 */
+		MEDUSA_ADMIN_EMAIL: z.string().email().optional(),
+		MEDUSA_ADMIN_PASSWORD: z.string().min(1).optional(),
 	},
 	client: {
 		/** URL backendu Medusa (Railway). Używany przez Medusa JS SDK. */
@@ -85,6 +92,9 @@ export const env = createEnv({
 		RESEND_API_KEY: process.env.RESEND_API_KEY,
 		RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL,
 		RESEND_CONTACT_TO: process.env.RESEND_CONTACT_TO,
+
+		MEDUSA_ADMIN_EMAIL: process.env.MEDUSA_ADMIN_EMAIL,
+		MEDUSA_ADMIN_PASSWORD: process.env.MEDUSA_ADMIN_PASSWORD,
 
 		NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
 

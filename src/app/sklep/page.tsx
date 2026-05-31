@@ -7,11 +7,10 @@ import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/compo
 import { ProductCard } from "@/components/product-card";
 import {
 	PRODUCT_CATEGORIES,
-	PRODUCT_EPOCHS,
 	type Product,
 	type ProductCategory,
-	type ProductEpoch,
 } from "@/lib/products";
+import { getEpochOptions } from "@/lib/catalog/epochs";
 import { listProducts } from "@/lib/products/queries";
 import { cn } from "@/lib/utils";
 import { PriceRangeFilter } from "./price-range-filter";
@@ -45,14 +44,14 @@ type SearchParams = ShopSearchParams;
 
 export default async function SklepPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
 	const params = await searchParams;
-	const PRODUCTS = await listProducts();
+	const [PRODUCTS, epochOptions] = await Promise.all([listProducts(), getEpochOptions()]);
 	const activeCategory = parseEnum<ProductCategory>(
 		params.kategoria,
 		PRODUCT_CATEGORIES.map((c) => c.value),
 	);
-	const activeEpoch = parseEnum<ProductEpoch>(
+	const activeEpoch = parseEnum<string>(
 		params.epoka,
-		PRODUCT_EPOCHS.map((e) => e.value),
+		epochOptions.map((e) => e.value),
 	);
 	const { min: priceMin, max: priceMax } = normalizePriceRange(
 		parsePriceParam(params.cenaOd),
@@ -117,7 +116,7 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 							<PriceRangeFilter params={params} priceMin={priceMin} priceMax={priceMax} />
 							<FilterGroup
 								title="Epoka"
-								options={PRODUCT_EPOCHS}
+								options={epochOptions}
 								active={activeEpoch}
 								paramKey="epoka"
 								params={params}

@@ -1,18 +1,22 @@
 import "server-only";
 import { cache } from "react";
+import { getEpochOptions } from "@/lib/catalog/epochs";
 import { medusa } from "@/lib/medusa/client";
 import { mapMedusaProduct, type MedusaStoreProduct } from "@/lib/products/map-from-medusa";
 import type { Product } from "@/lib/products/types";
 
-const PRODUCT_FIELDS = "*variants.calculated_price,+metadata,+categories,*images";
+const PRODUCT_FIELDS =
+	"*variants,+variants.calculated_price,+variants.prices,+metadata,+categories,*images";
 
 export const getDefaultRegionId = cache(async (): Promise<string> => {
 	const { regions } = await medusa.store.region.list();
-	return regions[0]?.id ?? "";
+	// Sklep sprzedaje w PLN — preferuj region złotówkowy (na backendzie istnieje też EUR).
+	const pln = regions.find((region: { currency_code?: string | null }) => region.currency_code === "pln");
+	return pln?.id ?? regions[0]?.id ?? "";
 });
 
 export const listProducts = cache(async (): Promise<Product[]> => {
-	const regionId = await getDefaultRegionId();
+	const [regionId, epochOptions] = await Promise.all([getDefaultRegionId(), getEpochOptions()]);
 	const { products } = await medusa.store.product.list({
 		limit: 100,
 		region_id: regionId || undefined,
@@ -20,12 +24,12 @@ export const listProducts = cache(async (): Promise<Product[]> => {
 	});
 
 	return products
-		.map((product: MedusaStoreProduct) => mapMedusaProduct(product))
+		.map((product: MedusaStoreProduct) => mapMedusaProduct(product, epochOptions))
 		.filter((product: Product | null): product is Product => product !== null);
 });
 
 export async function getProductBySlug(slug: string): Promise<Product | undefined> {
-	const regionId = await getDefaultRegionId();
+	const [regionId, epochOptions] = await Promise.all([getDefaultRegionId(), getEpochOptions()]);
 	const { products } = await medusa.store.product.list({
 		handle: slug,
 		limit: 1,
@@ -34,7 +38,7 @@ export async function getProductBySlug(slug: string): Promise<Product | undefine
 	});
 
 	const mapped = products
-		.map((product: MedusaStoreProduct) => mapMedusaProduct(product))
+		.map((product: MedusaStoreProduct) => mapMedusaProduct(product, epochOptions))
 		.filter((product: Product | null): product is Product => product !== null);
 
 	return mapped[0];

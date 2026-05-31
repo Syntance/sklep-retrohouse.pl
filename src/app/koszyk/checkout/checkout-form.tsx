@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { CheckIcon, ShieldIcon } from "@/components/icons";
 import { CheckboxInput } from "@/components/ui/checkbox-input";
@@ -10,6 +11,7 @@ import type {
 	PaymentMethod,
 	ShippingMethod,
 } from "@/lib/analytics/events";
+import { useCartStore } from "@/lib/cart/store";
 import { formatPrice } from "@/lib/format";
 import type { Product } from "@/lib/products/types";
 import type { OrderAcceptance } from "@/lib/order-acceptance";
@@ -91,11 +93,15 @@ const PAYMENT_OPTIONS: Array<{
 export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 	const total = subtotal;
 	const formId = useId();
+	const router = useRouter();
+	const clearCart = useCartStore((state) => state.clear);
 	const [shipping, setShipping] = useState<ShippingMethod>("inpost");
 	const [payment, setPayment] = useState<PaymentMethod>("blik");
 	const [invoice, setInvoice] = useState(false);
 	const [nipFilled, setNipFilled] = useState(false);
 	const [acceptance, setAcceptance] = useState<OrderAcceptance | null>(null);
+	const [submitting, setSubmitting] = useState(false);
+	const [submitError, setSubmitError] = useState<string | null>(null);
 	const completedRef = useRef<Record<CheckoutStep, boolean>>({
 		data: false,
 		shipping: false,
@@ -137,11 +143,62 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		if (!acceptance || submitting) return;
+
+		const formData = new FormData(event.currentTarget);
+		const value = (name: string) => String(formData.get(name) ?? "").trim();
+
+		const payload = {
+			items: items.map((item) => item.slug),
+			firstName: value("firstName"),
+			lastName: value("lastName"),
+			email: value("email"),
+			phone: value("phone"),
+			address: value("address"),
+			postal: value("postal"),
+			city: value("city"),
+			shipping,
+			payment,
+			invoice,
+			nip: value("nip"),
+			companyName: value("companyName"),
+		};
+
+		setSubmitting(true);
+		setSubmitError(null);
+
+		try {
+			const response = await fetch("/api/checkout", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(payload),
+			});
+			const data = (await response.json()) as {
+				ok: boolean;
+				error?: string;
+				displayId?: number;
+			};
+
+			if (!response.ok || !data.ok) {
+				setSubmitError(data.error ?? "Nie udało się złożyć zamówienia. Spróbuj ponownie.");
+				setSubmitting(false);
+				return;
+			}
+
+			clearCart();
+			router.push(data.displayId ? `/dziekujemy?order=${data.displayId}` : "/dziekujemy");
+		} catch {
+			setSubmitError("Błąd połączenia. Sprawdź internet i spróbuj ponownie.");
+			setSubmitting(false);
+		}
+	};
+
 	return (
 		<form
-			action="/api/checkout"
-			method="post"
 			id={formId}
+			onSubmit={handleSubmit}
 			className="mt-10 grid gap-10 lg:grid-cols-[1.4fr_1fr]"
 			onBlur={(event) => {
 				// Po opuszczeniu sekcji "dane" — emit `checkout_step_completed`.
@@ -279,13 +336,21 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 				) : null}
 				<button
 					type="submit"
-					disabled={!acceptance}
-					aria-disabled={!acceptance}
+					disabled={!acceptance || submitting}
+					aria-disabled={!acceptance || submitting}
 					className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-terracotta px-6 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground shadow-md transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
 				>
 					<ShieldIcon className="size-4 text-brass" />
-					Zapłać bezpiecznie
+					{submitting ? "Składanie zamówienia…" : "Zapłać bezpiecznie"}
 				</button>
+				{submitError ? (
+					<p
+						role="alert"
+						className="rounded-xl border border-destructive/30 bg-destructive/5 p-3 text-center text-sm text-destructive"
+					>
+						{submitError}
+					</p>
+				) : null}
 				<ul className="space-y-2 rounded-2xl border border-border bg-cream p-4 text-xs text-foreground/70">
 					<li className="flex items-start gap-2">
 						<CheckIcon className="size-4 text-brass" />

@@ -29,6 +29,24 @@ export function ProductConditionModal({ product, onClose }: ProductConditionModa
 					Opis stanu: {product.name}
 				</h2>
 				<p className="mt-4 leading-relaxed text-foreground/80">{product.condition}</p>
+				{product.defects.length > 0 ? (
+					<div className="mt-5">
+						<h3 className="text-xs font-semibold uppercase tracking-[0.12em] text-foreground/60">
+							Wady i ubytki
+						</h3>
+						<ul className="mt-2 flex flex-col gap-2">
+							{product.defects.map((defect) => (
+								<li key={defect.label} className="flex gap-2 text-sm text-foreground/80">
+									<span aria-hidden className="mt-1 size-1.5 shrink-0 rounded-full bg-primary" />
+									<span>
+										<span className="font-medium text-foreground">{defect.label}</span>
+										{defect.note ? <span className="text-foreground/65"> — {defect.note}</span> : null}
+									</span>
+								</li>
+							))}
+						</ul>
+					</div>
+				) : null}
 				<p className="mt-3 text-xs text-foreground/55">
 					Wersja opisu:{" "}
 					<code className="font-mono">

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AddToCartButton } from "@/components/add-to-cart-button";
+import { PinIcon } from "@/components/icons";
 import { formatPrice } from "@/lib/format";
 import type { Product } from "@/lib/products/types";
 import type { ProductSource } from "@/lib/analytics/events";
@@ -127,6 +128,12 @@ export function ProductCard({
 						)}
 					>
 						{BADGE_LABELS[primaryBadge]}
+					</span>
+				) : null}
+				{product.pickupOnly ? (
+					<span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-background/90 px-2.5 py-1 text-[0.62rem] font-semibold uppercase tracking-[0.1em] text-terracotta shadow-sm backdrop-blur">
+						<PinIcon className="size-3" />
+						Tylko odbiór
 					</span>
 				) : null}
 			</Link>

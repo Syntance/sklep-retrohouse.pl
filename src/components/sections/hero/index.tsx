@@ -21,7 +21,7 @@ type HeroSectionProps = {
 /**
  * Hero homepage — H1 + podtytuł + lead, CTA scroll / sklep.
  *
- * Prawa kolumna: zdjęcie produktu z Sanity (`homePage`), albo placeholder gdy brak obrazu / CMS.
+ * Prawa kolumna: zdjęcie produktu z Sanity (`homePage`), albo domyślne `/images/hero-gallery.jpg`.
  * Pierwszy CTA: „POZNAJ NAS” → smooth scroll do `#home-kategorie`.
  * Bez fabricated cytatów klientów — Social proof przeniesiony do dedykowanej sekcji.
  */
@@ -138,13 +138,12 @@ function HeroProductPlaceholder() {
 
 function HeroProductPhoto({ image }: { image: HeroProductImage }) {
 	return (
-		<figure className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
+		<figure className="relative mx-auto aspect-[4/3] w-full max-w-md overflow-hidden rounded-2xl border border-walnut/15 shadow-card lg:mx-0 lg:max-w-none">
 			<Image
 				src={image.src}
 				alt={image.alt}
-				width={image.width}
-				height={image.height}
-				className="h-auto w-full rounded-2xl border border-walnut/15 object-cover shadow-card"
+				fill
+				className="object-cover"
 				sizes="(min-width: 1024px) 34vw, min(22rem, 92vw)"
 				priority
 				fetchPriority="high"

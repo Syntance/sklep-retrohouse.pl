@@ -1,23 +1,24 @@
 import {
 	categoryLabel,
-	epochLabel,
 	HUE_TRIADS,
 	PRODUCT_CATEGORY_VALUES,
-	PRODUCT_EPOCH_VALUES,
 } from "@/lib/products/constants";
 import { resolveMedusaMediaUrl, resolveMedusaMediaUrls } from "@/lib/medusa/media-url";
+import { epochLabelFor, type EpochOption } from "@/lib/products/epoch-types";
 import type {
 	Product,
 	ProductBadge,
 	ProductCategory,
-	ProductEpoch,
+	ProductDefect,
 } from "@/lib/products/types";
 
 type MedusaVariant = {
+	id?: string;
 	calculated_price?: {
 		calculated_amount?: number;
 		currency_code?: string;
 	} | null;
+	prices?: Array<{ amount?: number; currency_code?: string }> | null;
 };
 
 type MedusaStoreProduct = {
@@ -57,11 +58,9 @@ function parseCategoryFromMedusa(
 	return parseCategory(rawMetadata);
 }
 
-function parseEpoch(raw: string | undefined): ProductEpoch {
-	if (raw && PRODUCT_EPOCH_VALUES.includes(raw as ProductEpoch)) {
-		return raw as ProductEpoch;
-	}
-	return "inne";
+function parseEpoch(raw: string | undefined, options: EpochOption[]): string {
+	if (raw?.trim()) return raw.trim();
+	return options.find((option) => option.value === "inne")?.value ?? options[0]?.value ?? "inne";
 }
 
 function parseBadges(raw: string | undefined): ProductBadge[] {
@@ -73,29 +72,55 @@ function parseBadges(raw: string | undefined): ProductBadge[] {
 		.filter((part): part is ProductBadge => allowed.includes(part as ProductBadge));
 }
 
-function lowestPrice(product: MedusaStoreProduct): { amount: number; currency: string } {
-	const variants = product.variants ?? [];
-	let amount = 0;
-	let currency = "eur";
-
-	for (const variant of variants) {
-		const calc = variant.calculated_price;
-		if (!calc?.calculated_amount) continue;
-		if (amount === 0 || calc.calculated_amount < amount) {
-			amount = calc.calculated_amount;
-			currency = calc.currency_code ?? currency;
-		}
+function parseDefects(raw: string | undefined): ProductDefect[] {
+	if (!raw) return [];
+	try {
+		const parsed = JSON.parse(raw) as unknown;
+		if (!Array.isArray(parsed)) return [];
+		return parsed
+			.map((item): ProductDefect | null => {
+				if (typeof item === "string") return item.trim() ? { label: item.trim() } : null;
+				if (item && typeof item === "object") {
+					const obj = item as Record<string, unknown>;
+					const label = typeof obj.label === "string" ? obj.label.trim() : "";
+					const note = typeof obj.note === "string" ? obj.note.trim() : "";
+					return label ? { label, note: note || undefined } : null;
+				}
+				return null;
+			})
+			.filter((item): item is ProductDefect => item !== null);
+	} catch {
+		return [];
 	}
-
-	return { amount, currency };
 }
 
-export function mapMedusaProduct(product: MedusaStoreProduct): Product | null {
+/** Sklep = wyłącznie PLN; bierzemy cenę pln z wariantu, nie calculated_price w EUR. */
+function singleVariantPrice(product: MedusaStoreProduct): {
+	amount: number;
+	currency: string;
+	variantId?: string;
+} {
+	const variant = product.variants?.[0];
+	const plnPrice = variant?.prices?.find((p) => p.currency_code === "pln");
+
+	if (plnPrice?.amount != null) {
+		return { amount: plnPrice.amount, currency: "pln", variantId: variant?.id };
+	}
+
+	const calc = variant?.calculated_price;
+	return {
+		amount: calc?.calculated_amount ?? 0,
+		currency: "pln",
+		variantId: variant?.id,
+	};
+}
+
+export function mapMedusaProduct(product: MedusaStoreProduct, epochOptions: EpochOption[]): Product | null {
 	if (!product.handle) return null;
 
 	const metadata = product.metadata ?? {};
 	const category = parseCategoryFromMedusa(metaString(metadata, "category"), product.categories);
-	const epoch = parseEpoch(metaString(metadata, "epoch"));
+	const epoch = parseEpoch(metaString(metadata, "epoch"), epochOptions);
 	const rawImages =
 		product.images?.map((image) => image.url).filter((url): url is string => Boolean(url)) ?? [];
 	const resolvedImages = [
@@ -104,7 +129,7 @@ export function mapMedusaProduct(product: MedusaStoreProduct): Product | null {
 	].filter((url): url is string => Boolean(url));
 	const images = [...new Set(resolvedImages)];
 	const thumbnail = images[0];
-	const { amount, currency } = lowestPrice(product);
+	const { amount, currency, variantId } = singleVariantPrice(product);
 	const description = product.description?.trim() ?? "";
 	const fallbackShort =
 		(description.length > 160 ? `${description.slice(0, 157)}…` : description) ||
@@ -114,6 +139,7 @@ export function mapMedusaProduct(product: MedusaStoreProduct): Product | null {
 
 	return {
 		medusaId: product.id,
+		medusaVariantId: variantId,
 		slug: product.handle,
 		name: product.title ?? product.handle,
 		price: amount,
@@ -121,12 +147,14 @@ export function mapMedusaProduct(product: MedusaStoreProduct): Product | null {
 		category,
 		categoryLabel: categoryLabel(category),
 		epoch,
-		epochLabel: epochLabel(epoch),
+		epochLabel: epochLabelFor(epoch, epochOptions),
 		manufacturer: metaString(metadata, "manufacturer") ?? product.subtitle ?? "—",
 		signature: metaString(metadata, "signature"),
 		dimensions: metaString(metadata, "dimensions") ?? "—",
 		condition: metaString(metadata, "condition") ?? "Stan do weryfikacji w sklepie.",
 		badges: parseBadges(metaString(metadata, "badges")),
+		defects: parseDefects(metaString(metadata, "defects")),
+		pickupOnly: metaString(metadata, "delivery") === "pickup_only",
 		addedAt: product.created_at?.slice(0, 10) ?? new Date().toISOString().slice(0, 10),
 		story: metaString(metadata, "story") ?? description,
 		shortDescription,

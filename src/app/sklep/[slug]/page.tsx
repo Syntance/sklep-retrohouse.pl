@@ -6,6 +6,7 @@ import {
 	CheckIcon,
 	InstagramIcon,
 	PackageIcon,
+	PinIcon,
 	ShieldIcon,
 } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
@@ -282,9 +283,29 @@ function InfoPanel({ product, source, isFresh }: InfoPanelProps) {
 				{product.shortDescription}
 			</p>
 
-			<p className="font-display text-4xl font-semibold tabular text-foreground">
-				{formatPrice(product.price, product.currencyCode)}
-			</p>
+		<p className="font-display text-4xl font-semibold tabular text-foreground">
+			{formatPrice(product.price, product.currencyCode)}
+		</p>
+
+		{product.pickupOnly ? (
+			<div
+				role="note"
+				className="flex items-start gap-3 rounded-2xl border border-terracotta/30 bg-terracotta/10 p-4"
+			>
+				<span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-full bg-terracotta/15 text-terracotta">
+					<PinIcon className="size-4" />
+				</span>
+				<div>
+					<p className="font-display text-base font-semibold text-foreground">
+						Tylko odbiór osobisty
+					</p>
+					<p className="mt-0.5 text-sm leading-relaxed text-foreground/70">
+						Ten przedmiot nie jest wysyłany. Odbierzesz go w sklepie w Nowym Targu — po
+						zamówieniu skontaktujemy się, aby ustalić termin.
+					</p>
+				</div>
+			</div>
+		) : null}
 
 		<ProductCtaBlock product={product} source={source} />
 
@@ -300,11 +321,19 @@ function InfoPanel({ product, source, isFresh }: InfoPanelProps) {
 		</p>
 
 		<ul className="grid gap-2.5 rounded-2xl border border-border bg-cream p-4 text-sm">
-				<TrustItem
-					icon={<PackageIcon className="size-4" />}
-					label="Ubezpieczona wysyłka"
-					value="2–3 dni · darmowa od 500 zł"
-				/>
+				{product.pickupOnly ? (
+					<TrustItem
+						icon={<PinIcon className="size-4" />}
+						label="Odbiór osobisty"
+						value="Nowy Targ · termin ustalany po zamówieniu"
+					/>
+				) : (
+					<TrustItem
+						icon={<PackageIcon className="size-4" />}
+						label="Ubezpieczona wysyłka"
+						value="2–3 dni · darmowa od 500 zł"
+					/>
+				)}
 				<TrustItem
 					icon={<ShieldIcon className="size-4" />}
 					label="Pewność pochodzenia"

@@ -5,12 +5,12 @@ import { LiveBanner } from "@/components/sections/live-banner";
 import { SocialProofSection } from "@/components/sections/social-proof";
 import { Container, Section } from "@/components/primitives";
 import { env } from "@/env";
-import { getHomeHeroProduct } from "@/lib/sanity/home-hero";
+import { getHomeHeroProduct, DEFAULT_HERO_PRODUCT } from "@/lib/sanity/home-hero";
 import { listProducts } from "@/lib/products/queries";
 
 /**
  * Homepage:
- *  1. Hero        — headline + obraz produktu z Sanity (`homePage`) lub placeholder
+ *  1. Hero        — headline + obraz (Sanity lub domyślne zdjęcie galerii sklepu)
  *  2. Categories  — 6 kafli, drugi entry point
  *  3. Bestsellers — 4 karty (BOFU)
  *  4. Live banner — warunkowy (LIVE_SCHEDULED=true)
@@ -20,7 +20,7 @@ export default async function HomePage() {
 	const products = await listProducts();
 	const bestsellers = [...products].sort((a, b) => b.popularity - a.popularity).slice(0, 4);
 
-	const heroProduct = await getHomeHeroProduct();
+	const heroProduct = (await getHomeHeroProduct()) ?? DEFAULT_HERO_PRODUCT;
 
 	const liveScheduled =
 		env.NEXT_PUBLIC_LIVE_SCHEDULED &&
