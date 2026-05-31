@@ -1,3 +1,5 @@
+import { EMAIL_B2B, EMAIL_CONTACT } from "@/lib/email/constants";
+
 export type NavLink = {
 	label: string;
 	href: string;
@@ -108,8 +110,8 @@ export const STORE_INFO = {
 	country: "PL",
 	geo: { lat: 49.475, lng: 20.028 },
 	hours: "wt–pt 11:00–18:00 · sob 10:00–14:00",
-	email: "kontakt@retrohouse.pl",
-	emailB2B: "studio@retrohouse.pl",
+	email: EMAIL_CONTACT,
+	emailB2B: EMAIL_B2B,
 	phone: "+48 530 062 677",
 	whatsapp: "+48 530 062 677",
 	instagram: "@retrohouse",

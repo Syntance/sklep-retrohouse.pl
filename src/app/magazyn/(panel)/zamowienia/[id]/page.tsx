@@ -65,13 +65,22 @@ function AddressBlock({ address }: { address: OrderAddress }) {
 
 function actionFlags(order: AdminOrderDetail) {
 	const closed = ["canceled", "completed", "archived"].includes(order.status);
+	const shipped = ["shipped", "partially_shipped", "delivered", "partially_delivered"].includes(
+		order.fulfillmentStatus,
+	);
+	const inRealization = ["fulfilled", "partially_fulfilled"].includes(order.fulfillmentStatus);
+
 	return {
-		canCapture: order.payments.some((p) => !p.capturedAt && !p.canceledAt && p.amount > 0),
-		canFulfill:
-			!closed && ["not_fulfilled", "partially_fulfilled"].includes(order.fulfillmentStatus),
-		canShip: order.fulfillments.some((f) => !f.canceledAt && !f.shippedAt),
-		canDeliver: order.fulfillments.some((f) => !f.canceledAt && f.shippedAt && !f.deliveredAt),
-		canComplete: order.status === "pending",
+		/** Akceptacja + rozpoczęcie realizacji — zanim paczka trafi do kuriera. */
+		canCapture:
+			!closed &&
+			!shipped &&
+			!inRealization &&
+			["not_fulfilled", "partially_fulfilled"].includes(order.fulfillmentStatus),
+		/** Kurier odebrał paczkę. */
+		canShip: !closed && !shipped && (inRealization || order.fulfillments.some((f) => !f.canceledAt && !f.shippedAt)),
+		/** Zamówienie dostarczone / domknięte w systemie. */
+		canComplete: !closed && shipped,
 		canCancel: !closed,
 	};
 }

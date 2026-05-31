@@ -65,10 +65,10 @@ export default function ReklamacjePage() {
 						<p className="rounded-xl border border-border bg-card p-4 text-sm">
 							Reklamacje przyjmujemy przez e-mail:{" "}
 							<Link
-								href="mailto:kontakt@retrohouse.pl"
+								href="mailto:kontakt@sklep-retrohouse.pl"
 								className="font-semibold underline underline-offset-4 hover:text-terracotta"
 							>
-								kontakt@retrohouse.pl
+								kontakt@sklep-retrohouse.pl
 							</Link>{" "}
 							lub przez{" "}
 							<Link

@@ -1,13 +1,6 @@
 "use client";
 
-import {
-	Ban,
-	Check,
-	CreditCard,
-	PackageCheck,
-	Truck,
-	type LucideIcon,
-} from "lucide-react";
+import { Ban, Check, CreditCard, Truck, type LucideIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { cn } from "@/lib/utils";
@@ -25,9 +18,7 @@ type ActionDef = {
 type Props = {
 	orderId: string;
 	canCapture: boolean;
-	canFulfill: boolean;
 	canShip: boolean;
-	canDeliver: boolean;
 	canComplete: boolean;
 	canCancel: boolean;
 };
@@ -35,9 +26,7 @@ type Props = {
 export function OrderActions({
 	orderId,
 	canCapture,
-	canFulfill,
 	canShip,
-	canDeliver,
 	canComplete,
 	canCancel,
 }: Props) {
@@ -55,25 +44,11 @@ export function OrderActions({
 			available: canCapture,
 		},
 		{
-			type: "fulfill",
-			label: "Przygotuj do wysyłki",
-			icon: PackageCheck,
-			variant: "neutral",
-			available: canFulfill,
-		},
-		{
 			type: "ship",
-			label: "Oznacz jako wysłane",
+			label: "Przesyłka wysłana",
 			icon: Truck,
 			variant: "neutral",
 			available: canShip,
-		},
-		{
-			type: "deliver",
-			label: "Oznacz jako dostarczone",
-			icon: Check,
-			variant: "neutral",
-			available: canDeliver,
 		},
 		{
 			type: "complete",

@@ -44,7 +44,7 @@ export default function DeklaracjaPage() {
 							value="Self-audit (axe DevTools, WAVE, manual VoiceOver/NVDA)"
 						/>
 						<Row label="Standard" value="WCAG 2.2 AA + EAA" />
-						<Row label="Koordynator dostępności" value="Magdalena · access@retrohouse.pl" />
+						<Row label="Koordynator dostępności" value="Magdalena · access@sklep-retrohouse.pl" />
 					</dl>
 				</Container>
 			</Section>
@@ -76,10 +76,10 @@ export default function DeklaracjaPage() {
 					<p className="mt-2 text-foreground/80">
 						Jeśli napotkasz problem z dostępnością, napisz na{" "}
 						<Link
-							href="mailto:access@retrohouse.pl"
+							href="mailto:access@sklep-retrohouse.pl"
 							className="font-semibold text-foreground underline underline-offset-4 hover:text-terracotta"
 						>
-							access@retrohouse.pl
+							access@sklep-retrohouse.pl
 						</Link>
 						lub przez{" "}
 						<Link

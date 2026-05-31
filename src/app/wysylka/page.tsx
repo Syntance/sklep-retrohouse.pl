@@ -43,7 +43,7 @@ const FAQS = [
 	{
 		question: "Czy wysyłacie za granicę?",
 		answer:
-			"Aktualnie wysyłamy w Polsce. Indywidualnie — Czechy, Słowacja, Niemcy. Napisz na kontakt@retrohouse.pl.",
+			"Aktualnie wysyłamy w Polsce. Indywidualnie — Czechy, Słowacja, Niemcy. Napisz na kontakt@sklep-retrohouse.pl.",
 	},
 	{
 		question: "Czy mogę zarezerwować przedmiot?",

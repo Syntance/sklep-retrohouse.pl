@@ -100,10 +100,10 @@ export default function RegulaminPage() {
 						<p className="mt-2 text-foreground/70">
 							Napisz na{" "}
 							<Link
-								href="mailto:kontakt@retrohouse.pl"
+								href="mailto:kontakt@sklep-retrohouse.pl"
 								className="font-semibold text-foreground underline underline-offset-4 hover:text-terracotta"
 							>
-								kontakt@retrohouse.pl
+								kontakt@sklep-retrohouse.pl
 							</Link>{" "}
 							lub przez{" "}
 							<Link

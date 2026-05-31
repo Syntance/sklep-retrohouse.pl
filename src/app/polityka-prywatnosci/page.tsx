@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 const SECTIONS = [
 	{
 		title: "1. Administrator danych",
-		copy: `Administratorem danych osobowych jest RetroHouse z siedzibą w Nowym Targu. Kontakt: privacy@retrohouse.pl. W sprawach RODO współpracujemy z zewnętrznym Inspektorem Ochrony Danych (DPO).`,
+		copy: `Administratorem danych osobowych jest RetroHouse z siedzibą w Nowym Targu. Kontakt: privacy@sklep-retrohouse.pl. W sprawach RODO współpracujemy z zewnętrznym Inspektorem Ochrony Danych (DPO).`,
 	},
 	{
 		title: "2. Cele przetwarzania",
@@ -28,7 +28,7 @@ const SECTIONS = [
 	},
 	{
 		title: "5. Twoje prawa (DSR)",
-		copy: `Masz prawo do: dostępu (art. 15), sprostowania (16), usunięcia / „prawa do bycia zapomnianym" (17), ograniczenia przetwarzania (18), przenoszenia danych (20), sprzeciwu (21). Realizacja przez /moje-konto/prywatnosc lub email privacy@retrohouse.pl. Termin: 30 dni.`,
+		copy: `Masz prawo do: dostępu (art. 15), sprostowania (16), usunięcia / „prawa do bycia zapomnianym" (17), ograniczenia przetwarzania (18), przenoszenia danych (20), sprzeciwu (21). Realizacja przez /moje-konto/prywatnosc lub email privacy@sklep-retrohouse.pl. Termin: 30 dni.`,
 	},
 	{
 		title: "6. Powierzenie danych",
@@ -92,10 +92,10 @@ export default function PolitykaPage() {
 						<p className="mt-2 text-foreground/70">
 							E-mail:{" "}
 							<Link
-								href="mailto:privacy@retrohouse.pl"
+								href="mailto:privacy@sklep-retrohouse.pl"
 								className="font-semibold text-foreground underline underline-offset-4 hover:text-terracotta"
 							>
-								privacy@retrohouse.pl
+								privacy@sklep-retrohouse.pl
 							</Link>
 							. Odpowiadamy w 14 dni roboczych.
 						</p>

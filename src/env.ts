@@ -22,7 +22,7 @@ export const env = createEnv({
 
 		/** Transactional — formularz /kontakt (Resend). Bez klucza akcja kończy się sukcesem bez wysyłki (preview / CI). */
 		RESEND_API_KEY: z.string().optional(),
-		/** Zweryfikowany nadawca w Resend. Domyślnie w kodzie: onboarding@resend.dev (tylko sandbox). */
+		/** Zweryfikowany nadawca w Resend (domyślnie w kodzie: kontakt@sklep-retrohouse.pl). */
 		RESEND_FROM_EMAIL: z.string().email().optional(),
 		/** Skrzynka zespołu (odbiorca zgłoszeń z formularza kontaktowego). */
 		RESEND_CONTACT_TO: z.string().email().optional(),
@@ -53,7 +53,7 @@ export const env = createEnv({
 
 		NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
 
-		NEXT_PUBLIC_SITE_URL: z.string().url().default("https://sklep.retrohouse.pl"),
+		NEXT_PUBLIC_SITE_URL: z.string().url().default("https://sklep-retrohouse.pl"),
 
 		/**
 		 * Live commerce — banner na homepage. Sanity nie podpięte (etap 2),

@@ -1,6 +1,7 @@
 import "server-only";
 import { resolveMedusaMediaUrl } from "@/lib/medusa/media-url";
-import { adminFetch } from "./medusa-admin";
+import { adminFetch, catalogAdminFetch } from "./medusa-admin";
+import { getSessionToken } from "./session";
 
 /** Status realizacji zamówienia w Medusa (cykl życia). */
 export type OrderStatus =
@@ -253,6 +254,9 @@ const DETAIL_FIELDS = [
 	"shipping_methods.shipping_option_id",
 	"*payment_collections.payments",
 	"*fulfillments",
+	"fulfillments.items.id",
+	"fulfillments.items.quantity",
+	"fulfillments.items.line_item_id",
 ].join(",");
 
 export async function listAdminOrders(): Promise<AdminOrderRow[]> {
@@ -275,13 +279,7 @@ export async function listAdminOrders(): Promise<AdminOrderRow[]> {
 	}));
 }
 
-export async function getAdminOrder(id: string): Promise<AdminOrderDetail | null> {
-	const data = await adminFetch<{ order: MedusaOrder }>(
-		`/admin/orders/${id}?fields=${DETAIL_FIELDS}`,
-	);
-	const order = data.order;
-	if (!order) return null;
-
+function mapMedusaOrderToDetail(order: MedusaOrder): AdminOrderDetail {
 	const payments: OrderPayment[] = (order.payment_collections ?? []).flatMap((collection) =>
 		(collection.payments ?? []).map((payment) => ({
 			id: payment.id,
@@ -298,7 +296,7 @@ export async function getAdminOrder(id: string): Promise<AdminOrderDetail | null
 		deliveredAt: fulfillment.delivered_at ?? null,
 		canceledAt: fulfillment.canceled_at ?? null,
 		items: (fulfillment.items ?? []).map((item) => ({
-			id: item.id ?? "",
+			id: item.id ?? item.line_item_id ?? "",
 			quantity: item.quantity ?? 0,
 		})),
 	}));
@@ -337,36 +335,72 @@ export async function getAdminOrder(id: string): Promise<AdminOrderDetail | null
 	};
 }
 
-/** Zaksięgowanie (capture) płatności, której jeszcze nie pobrano. */
-export async function captureOrderPayment(orderId: string): Promise<void> {
+export async function getAdminOrder(id: string): Promise<AdminOrderDetail | null> {
+	const data = await adminFetch<{ order: MedusaOrder }>(
+		`/admin/orders/${id}?fields=${DETAIL_FIELDS}`,
+	);
+	if (!data.order) return null;
+	return mapMedusaOrderToDetail(data.order);
+}
+
+/** Pobiera zamówienie do maili — sesja panelu lub konto serwisowe (MEDUSA_ADMIN_*). */
+export async function getAdminOrderForEmail(id: string): Promise<AdminOrderDetail | null> {
+	const token = await getSessionToken();
+	if (token) {
+		try {
+			return await getAdminOrder(id);
+		} catch {
+			// brak uprawnień / błąd API — fallback na konto serwisowe
+		}
+	}
+
+	const data = await catalogAdminFetch<{ order: MedusaOrder }>(
+		`/admin/orders/${id}?fields=${DETAIL_FIELDS}`,
+	);
+	if (!data?.order) return null;
+	return mapMedusaOrderToDetail(data.order);
+}
+
+/** Zaksięgowanie płatności (jeśli trzeba) + rozpoczęcie realizacji (fulfillment). */
+export async function startOrderRealization(orderId: string): Promise<void> {
 	const order = await getAdminOrder(orderId);
 	if (!order) throw new Error("Nie znaleziono zamówienia.");
 
-	const pending = order.payments.find((p) => !p.capturedAt && !p.canceledAt);
-	if (!pending) throw new Error("Brak płatności do zaksięgowania.");
+	const pending = order.payments.find((p) => !p.capturedAt && !p.canceledAt && p.amount > 0);
+	if (pending) {
+		await adminFetch(`/admin/payments/${pending.id}/capture`, {
+			method: "POST",
+			body: JSON.stringify({}),
+		});
+	}
 
-	await adminFetch(`/admin/payments/${pending.id}/capture`, {
-		method: "POST",
-		body: JSON.stringify({}),
-	});
+	if (["not_fulfilled", "partially_fulfilled"].includes(order.fulfillmentStatus)) {
+		await fulfillOrder(orderId);
+	}
 }
 
 type MedusaOrderRaw = {
-	items?: Array<{ id: string; quantity?: number | null; detail?: { fulfilled_quantity?: number | null } | null }> | null;
+	items?: Array<{
+		id: string;
+		quantity?: number | null;
+		detail?: { fulfilled_quantity?: number | null; quantity?: number | null } | null;
+	}> | null;
 	shipping_methods?: Array<{ shipping_option_id?: string | null }> | null;
 };
 
 /** Utworzenie wysyłki (fulfillment) dla wszystkich niezrealizowanych pozycji. */
 export async function fulfillOrder(orderId: string): Promise<void> {
 	const data = await adminFetch<{ order: MedusaOrderRaw }>(
-		`/admin/orders/${orderId}?fields=id,items.id,items.quantity,items.detail.fulfilled_quantity,shipping_methods.shipping_option_id`,
+		`/admin/orders/${orderId}?fields=id,*items,shipping_methods.shipping_option_id`,
 	);
 	const order = data.order;
 
 	const items = (order.items ?? [])
 		.map((item) => {
-			const fulfilled = item.detail?.fulfilled_quantity ?? 0;
-			const remaining = (item.quantity ?? 0) - fulfilled;
+			const detail = item.detail ?? {};
+			const fulfilled = detail.fulfilled_quantity ?? 0;
+			const quantity = item.quantity ?? detail.quantity ?? 0;
+			const remaining = quantity - fulfilled;
 			return { id: item.id, quantity: remaining };
 		})
 		.filter((item) => item.quantity > 0);
@@ -389,24 +423,41 @@ export async function fulfillOrder(orderId: string): Promise<void> {
 	});
 }
 
+type MedusaFulfillmentForShip = {
+	id: string;
+	shipped_at?: string | null;
+	canceled_at?: string | null;
+	items?: Array<{ id?: string | null; quantity?: number | null }> | null;
+};
+
 /** Oznaczenie najnowszej wysyłki jako nadanej (shipment). */
 export async function markOrderShipped(orderId: string): Promise<void> {
-	const order = await getAdminOrder(orderId);
-	if (!order) throw new Error("Nie znaleziono zamówienia.");
+	const fetchFulfillments = () =>
+		adminFetch<{ order: { fulfillments?: MedusaFulfillmentForShip[] } }>(
+			`/admin/orders/${orderId}?fields=id,fulfillments.id,fulfillments.shipped_at,fulfillments.canceled_at,fulfillments.items.id,fulfillments.items.quantity`,
+		);
 
-	const fulfillment = order.fulfillments
-		.filter((f) => !f.canceledAt && !f.shippedAt)
+	let data = await fetchFulfillments();
+	let fulfillment = (data.order.fulfillments ?? [])
+		.filter((f) => !f.canceled_at && !f.shipped_at)
 		.at(-1);
-	if (!fulfillment) throw new Error("Najpierw utwórz realizację (fulfillment).");
 
-	const items = fulfillment.items
-		.filter((item) => item.id && item.quantity > 0)
-		.map((item) => ({ id: item.id, quantity: item.quantity }));
-	if (items.length === 0) throw new Error("Brak pozycji do nadania.");
+	if (!fulfillment) {
+		await fulfillOrder(orderId);
+		data = await fetchFulfillments();
+		fulfillment = (data.order.fulfillments ?? [])
+			.filter((f) => !f.canceled_at && !f.shipped_at)
+			.at(-1);
+		if (!fulfillment) throw new Error("Nie udało się przygotować przesyłki.");
+	}
+
+	const items = (fulfillment.items ?? [])
+		.filter((item) => item.id && (item.quantity ?? 0) > 0)
+		.map((item) => ({ id: item.id as string, quantity: item.quantity as number }));
 
 	await adminFetch(`/admin/orders/${orderId}/fulfillments/${fulfillment.id}/shipments`, {
 		method: "POST",
-		body: JSON.stringify({ items }),
+		body: JSON.stringify(items.length > 0 ? { items } : {}),
 	});
 }
 

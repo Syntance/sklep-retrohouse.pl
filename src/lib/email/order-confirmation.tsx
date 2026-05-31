@@ -2,11 +2,10 @@ import "server-only";
 
 import { Resend } from "resend";
 import { env } from "@/env";
+import { EMAIL_CONTACT, EMAIL_FROM, EMAIL_REPLY_TO } from "@/lib/email/constants";
 import type { OrderAcceptance, LineItemAcceptance } from "@/lib/order-acceptance";
 
 const RESEND_TIMEOUT_MS = 10_000;
-const DEFAULT_INBOX = "kontakt@retrohouse.pl";
-const SANDBOX_FROM = "onboarding@resend.dev";
 
 /** Parametry potrzebne do wysłania e-maila z potwierdzeniem zamówienia. */
 export type OrderConfirmationData = {
@@ -49,7 +48,7 @@ export async function sendOrderConfirmation(
 		return { ok: true, skipped: true };
 	}
 
-	const from = env.RESEND_FROM_EMAIL ?? SANDBOX_FROM;
+	const from = env.RESEND_FROM_EMAIL ? `RetroHouse <${env.RESEND_FROM_EMAIL}>` : EMAIL_FROM;
 
 	const resend = new Resend(apiKey);
 
@@ -91,7 +90,7 @@ export async function sendOrderConfirmation(
 		`Regulamin (v. ${data.acceptance.termsVersion}): https://sklep-retrohouse.pl/regulamin`,
 		`Polityka prywatności: https://sklep-retrohouse.pl/polityka-prywatnosci`,
 		``,
-		`Pytania? Napisz na kontakt@retrohouse.pl lub przez`,
+		`Pytania? Napisz na ${EMAIL_CONTACT} lub przez`,
 		`https://sklep-retrohouse.pl/kontakt`,
 		``,
 		`Pozdrawiamy,`,
@@ -104,7 +103,7 @@ export async function sendOrderConfirmation(
 	const sendPromise = resend.emails.send({
 		from,
 		to: [data.customerEmail],
-		replyTo: DEFAULT_INBOX,
+		replyTo: EMAIL_REPLY_TO,
 		subject,
 		text,
 		html,
@@ -218,7 +217,7 @@ function buildHtml(data: OrderConfirmationData, _itemsText: string): string {
             <a href="https://sklep-retrohouse.pl/polityka-prywatnosci" style="color:#c8622a">Polityka prywatności</a>
           </p>
           <p style="font-size:12px;color:#9a8a7a;margin-top:8px">
-            Pytania? <a href="mailto:kontakt@retrohouse.pl" style="color:#c8622a">kontakt@retrohouse.pl</a>
+            Pytania? <a href="mailto:${EMAIL_CONTACT}" style="color:#c8622a">${EMAIL_CONTACT}</a>
           </p>
         </td></tr>
 
@@ -227,7 +226,7 @@ function buildHtml(data: OrderConfirmationData, _itemsText: string): string {
           <p style="margin:0;font-size:11px;color:#9a8a7a;line-height:1.6">
             RetroHouse · ul. Ludźmierska 25A, 34-400 Nowy Targ<br>
             Możesz zrezygnować z komunikacji marketingowej w ustawieniach konta
-            lub pisząc na kontakt@retrohouse.pl.
+            lub pisząc na ${EMAIL_CONTACT}.
           </p>
         </td></tr>
 

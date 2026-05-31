@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createMedusaOrder } from "@/lib/checkout/create-order";
+import { sendNewOrderShopNotification, sendOrderStatusEmail } from "@/lib/email/order-status-email";
 import { CheckoutSchema } from "@/lib/validation/checkout";
 
 /**
@@ -27,6 +28,9 @@ export async function POST(request: Request) {
 		if (!result.ok) {
 			return NextResponse.json({ ok: false, error: result.error }, { status: 422 });
 		}
+		void sendOrderStatusEmail(result.orderId, "placed").catch(() => {});
+		void sendNewOrderShopNotification(result.orderId).catch(() => {});
+
 		return NextResponse.json({
 			ok: true,
 			orderId: result.orderId,

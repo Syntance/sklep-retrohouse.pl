@@ -2,6 +2,7 @@ import "server-only";
 
 import { Resend } from "resend";
 import { env } from "@/env";
+import { EMAIL_CONTACT, EMAIL_FROM } from "@/lib/email/constants";
 import type { ContactData } from "@/lib/validation/contact";
 
 const RESEND_TIMEOUT_MS = 5_000;
@@ -13,10 +14,8 @@ const TOPIC_LABEL: Record<ContactData["topic"], string> = {
 	inne: "Inne",
 };
 
-/** Zgodne ze stopką / STORE_INFO — domyślny odbiorca gdy brak RESEND_CONTACT_TO. */
-const DEFAULT_CONTACT_INBOX = "kontakt@retrohouse.pl";
-
-const SANDBOX_FROM = "onboarding@resend.dev";
+/** Domyślny odbiorca gdy brak RESEND_CONTACT_TO. */
+const DEFAULT_CONTACT_INBOX = EMAIL_CONTACT;
 
 export type SendContactResult = { ok: true; skipped?: boolean } | { ok: false; message: string };
 
@@ -30,7 +29,7 @@ export async function sendContactNotification(data: ContactData): Promise<SendCo
 		return { ok: true, skipped: true };
 	}
 
-	const from = env.RESEND_FROM_EMAIL ?? SANDBOX_FROM;
+	const from = env.RESEND_FROM_EMAIL ? `RetroHouse <${env.RESEND_FROM_EMAIL}>` : EMAIL_FROM;
 	const to = env.RESEND_CONTACT_TO ?? DEFAULT_CONTACT_INBOX;
 
 	const topicLabel = TOPIC_LABEL[data.topic];
@@ -60,16 +59,14 @@ export async function sendContactNotification(data: ContactData): Promise<SendCo
 		if (error) {
 			return {
 				ok: false,
-				message:
-					"Nie udało się wysłać wiadomości. Spróbuj ponownie za chwilę lub napisz na kontakt@retrohouse.pl.",
+				message: `Nie udało się wysłać wiadomości. Spróbuj ponownie za chwilę lub napisz na ${EMAIL_CONTACT}.`,
 			};
 		}
 
 		if (!sent?.id) {
 			return {
 				ok: false,
-				message:
-					"Nie udało się wysłać wiadomości. Spróbuj ponownie za chwilę lub napisz na kontakt@retrohouse.pl.",
+				message: `Nie udało się wysłać wiadomości. Spróbuj ponownie za chwilę lub napisz na ${EMAIL_CONTACT}.`,
 			};
 		}
 
@@ -77,8 +74,7 @@ export async function sendContactNotification(data: ContactData): Promise<SendCo
 	} catch {
 		return {
 			ok: false,
-			message:
-				"Przekroczono czas oczekiwania na e-mail. Spróbuj ponownie lub napisz na kontakt@retrohouse.pl.",
+			message: `Przekroczono czas oczekiwania na e-mail. Spróbuj ponownie lub napisz na ${EMAIL_CONTACT}.`,
 		};
 	} finally {
 		if (timeoutId !== undefined) clearTimeout(timeoutId);

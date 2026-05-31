@@ -31,11 +31,11 @@ const PAYMENT: Record<OrderPaymentStatus, StatusBadge> = {
 };
 
 const FULFILLMENT: Record<OrderFulfillmentStatus, StatusBadge> = {
-	not_fulfilled: { label: "Nieprzygotowane", tone: "warning" },
-	partially_fulfilled: { label: "Częśc. przygotowane", tone: "info" },
-	fulfilled: { label: "Przygotowane", tone: "info" },
-	partially_shipped: { label: "Częśc. wysłane", tone: "info" },
-	shipped: { label: "Wysłane", tone: "success" },
+	not_fulfilled: { label: "Oczekuje na akceptację", tone: "warning" },
+	partially_fulfilled: { label: "Częśc. w realizacji", tone: "info" },
+	fulfilled: { label: "Realizacja w toku", tone: "info" },
+	partially_shipped: { label: "Częśc. u kuriera", tone: "info" },
+	shipped: { label: "U kuriera", tone: "success" },
 	partially_delivered: { label: "Częśc. dostarczone", tone: "info" },
 	delivered: { label: "Dostarczone", tone: "success" },
 	canceled: { label: "Anulowane", tone: "danger" },
