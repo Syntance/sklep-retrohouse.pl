@@ -345,20 +345,25 @@ export async function getAdminOrder(id: string): Promise<AdminOrderDetail | null
 
 /** Pobiera zamówienie do maili — sesja panelu lub konto serwisowe (MEDUSA_ADMIN_*). */
 export async function getAdminOrderForEmail(id: string): Promise<AdminOrderDetail | null> {
-	const token = await getSessionToken();
-	if (token) {
-		try {
-			return await getAdminOrder(id);
-		} catch {
-			// brak uprawnień / błąd API — fallback na konto serwisowe
+	for (let attempt = 0; attempt < 3; attempt++) {
+		const token = await getSessionToken();
+		if (token) {
+			try {
+				const order = await getAdminOrder(id);
+				if (order) return order;
+			} catch {
+				// fallback na konto serwisowe
+			}
 		}
-	}
 
-	const data = await catalogAdminFetch<{ order: MedusaOrder }>(
-		`/admin/orders/${id}?fields=${DETAIL_FIELDS}`,
-	);
-	if (!data?.order) return null;
-	return mapMedusaOrderToDetail(data.order);
+		const data = await catalogAdminFetch<{ order: MedusaOrder }>(
+			`/admin/orders/${id}?fields=${DETAIL_FIELDS}`,
+		);
+		if (data?.order) return mapMedusaOrderToDetail(data.order);
+
+		if (attempt < 2) await new Promise((r) => setTimeout(r, 400));
+	}
+	return null;
 }
 
 /** Zaksięgowanie płatności (jeśli trzeba) + rozpoczęcie realizacji (fulfillment). */
@@ -427,14 +432,21 @@ type MedusaFulfillmentForShip = {
 	id: string;
 	shipped_at?: string | null;
 	canceled_at?: string | null;
-	items?: Array<{ id?: string | null; quantity?: number | null }> | null;
+	items?: Array<{
+		id?: string | null;
+		line_item_id?: string | null;
+		quantity?: number | null;
+	}> | null;
 };
+
+const SHIPMENT_FIELDS =
+	"id,fulfillments.id,fulfillments.shipped_at,fulfillments.canceled_at,fulfillments.items.id,fulfillments.items.line_item_id,fulfillments.items.quantity";
 
 /** Oznaczenie najnowszej wysyłki jako nadanej (shipment). */
 export async function markOrderShipped(orderId: string): Promise<void> {
 	const fetchFulfillments = () =>
 		adminFetch<{ order: { fulfillments?: MedusaFulfillmentForShip[] } }>(
-			`/admin/orders/${orderId}?fields=id,fulfillments.id,fulfillments.shipped_at,fulfillments.canceled_at,fulfillments.items.id,fulfillments.items.quantity`,
+			`/admin/orders/${orderId}?fields=${SHIPMENT_FIELDS}`,
 		);
 
 	let data = await fetchFulfillments();
@@ -451,9 +463,13 @@ export async function markOrderShipped(orderId: string): Promise<void> {
 		if (!fulfillment) throw new Error("Nie udało się przygotować przesyłki.");
 	}
 
+	// Medusa oczekuje ID pozycji zamówienia (ordli_*), nie ID fulfillment item (fulit_*).
 	const items = (fulfillment.items ?? [])
-		.filter((item) => item.id && (item.quantity ?? 0) > 0)
-		.map((item) => ({ id: item.id as string, quantity: item.quantity as number }));
+		.map((item) => ({
+			id: item.line_item_id ?? item.id ?? "",
+			quantity: item.quantity ?? 0,
+		}))
+		.filter((item) => item.id && item.quantity > 0);
 
 	await adminFetch(`/admin/orders/${orderId}/fulfillments/${fulfillment.id}/shipments`, {
 		method: "POST",

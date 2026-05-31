@@ -28,8 +28,10 @@ export async function POST(request: Request) {
 		if (!result.ok) {
 			return NextResponse.json({ ok: false, error: result.error }, { status: 422 });
 		}
-		void sendOrderStatusEmail(result.orderId, "placed").catch(() => {});
-		void sendNewOrderShopNotification(result.orderId).catch(() => {});
+		await Promise.all([
+			sendOrderStatusEmail(result.orderId, "placed"),
+			sendNewOrderShopNotification(result.orderId),
+		]);
 
 		return NextResponse.json({
 			ok: true,

@@ -22,10 +22,11 @@ type StageCopy = {
 
 const STAGE_COPY: Record<OrderEmailStage, StageCopy> = {
 	placed: {
-		subject: (id) => `[RetroHouse] Otrzymaliśmy zamówienie #${id}`,
-		headline: "Dziękujemy za zamówienie!",
+		subject: (id) => `[RetroHouse] Dziękujemy za zamówienie #${id}`,
+		headline: "Dziękujemy za złożenie zamówienia!",
 		body: [
-			"Potwierdzamy przyjęcie zamówienia. Gdy je zaakceptujemy, wyślemy kolejne potwierdzenie o rozpoczęciu realizacji.",
+			"Otrzymaliśmy Twoje zamówienie i właśnie je przetwarzamy.",
+			"Gdy je zaakceptujemy, wyślemy kolejne potwierdzenie o rozpoczęciu realizacji.",
 		],
 	},
 	realization_started: {
@@ -178,7 +179,7 @@ function buildShopHtml(order: AdminOrderDetail): string {
 <table width="100%" style="max-width:560px;margin:0 auto;background:#fffdf8;border:1px solid #e8dcc0;border-radius:12px;padding:24px">
 <tr><td>
 <p style="font-size:20px;font-weight:600;margin:0 0 8px">Nowe zamówienie #${order.displayId}</p>
-<p style="color:#7a6a5a;margin:0 0 16px">Wymaga akceptacji — zaksięguj płatność w panelu magazynu.</p>
+<p style="color:#7a6a5a;margin:0 0 16px">Powiadomienie z systemu sklepu — zamówienie wymaga akceptacji w magazynie.</p>
 <p style="margin:0 0 4px"><strong>${name}</strong></p>
 <p style="margin:0 0 4px">${esc(order.email)}</p>
 ${order.phone ? `<p style="margin:0 0 16px">${esc(order.phone)}</p>` : ""}
@@ -191,8 +192,9 @@ ${order.phone ? `<p style="margin:0 0 16px">${esc(order.phone)}</p>` : ""}
 function buildShopText(order: AdminOrderDetail): string {
 	const adminUrl = `${SITE_URL}/magazyn/zamowienia/${order.id}`;
 	return [
-		`Nowe zamówienie #${order.displayId} — do akceptacji`,
+		`Nowe zamówienie #${order.displayId} — powiadomienie z systemu sklepu`,
 		``,
+		`Złożone przez klienta na sklep-retrohouse.pl. Wymaga akceptacji w magazynie.`,
 		`Klient: ${customerName(order)}`,
 		`Email: ${order.email}`,
 		order.phone ? `Tel: ${order.phone}` : "",
@@ -236,7 +238,7 @@ export async function sendNewOrderShopNotification(
 
 	const result = await sendTransactionalEmail({
 		to: EMAIL_CONTACT,
-		subject: `[RetroHouse · Magazyn] Nowe zamówienie #${order.displayId} do akceptacji`,
+		subject: `[RetroHouse · System] Nowe zamówienie #${order.displayId} do akceptacji`,
 		text: buildShopText(order),
 		html: buildShopHtml(order),
 	});

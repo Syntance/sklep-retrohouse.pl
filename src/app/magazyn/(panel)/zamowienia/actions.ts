@@ -49,7 +49,7 @@ export async function runOrderAction(
 	revalidatePath(`/magazyn/zamowienia/${orderId}`);
 	revalidatePath("/magazyn");
 
-	void sendOrderStatusEmail(orderId, ACTION_EMAIL[action]).catch(() => {});
+	await sendOrderStatusEmail(orderId, ACTION_EMAIL[action]);
 
 	return { ok: true, error: null };
 }
