@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { getEpochOptions } from "@/lib/catalog/epochs";
+import { isMedusaBackendHealthy } from "@/lib/medusa/backend-health";
 import { getMedusaClient } from "@/lib/medusa/client";
 import { isMedusaConfigured } from "@/lib/medusa/is-medusa-configured";
 import { mapMedusaProduct, type MedusaStoreProduct } from "@/lib/products/map-from-medusa";
@@ -11,6 +12,7 @@ const PRODUCT_FIELDS =
 	"*variants,+variants.calculated_price,+variants.prices,+metadata,+categories,*images";
 
 let devMockWarned = false;
+let medusaUnavailableWarned = false;
 
 function warnDevMockCatalog(): void {
 	if (process.env.NODE_ENV !== "development" || devMockWarned) return;
@@ -20,12 +22,27 @@ function warnDevMockCatalog(): void {
 	);
 }
 
+function warnMedusaUnavailable(message: string): void {
+	if (medusaUnavailableWarned) return;
+	medusaUnavailableWarned = true;
+	console.warn(`[retrohouse] ${message}`);
+}
+
 export const getDefaultRegionId = cache(async (): Promise<string> => {
+	if (!(await isMedusaBackendHealthy())) return "";
+
 	const medusa = getMedusaClient();
 	if (!medusa) return "";
-	const { regions } = await medusa.store.region.list();
-	const pln = regions.find((region: { currency_code?: string | null }) => region.currency_code === "pln");
-	return pln?.id ?? regions[0]?.id ?? "";
+	try {
+		const { regions } = await medusa.store.region.list();
+		const pln = regions.find((region: { currency_code?: string | null }) => region.currency_code === "pln");
+		return pln?.id ?? regions[0]?.id ?? "";
+	} catch (error) {
+		warnMedusaUnavailable(
+			`Medusa region.list nieudane: ${error instanceof Error ? error.message : "nieznany błąd"}`,
+		);
+		return "";
+	}
 });
 
 export const listProducts = cache(async (): Promise<Product[]> => {
@@ -36,17 +53,25 @@ export const listProducts = cache(async (): Promise<Product[]> => {
 
 	const medusa = getMedusaClient();
 	if (!medusa) return DEV_MOCK_PRODUCTS;
+	if (!(await isMedusaBackendHealthy())) return [];
 
-	const [regionId, epochOptions] = await Promise.all([getDefaultRegionId(), getEpochOptions()]);
-	const { products } = await medusa.store.product.list({
-		limit: 100,
-		region_id: regionId || undefined,
-		fields: PRODUCT_FIELDS,
-	});
+	try {
+		const [regionId, epochOptions] = await Promise.all([getDefaultRegionId(), getEpochOptions()]);
+		const { products } = await medusa.store.product.list({
+			limit: 100,
+			region_id: regionId || undefined,
+			fields: PRODUCT_FIELDS,
+		});
 
-	return products
-		.map((product: MedusaStoreProduct) => mapMedusaProduct(product, epochOptions))
-		.filter((product: Product | null): product is Product => product !== null);
+		return products
+			.map((product: MedusaStoreProduct) => mapMedusaProduct(product, epochOptions))
+			.filter((product: Product | null): product is Product => product !== null);
+	} catch (error) {
+		warnMedusaUnavailable(
+			`Medusa product.list nieudane: ${error instanceof Error ? error.message : "nieznany błąd"}`,
+		);
+		return [];
+	}
 });
 
 export async function getProductBySlug(slug: string): Promise<Product | undefined> {
@@ -56,20 +81,28 @@ export async function getProductBySlug(slug: string): Promise<Product | undefine
 
 	const medusa = getMedusaClient();
 	if (!medusa) return undefined;
+	if (!(await isMedusaBackendHealthy())) return undefined;
 
-	const [regionId, epochOptions] = await Promise.all([getDefaultRegionId(), getEpochOptions()]);
-	const { products } = await medusa.store.product.list({
-		handle: slug,
-		limit: 1,
-		region_id: regionId || undefined,
-		fields: PRODUCT_FIELDS,
-	});
+	try {
+		const [regionId, epochOptions] = await Promise.all([getDefaultRegionId(), getEpochOptions()]);
+		const { products } = await medusa.store.product.list({
+			handle: slug,
+			limit: 1,
+			region_id: regionId || undefined,
+			fields: PRODUCT_FIELDS,
+		});
 
-	const mapped = products
-		.map((product: MedusaStoreProduct) => mapMedusaProduct(product, epochOptions))
-		.filter((product: Product | null): product is Product => product !== null);
+		const mapped = products
+			.map((product: MedusaStoreProduct) => mapMedusaProduct(product, epochOptions))
+			.filter((product: Product | null): product is Product => product !== null);
 
-	return mapped[0];
+		return mapped[0];
+	} catch (error) {
+		warnMedusaUnavailable(
+			`Medusa product.list(${slug}) nieudane: ${error instanceof Error ? error.message : "nieznany błąd"}`,
+		);
+		return undefined;
+	}
 }
 
 export async function getProductsBySlugs(slugs: string[]): Promise<Product[]> {
