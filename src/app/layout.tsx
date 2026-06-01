@@ -1,7 +1,6 @@
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
 import { CookieConsentBanner } from "@/components/cookie-consent";
 import { CartAddedCallout } from "@/components/cart-added-callout";
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -10,21 +9,6 @@ import { AnalyticsProvider } from "@/lib/analytics/provider";
 import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sklep-retrohouse.pl";
-
-const inter = Inter({
-	variable: "--font-inter",
-	subsets: ["latin", "latin-ext"],
-	display: "swap",
-	axes: ["opsz"],
-});
-
-const playfair = Playfair_Display({
-	variable: "--font-playfair",
-	subsets: ["latin", "latin-ext"],
-	display: "swap",
-	weight: ["400", "500", "600", "700", "800"],
-	style: ["normal", "italic"],
-});
 
 export const metadata: Metadata = {
 	metadataBase: new URL(SITE_URL),
@@ -92,7 +76,7 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="pl" className={`${inter.variable} ${playfair.variable} h-full antialiased`}>
+		<html lang="pl" className="h-full antialiased">
 			<body className="min-h-full flex flex-col bg-background text-foreground">
 				<a
 					href="#main"
