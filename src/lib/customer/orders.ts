@@ -24,7 +24,7 @@ async function getAdminToken(): Promise<string> {
 		throw new Error("MEDUSA_ADMIN_EMAIL i MEDUSA_ADMIN_PASSWORD są wymagane");
 	}
 
-	const res = await fetch(`${BASE_URL}/admin/auth/token`, {
+	const res = await fetch(`${BASE_URL}/auth/user/emailpass`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ email, password }),
@@ -36,8 +36,8 @@ async function getAdminToken(): Promise<string> {
 		throw new Error(`Medusa admin auth failed: ${res.status}`);
 	}
 
-	const data = (await res.json()) as { access_token: string };
-	const token = data.access_token;
+	const data = (await res.json()) as { token: string };
+	const token = data.token;
 
 	// Cache na 23h
 	adminTokenCache = {
