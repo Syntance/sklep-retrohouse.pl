@@ -27,11 +27,15 @@ export async function GET(request: Request) {
 			);
 		}
 
+		console.log(`[GET /api/customer/orders] Verified email from token: ${email}`);
+
 		const orders = await getCustomerOrders(email);
+
+		console.log(`[GET /api/customer/orders] Returning ${orders.length} orders for ${email}`);
 
 		return NextResponse.json({ ok: true, orders });
 	} catch (error) {
-		console.error("Customer orders error:", error);
+		console.error("[GET /api/customer/orders] Error:", error);
 		return NextResponse.json(
 			{ ok: false, error: "Nie udało się pobrać zamówień" },
 			{ status: 500 },

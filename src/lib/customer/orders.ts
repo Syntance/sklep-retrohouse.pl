@@ -124,10 +124,18 @@ export async function getCustomerOrders(email: string): Promise<CustomerOrder[]>
 			`/admin/orders?email=${encodeURIComponent(email)}&limit=50`
 		);
 
-		console.log(`[getCustomerOrders] Found ${response.orders.length} orders`);
+		console.log(`[getCustomerOrders] API returned ${response.orders.length} orders`);
+
+		// CRITICAL SECURITY: Zawsze filtruj po stronie aplikacji, nawet jeśli API ma parametr email
+		// (defense in depth - API może ignorować parametr lub mieć bug)
+		const filteredOrders = response.orders.filter(
+			(order) => order.email.toLowerCase() === email.toLowerCase()
+		);
+
+		console.log(`[getCustomerOrders] After filtering: ${filteredOrders.length} orders for ${email}`);
 
 		const now = Date.now();
-		return response.orders.map((order) => {
+		return filteredOrders.map((order) => {
 			const createdMs = new Date(order.created_at).getTime();
 			const ageMs = now - createdMs;
 			const ageDays = Math.floor(ageMs / (24 * 60 * 60 * 1000));
