@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CartIcon, CartPlusIcon, CheckIcon } from "@/components/icons";
 import { ConditionAcceptanceDialog } from "@/components/condition-acceptance-dialog";
 import { track } from "@/lib/analytics/posthog";
+import { useCartCalloutStore } from "@/lib/cart/callout-store";
 import type { ProductSource } from "@/lib/analytics/events";
 import type { Product } from "@/lib/products/types";
 import { useCartStore } from "@/lib/cart/store";
@@ -31,6 +32,7 @@ export function AddToCartButton({
 }: AddToCartButtonProps) {
 	const addItem = useCartStore((state) => state.addItem);
 	const removeItem = useCartStore((state) => state.removeItem);
+	const showCartCallout = useCartCalloutStore((state) => state.show);
 	const inCart = useCartStore((state) =>
 		state.items.some((item) => item.slug === product.slug),
 	);
@@ -40,6 +42,7 @@ export function AddToCartButton({
 	const handleClick = () => {
 		if (inCart) {
 			setFeedback("duplicate");
+			showCartCallout({ productName: product.name, variant: "duplicate" });
 			window.setTimeout(() => setFeedback("idle"), 2500);
 			return;
 		}
@@ -58,6 +61,7 @@ export function AddToCartButton({
 
 	const handleConfirm = () => {
 		setDialogOpen(false);
+		showCartCallout({ productName: product.name, variant: "added" });
 		window.setTimeout(() => setFeedback("idle"), 1500);
 	};
 

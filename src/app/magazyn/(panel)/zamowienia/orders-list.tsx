@@ -74,7 +74,7 @@ const PAYMENT_OPTIONS = [
 const FULFILLMENT_OPTIONS = [
 	{ value: "all", label: "Wszystkie wysyłki" },
 	{ value: "not_fulfilled", label: "Oczekuje na akceptację" },
-	{ value: "fulfilled", label: "Realizacja w toku" },
+	{ value: "fulfilled", label: "W toku" },
 	{ value: "shipped", label: "U kuriera" },
 	{ value: "delivered", label: "Dostarczone" },
 	{ value: "canceled", label: "Anulowane" },
@@ -315,7 +315,7 @@ export function OrdersList({ orders }: Props) {
 						<tbody className="divide-y divide-border">
 							{filtered.map((order) => {
 								const payment = paymentStatusBadge(order.paymentStatus);
-								const fulfillment = fulfillmentStatusBadge(order.fulfillmentStatus);
+								const fulfillment = fulfillmentStatusBadge(order.fulfillmentStatus, order.status);
 								const status = orderStatusBadge(order.status);
 
 								return (

@@ -33,7 +33,7 @@ const PAYMENT: Record<OrderPaymentStatus, StatusBadge> = {
 const FULFILLMENT: Record<OrderFulfillmentStatus, StatusBadge> = {
 	not_fulfilled: { label: "Oczekuje na akceptację", tone: "warning" },
 	partially_fulfilled: { label: "Częśc. w realizacji", tone: "info" },
-	fulfilled: { label: "Realizacja w toku", tone: "info" },
+	fulfilled: { label: "W toku", tone: "info" },
 	partially_shipped: { label: "Częśc. u kuriera", tone: "info" },
 	shipped: { label: "U kuriera", tone: "success" },
 	partially_delivered: { label: "Częśc. dostarczone", tone: "info" },
@@ -49,7 +49,13 @@ export function paymentStatusBadge(status: OrderPaymentStatus): StatusBadge {
 	return PAYMENT[status] ?? { label: status, tone: "neutral" };
 }
 
-export function fulfillmentStatusBadge(status: OrderFulfillmentStatus): StatusBadge {
+export function fulfillmentStatusBadge(
+	status: OrderFulfillmentStatus,
+	orderStatus?: OrderStatus,
+): StatusBadge {
+	if (orderStatus === "canceled") {
+		return { label: "Anulowane", tone: "danger" };
+	}
 	return FULFILLMENT[status] ?? { label: status, tone: "neutral" };
 }
 

@@ -3,6 +3,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import { CookieConsentBanner } from "@/components/cookie-consent";
+import { CartAddedCallout } from "@/components/cart-added-callout";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { AnalyticsProvider } from "@/lib/analytics/provider";
@@ -105,6 +106,7 @@ export default function RootLayout({
 					<SiteFooter />
 				</AnalyticsProvider>
 				<CookieConsentBanner />
+				<CartAddedCallout />
 				<SpeedInsights />
 				<Analytics />
 			</body>

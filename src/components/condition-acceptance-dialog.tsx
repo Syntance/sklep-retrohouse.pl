@@ -64,7 +64,7 @@ export function ConditionAcceptanceDialog({
 			aria-describedby="condition-acceptance-desc"
 			className="fixed inset-0 z-100 flex items-center justify-center p-4"
 		>
-			<div className="absolute inset-0 bg-ink/60 backdrop-blur-sm" aria-hidden="true" />
+			<div className="absolute inset-0 bg-ink/50" aria-hidden="true" />
 
 			<div className="relative z-10 w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-xl sm:p-8">
 				<p className="font-sans text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-brass">

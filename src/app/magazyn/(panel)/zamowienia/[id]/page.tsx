@@ -96,7 +96,7 @@ export default async function OrderDetailPage({
 
 	const status = orderStatusBadge(order.status);
 	const payment = paymentStatusBadge(order.paymentStatus);
-	const fulfillment = fulfillmentStatusBadge(order.fulfillmentStatus);
+	const fulfillment = fulfillmentStatusBadge(order.fulfillmentStatus, order.status);
 	const flags = actionFlags(order);
 	const metaEntries = Object.entries(order.metadata).filter(([key]) => key in META_LABELS);
 
