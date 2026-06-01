@@ -4,7 +4,9 @@ import { cn } from "@/lib/utils";
 
 const GIFT_HERO_MAX_PRICE = 1000;
 
-export function pickGiftHeroProduct(products: readonly Product[]): Product {
+export function pickGiftHeroProduct(products: readonly Product[]): Product | null {
+	if (products.length === 0) return null;
+
 	const eligible = products.filter((product) => product.price <= GIFT_HERO_MAX_PRICE);
 	if (eligible.length === 0) {
 		return products.reduce((cheapest, product) =>

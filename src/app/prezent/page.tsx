@@ -84,10 +84,21 @@ export default async function PrezentPage() {
 								</CtaLink>
 							</div>
 						</div>
-						<GiftHeroProduct
-							product={heroProduct}
-							className="lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-start"
-						/>
+						{heroProduct ? (
+							<GiftHeroProduct
+								product={heroProduct}
+								className="lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-start"
+							/>
+						) : (
+							<div
+								aria-hidden
+								className="aspect-5/6 w-full rounded-3xl border border-border bg-card shadow-xl lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-start"
+								style={{
+									backgroundImage:
+										"radial-gradient(120% 80% at 30% 20%, oklch(0.78 0.06 60), transparent 60%), linear-gradient(135deg, oklch(0.52 0.15 38), oklch(0.74 0.10 80))",
+								}}
+							/>
+						)}
 					</div>
 				</Container>
 			</Section>

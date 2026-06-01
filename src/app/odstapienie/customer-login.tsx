@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	CustomerLoginSchema,
 	CustomerCodeOnlySchema,
@@ -23,27 +22,28 @@ export function CustomerLogin({ onSuccess }: Props) {
 	const [email, setEmail] = useState("");
 	const [loading, setLoading] = useState(false);
 
-	const loginForm = useForm<CustomerLoginInput>({
-		resolver: zodResolver(CustomerLoginSchema),
-	});
-
-	const otpForm = useForm<CustomerCodeOnlyInput>({
-		resolver: zodResolver(CustomerCodeOnlySchema),
-	});
+	const loginForm = useForm<CustomerLoginInput>();
+	const otpForm = useForm<CustomerCodeOnlyInput>();
 
 	async function handleRequestCode(data: CustomerLoginInput) {
+		const parsed = CustomerLoginSchema.safeParse(data);
+		if (!parsed.success) {
+			const emailIssue = parsed.error.issues.find((issue) => issue.path[0] === "email");
+			if (emailIssue) loginForm.setError("email", { message: emailIssue.message });
+			return;
+		}
 		setLoading(true);
 		try {
 			const res = await fetch("/api/customer/login", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(data),
+				body: JSON.stringify(parsed.data),
 			});
 
 			const json = await res.json();
 
 			if (json.ok) {
-				setEmail(data.email);
+				setEmail(parsed.data.email);
 				otpForm.reset({ code: "" }); // Reset formularza kodu
 				setStep("code");
 				toast.success("Kod został wysłany na Twój email");
@@ -58,12 +58,17 @@ export function CustomerLogin({ onSuccess }: Props) {
 	}
 
 	async function handleVerifyCode(data: CustomerCodeOnlyInput) {
-		console.log("[handleVerifyCode] Called with:", data);
-		console.log("[handleVerifyCode] Email state:", email);
+		const parsed = CustomerCodeOnlySchema.safeParse(data);
+		if (!parsed.success) {
+			const codeIssue = parsed.error.issues.find((issue) => issue.path[0] === "code");
+			if (codeIssue) otpForm.setError("code", { message: codeIssue.message });
+			toast.error("Kod musi mieć 6 cyfr");
+			return;
+		}
+
 		setLoading(true);
 		try {
-			const payload = { ...data, email };
-			console.log("[handleVerifyCode] Sending payload:", payload);
+			const payload = { ...parsed.data, email };
 			
 			const res = await fetch("/api/customer/verify-otp", {
 				method: "POST",
@@ -72,7 +77,6 @@ export function CustomerLogin({ onSuccess }: Props) {
 			});
 
 			const json = await res.json();
-			console.log("[handleVerifyCode] Response:", json);
 
 			if (json.ok && json.token) {
 				toast.success("Zalogowano");
@@ -80,8 +84,7 @@ export function CustomerLogin({ onSuccess }: Props) {
 			} else {
 				toast.error(json.error ?? "Niepoprawny kod");
 			}
-		} catch (error) {
-			console.error("[handleVerifyCode] Error:", error);
+		} catch {
 			toast.error("Błąd połączenia");
 		} finally {
 			setLoading(false);
