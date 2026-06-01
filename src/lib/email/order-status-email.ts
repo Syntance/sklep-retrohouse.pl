@@ -1,8 +1,14 @@
 import "server-only";
 
+import { getEmailTemplateForSend } from "@/lib/admin/email-templates";
 import type { AdminOrderDetail } from "@/lib/admin/orders";
 import { getAdminOrderForEmail } from "@/lib/admin/orders";
 import { EMAIL_CONTACT, SITE_URL } from "@/lib/email/constants";
+import {
+	buildOrderRenderContext,
+	mergeSubject,
+	renderTemplate,
+} from "@/lib/email/render-template";
 import { sendTransactionalEmail } from "@/lib/email/send-transactional";
 import { formatPrice } from "@/lib/format";
 
@@ -50,7 +56,7 @@ const STAGE_COPY: Record<OrderEmailStage, StageCopy> = {
 		headline: "Zamówienie zakończone",
 		body: [
 			"Dziękujemy za zakupy w RetroHouse. Mamy nadzieję, że antyki cieszą w Twoim wnętrzu.",
-			"Masz 14 dni na odstąpienie od umowy — szczegóły: " + `${SITE_URL}/odstapienie`,
+			`Masz 14 dni na odstąpienie od umowy — szczegóły: ${SITE_URL}/odstapienie`,
 		],
 	},
 	cancelled: {
@@ -58,7 +64,7 @@ const STAGE_COPY: Record<OrderEmailStage, StageCopy> = {
 		headline: "Zamówienie zostało anulowane",
 		body: [
 			"Twoje zamówienie zostało anulowane. Jeśli płatność została pobrana, zwrot środków nastąpi zgodnie z regulaminem.",
-			"Pytania? Napisz na " + EMAIL_CONTACT,
+			`Pytania? Napisz na ${EMAIL_CONTACT}`,
 		],
 	},
 };
@@ -218,14 +224,27 @@ export async function sendOrderStatusEmail(
 	const order = await getAdminOrderForEmail(orderId);
 	if (!order?.email.trim()) return { ok: true, skipped: true };
 
-	const copy = STAGE_COPY[stage];
-	const result = await sendTransactionalEmail({
-		to: order.email,
-		subject: copy.subject(order.displayId),
-		text: buildText(order, copy),
-		html: buildHtml(order, copy),
-	});
+	// Override z wizualnego edytora (/magazyn/maile); fallback do szablonu w kodzie.
+	const saved = await getEmailTemplateForSend(stage).catch(() => null);
 
+	let subject: string;
+	let text: string;
+	let html: string;
+
+	if (saved) {
+		const ctx = buildOrderRenderContext(order);
+		const rendered = renderTemplate(saved, ctx);
+		subject = mergeSubject(saved.subject, ctx.vars);
+		text = rendered.text;
+		html = rendered.html;
+	} else {
+		const copy = STAGE_COPY[stage];
+		subject = copy.subject(order.displayId);
+		text = buildText(order, copy);
+		html = buildHtml(order, copy);
+	}
+
+	const result = await sendTransactionalEmail({ to: order.email, subject, text, html });
 	return result.ok ? { ok: true, skipped: result.skipped } : { ok: false };
 }
 

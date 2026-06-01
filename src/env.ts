@@ -1,6 +1,9 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
+const isStrictEnv =
+	process.env.NODE_ENV === "production" && process.env.SKIP_ENV_VALIDATION !== "true";
+
 /**
  * Centralna walidacja zmiennych środowiskowych.
  * Build fails gdy required env brakuje — zgodnie z 55-security.mdc.
@@ -41,7 +44,9 @@ export const env = createEnv({
 			.url()
 			.default("https://medusa-backend-production-9270.up.railway.app"),
 		/** Publishable API key ze sklepu Medusa (Settings → Publishable API Keys). */
-		NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: z.string().min(1),
+		NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: isStrictEnv
+			? z.string().min(1)
+			: z.string().min(1).optional(),
 
 		NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: z.string().optional(),
 

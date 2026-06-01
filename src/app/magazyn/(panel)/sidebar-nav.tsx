@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, LayoutGrid, Package, ShoppingBag, Tags } from "lucide-react";
+import { Clock, LayoutGrid, Mail, Package, ShoppingBag, Tags } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,7 @@ const LINKS = [
 	{ href: "/magazyn/produkty", label: "Produkty", icon: Package, exact: false },
 	{ href: "/magazyn/kategorie", label: "Kategorie", icon: Tags, exact: false },
 	{ href: "/magazyn/epoki", label: "Epoki", icon: Clock, exact: false },
+	{ href: "/magazyn/maile", label: "Maile", icon: Mail, exact: false },
 ];
 
 export function SidebarNav() {

@@ -30,15 +30,10 @@ export type SendOrderConfirmationResult =
 /**
  * Wysyła e-mail z potwierdzeniem zamówienia do klienta.
  *
- * Zawiera (wymogi art. 21 UPK):
- *  - pouczenie o prawie odstąpienia (14 dni)
- *  - link do formularza /odstapienie
+ * Zawiera m.in.:
  *  - link do regulaminu (wersja z momentu zakupu)
  *  - link do /reklamacje
  *  - snapshot opisu stanu każdego przedmiotu
- *
- * Załączniki PDF (formularz UPK + regulamin) należy wgrać do Vercel Blob
- * lub R2 i podmienić URL-e poniżej gdy będą dostępne.
  */
 export async function sendOrderConfirmation(
 	data: OrderConfirmationData,
@@ -74,15 +69,6 @@ export async function sendOrderConfirmation(
 		`Wysyłka: ${data.shippingMethod}`,
 		`Razem: ${(data.totalPrice / 100).toFixed(2).replace(".", ",")} zł`,
 		``,
-		`── PRAWO ODSTĄPIENIA OD UMOWY (art. 27 UPK) ──────────`,
-		`Masz 14 dni na odstąpienie od umowy od dnia otrzymania przesyłki`,
-		`— bez podania przyczyny.`,
-		`Formularz odstąpienia i pełna procedura: https://sklep-retrohouse.pl/odstapienie`,
-		``,
-		`Pamiętaj: antyki są rzeczami używanymi. Odpowiadasz za zmniejszenie`,
-		`wartości przedmiotu wynikłe z korzystania ponad to, co konieczne do`,
-		`sprawdzenia jego charakteru (art. 34 ust. 4 UPK).`,
-		``,
 		`── REKLAMACJE ──────────────────────────────────────────`,
 		`Procedura reklamacyjna: https://sklep-retrohouse.pl/reklamacje`,
 		``,
@@ -107,9 +93,8 @@ export async function sendOrderConfirmation(
 		subject,
 		text,
 		html,
-		// TODO: gdy pliki PDF będą dostępne w Vercel Blob / R2, odkomentuj:
+		// TODO: gdy regulamin PDF będzie w Vercel Blob / R2, odkomentuj:
 		// attachments: [
-		//   { filename: "formularz-odstapienia-upk.pdf", path: "https://..." },
 		//   { filename: `regulamin-${data.acceptance.termsVersion}.pdf`, path: "https://..." },
 		// ],
 	});
@@ -193,22 +178,6 @@ function buildHtml(data: OrderConfirmationData, _itemsText: string): string {
               </td>
             </tr>
           </table>
-
-          <!-- Withdrawal notice (art. 21 UPK) -->
-          <div style="background:#fdf3e8;border:1px solid #e8b06a;border-radius:12px;padding:20px;margin-bottom:24px">
-            <p style="margin:0 0 8px;font-weight:700;font-size:15px">Prawo odstąpienia od umowy</p>
-            <p style="margin:0;font-size:13px;line-height:1.7;color:#5a3a1a">
-              Masz <strong>14 dni na odstąpienie od umowy</strong> od dnia otrzymania przesyłki
-              — bez podania przyczyny (art. 27 UPK).<br><br>
-              Formularz i pełna procedura:
-              <a href="https://sklep-retrohouse.pl/odstapienie" style="color:#c8622a;font-weight:600">
-                sklep-retrohouse.pl/odstapienie
-              </a><br><br>
-              Pamiętaj: antyki są rzeczami używanymi. Odpowiadasz za zmniejszenie wartości
-              wynikłe z korzystania ponad to, co konieczne do sprawdzenia charakteru przedmiotu
-              (art. 34 ust. 4 UPK).
-            </p>
-          </div>
 
           <!-- Links -->
           <p style="font-size:13px;color:#7a6a5a;line-height:2">

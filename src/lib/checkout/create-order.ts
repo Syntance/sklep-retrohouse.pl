@@ -26,7 +26,7 @@ export type CreateOrderResult =
 
 async function storeFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
 	const headers = new Headers(init.headers);
-	headers.set("x-publishable-api-key", PUBLISHABLE_KEY);
+	headers.set("x-publishable-api-key", PUBLISHABLE_KEY ?? "");
 	if (init.body) headers.set("Content-Type", "application/json");
 
 	const res = await fetch(`${BASE_URL}${path}`, {

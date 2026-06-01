@@ -1,21 +1,42 @@
 import "server-only";
 import { cache } from "react";
 import { getEpochOptions } from "@/lib/catalog/epochs";
-import { medusa } from "@/lib/medusa/client";
+import { getMedusaClient } from "@/lib/medusa/client";
+import { isMedusaConfigured } from "@/lib/medusa/is-medusa-configured";
 import { mapMedusaProduct, type MedusaStoreProduct } from "@/lib/products/map-from-medusa";
+import { DEV_MOCK_PRODUCTS } from "@/lib/products/mock-catalog";
 import type { Product } from "@/lib/products/types";
 
 const PRODUCT_FIELDS =
 	"*variants,+variants.calculated_price,+variants.prices,+metadata,+categories,*images";
 
+let devMockWarned = false;
+
+function warnDevMockCatalog(): void {
+	if (process.env.NODE_ENV !== "development" || devMockWarned) return;
+	devMockWarned = true;
+	console.warn(
+		"[retrohouse] Brak NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY — katalog demo. Dodaj pk_… do .env.local.",
+	);
+}
+
 export const getDefaultRegionId = cache(async (): Promise<string> => {
+	const medusa = getMedusaClient();
+	if (!medusa) return "";
 	const { regions } = await medusa.store.region.list();
-	// Sklep sprzedaje w PLN — preferuj region złotówkowy (na backendzie istnieje też EUR).
 	const pln = regions.find((region: { currency_code?: string | null }) => region.currency_code === "pln");
 	return pln?.id ?? regions[0]?.id ?? "";
 });
 
 export const listProducts = cache(async (): Promise<Product[]> => {
+	if (!isMedusaConfigured()) {
+		warnDevMockCatalog();
+		return DEV_MOCK_PRODUCTS;
+	}
+
+	const medusa = getMedusaClient();
+	if (!medusa) return DEV_MOCK_PRODUCTS;
+
 	const [regionId, epochOptions] = await Promise.all([getDefaultRegionId(), getEpochOptions()]);
 	const { products } = await medusa.store.product.list({
 		limit: 100,
@@ -29,6 +50,13 @@ export const listProducts = cache(async (): Promise<Product[]> => {
 });
 
 export async function getProductBySlug(slug: string): Promise<Product | undefined> {
+	if (!isMedusaConfigured()) {
+		return DEV_MOCK_PRODUCTS.find((product) => product.slug === slug);
+	}
+
+	const medusa = getMedusaClient();
+	if (!medusa) return undefined;
+
 	const [regionId, epochOptions] = await Promise.all([getDefaultRegionId(), getEpochOptions()]);
 	const { products } = await medusa.store.product.list({
 		handle: slug,
