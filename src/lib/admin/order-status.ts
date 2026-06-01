@@ -2,7 +2,7 @@ import type {
 	OrderFulfillmentStatus,
 	OrderPaymentStatus,
 	OrderStatus,
-} from "@/lib/admin/orders";
+} from "@/lib/admin/order-types";
 
 type Tone = "neutral" | "info" | "success" | "warning" | "danger";
 
