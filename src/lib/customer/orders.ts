@@ -120,8 +120,9 @@ export async function getCustomerOrders(email: string): Promise<CustomerOrder[]>
 	
 	try {
 		// Pobierz zamówienia z Admin API filtrowane po emailu
+		// CRITICAL: fields=+email MUSI być w query - bez tego Medusa nie zwraca pola email!
 		const response = await adminFetch<{ orders: MedusaOrder[]; count: number }>(
-			`/admin/orders?email=${encodeURIComponent(email)}&limit=50`
+			`/admin/orders?email=${encodeURIComponent(email)}&limit=50&fields=+email`
 		);
 
 		console.log(`[getCustomerOrders] API returned ${response.orders.length} orders`);
