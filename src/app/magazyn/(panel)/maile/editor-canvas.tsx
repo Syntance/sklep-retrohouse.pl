@@ -20,6 +20,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Copy, GripVertical, Trash2 } from "lucide-react";
 import type { Block } from "@/lib/email/template-types";
 import { cn } from "@/lib/utils";
+import { editorBtnRounded } from "./editor-chrome";
 import { BLOCK_META } from "./block-meta";
 
 function snippet(block: Block): string {
@@ -97,7 +98,10 @@ function SortableRow({
 				type="button"
 				aria-label="Duplikuj blok"
 				onClick={onDuplicate}
-				className="inline-flex size-7 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+				className={cn(
+					editorBtnRounded,
+					"inline-flex size-7 items-center justify-center text-muted-foreground hover:bg-muted hover:text-foreground",
+				)}
 			>
 				<Copy className="size-3.5" aria-hidden />
 			</button>
@@ -105,7 +109,10 @@ function SortableRow({
 				type="button"
 				aria-label="Usuń blok"
 				onClick={onDelete}
-				className="inline-flex size-7 items-center justify-center rounded text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+				className={cn(
+					editorBtnRounded,
+					"inline-flex size-7 items-center justify-center text-muted-foreground hover:bg-destructive/10 hover:text-destructive",
+				)}
 			>
 				<Trash2 className="size-3.5" aria-hidden />
 			</button>

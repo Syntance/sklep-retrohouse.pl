@@ -21,6 +21,13 @@ import {
 } from "./actions";
 import { BLOCK_META, createBlock, duplicateBlock, PALETTE_BLOCKS } from "./block-meta";
 import { BlockInspector, type ImageUploader } from "./block-inspector";
+import {
+	editorBtnRounded,
+	segmentItem,
+	segmentItemActive,
+	segmentItemIdle,
+	segmentTrack,
+} from "./editor-chrome";
 import { EditorCanvas } from "./editor-canvas";
 import { ThemePanel } from "./theme-panel";
 
@@ -168,9 +175,10 @@ export function EmailEditor({ initialTemplates }: { initialTemplates: EmailTempl
 						type="button"
 						onClick={() => switchTemplate(type)}
 						className={cn(
-							"rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+							editorBtnRounded,
+							"px-3.5 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
 							type === activeType
-								? "bg-primary text-primary-foreground"
+								? segmentItemActive
 								: "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground",
 						)}
 					>
@@ -201,7 +209,10 @@ export function EmailEditor({ initialTemplates }: { initialTemplates: EmailTempl
 							type="button"
 							onClick={() => insertVariable(v.token)}
 							title={v.label}
-							className="rounded border border-input px-2 py-0.5 font-mono text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+							className={cn(
+								editorBtnRounded,
+								"border border-input px-2 py-0.5 font-mono text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+							)}
 						>
 							{`{{${v.token}}}`}
 						</button>
@@ -266,16 +277,15 @@ export function EmailEditor({ initialTemplates }: { initialTemplates: EmailTempl
 				{/* Lewa: Blok/Motyw, paleta, lista bloków */}
 				<div className="flex flex-col gap-3">
 					<div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
-						<div className="inline-flex w-full rounded-md border border-input p-0.5">
+						<div className={cn(segmentTrack, "w-full")}>
 							<button
 								type="button"
 								onClick={() => setLeftPanelTab("block")}
 								aria-pressed={leftPanelTab === "block"}
 								className={cn(
-									"flex-1 rounded px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
-									leftPanelTab === "block"
-										? "bg-primary text-primary-foreground"
-										: "text-muted-foreground hover:bg-muted",
+									"flex-1 px-3 py-1.5 text-sm font-medium",
+									segmentItem,
+									leftPanelTab === "block" ? segmentItemActive : segmentItemIdle,
 								)}
 							>
 								Blok
@@ -285,10 +295,9 @@ export function EmailEditor({ initialTemplates }: { initialTemplates: EmailTempl
 								onClick={() => setLeftPanelTab("theme")}
 								aria-pressed={leftPanelTab === "theme"}
 								className={cn(
-									"flex-1 rounded px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
-									leftPanelTab === "theme"
-										? "bg-primary text-primary-foreground"
-										: "text-muted-foreground hover:bg-muted",
+									"flex-1 px-3 py-1.5 text-sm font-medium",
+									segmentItem,
+									leftPanelTab === "theme" ? segmentItemActive : segmentItemIdle,
 								)}
 							>
 								Motyw
@@ -322,7 +331,10 @@ export function EmailEditor({ initialTemplates }: { initialTemplates: EmailTempl
 										key={type}
 										type="button"
 										onClick={() => addBlock(type)}
-										className="inline-flex items-center gap-1.5 rounded-lg border border-input px-2 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+										className={cn(
+											editorBtnRounded,
+											"inline-flex items-center gap-1.5 border border-input px-2 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+										)}
 									>
 										<Icon className="size-3.5 text-muted-foreground" aria-hidden />
 										<span className="truncate">{BLOCK_META[type].label}</span>
@@ -356,15 +368,16 @@ export function EmailEditor({ initialTemplates }: { initialTemplates: EmailTempl
 						<h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
 							Podgląd (dane przykładowe)
 						</h3>
-						<div className="inline-flex rounded-md border border-input p-0.5">
+						<div className={segmentTrack}>
 							<button
 								type="button"
 								aria-label="Podgląd desktop"
 								aria-pressed={previewMode === "desktop"}
 								onClick={() => setPreviewMode("desktop")}
 								className={cn(
-									"inline-flex size-7 items-center justify-center rounded transition-colors",
-									previewMode === "desktop" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted",
+									"inline-flex size-7 items-center justify-center",
+									segmentItem,
+									previewMode === "desktop" ? segmentItemActive : segmentItemIdle,
 								)}
 							>
 								<Monitor className="size-4" aria-hidden />
@@ -375,8 +388,9 @@ export function EmailEditor({ initialTemplates }: { initialTemplates: EmailTempl
 								aria-pressed={previewMode === "mobile"}
 								onClick={() => setPreviewMode("mobile")}
 								className={cn(
-									"inline-flex size-7 items-center justify-center rounded transition-colors",
-									previewMode === "mobile" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted",
+									"inline-flex size-7 items-center justify-center",
+									segmentItem,
+									previewMode === "mobile" ? segmentItemActive : segmentItemIdle,
 								)}
 							>
 								<Smartphone className="size-4" aria-hidden />

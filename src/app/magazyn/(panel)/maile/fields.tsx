@@ -2,9 +2,12 @@
 
 import { AlignCenter, AlignLeft, AlignRight } from "lucide-react";
 import { useId } from "react";
+import { CheckboxInput } from "@/components/ui/checkbox-input";
 import { Input } from "@/components/ui/input";
 import type { TextAlign } from "@/lib/email/template-types";
 import { cn } from "@/lib/utils";
+import { colorSwatchInput, segmentItem, segmentItemActive, segmentItemIdle, segmentTrack } from "./editor-chrome";
+import "./email-editor.css";
 
 function FieldLabel({ htmlFor, children }: { htmlFor: string; children: string }) {
 	return (
@@ -124,7 +127,7 @@ export function ColorField({
 					aria-label={`${label} — wybór koloru`}
 					value={safe}
 					onChange={(e) => onChange(e.target.value)}
-					className="h-9 w-10 shrink-0 cursor-pointer rounded-md border border-input bg-transparent p-1"
+					className={colorSwatchInput}
 				/>
 				<Input
 					id={id}
@@ -150,12 +153,7 @@ export function ToggleField({
 	return (
 		<label className="flex cursor-pointer items-center justify-between gap-3 text-sm">
 			<span className="font-medium text-foreground">{label}</span>
-			<input
-				type="checkbox"
-				checked={checked}
-				onChange={(e) => onChange(e.target.checked)}
-				className="size-4 cursor-pointer accent-primary"
-			/>
+			<CheckboxInput checked={checked} onChange={(e) => onChange(e.target.checked)} />
 		</label>
 	);
 }
@@ -207,7 +205,7 @@ export function AlignField({
 	return (
 		<fieldset className="flex flex-col gap-1.5 border-0 p-0">
 			<legend className="mb-1.5 text-sm font-medium text-foreground">Wyrównanie</legend>
-			<div className="inline-flex w-fit rounded-md border border-input p-0.5">
+			<div className={cn(segmentTrack, "w-fit")}>
 				{ALIGN_OPTIONS.map(({ value: v, icon: Icon, label }) => (
 					<button
 						key={v}
@@ -216,8 +214,9 @@ export function AlignField({
 						aria-pressed={value === v}
 						onClick={() => onChange(v)}
 						className={cn(
-							"inline-flex size-8 items-center justify-center rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
-							value === v ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted",
+							"inline-flex size-8 items-center justify-center",
+							segmentItem,
+							value === v ? segmentItemActive : segmentItemIdle,
 						)}
 					>
 						<Icon className="size-4" aria-hidden />

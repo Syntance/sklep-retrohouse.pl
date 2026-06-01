@@ -16,6 +16,8 @@ import type {
 	SpacerBlock,
 	TextBlock,
 } from "@/lib/email/template-types";
+import { cn } from "@/lib/utils";
+import { editorBtnRounded } from "./editor-chrome";
 import { BLOCK_META, createBlock, LEAF_PALETTE } from "./block-meta";
 import {
 	AlignField,
@@ -311,7 +313,10 @@ function ColumnsEditor({
 								key={type}
 								type="button"
 								onClick={() => onChange({ ...block, [side]: [...items, createBlock(type) as LeafBlock] })}
-								className="inline-flex items-center gap-1 rounded border border-input px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+								className={cn(
+									editorBtnRounded,
+									"inline-flex items-center gap-1 border border-input px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+								)}
 							>
 								<Icon className="size-3.5" aria-hidden />
 								{BLOCK_META[type].label}
