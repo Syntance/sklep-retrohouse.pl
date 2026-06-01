@@ -5,9 +5,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	CustomerLoginSchema,
-	CustomerVerifyOtpSchema,
+	CustomerCodeOnlySchema,
 	type CustomerLoginInput,
-	type CustomerVerifyOtpInput,
+	type CustomerCodeOnlyInput,
 } from "@/lib/validation/returns";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -27,8 +27,8 @@ export function CustomerLogin({ onSuccess }: Props) {
 		resolver: zodResolver(CustomerLoginSchema),
 	});
 
-	const otpForm = useForm<CustomerVerifyOtpInput>({
-		resolver: zodResolver(CustomerVerifyOtpSchema),
+	const otpForm = useForm<CustomerCodeOnlyInput>({
+		resolver: zodResolver(CustomerCodeOnlySchema),
 	});
 
 	async function handleRequestCode(data: CustomerLoginInput) {
@@ -57,16 +57,22 @@ export function CustomerLogin({ onSuccess }: Props) {
 		}
 	}
 
-	async function handleVerifyCode(data: CustomerVerifyOtpInput) {
+	async function handleVerifyCode(data: CustomerCodeOnlyInput) {
+		console.log("[handleVerifyCode] Called with:", data);
+		console.log("[handleVerifyCode] Email state:", email);
 		setLoading(true);
 		try {
+			const payload = { ...data, email };
+			console.log("[handleVerifyCode] Sending payload:", payload);
+			
 			const res = await fetch("/api/customer/verify-otp", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ ...data, email }),
+				body: JSON.stringify(payload),
 			});
 
 			const json = await res.json();
+			console.log("[handleVerifyCode] Response:", json);
 
 			if (json.ok && json.token) {
 				toast.success("Zalogowano");
@@ -74,7 +80,8 @@ export function CustomerLogin({ onSuccess }: Props) {
 			} else {
 				toast.error(json.error ?? "Niepoprawny kod");
 			}
-		} catch {
+		} catch (error) {
+			console.error("[handleVerifyCode] Error:", error);
 			toast.error("Błąd połączenia");
 		} finally {
 			setLoading(false);
@@ -124,7 +131,16 @@ export function CustomerLogin({ onSuccess }: Props) {
 				Kod został wysłany na <strong>{email}</strong>
 			</p>
 
-			<form onSubmit={otpForm.handleSubmit(handleVerifyCode)} className="space-y-4">
+			<form 
+				onSubmit={otpForm.handleSubmit(
+					handleVerifyCode,
+					(errors) => {
+						console.log("[otpForm] Validation errors:", errors);
+						toast.error("Kod musi mieć 6 cyfr");
+					}
+				)} 
+				className="space-y-4"
+			>
 				<div>
 					<label htmlFor="code" className="block text-sm font-medium mb-1.5">
 						Kod (6 cyfr)

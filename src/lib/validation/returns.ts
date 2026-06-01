@@ -10,6 +10,11 @@ export const CustomerVerifyOtpSchema = z.object({
 	code: z.string().length(6, "Kod musi mieć 6 cyfr").regex(/^\d{6}$/, "Kod składa się tylko z cyfr"),
 });
 
+/** Schema tylko dla pola code w formularzu (email dodawany później) */
+export const CustomerCodeOnlySchema = z.object({
+	code: z.string().length(6, "Kod musi mieć 6 cyfr").regex(/^\d{6}$/, "Kod składa się tylko z cyfr"),
+});
+
 /** Tworzenie wniosku o zwrot/odstąpienie. */
 export const CreateReturnSchema = z.object({
 	orderId: z.string().min(1),
@@ -19,4 +24,5 @@ export const CreateReturnSchema = z.object({
 
 export type CustomerLoginInput = z.infer<typeof CustomerLoginSchema>;
 export type CustomerVerifyOtpInput = z.infer<typeof CustomerVerifyOtpSchema>;
+export type CustomerCodeOnlyInput = z.infer<typeof CustomerCodeOnlySchema>;
 export type CreateReturnInput = z.infer<typeof CreateReturnSchema>;
