@@ -28,18 +28,22 @@ export function CustomerOrders({ token, onLogout }: Props) {
 	}, []);
 
 	async function fetchOrders() {
+		console.log("[fetchOrders] Fetching with token:", token.slice(0, 20) + "...");
 		try {
 			const res = await fetch("/api/customer/orders", {
 				headers: { Authorization: `Bearer ${token}` },
 			});
 			const json = await res.json();
+			console.log("[fetchOrders] Response:", json);
 
 			if (json.ok) {
 				setOrders(json.orders);
+				console.log("[fetchOrders] Loaded orders:", json.orders.length);
 			} else {
 				toast.error("Nie udało się pobrać zamówień");
 			}
-		} catch {
+		} catch (error) {
+			console.error("[fetchOrders] Error:", error);
 			toast.error("Błąd połączenia");
 		} finally {
 			setLoading(false);

@@ -4,19 +4,69 @@ import { env } from "@/env";
 const BASE_URL = env.NEXT_PUBLIC_MEDUSA_BACKEND_URL.replace(/\/$/, "");
 const PUBLISHABLE_KEY = env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY;
 
-async function storeFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
-	const headers = new Headers(init.headers);
-	headers.set("x-publishable-api-key", PUBLISHABLE_KEY ?? "");
+/** Cache dla admin tokena (TTL 24h). W produkcji: Redis / Upstash. */
+let adminTokenCache: { token: string; expiresAt: number } | null = null;
 
-	const res = await fetch(`${BASE_URL}${path}`, {
-		...init,
-		headers,
-		cache: "no-store",
+/**
+ * Loguje się do Medusa Admin API i zwraca JWT token.
+ * Token cachowany na 23h (Medusa domyślnie 24h).
+ */
+async function getAdminToken(): Promise<string> {
+	// Sprawdź cache
+	if (adminTokenCache && Date.now() < adminTokenCache.expiresAt) {
+		return adminTokenCache.token;
+	}
+
+	const email = env.MEDUSA_ADMIN_EMAIL;
+	const password = env.MEDUSA_ADMIN_PASSWORD;
+
+	if (!email || !password) {
+		throw new Error("MEDUSA_ADMIN_EMAIL i MEDUSA_ADMIN_PASSWORD są wymagane");
+	}
+
+	const res = await fetch(`${BASE_URL}/admin/auth/token`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ email, password }),
 		signal: AbortSignal.timeout(10_000),
 	});
 
 	if (!res.ok) {
-		throw new Error(`Medusa API error: ${res.status}`);
+		console.error("[getAdminToken] Failed:", res.status, await res.text());
+		throw new Error(`Medusa admin auth failed: ${res.status}`);
+	}
+
+	const data = (await res.json()) as { access_token: string };
+	const token = data.access_token;
+
+	// Cache na 23h
+	adminTokenCache = {
+		token,
+		expiresAt: Date.now() + 23 * 60 * 60 * 1000,
+	};
+
+	return token;
+}
+
+/**
+ * Fetch do Medusa Admin API z automatycznym logowaniem.
+ */
+async function adminFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
+	const token = await getAdminToken();
+	const headers = new Headers(init.headers);
+	headers.set("Authorization", `Bearer ${token}`);
+	headers.set("Content-Type", "application/json");
+
+	const res = await fetch(`${BASE_URL}${path}`, {
+		...init,
+		headers,
+		signal: AbortSignal.timeout(10_000),
+	});
+
+	if (!res.ok) {
+		const text = await res.text();
+		console.error(`[adminFetch] ${path} failed:`, res.status, text);
+		throw new Error(`Medusa Admin API error: ${res.status}`);
 	}
 
 	return res.json() as T;
@@ -60,45 +110,49 @@ export type CustomerOrder = {
 };
 
 /**
- * Pobiera zamówienia dla danego emaila z Medusa.
- * @param email email klienta
- * @returns lista zamówień
+ * Pobiera zamówienia dla danego emaila z Medusa Admin API.
+ * BEZPIECZEŃSTWO: email pochodzi z zweryfikowanego tokena OTP.
+ * @param email email klienta (z verifyCustomerToken)
+ * @returns lista zamówień z możliwością zwrotu
  */
 export async function getCustomerOrders(email: string): Promise<CustomerOrder[]> {
-	// Medusa nie ma publicznego endpoint dla "orders by email" — trzeba użyć admin API
-	// lub przechowywać mapping email → order IDs po stronie Next.js.
-	// Na potrzeby prototypu: mock data (w produkcji: admin API + cache).
+	console.log(`[getCustomerOrders] Fetching orders for email: ${email}`);
 	
-	// TODO: Zaimplementuj pobieranie przez Medusa Admin API lub własną bazę
-	// const response = await storeFetch<{ orders: MedusaOrder[] }>(
-	// 	`/admin/orders?email=${encodeURIComponent(email)}`
-	// );
+	try {
+		// Pobierz zamówienia z Admin API filtrowane po emailu
+		const response = await adminFetch<{ orders: MedusaOrder[]; count: number }>(
+			`/admin/orders?email=${encodeURIComponent(email)}&limit=50`
+		);
 
-	// Mock dla prototypu:
-	const mockOrders: MedusaOrder[] = [];
+		console.log(`[getCustomerOrders] Found ${response.orders.length} orders`);
 
-	const now = Date.now();
-	return mockOrders.map((order) => {
-		const createdMs = new Date(order.created_at).getTime();
-		const ageMs = now - createdMs;
-		const ageDays = Math.floor(ageMs / (24 * 60 * 60 * 1000));
-		const daysLeft = Math.max(0, 14 - ageDays);
+		const now = Date.now();
+		return response.orders.map((order) => {
+			const createdMs = new Date(order.created_at).getTime();
+			const ageMs = now - createdMs;
+			const ageDays = Math.floor(ageMs / (24 * 60 * 60 * 1000));
+			const daysLeft = Math.max(0, 14 - ageDays);
 
-		return {
-			id: order.id,
-			displayId: order.display_id,
-			createdAt: order.created_at,
-			total: order.total,
-			itemCount: order.items.length,
-			items: order.items.map((item) => ({
-				id: item.id,
-				title: item.title,
-				quantity: item.quantity,
-				unitPrice: item.unit_price,
-				thumbnail: item.thumbnail,
-			})),
-			canReturn: daysLeft > 0,
-			daysLeftToReturn: daysLeft,
-		};
-	});
+			return {
+				id: order.id,
+				displayId: order.display_id,
+				createdAt: order.created_at,
+				total: order.total,
+				itemCount: order.items.length,
+				items: order.items.map((item) => ({
+					id: item.id,
+					title: item.title,
+					quantity: item.quantity,
+					unitPrice: item.unit_price,
+					thumbnail: item.thumbnail,
+				})),
+				canReturn: daysLeft > 0,
+				daysLeftToReturn: daysLeft,
+			};
+		});
+	} catch (error) {
+		console.error("[getCustomerOrders] Error fetching orders:", error);
+		// W przypadku błędu zwróć pustą listę zamiast crashować całą stronę
+		return [];
+	}
 }
