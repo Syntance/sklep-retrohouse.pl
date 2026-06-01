@@ -12,6 +12,7 @@ export function generateOtp(email: string): string {
 	const code = crypto.randomInt(100000, 999999).toString();
 	const expiresAt = Date.now() + 15 * 60 * 1000; // 15 min
 	otpStore.set(email.toLowerCase(), { code, expiresAt });
+	console.log(`[generateOtp] Generated code for ${email.toLowerCase()}: ${code}, expires at ${new Date(expiresAt).toISOString()}`);
 	return code;
 }
 
@@ -21,14 +22,27 @@ export function generateOtp(email: string): string {
  */
 export function verifyOtp(email: string, code: string): boolean {
 	const stored = otpStore.get(email.toLowerCase());
-	if (!stored) return false;
+	console.log(`[verifyOtp] Checking email: ${email.toLowerCase()}, code: ${code}`);
+	console.log(`[verifyOtp] Stored:`, stored);
+	
+	if (!stored) {
+		console.log(`[verifyOtp] No OTP found for ${email.toLowerCase()}`);
+		return false;
+	}
+	
 	if (Date.now() > stored.expiresAt) {
+		console.log(`[verifyOtp] OTP expired for ${email.toLowerCase()}`);
 		otpStore.delete(email.toLowerCase());
 		return false;
 	}
-	if (stored.code !== code) return false;
+	
+	if (stored.code !== code) {
+		console.log(`[verifyOtp] Code mismatch. Expected: ${stored.code}, Got: ${code}`);
+		return false;
+	}
 
 	// Usuwamy po poprawnej weryfikacji (one-time)
+	console.log(`[verifyOtp] OTP verified successfully for ${email.toLowerCase()}`);
 	otpStore.delete(email.toLowerCase());
 	return true;
 }

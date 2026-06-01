@@ -9,9 +9,12 @@ import { createCustomerToken, verifyOtp } from "@/lib/customer/auth";
 export async function POST(request: Request) {
 	try {
 		const body = await request.json();
+		console.log("[verify-otp] Received body:", body);
+		
 		const parsed = CustomerVerifyOtpSchema.safeParse(body);
 
 		if (!parsed.success) {
+			console.log("[verify-otp] Validation failed:", parsed.error);
 			return NextResponse.json(
 				{ ok: false, error: "Niepoprawny format danych" },
 				{ status: 400 },
@@ -19,7 +22,10 @@ export async function POST(request: Request) {
 		}
 
 		const { email, code } = parsed.data;
+		console.log("[verify-otp] Verifying email:", email, "code:", code);
+		
 		const isValid = verifyOtp(email, code);
+		console.log("[verify-otp] Verification result:", isValid);
 
 		if (!isValid) {
 			return NextResponse.json(
@@ -32,7 +38,7 @@ export async function POST(request: Request) {
 
 		return NextResponse.json({ ok: true, token });
 	} catch (error) {
-		console.error("OTP verify error:", error);
+		console.error("[verify-otp] Error:", error);
 		return NextResponse.json(
 			{ ok: false, error: "Błąd weryfikacji" },
 			{ status: 500 },

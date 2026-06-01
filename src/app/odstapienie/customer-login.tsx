@@ -44,6 +44,7 @@ export function CustomerLogin({ onSuccess }: Props) {
 
 			if (json.ok) {
 				setEmail(data.email);
+				otpForm.reset({ code: "" }); // Reset formularza kodu
 				setStep("code");
 				toast.success("Kod został wysłany na Twój email");
 			} else {
@@ -132,11 +133,14 @@ export function CustomerLogin({ onSuccess }: Props) {
 						{...otpForm.register("code")}
 						id="code"
 						type="text"
+						inputMode="numeric"
+						pattern="[0-9]*"
 						placeholder="123456"
 						maxLength={6}
 						className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm font-mono text-center text-2xl tracking-widest focus:outline-none focus:ring-2 focus:ring-ring"
 						disabled={loading}
 						autoComplete="one-time-code"
+						autoFocus
 					/>
 					{otpForm.formState.errors.code && (
 						<p className="mt-1 text-xs text-destructive">
@@ -151,7 +155,10 @@ export function CustomerLogin({ onSuccess }: Props) {
 
 				<button
 					type="button"
-					onClick={() => setStep("email")}
+					onClick={() => {
+						setStep("email");
+						otpForm.reset();
+					}}
 					className="w-full text-sm text-muted-foreground hover:text-foreground"
 					disabled={loading}
 				>
