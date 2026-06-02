@@ -1,0 +1,22 @@
+# ENV do dodania w Railway (Medusa Backend service)
+# Po utworzeniu R2 bucket i wygenerowaniu S3 credentials
+
+# S3-compatible endpoint Cloudflare R2 (format: https://<ACCOUNT_ID>.r2.cloudflarestorage.com)
+S3_ENDPOINT=https://YOUR_ACCOUNT_ID.r2.cloudflarestorage.com
+
+# Region R2 (zawsze "auto" dla Cloudflare R2)
+S3_REGION=auto
+
+# Nazwa bucketu R2
+S3_BUCKET=retrohouse-media
+
+# S3 Access Key ID (wygeneruj w Cloudflare: R2 > Manage R2 API Tokens)
+S3_ACCESS_KEY_ID=your_access_key_here
+
+# S3 Secret Access Key (wygeneruj w Cloudflare: R2 > Manage R2 API Tokens)
+S3_SECRET_ACCESS_KEY=your_secret_key_here
+
+# Custom domain dla R2 (opcjonalne, ale BARDZO zalecane dla CDN)
+# Po skonfigurowaniu: assets.sklep-retrohouse.pl
+# Jeśli nie skonfigurujesz - będzie używane: https://<BUCKET>.r2.dev
+S3_PUBLIC_URL=https://assets.sklep-retrohouse.pl

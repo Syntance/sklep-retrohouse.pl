@@ -3,10 +3,14 @@ import type { NextConfig } from "next";
 
 type RemotePattern = NonNullable<NonNullable<NextConfig["images"]>["remotePatterns"]>[number];
 
+const MEDIA_CDN_HOSTNAME = "assets.sklep-retrohouse.pl";
+
 function medusaImagePatterns(): RemotePattern[] {
 	const patterns: RemotePattern[] = [
 		{ protocol: "http", hostname: "localhost", port: "9000", pathname: "/static/**" },
 		{ protocol: "http", hostname: "127.0.0.1", port: "9000", pathname: "/static/**" },
+		// Cloudflare R2 — obrazy z Medusa po migracji storage (dev + prod bez wymogu ENV).
+		{ protocol: "https", hostname: MEDIA_CDN_HOSTNAME, pathname: "/**" },
 	];
 
 	const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
@@ -30,12 +34,14 @@ function medusaImagePatterns(): RemotePattern[] {
 	if (cdnUrl) {
 		try {
 			const url = new URL(cdnUrl);
-			patterns.push({
-				protocol: url.protocol.replace(":", "") as "http" | "https",
-				hostname: url.hostname,
-				...(url.port ? { port: url.port } : {}),
-				pathname: "/**",
-			});
+			if (url.hostname !== MEDIA_CDN_HOSTNAME) {
+				patterns.push({
+					protocol: url.protocol.replace(":", "") as "http" | "https",
+					hostname: url.hostname,
+					...(url.port ? { port: url.port } : {}),
+					pathname: "/**",
+				});
+			}
 		} catch {
 			// ignore invalid env at build time
 		}

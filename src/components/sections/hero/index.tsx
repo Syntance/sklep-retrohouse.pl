@@ -48,7 +48,7 @@ export function HeroSection({ liveBadge, heroProduct }: HeroSectionProps) {
 				}}
 			/>
 			<Container size="lg">
-				<div className="grid gap-10 lg:grid-cols-[1.2fr_0.85fr] lg:items-center">
+				<div className="grid gap-10 lg:grid-cols-[1.2fr_1.02fr] lg:items-start">
 					<div className="flex flex-col gap-6">
 						<Eyebrow variant="script">Witamy w RetroHouse</Eyebrow>
 						<h1 className="text-balance font-display text-[clamp(2.1rem,4.8vw,3.8rem)] font-medium leading-[1.04] text-foreground">
@@ -109,9 +109,9 @@ export function HeroSection({ liveBadge, heroProduct }: HeroSectionProps) {
 					</div>
 
 					{heroProduct ? (
-						<HeroProductPhoto image={heroProduct} />
+						<HeroProductPhoto image={heroProduct} className="lg:mt-[calc(1.75rem+1.5rem)]" />
 					) : (
-						<HeroProductPlaceholder />
+						<HeroProductPlaceholder className="lg:mt-[calc(1.75rem+1.5rem)]" />
 					)}
 				</div>
 			</Container>
@@ -119,10 +119,13 @@ export function HeroSection({ liveBadge, heroProduct }: HeroSectionProps) {
 	);
 }
 
-function HeroProductPlaceholder() {
+function HeroProductPlaceholder({ className }: { className?: string }) {
 	return (
 		<div
-			className="relative mx-auto flex aspect-4/5 w-full max-w-md flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-walnut/30 bg-foreground/[0.035] px-6 py-10 text-center lg:mx-0 lg:max-w-none"
+			className={cn(
+				"relative mx-auto flex aspect-4/5 w-full max-w-md flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-walnut/30 bg-foreground/[0.035] px-6 py-10 text-center lg:mx-0 lg:max-w-none",
+				className,
+			)}
 			role="img"
 			aria-label="Placeholder: zdjęcie produktu na hero — do uzupełnienia w Sanity"
 		>
@@ -136,15 +139,20 @@ function HeroProductPlaceholder() {
 	);
 }
 
-function HeroProductPhoto({ image }: { image: HeroProductImage }) {
+function HeroProductPhoto({ image, className }: { image: HeroProductImage; className?: string }) {
 	return (
-		<figure className="relative mx-auto aspect-[4/3] w-full max-w-md overflow-hidden rounded-2xl border border-walnut/15 shadow-card lg:mx-0 lg:max-w-none">
+		<figure
+			className={cn(
+				"relative mx-auto aspect-[4/3] w-full max-w-[33.6rem] overflow-hidden rounded-2xl border border-walnut/15 shadow-card lg:mx-0 lg:max-w-none",
+				className,
+			)}
+		>
 			<Image
 				src={image.src}
 				alt={image.alt}
 				fill
 				className="object-cover"
-				sizes="(min-width: 1024px) 34vw, min(22rem, 92vw)"
+				sizes="(min-width: 1024px) 41vw, min(26.4rem, 92vw)"
 				priority
 				fetchPriority="high"
 			/>
