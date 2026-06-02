@@ -35,10 +35,25 @@ export function ProductLightbox({ productName, hues, images = [] }: ProductLight
 	const dialogRef = useRef<HTMLDialogElement>(null);
 	const [index, setIndex] = useState(0);
 	const [isOpen, setIsOpen] = useState(false);
+	const [failedIndexes, setFailedIndexes] = useState<ReadonlySet<number>>(new Set());
 	const hasPhotos = images.length > 0;
 	const slotCount = hasPhotos ? images.length : FALLBACK_SLOTS.length;
 	const [primary, secondary, accent] = hues;
 	const huePalette = [primary, secondary, accent];
+
+	const markFailed = useCallback((i: number) => {
+		setFailedIndexes((prev) => {
+			if (prev.has(i)) return prev;
+			const next = new Set(prev);
+			next.add(i);
+			return next;
+		});
+	}, []);
+
+	const activeFailed = failedIndexes.has(index);
+	const showMainPhoto = hasPhotos && !activeFailed;
+	const gradientFor = (i: number) =>
+		`linear-gradient(${i * 30}deg, ${primary}, ${secondary} 60%, ${accent})`;
 
 	const open = useCallback((nextIndex: number) => {
 		setIndex(nextIndex);
@@ -83,7 +98,7 @@ export function ProductLightbox({ productName, hues, images = [] }: ProductLight
 					className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-border bg-card text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-terracotta"
 					aria-label={`Powiększ zdjęcie: ${productName}`}
 				>
-					{hasPhotos ? (
+					{showMainPhoto ? (
 						<Image
 							src={images[index] ?? images[0] ?? ""}
 							alt={productName}
@@ -91,6 +106,7 @@ export function ProductLightbox({ productName, hues, images = [] }: ProductLight
 							className="object-cover"
 							sizes="(max-width: 1024px) 100vw, 60vw"
 							priority
+							onError={() => markFailed(index)}
 						/>
 					) : (
 						<div
@@ -130,13 +146,22 @@ export function ProductLightbox({ productName, hues, images = [] }: ProductLight
 												index === i ? "border-terracotta ring-2 ring-terracotta/30" : "border-border",
 											)}
 										>
-											<Image
-												src={src}
-												alt=""
-												fill
-												className="object-cover"
-												sizes="80px"
-											/>
+											{failedIndexes.has(i) ? (
+												<span
+													aria-hidden="true"
+													className="absolute inset-0"
+													style={{ backgroundImage: gradientFor(i) }}
+												/>
+											) : (
+												<Image
+													src={src}
+													alt=""
+													fill
+													className="object-cover"
+													sizes="80px"
+													onError={() => markFailed(i)}
+												/>
+											)}
 										</button>
 									</li>
 								))
@@ -183,13 +208,14 @@ export function ProductLightbox({ productName, hues, images = [] }: ProductLight
 					</button>
 
 					<figure className="relative aspect-[4/3] w-full max-w-4xl overflow-hidden rounded-2xl border border-ink-foreground/15 bg-card">
-						{hasPhotos ? (
+						{showMainPhoto ? (
 							<Image
 								src={images[index] ?? images[0] ?? ""}
 								alt={`${productName} — ${activeLabel}`}
 								fill
 								className="object-contain"
 								sizes="100vw"
+								onError={() => markFailed(index)}
 							/>
 						) : (
 							<div

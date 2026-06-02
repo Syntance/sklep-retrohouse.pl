@@ -48,6 +48,7 @@ pnpm dev
 | `pnpm test:watch` | Vitest watch |
 | `pnpm test:e2e` | Playwright E2E |
 | `pnpm knip` | Wykryj martwe eksporty / unused deps |
+| `pnpm db:backup` | Backup bazy Medusa → R2 (patrz `docs/runbook/railway-disaster-recovery.md`) |
 
 ## Deploy
 

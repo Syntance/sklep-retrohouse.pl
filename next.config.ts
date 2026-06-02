@@ -24,6 +24,23 @@ function medusaImagePatterns(): RemotePattern[] {
 		}
 	}
 
+	// Trwały storage mediów (Cloudflare R2 / S3) — po migracji backendu z dysku Railway.
+	// Patrz docs/runbook/railway-disaster-recovery.md.
+	const cdnUrl = process.env.NEXT_PUBLIC_MEDIA_CDN_URL;
+	if (cdnUrl) {
+		try {
+			const url = new URL(cdnUrl);
+			patterns.push({
+				protocol: url.protocol.replace(":", "") as "http" | "https",
+				hostname: url.hostname,
+				...(url.port ? { port: url.port } : {}),
+				pathname: "/**",
+			});
+		} catch {
+			// ignore invalid env at build time
+		}
+	}
+
 	return patterns;
 }
 

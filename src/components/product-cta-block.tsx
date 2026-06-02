@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { ArrowRightIcon } from "@/components/icons";
 import { AddToCartButton } from "@/components/add-to-cart-button";
@@ -8,9 +9,22 @@ import { track } from "@/lib/analytics/posthog";
 import type { ProductSource } from "@/lib/analytics/events";
 import type { Product } from "@/lib/products/types";
 
+const KNOWN_SOURCES = new Set<ProductSource>([
+	"/sklep",
+	"/prezent",
+	"hp-bestsellers",
+	"/blog",
+	"pdp-related",
+	"/",
+]);
+
+function resolveSource(raw: string | null): ProductSource | "direct" {
+	if (!raw) return "direct";
+	return KNOWN_SOURCES.has(raw as ProductSource) ? (raw as ProductSource) : "direct";
+}
+
 type ProductCtaBlockProps = {
 	product: Product;
-	source: ProductSource | "direct";
 };
 
 /**
@@ -18,7 +32,10 @@ type ProductCtaBlockProps = {
  *  - product_viewed (na mount, raz; deps: slug)
  *  - add_to_cart (przez AddToCartButton — bez nawigacji)
  */
-export function ProductCtaBlock({ product, source }: ProductCtaBlockProps) {
+export function ProductCtaBlock({ product }: ProductCtaBlockProps) {
+	const searchParams = useSearchParams();
+	const source = resolveSource(searchParams.get("source"));
+
 	useEffect(() => {
 		track({
 			name: "product_viewed",

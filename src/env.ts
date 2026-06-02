@@ -50,6 +50,13 @@ export const env = createEnv({
 
 		NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: z.string().optional(),
 
+		/**
+		 * Publiczna domena CDN dla mediów Medusa (Cloudflare R2 / S3).
+		 * Po migracji storage backendu na R2 ustaw np. https://assets.sklep-retrohouse.pl —
+		 * trafia do `images.remotePatterns` w next.config.ts. Patrz docs/runbook/railway-disaster-recovery.md.
+		 */
+		NEXT_PUBLIC_MEDIA_CDN_URL: z.string().url().optional(),
+
 		NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().optional(),
 		NEXT_PUBLIC_SANITY_DATASET: z.string().default("production"),
 
@@ -81,6 +88,7 @@ export const env = createEnv({
 		NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
 
 		NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+		NEXT_PUBLIC_MEDIA_CDN_URL: process.env.NEXT_PUBLIC_MEDIA_CDN_URL,
 
 		SANITY_API_READ_TOKEN: process.env.SANITY_API_READ_TOKEN,
 		NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,

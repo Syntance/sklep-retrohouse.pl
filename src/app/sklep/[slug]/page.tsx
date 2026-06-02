@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import {
 	ArrowRightIcon,
 	CheckIcon,
@@ -15,7 +16,6 @@ import { ProductCard } from "@/components/product-card";
 import { ProductCtaBlock } from "@/components/product-cta-block";
 import { ProductLightbox } from "@/components/product-lightbox";
 import { ProductMobileBar } from "@/components/product-mobile-bar";
-import type { ProductSource } from "@/lib/analytics/events";
 import { daysSince, formatPrice } from "@/lib/format";
 import {
 	getProductBySlug,
@@ -26,19 +26,6 @@ import type { Product } from "@/lib/products/types";
 import { cn } from "@/lib/utils";
 
 const FRESH_THRESHOLD_DAYS = 14;
-const KNOWN_SOURCES = new Set<ProductSource>([
-	"/sklep",
-	"/prezent",
-	"hp-bestsellers",
-	"/blog",
-	"pdp-related",
-	"/",
-]);
-
-function resolveSource(raw: string | string[] | undefined): ProductSource | "direct" {
-	if (typeof raw !== "string") return "direct";
-	return KNOWN_SOURCES.has(raw as ProductSource) ? (raw as ProductSource) : "direct";
-}
 
 export const revalidate = 60;
 
@@ -48,7 +35,6 @@ export async function generateStaticParams() {
 }
 
 type Params = Promise<{ slug: string }>;
-type SearchParams = Promise<{ source?: string | string[] }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
 	const { slug } = await params;
@@ -66,19 +52,11 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 	};
 }
 
-export default async function ProduktPage({
-	params,
-	searchParams,
-}: {
-	params: Params;
-	searchParams: SearchParams;
-}) {
+export default async function ProduktPage({ params }: { params: Params }) {
 	const { slug } = await params;
-	const { source: rawSource } = await searchParams;
 	const product = await getProductBySlug(slug);
 	if (!product) notFound();
 
-	const source = resolveSource(rawSource);
 	const related = await getRelatedProducts(slug, 4);
 	const isFresh = daysSince(product.addedAt) < FRESH_THRESHOLD_DAYS;
 
@@ -124,7 +102,7 @@ export default async function ProduktPage({
 							hues={product.imageHues}
 							images={product.images}
 						/>
-						<InfoPanel product={product} source={source} isFresh={isFresh} />
+						<InfoPanel product={product} isFresh={isFresh} />
 					</div>
 				</Container>
 			</Section>
@@ -247,11 +225,10 @@ function manufacturerEra(product: Product) {
 
 type InfoPanelProps = {
 	product: Product;
-	source: ProductSource | "direct";
 	isFresh: boolean;
 };
 
-function InfoPanel({ product, source, isFresh }: InfoPanelProps) {
+function InfoPanel({ product, isFresh }: InfoPanelProps) {
 	return (
 		<aside className="flex flex-col gap-6 lg:sticky lg:top-24 lg:self-start">
 			<div className="flex flex-wrap gap-2">
@@ -307,7 +284,9 @@ function InfoPanel({ product, source, isFresh }: InfoPanelProps) {
 			</div>
 		) : null}
 
-		<ProductCtaBlock product={product} source={source} />
+		<Suspense fallback={null}>
+			<ProductCtaBlock product={product} />
+		</Suspense>
 
 		{/* Nota prawna po CTA — UPK art. 43a ust. 4 */}
 		<p className="text-sm text-foreground/60 leading-relaxed">

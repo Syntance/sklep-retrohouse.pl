@@ -17,6 +17,7 @@
 		"test:e2e": "playwright test",
 		"knip": "knip",
 		"dns:cf-sync": "bash scripts/cloudflare-sync-vercel-dns.sh",
+		"db:backup": "bash scripts/backup-medusa-db.sh",
 		"preinstall": "npx only-allow pnpm"
 	},
 	"dependencies": {

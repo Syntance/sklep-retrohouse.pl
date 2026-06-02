@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { PinIcon } from "@/components/icons";
 import { formatPrice } from "@/lib/format";
@@ -55,6 +56,8 @@ export function ProductCard({
 	showShopActions = false,
 }: ProductCardProps) {
 	const [primary, secondary, accent] = product.imageHues;
+	const [imageFailed, setImageFailed] = useState(false);
+	const showImage = Boolean(product.imageUrl) && !imageFailed;
 	const url =
 		source && source !== "/sklep"
 			? `/sklep/${product.slug}?source=${encodeURIComponent(source)}`
@@ -103,20 +106,21 @@ export function ProductCard({
 				<div
 					className="absolute inset-0 transition-transform duration-700 group-hover/card:scale-[1.04]"
 					style={
-						product.imageUrl
+						showImage
 							? undefined
 							: {
 									backgroundImage: `radial-gradient(120% 80% at 30% 20%, ${primary}, transparent 60%), radial-gradient(80% 80% at 80% 90%, ${secondary}, transparent 70%), linear-gradient(135deg, ${accent}, ${primary})`,
 								}
 					}
 				>
-					{product.imageUrl ? (
+					{showImage ? (
 						<Image
-							src={product.imageUrl}
+							src={product.imageUrl ?? ""}
 							alt=""
 							fill
 							className="object-cover"
 							sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+							onError={() => setImageFailed(true)}
 						/>
 					) : null}
 				</div>
