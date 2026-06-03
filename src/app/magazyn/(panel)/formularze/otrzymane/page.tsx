@@ -16,7 +16,7 @@ function formatWhen(iso: string): string {
 	}
 }
 
-export default async function WyslaneFormularzePage() {
+export default async function OtrzymaneFormularzePage() {
 	const result = await getSubmissionsListAction();
 
 	return (
@@ -37,7 +37,7 @@ export default async function WyslaneFormularzePage() {
 				<p className="text-sm text-destructive">{result.error}</p>
 			) : result.submissions.length === 0 ? (
 				<p className="rounded-xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-					Brak wysłanych formularzy.
+					Brak otrzymanych formularzy.
 				</p>
 			) : (
 				<div className="overflow-hidden rounded-xl border border-border bg-card">
@@ -56,7 +56,7 @@ export default async function WyslaneFormularzePage() {
 								<tr key={row.id} className="hover:bg-muted/30">
 									<td className="px-4 py-3">
 										<Link
-											href={`/magazyn/formularze/wyslane/${row.id}`}
+											href={`/magazyn/formularze/otrzymane/${row.id}`}
 											className="font-mono text-xs font-medium text-terracotta hover:underline"
 										>
 											{row.caseNumber}

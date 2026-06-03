@@ -17,7 +17,7 @@ export async function saveContactFormsAction(
 		revalidatePath("/polityka-prywatnosci");
 		revalidatePath("/regulamin");
 		revalidatePath("/konto");
-		revalidatePath("/magazyn/formularze/wyslane");
+		revalidatePath("/magazyn/formularze/otrzymane");
 		return { ok: true };
 	} catch (error) {
 		const message = error instanceof Error ? error.message : "Nie udało się zapisać.";

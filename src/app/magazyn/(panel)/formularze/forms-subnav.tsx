@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 export function FormsSubnav() {
 	const pathname = usePathname();
-	const onSent = pathname.includes("/formularze/wyslane");
+	const onReceived = pathname.includes("/formularze/otrzymane");
 
 	return (
 		<nav
@@ -17,7 +17,7 @@ export function FormsSubnav() {
 				href="/magazyn/formularze"
 				className={cn(
 					"border-b-2 px-3 py-2 text-sm font-medium transition-colors",
-					!onSent
+					!onReceived
 						? "border-primary text-foreground"
 						: "border-transparent text-muted-foreground hover:text-foreground",
 				)}
@@ -25,15 +25,15 @@ export function FormsSubnav() {
 				Konfiguracja
 			</Link>
 			<Link
-				href="/magazyn/formularze/wyslane"
+				href="/magazyn/formularze/otrzymane"
 				className={cn(
 					"border-b-2 px-3 py-2 text-sm font-medium transition-colors",
-					onSent
+					onReceived
 						? "border-primary text-foreground"
 						: "border-transparent text-muted-foreground hover:text-foreground",
 				)}
 			>
-				Wysłane
+				Otrzymane
 			</Link>
 		</nav>
 	);
