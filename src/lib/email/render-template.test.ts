@@ -4,6 +4,7 @@ import {
 	mergeSubject,
 	renderTemplate,
 	sampleRenderContext,
+	sampleRenderContextForTemplate,
 } from "@/lib/email/render-template";
 import {
 	buildDefaultTemplate,
@@ -49,6 +50,14 @@ describe("renderTemplate", () => {
 		const { html } = renderTemplate(template, malicious);
 		expect(html).not.toContain("<script>alert(1)</script>");
 		expect(html).toContain("&lt;script&gt;");
+	});
+
+	it("scala {{linkKonto}} w href przycisku (e-maile spraw)", () => {
+		const template = buildDefaultTemplate("claim_received");
+		const ctx = sampleRenderContextForTemplate("claim_received");
+		const { html } = renderTemplate(template, ctx);
+		expect(html).toContain("https://sklep-retrohouse.pl/konto?tab=reklamacje");
+		expect(html).not.toContain("{{linkKonto}}");
 	});
 
 	it("renderuje przycisk z linkiem", () => {

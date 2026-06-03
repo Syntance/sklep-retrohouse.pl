@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { AdminUnauthorizedError } from "@/lib/admin/medusa-admin";
 import { getSessionToken } from "@/lib/admin/session";
 import { getAllReturns, getReturnById, updateReturnStatus } from "@/lib/admin/returns";
-import { sendTransactionalEmail } from "@/lib/email/send-transactional";
+import { sendReturnStatusCustomerEmail } from "@/lib/email/return-status-customer-email";
 import type { ReturnStatus } from "@/lib/admin/return-types";
 
 export async function getReturnsListAction() {
@@ -49,28 +49,7 @@ export async function updateReturnStatusAction(
 		// Wyślij email do klienta o zmianie statusu
 		const returnReq = await getReturnById(id);
 		if (returnReq) {
-			let subject = "";
-			let message = "";
-
-			if (status === "approved") {
-				subject = "Zwrot zaakceptowany — RetroHouse";
-				message = `Twój wniosek o zwrot (zamówienie #${returnReq.orderDisplayId}) został zaakceptowany.\n\nWyślij przesyłkę zwrotną na adres:\nRetroHouse\nul. Ludźmierska 25A\n34-400 Nowy Targ\n\nPo otrzymaniu zwrotu prześlemyrozliczenie.`;
-			} else if (status === "refunded") {
-				subject = "Zwrot środków — RetroHouse";
-				message = `Zwróciliśmy środki za zamówienie #${returnReq.orderDisplayId}.\n\nKwota ${(returnReq.totalToRefund / 100).toFixed(2)} zł zostanie na Twoim koncie w ciągu 3-5 dni roboczych.`;
-			} else if (status === "rejected") {
-				subject = "Zwrot odrzucony — RetroHouse";
-				message = `Twój wniosek o zwrot (zamówienie #${returnReq.orderDisplayId}) został odrzucony.\n\nPowód: ${extra?.rejectionReason ?? "Nie podano przyczyny"}\n\nJeśli masz pytania, skontaktuj się z nami.`;
-			}
-
-			if (subject) {
-				await sendTransactionalEmail({
-					to: returnReq.customerEmail,
-					subject,
-					text: message,
-					html: `<div style="font-family: system-ui, sans-serif; max-width: 500px; padding: 24px;"><p>${message.replace(/\n/g, "<br>")}</p></div>`,
-				});
-			}
+			await sendReturnStatusCustomerEmail(returnReq, status, extra);
 		}
 
 		revalidatePath("/magazyn/zwroty");

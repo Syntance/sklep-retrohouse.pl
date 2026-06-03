@@ -1,1 +1,62 @@
-[]
+[
+  {
+    "id": "ret_1780480677486_5jvz5k8",
+    "requestType": "claim",
+    "orderId": "order_01KSZHW8X9W2FCZ15BHMV6GD5S",
+    "orderDisplayId": 4,
+    "customerEmail": "kamil.podobinski@tutamail.com",
+    "status": "approved",
+    "reason": "zsdasdasdasdasdasdasdasdasd",
+    "claimRemedy": "repair",
+    "claimReferenceId": "RK-20260603-E460EA",
+    "items": [
+      {
+        "orderLineItemId": "ordli_01KSZHW8XAR7DE1B0KQFK2C3KJ",
+        "productTitle": "Rybka Murano",
+        "quantity": 1,
+        "unitPrice": 900,
+        "thumbnail": ""
+      }
+    ],
+    "totalToRefund": 900,
+    "createdAt": "2026-06-03T09:57:57.486Z",
+    "updatedAt": "2026-06-03T09:59:24.873Z",
+    "approvedAt": "2026-06-03T09:59:24.873Z",
+    "shippedAt": null,
+    "receivedAt": null,
+    "refundedAt": null,
+    "rejectedAt": null,
+    "rejectionReason": null,
+    "adminNotes": null
+  },
+  {
+    "id": "ret_1780481417994_jxvjqt3",
+    "requestType": "withdrawal",
+    "orderId": "order_01KSZK9SS8QX19P0G84QPG55GX",
+    "orderDisplayId": 5,
+    "customerEmail": "kamil.podobinski@tutamail.com",
+    "status": "pending_approval",
+    "reason": "qweqweqweqweqweqwe",
+    "claimRemedy": null,
+    "claimReferenceId": null,
+    "items": [
+      {
+        "orderLineItemId": "ordli_01KSZK9SS8GTG4YAC9GNMFYAA4",
+        "productTitle": "Rybka Murano",
+        "quantity": 1,
+        "unitPrice": 900,
+        "thumbnail": ""
+      }
+    ],
+    "totalToRefund": 900,
+    "createdAt": "2026-06-03T10:10:17.994Z",
+    "updatedAt": "2026-06-03T10:10:17.994Z",
+    "approvedAt": null,
+    "shippedAt": null,
+    "receivedAt": null,
+    "refundedAt": null,
+    "rejectedAt": null,
+    "rejectionReason": null,
+    "adminNotes": null
+  }
+]

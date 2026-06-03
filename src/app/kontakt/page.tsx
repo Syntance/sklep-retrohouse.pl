@@ -26,7 +26,7 @@ const FAQS = [
 	{
 		question: "Czy wysyłacie za granicę?",
 		answer:
-			"Aktualnie wysyłamy w Polsce. Indywidualne wysyłki do Czech, Słowacji i Niemiec — po kontakcie mailowym.",
+			"Aktualnie wysyłamy w Polsce. Indywidualne wysyłki do Czech, Słowacji i Niemiec — po kontakcie e-mailowym.",
 	},
 	{
 		question: "Czy mogę zarezerwować przedmiot?",

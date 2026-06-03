@@ -19,7 +19,7 @@ type LiveBannerProps = {
 const initialState: LiveReminderState = { status: "idle" };
 
 /**
- * Live commerce banner — countdown + 2 CTA (mail / .ics).
+ * Live commerce banner — countdown + 2 CTA (e-mail / .ics).
  *
  * Reguły:
  * - prefers-reduced-motion: reduce → wyłącz pulsowanie kropki + interwał
@@ -101,7 +101,7 @@ export function LiveBanner({ dateIso, dropTitle, dropCount }: LiveBannerProps) {
 								disabled={isPending}
 								className="cta-text inline-flex h-12 items-center justify-center gap-2 rounded-full bg-terracotta px-5 text-xs text-terracotta-foreground transition-all hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta disabled:opacity-60"
 							>
-								{isPending ? "Zapisuję…" : "Powiadom mailem"}
+								{isPending ? "Zapisuję…" : "Powiadom e-mailem"}
 								<ArrowRightIcon className="size-3.5" />
 							</button>
 						</div>
@@ -110,7 +110,7 @@ export function LiveBanner({ dateIso, dropTitle, dropCount }: LiveBannerProps) {
 								role="status"
 								className="text-xs text-success-foreground bg-success/15 rounded-md px-3 py-2"
 							>
-								Zapisane — wyślemy maila 30 minut przed startem.
+								Zapisane — wyślemy e-maila 30 minut przed startem.
 							</p>
 						) : null}
 						{state.status === "error" ? (

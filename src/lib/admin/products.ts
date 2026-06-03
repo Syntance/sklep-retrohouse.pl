@@ -1,6 +1,7 @@
 import "server-only";
 import { partitionReachableMediaUrls } from "@/lib/admin/media-check";
-import { resolveMedusaMediaUrl, resolveMedusaMediaUrls } from "@/lib/medusa/media-url";
+import { resolveProductThumbnailUrl } from "@/lib/medusa/product-thumbnail";
+import { resolveMedusaMediaUrls } from "@/lib/medusa/media-url";
 import { adminFetch } from "./medusa-admin";
 import { getStoreConfig } from "./store-config";
 
@@ -104,15 +105,7 @@ const DETAIL_FIELDS =
 	"id,title,handle,status,description,thumbnail,images.url,metadata,categories.id,categories.name,variants.id,variants.prices.amount,variants.prices.currency_code";
 
 function resolveAdminProductThumbnail(product: MedusaProduct): string | null {
-	const rawImages = (product.images ?? [])
-		.map((img) => img.url)
-		.filter((url): url is string => Boolean(url));
-	const resolved = [
-		resolveMedusaMediaUrl(product.thumbnail),
-		...resolveMedusaMediaUrls(rawImages),
-	].filter((url): url is string => Boolean(url));
-
-	return resolved.length > 0 ? [...new Set(resolved)][0] : null;
+	return resolveProductThumbnailUrl(product);
 }
 
 export async function listAdminProducts(): Promise<AdminProductRow[]> {

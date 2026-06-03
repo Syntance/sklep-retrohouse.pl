@@ -46,7 +46,7 @@ export function CustomerLogin({ onSuccess }: Props) {
 				setEmail(parsed.data.email);
 				otpForm.reset({ code: "" }); // Reset formularza kodu
 				setStep("code");
-				toast.success("Kod został wysłany na Twój email");
+				toast.success("Kod został wysłany na Twój e-mail");
 			} else {
 				toast.error(json.error ?? "Nie udało się wysłać kodu");
 			}
@@ -96,7 +96,7 @@ export function CustomerLogin({ onSuccess }: Props) {
 			<div className="rounded-2xl border border-border bg-card p-6 max-w-md mx-auto">
 				<h2 className="font-display text-2xl font-semibold mb-4">Zaloguj się</h2>
 				<p className="text-sm text-muted-foreground mb-6">
-					Wyślemy kod na Twój email, którym składałeś zamówienie.
+					Wyślemy kod na Twój e-mail, którym składałeś zamówienie.
 				</p>
 
 				<form onSubmit={loginForm.handleSubmit(handleRequestCode)} className="space-y-4">

@@ -1,6 +1,9 @@
 import "server-only";
 
-import { getEmailTemplateForSend } from "@/lib/admin/email-templates";
+import {
+	getEmailTemplateForSend,
+	isEmailTemplateEnabledForSend,
+} from "@/lib/admin/email-templates";
 import type { AdminOrderDetail } from "@/lib/admin/orders";
 import { getAdminOrderForEmail } from "@/lib/admin/orders";
 import { EMAIL_CONTACT, SITE_URL } from "@/lib/email/constants";
@@ -12,7 +15,7 @@ import {
 import { sendTransactionalEmail } from "@/lib/email/send-transactional";
 import { formatPrice } from "@/lib/format";
 
-/** Etapy widoczne dla klienta — każda akcja w panelu wysyła osobny mail. */
+/** Etapy widoczne dla klienta — każda akcja w panelu wysyła osobny e-mail. */
 export type OrderEmailStage =
 	| "placed"
 	| "realization_started"
@@ -202,7 +205,7 @@ function buildShopText(order: AdminOrderDetail): string {
 		``,
 		`Złożone przez klienta na sklep-retrohouse.pl. Wymaga akceptacji w magazynie.`,
 		`Klient: ${customerName(order)}`,
-		`Email: ${order.email}`,
+		`E-mail: ${order.email}`,
 		order.phone ? `Tel: ${order.phone}` : "",
 		``,
 		formatItemsSummary(order),
@@ -216,7 +219,7 @@ function buildShopText(order: AdminOrderDetail): string {
 		.join("\n");
 }
 
-/** Mail do klienta po zmianie statusu. */
+/** E-mail do klienta po zmianie statusu. */
 export async function sendOrderStatusEmail(
 	orderId: string,
 	stage: OrderEmailStage,
@@ -224,7 +227,11 @@ export async function sendOrderStatusEmail(
 	const order = await getAdminOrderForEmail(orderId);
 	if (!order?.email.trim()) return { ok: true, skipped: true };
 
-	// Override z wizualnego edytora (/magazyn/maile); fallback do szablonu w kodzie.
+	if (!(await isEmailTemplateEnabledForSend(stage).catch(() => true))) {
+		return { ok: true, skipped: true };
+	}
+
+	// Override z wizualnego edytora (/magazyn/maile — E-maile); fallback do szablonu w kodzie.
 	const saved = await getEmailTemplateForSend(stage).catch(() => null);
 
 	let subject: string;
@@ -248,7 +255,7 @@ export async function sendOrderStatusEmail(
 	return result.ok ? { ok: true, skipped: result.skipped } : { ok: false };
 }
 
-/** Mail wewnętrzny — tylko przy nowym zamówieniu do akceptacji. */
+/** E-mail wewnętrzny — tylko przy nowym zamówieniu do akceptacji. */
 export async function sendNewOrderShopNotification(
 	orderId: string,
 ): Promise<{ ok: boolean; skipped?: boolean }> {

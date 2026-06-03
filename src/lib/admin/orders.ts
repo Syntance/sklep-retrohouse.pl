@@ -254,7 +254,7 @@ export async function getAdminOrder(id: string): Promise<AdminOrderDetail | null
 	return mapMedusaOrderToDetail(data.order);
 }
 
-/** Pobiera zamówienie do maili — sesja panelu lub konto serwisowe (MEDUSA_ADMIN_*). */
+/** Pobiera zamówienie do e-maili — sesja panelu lub konto serwisowe (MEDUSA_ADMIN_*). */
 export async function getAdminOrderForEmail(id: string): Promise<AdminOrderDetail | null> {
 	for (let attempt = 0; attempt < 3; attempt++) {
 		const token = await getSessionToken();

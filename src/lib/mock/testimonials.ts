@@ -6,7 +6,7 @@
  * obsługuje stan `length === 0` (renderuje wariant „pre-launch").
  *
  * Procedura dodawania opinii (Notion „SOP — Social Proof"):
- *  1. Zrzut DM/IG + zgoda klientki na publikację (mail / DM).
+ *  1. Zrzut DM/IG + zgoda klientki na publikację (e-mail / DM).
  *  2. Anonimizacja do imię + miasto (NIE nazwisko).
  *  3. Field `source: 'instagram' | 'dm' | 'google'`.
  *  4. Field `purchasedSlug` jeśli klient wskazał konkretny produkt.

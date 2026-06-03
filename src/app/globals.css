@@ -45,6 +45,8 @@
   --color-ink-foreground: var(--ink-foreground);
   --color-brass: var(--brass);
   --color-brass-foreground: var(--brass-foreground);
+  --color-orange: var(--orange);
+  --color-orange-foreground: var(--orange-foreground);
 
   --color-border: var(--border);
   --color-input: var(--input);
@@ -148,6 +150,9 @@
   --ink-foreground: oklch(0.92 0.025 80); /* krem na ciemnym */
   --brass: oklch(0.74 0.10 80);
   --brass-foreground: oklch(0.18 0.025 35);
+  /* Żółty / bursztyn — „możliwa reklamacja” / „możesz odstąpić” */
+  --orange: oklch(0.68 0.14 88);
+  --orange-foreground: oklch(0.28 0.06 75);
 
   --success: oklch(0.43 0.07 150);
   --success-foreground: oklch(0.99 0.005 80);
@@ -212,6 +217,8 @@
   --ink-foreground: oklch(0.92 0.025 80);
   --brass: oklch(0.78 0.10 80);
   --brass-foreground: oklch(0.18 0.025 35);
+  --orange: oklch(0.78 0.13 90);
+  --orange-foreground: oklch(0.18 0.025 35);
 
   --success: oklch(0.62 0.10 150);
   --success-foreground: oklch(0.18 0.025 35);

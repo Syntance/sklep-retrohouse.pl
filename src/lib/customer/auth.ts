@@ -6,7 +6,7 @@ const otpStore = new Map<string, { code: string; expiresAt: number }>();
 
 /**
  * Generuje 6-cyfrowy OTP i zapisuje na 15 min.
- * @returns kod OTP (wysyłany mailem)
+ * @returns kod OTP (wysyłany e-mailem)
  */
 export function generateOtp(email: string): string {
 	const code = crypto.randomInt(100000, 999999).toString();

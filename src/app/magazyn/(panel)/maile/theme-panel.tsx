@@ -20,7 +20,7 @@ export function ThemePanel({
 	return (
 		<div className="flex flex-col gap-4">
 			<div className="border-b border-border pb-3">
-				<h3 className="font-serif text-base text-foreground">Motyw maila</h3>
+				<h3 className="font-serif text-base text-foreground">Motyw e-maila</h3>
 				<p className="text-xs text-muted-foreground">Globalne kolory, font i układ.</p>
 			</div>
 

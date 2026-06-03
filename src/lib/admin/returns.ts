@@ -3,7 +3,9 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import type {
 	AdminReturnRow,
+	ClaimRemedy,
 	ReturnRequest,
+	ReturnRequestType,
 	ReturnStatus,
 } from "@/lib/admin/return-types";
 
@@ -23,10 +25,20 @@ async function ensureDataDir() {
 	}
 }
 
+function normalizeReturn(raw: ReturnRequest): ReturnRequest {
+	return {
+		...raw,
+		requestType: raw.requestType ?? "withdrawal",
+		claimRemedy: raw.claimRemedy ?? null,
+		claimReferenceId: raw.claimReferenceId ?? null,
+	};
+}
+
 async function readReturns(): Promise<ReturnRequest[]> {
 	try {
 		const data = await fs.readFile(RETURNS_FILE, "utf-8");
-		return JSON.parse(data);
+		const parsed = JSON.parse(data) as ReturnRequest[];
+		return parsed.map(normalizeReturn);
 	} catch {
 		return [];
 	}
@@ -41,22 +53,28 @@ async function writeReturns(returns: ReturnRequest[]): Promise<void> {
  * Tworzy nowy wniosek o zwrot.
  */
 export async function createReturnRequest(data: {
+	requestType: ReturnRequestType;
 	orderId: string;
 	orderDisplayId: number;
 	customerEmail: string;
 	items: ReturnRequest["items"];
 	reason: string;
 	totalToRefund: number;
+	claimRemedy?: ClaimRemedy | null;
+	claimReferenceId?: string | null;
 }): Promise<ReturnRequest> {
 	const returns = await readReturns();
 
 	const newReturn: ReturnRequest = {
 		id: `ret_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+		requestType: data.requestType,
 		orderId: data.orderId,
 		orderDisplayId: data.orderDisplayId,
 		customerEmail: data.customerEmail,
 		status: "pending_approval",
 		reason: data.reason,
+		claimRemedy: data.claimRemedy ?? null,
+		claimReferenceId: data.claimReferenceId ?? null,
 		items: data.items,
 		totalToRefund: data.totalToRefund,
 		createdAt: new Date().toISOString(),
@@ -83,6 +101,7 @@ export async function getAllReturns(): Promise<AdminReturnRow[]> {
 	const returns = await readReturns();
 	return returns.map((r) => ({
 		id: r.id,
+		requestType: r.requestType,
 		orderDisplayId: r.orderDisplayId,
 		customerEmail: r.customerEmail,
 		status: r.status,
@@ -98,6 +117,60 @@ export async function getAllReturns(): Promise<AdminReturnRow[]> {
 export async function getReturnById(id: string): Promise<ReturnRequest | null> {
 	const returns = await readReturns();
 	return returns.find((r) => r.id === id) ?? null;
+}
+
+/**
+ * Wnioski klienta (zwroty + reklamacje) po zweryfikowanym e-mailu z OTP.
+ */
+export async function getReturnRequestsByCustomerEmail(
+	email: string,
+): Promise<ReturnRequest[]> {
+	const returns = await readReturns();
+	const normalized = email.trim().toLowerCase();
+	return returns.filter((r) => r.customerEmail.trim().toLowerCase() === normalized);
+}
+
+const ACTIVE_STATUSES: ReturnRequest["status"][] = [
+	"pending_approval",
+	"approved",
+	"shipped",
+	"received",
+];
+
+function isActiveReturnRequest(r: ReturnRequest): boolean {
+	return ACTIVE_STATUSES.includes(r.status);
+}
+
+/** Aktywna reklamacja na zamówienie (blokuje odstąpienie). */
+export async function getActiveClaimForOrder(
+	customerEmail: string,
+	orderId: string,
+): Promise<ReturnRequest | null> {
+	const requests = await getReturnRequestsByCustomerEmail(customerEmail);
+	return (
+		requests.find(
+			(r) =>
+				r.requestType === "claim" &&
+				r.orderId === orderId &&
+				isActiveReturnRequest(r),
+		) ?? null
+	);
+}
+
+/** Aktywne odstąpienie na zamówienie (blokuje reklamację). */
+export async function getActiveWithdrawalForOrder(
+	customerEmail: string,
+	orderId: string,
+): Promise<ReturnRequest | null> {
+	const requests = await getReturnRequestsByCustomerEmail(customerEmail);
+	return (
+		requests.find(
+			(r) =>
+				r.requestType === "withdrawal" &&
+				r.orderId === orderId &&
+				isActiveReturnRequest(r),
+		) ?? null
+	);
 }
 
 /**

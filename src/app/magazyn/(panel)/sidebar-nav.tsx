@@ -11,8 +11,8 @@ const LINKS = [
 	{ href: "/magazyn/produkty", label: "Produkty", icon: Package, exact: false },
 	{ href: "/magazyn/kategorie", label: "Kategorie", icon: Tags, exact: false },
 	{ href: "/magazyn/epoki", label: "Epoki", icon: Clock, exact: false },
-	{ href: "/magazyn/zwroty", label: "Zwroty", icon: PackageX, exact: false },
-	{ href: "/magazyn/maile", label: "Maile", icon: Mail, exact: false },
+	{ href: "/magazyn/zwroty", label: "Zwroty / reklam.", icon: PackageX, exact: false },
+	{ href: "/magazyn/maile", label: "E-maile", icon: Mail, exact: false },
 ];
 
 export function SidebarNav() {

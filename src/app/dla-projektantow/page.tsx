@@ -26,14 +26,14 @@ const TRADE_TERMS = [
 	{ label: "Rabat trade", detail: "10–15% od 3 sztuk lub koszyka >2 000 zł" },
 	{ label: "Rezerwacja", detail: "Do 14 dni bez płatności — na czas prezentacji u klienta" },
 	{ label: "FV VAT", detail: "Standardowo. NIP + dane firmy w briefie" },
-	{ label: "Priorytetowy dostęp", detail: "Nowe dostawy z Wiednia mailem 48 h przed publikacją" },
+	{ label: "Priorytetowy dostęp", detail: "Nowe dostawy z Wiednia e-mailem 48 h przed publikacją" },
 	{ label: "Płatność", detail: "Przelew, termin 14 dni od odbioru" },
 	{ label: "Dostawa", detail: "Kurier ubezpieczony, odbiór w NT, dostarczenie na plac budowy" },
 ];
 
 const PROCESS = [
 	{ title: "Wyślij brief", description: "Mood board (PDF / link / zdjęcia), opis stylistyki, budżet, termin." },
-	{ title: "Selekcja w 24 h", description: "Mailem dostajesz 3–5 propozycji z fotografią i pochodzeniem każdego obiektu." },
+	{ title: "Selekcja w 24 h", description: "E-mailem dostajesz 3–5 propozycji z fotografią i pochodzeniem każdego obiektu." },
 	{ title: "Rezerwacja 14 dni", description: "Wybrane przedmioty blokujemy — masz czas pokazać klientowi." },
 	{ title: "FV VAT + dostawa", description: "Faktura po zatwierdzeniu, kurier ubezpieczony lub odbiór w NT." },
 ];

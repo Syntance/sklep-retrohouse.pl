@@ -12,7 +12,7 @@ updated: 2026-05
   - Metoda oceny (external audit / self-audit).
   - Kontakt koordynatora dostępności (email + telefon).
   - Link do UODO / Rzecznika Praw Obywatelskich (procedura skargowa).
-- **Przycisk „Zgłoś problem z dostępnością"** w stopce → formularz + email.
+- **Przycisk „Zgłoś problem z dostępnością"** w stopce → formularz + e-mail.
 - Audit raz w roku: axe DevTools + Wave + manual screen reader. Fix critical w 30 dni.
 
 ## GDPR — Data Subject Rights (DSR)

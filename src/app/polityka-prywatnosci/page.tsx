@@ -28,7 +28,7 @@ const SECTIONS = [
 	},
 	{
 		title: "5. Twoje prawa (DSR)",
-		copy: `Masz prawo do: dostępu (art. 15), sprostowania (16), usunięcia / „prawa do bycia zapomnianym" (17), ograniczenia przetwarzania (18), przenoszenia danych (20), sprzeciwu (21). Realizacja przez /moje-konto/prywatnosc lub email privacy@sklep-retrohouse.pl. Termin: 30 dni.`,
+		copy: `Masz prawo do: dostępu (art. 15), sprostowania (16), usunięcia / „prawa do bycia zapomnianym" (17), ograniczenia przetwarzania (18), przenoszenia danych (20), sprzeciwu (21). Realizacja przez /moje-konto/prywatnosc lub e-mail privacy@sklep-retrohouse.pl. Termin: 30 dni.`,
 	},
 	{
 		title: "6. Powierzenie danych",
@@ -44,7 +44,7 @@ const SECTIONS = [
 	},
 	{
 		title: "9. Zmiany polityki",
-		copy: `Każda istotna zmiana polityki — komunikacja mailowa do osób zapisanych. Aktualna wersja zawsze pod /polityka-prywatnosci. Wersja: ${new Date().toLocaleDateString("pl-PL")}.`,
+		copy: `Każda istotna zmiana polityki — komunikacja e-mailowa do osób zapisanych. Aktualna wersja zawsze pod /polityka-prywatnosci. Wersja: ${new Date().toLocaleDateString("pl-PL")}.`,
 	},
 ];
 

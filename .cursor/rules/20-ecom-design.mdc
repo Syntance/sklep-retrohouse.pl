@@ -54,6 +54,6 @@ globs:
 
 ## Zero-stock / sold-out states
 - Button disabled: „Wyprzedane" zamiast „Dodaj do koszyka".
-- „Powiadom mnie" button → email form → webhook `inventory.restocked` → mail.
+- „Powiadom mnie" button → formularz e-mail → webhook `inventory.restocked` → e-mail.
 - Sold-out variant: greyed + strikethrough w selektorze.
 - Low stock: „Zostało 3 szt." poniżej CTA gdy `quantity < 5`.

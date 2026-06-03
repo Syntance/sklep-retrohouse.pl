@@ -158,7 +158,7 @@ export function BriefForm() {
 					role="status"
 					className="mt-4 rounded-md bg-success/15 px-3 py-2 text-sm text-success-foreground"
 				>
-					Dziękujemy — odpiszemy mailowo w ciągu 24 godzin roboczych.
+					Dziękujemy — odpiszemy e-mailowo w ciągu 24 godzin roboczych.
 				</p>
 			) : null}
 			{state.status === "error" ? (

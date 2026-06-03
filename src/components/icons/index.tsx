@@ -328,3 +328,12 @@ export function ClipboardIcon(props: IconProps) {
 		</Svg>
 	);
 }
+
+export function UserIcon(props: IconProps) {
+	return (
+		<Svg {...props}>
+			<circle cx="12" cy="8" r="3.5" />
+			<path d="M5 20c1.5-3.5 4.2-5.5 7-5.5s5.5 2 7 5.5" />
+		</Svg>
+	);
+}

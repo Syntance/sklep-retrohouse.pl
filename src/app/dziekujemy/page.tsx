@@ -42,7 +42,7 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Sea
 						</h1>
 						<p className="mt-4 max-w-2xl text-pretty text-lg text-foreground/80">
 							Numer zamówienia <span className="tabular font-semibold">#{orderId}</span> trafił do
-							naszej skrzynki. W ciągu 2 godzin roboczych odeślemy maila z potwierdzeniem i numerem
+							naszej skrzynki. W ciągu 2 godzin roboczych odeślemy e-maila z potwierdzeniem i numerem
 							śledzenia.
 						</p>
 					</div>
@@ -78,7 +78,7 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Sea
 						<NewsletterForm
 							source="popup"
 							heading="Chcesz wiedzieć o nowych dostawach z Wiednia?"
-							description="Maila wysyłamy raz na 2 tygodnie. Bez spamu, z linkiem do priorytetowej rezerwacji."
+							description="E-maila wysyłamy raz na 2 tygodnie. Bez spamu, z linkiem do priorytetowej rezerwacji."
 						/>
 					</div>
 				</Container>

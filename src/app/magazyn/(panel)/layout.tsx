@@ -1,11 +1,9 @@
-import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
-import { Button } from "@/components/ui/button";
-import { logoutAction } from "@/lib/admin/auth-actions";
 import { getSessionToken } from "@/lib/admin/session";
 import { SidebarNav } from "./sidebar-nav";
+import { SidebarUtilityLinks } from "./sidebar-utility-links";
 
 export default async function PanelLayout({ children }: { children: ReactNode }) {
 	const token = await getSessionToken();
@@ -23,21 +21,9 @@ export default async function PanelLayout({ children }: { children: ReactNode })
 					</Link>
 				</div>
 
-				<SidebarNav />
-
-				<div className="mt-auto flex flex-col gap-2 border-t border-border pt-4">
-					<Link
-						href="/"
-						className="px-3 text-xs text-muted-foreground transition-colors hover:text-foreground"
-					>
-						↗ Otwórz sklep
-					</Link>
-					<form action={logoutAction}>
-						<Button type="submit" variant="ghost" size="sm" className="w-full justify-start gap-2">
-							<LogOut className="size-4" aria-hidden />
-							Wyloguj
-						</Button>
-					</form>
+				<div className="flex flex-col gap-1">
+					<SidebarNav />
+					<SidebarUtilityLinks />
 				</div>
 			</aside>
 

@@ -1,22 +1,24 @@
 "use client";
 
 import { Loader2, Monitor, Plus, RotateCcw, Save, Send, Smartphone } from "lucide-react";
-import { useMemo, useState, useTransition } from "react";
+import { useCallback, useMemo, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { renderTemplate, sampleRenderContext } from "@/lib/email/render-template";
+import { renderTemplate, sampleRenderContextForTemplate } from "@/lib/email/render-template";
 import {
 	type Block,
-	EMAIL_TEMPLATE_TYPES,
 	type EmailTemplate,
 	type EmailTemplateType,
-	MERGE_VARIABLES,
+	getMergeVariablesForTemplate,
+	isCaseEmailTemplateType,
+	isEmailTemplateEnabled,
 } from "@/lib/email/template-types";
 import { cn } from "@/lib/utils";
 import {
 	resetTemplateAction,
 	saveTemplateAction,
 	sendTestEmailAction,
+	setTemplateEnabledAction,
 	uploadEmailImageAction,
 } from "./actions";
 import { BLOCK_META, createBlock, duplicateBlock, PALETTE_BLOCKS } from "./block-meta";
@@ -29,6 +31,10 @@ import {
 	segmentTrack,
 } from "./editor-chrome";
 import { EditorCanvas } from "./editor-canvas";
+import {
+	EmailTemplatePicker,
+	enabledByTypeFromTemplates,
+} from "./email-template-picker";
 import { ThemePanel } from "./theme-panel";
 
 type Feedback = { type: "ok" | "err"; text: string } | null;
@@ -52,15 +58,31 @@ export function EmailEditor({ initialTemplates }: { initialTemplates: EmailTempl
 	const [saving, startSave] = useTransition();
 	const [resetting, startReset] = useTransition();
 	const [testing, startTest] = useTransition();
+	const [togglingType, setTogglingType] = useState<EmailTemplateType | null>(null);
 
 	const active = templates[activeType];
+	const activeEnabled = isEmailTemplateEnabled(active);
+
+	const templateList = useMemo(() => Object.values(templates), [templates]);
+	const enabledByType = useMemo(
+		() => enabledByTypeFromTemplates(templateList),
+		[templateList],
+	);
 
 	const selectedBlock = useMemo(
 		() => active.blocks.find((b) => b.id === selectedId) ?? null,
 		[active.blocks, selectedId],
 	);
 
-	const preview = useMemo(() => renderTemplate(active, sampleRenderContext()).html, [active]);
+	const mergeVariables = useMemo(
+		() => getMergeVariablesForTemplate(activeType),
+		[activeType],
+	);
+
+	const preview = useMemo(
+		() => renderTemplate(active, sampleRenderContextForTemplate(activeType)).html,
+		[active, activeType],
+	);
 
 	function updateActive(updater: (t: EmailTemplate) => EmailTemplate) {
 		setTemplates((prev) => ({ ...prev, [activeType]: updater(prev[activeType]) }));
@@ -101,12 +123,41 @@ export function EmailEditor({ initialTemplates }: { initialTemplates: EmailTempl
 		if (selectedId === id) setSelectedId(null);
 	}
 
-	function switchTemplate(type: EmailTemplateType) {
+	const switchTemplate = useCallback((type: EmailTemplateType) => {
 		setActiveType(type);
 		setSelectedId(null);
 		setLeftPanelTab("theme");
 		setFeedback(null);
-	}
+	}, []);
+
+	const onToggleEnabled = useCallback(
+		(type: EmailTemplateType, enabled: boolean) => {
+			setFeedback(null);
+			setTogglingType(type);
+			void (async () => {
+				const result = await setTemplateEnabledAction({ type, enabled });
+				setTogglingType(null);
+				if (result.ok && result.template) {
+					setTemplates((prev) => ({
+						...prev,
+						[type]: result.template as EmailTemplate,
+					}));
+					setFeedback({
+						type: "ok",
+						text: enabled
+							? "Wysyłka tego e-maila włączona."
+							: "Wysyłka tego e-maila wyłączona — klient nie dostanie go automatycznie.",
+					});
+				} else {
+					setFeedback({
+						type: "err",
+						text: result.error ?? "Nie udało się zapisać ustawienia.",
+					});
+				}
+			})();
+		},
+		[],
+	);
 
 	const uploadImage: ImageUploader = async (file) => {
 		const formData = new FormData();
@@ -118,7 +169,10 @@ export function EmailEditor({ initialTemplates }: { initialTemplates: EmailTempl
 	function onSave() {
 		setFeedback(null);
 		startSave(async () => {
-			const result = await saveTemplateAction(active);
+			const result = await saveTemplateAction({
+				...active,
+				enabled: active.enabled ?? true,
+			});
 			setFeedback(
 				result.ok
 					? { type: "ok", text: "Szablon zapisany — nadpisze wysyłki tego etapu." }
@@ -128,7 +182,7 @@ export function EmailEditor({ initialTemplates }: { initialTemplates: EmailTempl
 	}
 
 	function onReset() {
-		if (!window.confirm("Przywrócić domyślny szablon? Twoje zmiany tego maila zostaną usunięte.")) {
+		if (!window.confirm("Przywrócić domyślny szablon? Twoje zmiany tego e-maila zostaną usunięte.")) {
 			return;
 		}
 		setFeedback(null);
@@ -160,32 +214,30 @@ export function EmailEditor({ initialTemplates }: { initialTemplates: EmailTempl
 		updateActive((t) => ({ ...t, subject: `${t.subject}{{${token}}}` }));
 	}
 
-	const busy = saving || resetting || testing;
+	const busy = saving || resetting || testing || togglingType !== null;
 
 	const previewMaxWidth =
 		previewMode === "mobile" ? 390 : (active.theme.contentWidth + 80) * 2;
 
 	return (
 		<div className="flex flex-col gap-4">
-			{/* Zakładki szablonów */}
-			<div className="flex flex-wrap gap-1.5">
-				{EMAIL_TEMPLATE_TYPES.map(({ type, label }) => (
-					<button
-						key={type}
-						type="button"
-						onClick={() => switchTemplate(type)}
-						className={cn(
-							editorBtnRounded,
-							"px-3.5 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
-							type === activeType
-								? segmentItemActive
-								: "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground",
-						)}
-					>
-						{label}
-					</button>
-				))}
-			</div>
+			<EmailTemplatePicker
+				activeType={activeType}
+				onSelect={switchTemplate}
+				enabledByType={enabledByType}
+				onToggleEnabled={onToggleEnabled}
+				togglingType={togglingType}
+			/>
+
+			{!activeEnabled ? (
+				<p
+					role="status"
+					className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-foreground"
+				>
+					Wysyłka automatyczna wyłączona dla tego szablonu. Możesz edytować treść i włączyć
+					ją suwakiem w liście powyżej.
+				</p>
+			) : null}
 
 			{/* Pasek narzędzi */}
 			<div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
@@ -203,7 +255,7 @@ export function EmailEditor({ initialTemplates }: { initialTemplates: EmailTempl
 
 				<div className="flex flex-wrap items-center gap-1.5">
 					<span className="text-xs text-muted-foreground">Wstaw zmienną:</span>
-					{MERGE_VARIABLES.map((v) => (
+					{mergeVariables.map((v) => (
 						<button
 							key={v.token}
 							type="button"
@@ -366,7 +418,11 @@ export function EmailEditor({ initialTemplates }: { initialTemplates: EmailTempl
 				<div className="flex min-w-0 flex-col gap-3 rounded-xl border border-border bg-muted/20 p-3">
 					<div className="flex items-center justify-between">
 						<h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-							Podgląd (dane przykładowe)
+							Podgląd (
+							{isCaseEmailTemplateType(activeType)
+								? "przykładowa sprawa"
+								: "przykładowe zamówienie"}
+							)
 						</h3>
 						<div className={segmentTrack}>
 							<button
@@ -399,7 +455,7 @@ export function EmailEditor({ initialTemplates }: { initialTemplates: EmailTempl
 					</div>
 					<div className="flex justify-center overflow-x-auto overflow-y-hidden">
 						<iframe
-							title="Podgląd maila"
+							title="Podgląd e-maila"
 							srcDoc={preview}
 							sandbox=""
 							className="h-[720px] shrink-0 rounded-lg border border-border bg-white transition-all"

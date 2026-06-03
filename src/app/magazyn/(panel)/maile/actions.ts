@@ -6,12 +6,13 @@ import { z } from "zod";
 import {
 	resetEmailTemplate,
 	saveEmailTemplate,
+	setEmailTemplateEnabled,
 } from "@/lib/admin/email-templates";
 import { AdminApiError, AdminUnauthorizedError, adminUpload } from "@/lib/admin/medusa-admin";
 import {
 	mergeSubject,
 	renderTemplate,
-	sampleRenderContext,
+	sampleRenderContextForTemplate,
 } from "@/lib/email/render-template";
 import { sendTransactionalEmail } from "@/lib/email/send-transactional";
 import {
@@ -22,6 +23,7 @@ import {
 
 export type EmailActionState = { ok: boolean; error: string | null };
 export type ResetActionState = EmailActionState & { template?: EmailTemplate };
+export type ToggleEnabledActionState = EmailActionState & { template?: EmailTemplate };
 export type UploadActionState = EmailActionState & { url?: string };
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
@@ -48,6 +50,24 @@ export async function saveTemplateAction(template: unknown): Promise<EmailAction
 
 	revalidatePath("/magazyn/maile");
 	return { ok: true, error: null };
+}
+
+const toggleEnabledSchema = z.object({
+	type: emailTemplateTypeSchema,
+	enabled: z.boolean(),
+});
+
+export async function setTemplateEnabledAction(input: unknown): Promise<ToggleEnabledActionState> {
+	const parsed = toggleEnabledSchema.safeParse(input);
+	if (!parsed.success) return { ok: false, error: "Nieprawidłowe dane przełącznika." };
+
+	try {
+		const template = await setEmailTemplateEnabled(parsed.data.type, parsed.data.enabled);
+		revalidatePath("/magazyn/maile");
+		return { ok: true, error: null, template };
+	} catch (error) {
+		return handleError(error, "Nie udało się zapisać ustawienia wysyłki.");
+	}
 }
 
 export async function resetTemplateAction(type: unknown): Promise<ResetActionState> {
@@ -95,7 +115,7 @@ export async function sendTestEmailAction(input: unknown): Promise<EmailActionSt
 	}
 
 	const template = parsed.data.template as EmailTemplate;
-	const ctx = sampleRenderContext();
+	const ctx = sampleRenderContextForTemplate(template.type);
 	const { html, text } = renderTemplate(template, ctx);
 	const subject = `[TEST] ${mergeSubject(template.subject, ctx.vars)}`;
 

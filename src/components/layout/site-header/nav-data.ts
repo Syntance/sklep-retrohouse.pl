@@ -94,6 +94,7 @@ export const FOOTER_COLUMNS: NavGroup[] = [
 			{ label: "Regulamin", href: "/regulamin" },
 			{ label: "Polityka prywatności", href: "/polityka-prywatnosci" },
 			{ label: "Polityka cookies", href: "/polityka-cookies" },
+			{ label: "Moje konto", href: "/konto" },
 			{ label: "Reklamacje", href: "/reklamacje" },
 			{ label: "Odstąpienie od umowy", href: "/odstapienie" },
 			{ label: "Deklaracja dostępności", href: "/deklaracja-dostepnosci" },

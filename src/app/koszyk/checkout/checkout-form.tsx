@@ -362,7 +362,7 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 					</li>
 					<li className="flex items-start gap-2">
 						<CheckIcon className="size-4 text-brass" />
-						Cart abandonment email po 1h od porzucenia koszyka
+						Cart abandonment e-mail po 1h od porzucenia koszyka
 					</li>
 				</ul>
 			</aside>

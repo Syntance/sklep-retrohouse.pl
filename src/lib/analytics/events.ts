@@ -118,6 +118,10 @@ export type AnalyticsEvent =
 	| { name: "related_article_clicked"; properties: { article_slug: string } }
 	| { name: "contact_form_submitted"; properties: { topic: ContactTopic } }
 	| { name: "contact_topic_selected"; properties: { topic: ContactTopic } }
+	| {
+			name: "claim_form_submitted";
+			properties: { remedy: "repair" | "price_reduction" | "withdrawal" };
+	  }
 	// Retencja / Post-purchase (Flow 6)
 	| { name: "ugc_cta_clicked"; properties: Record<string, never> }
 	| { name: "review_google_clicked"; properties: Record<string, never> }
@@ -180,6 +184,7 @@ export const KNOWN_EVENT_NAMES = [
 	"related_article_clicked",
 	"contact_form_submitted",
 	"contact_topic_selected",
+	"claim_form_submitted",
 	"ugc_cta_clicked",
 	"review_google_clicked",
 	"story_section_scrolled",

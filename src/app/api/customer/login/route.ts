@@ -8,7 +8,7 @@ import {
 
 /**
  * POST /api/customer/login
- * Wysyła kod OTP na email klienta (logowanie bez hasła).
+ * Wysyła kod OTP na e-mail klienta (logowanie bez hasła).
  */
 export async function POST(request: Request) {
 	try {
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
 
 		if (!parsed.success) {
 			return NextResponse.json(
-				{ ok: false, error: "Niepoprawny adres email" },
+				{ ok: false, error: "Niepoprawny adres e-mail" },
 				{ status: 400 },
 			);
 		}
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
 		const { email } = parsed.data;
 		const code = generateOtp(email);
 
-		// Wyślij email z kodem OTP
+		// Wyślij e-mail z kodem OTP
 		await sendTransactionalEmail({
 			to: email,
 			subject: "Twój kod do logowania — RetroHouse",

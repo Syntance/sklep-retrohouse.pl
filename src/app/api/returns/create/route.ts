@@ -1,31 +1,30 @@
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
-import { CreateReturnSchema } from "@/lib/validation/returns";
-import { verifyCustomerToken } from "@/lib/customer/auth";
-import { createReturnRequest } from "@/lib/admin/returns";
-import { sendTransactionalEmail } from "@/lib/email/send-transactional";
+import { createReturnRequest, getActiveClaimForOrder } from "@/lib/admin/returns";
+import { getCustomerEmailFromRequest } from "@/lib/customer/authorize-request";
+import { buildReturnItemsFromOrder } from "@/lib/customer/return-items";
+import {
+	getLineItemsBlockedByOtherCases,
+	validateReturnLineItemSelection,
+} from "@/lib/customer/return-line-items";
+import { getCustomerOrderById } from "@/lib/customer/orders";
 import { EMAIL_CONTACT } from "@/lib/email/constants";
+import { buildCaseRenderVarsForNewWithdrawal } from "@/lib/email/case-email-context";
+import { buildCustomerCaseEmailBodies } from "@/lib/email/customer-case-email";
+import { sendCaseCustomerEmail } from "@/lib/email/send-case-customer-email";
+import { sendTransactionalEmail } from "@/lib/email/send-transactional";
+import { CreateReturnSchema } from "@/lib/validation/returns";
 
 /**
  * POST /api/returns/create
- * Tworzy wniosek o zwrot/odstąpienie od umowy.
- * Wymaga tokenu klienta.
+ * Odstąpienie od umowy (14 dni). Wymaga tokenu klienta.
  */
 export async function POST(request: Request) {
 	try {
-		const authHeader = request.headers.get("Authorization");
-		if (!authHeader?.startsWith("Bearer ")) {
-			return NextResponse.json(
-				{ ok: false, error: "Brak autoryzacji" },
-				{ status: 401 },
-			);
-		}
-
-		const token = authHeader.slice(7);
-		const email = verifyCustomerToken(token);
-
+		const email = getCustomerEmailFromRequest(request);
 		if (!email) {
 			return NextResponse.json(
-				{ ok: false, error: "Token wygasł" },
+				{ ok: false, error: "Brak autoryzacji" },
 				{ status: 401 },
 			);
 		}
@@ -34,70 +33,112 @@ export async function POST(request: Request) {
 		const parsed = CreateReturnSchema.safeParse(body);
 
 		if (!parsed.success) {
-			return NextResponse.json(
-				{ ok: false, error: "Niepoprawne dane" },
-				{ status: 400 },
-			);
+			const first = parsed.error.issues[0]?.message ?? "Niepoprawne dane";
+			return NextResponse.json({ ok: false, error: first }, { status: 400 });
 		}
 
 		const { orderId, itemIds, reason } = parsed.data;
 
-		// TODO: Pobierz order z Medusa, zweryfikuj że należy do tego emaila
-		// i że itemIds są poprawne
-		
-		// Mock dla prototypu:
-		const mockItems = itemIds.map((id) => ({
-			orderLineItemId: id,
-			productTitle: "Produkt testowy",
-			quantity: 1,
-			unitPrice: 10000, // 100 zł
-			thumbnail: null,
-		}));
+		const order = await getCustomerOrderById(email, orderId);
+		if (!order) {
+			return NextResponse.json(
+				{ ok: false, error: "Nie znaleziono zamówienia dla tego konta." },
+				{ status: 404 },
+			);
+		}
 
-		const totalToRefund = mockItems.reduce(
-			(sum, item) => sum + item.unitPrice * item.quantity,
-			0,
+		if (!order.canReturn) {
+			return NextResponse.json(
+				{ ok: false, error: "Upłynął termin 14 dni na odstąpienie od umowy." },
+				{ status: 400 },
+			);
+		}
+
+		const activeClaim = await getActiveClaimForOrder(email, orderId);
+		if (activeClaim) {
+			const ref = activeClaim.claimReferenceId;
+			return NextResponse.json(
+				{
+					ok: false,
+					error: ref
+						? `Na tym zamówieniu trwa reklamacja (${ref}). Odstąpienie nie jest możliwe równolegle.`
+						: "Na tym zamówieniu trwa reklamacja — odstąpienie nie jest możliwe równolegle.",
+				},
+				{ status: 409 },
+			);
+		}
+
+		const selectionError = validateReturnLineItemSelection(
+			order.items,
+			itemIds,
+			getLineItemsBlockedByOtherCases(order),
 		);
+		if (selectionError) {
+			return NextResponse.json({ ok: false, error: selectionError }, { status: 400 });
+		}
+
+		let items;
+		let totalToRefund;
+		try {
+			const built = buildReturnItemsFromOrder(order, itemIds);
+			items = built.items;
+			totalToRefund = built.totalToRefund;
+		} catch {
+			return NextResponse.json(
+				{ ok: false, error: "Nieprawidłowe pozycje zamówienia." },
+				{ status: 400 },
+			);
+		}
 
 		const returnRequest = await createReturnRequest({
-			orderId,
-			orderDisplayId: 1234, // TODO: z Medusa
+			requestType: "withdrawal",
+			orderId: order.id,
+			orderDisplayId: order.displayId,
 			customerEmail: email,
-			items: mockItems,
+			items,
 			reason,
 			totalToRefund,
 		});
 
-		// Wyślij email do klienta
-		await sendTransactionalEmail({
-			to: email,
-			subject: "Złożono wniosek o odstąpienie od umowy — RetroHouse",
-			text: `Otrzymaliśmy Twój wniosek o odstąpienie od umowy (zamówienie #${returnRequest.orderDisplayId}).\n\nOdpowiemy w ciągu 2 dni roboczych.\n\nRetroHouse`,
-			html: `
-				<div style="font-family: system-ui, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px;">
-					<h2 style="color: #2D1810;">Wniosek o odstąpienie od umowy</h2>
-					<p>Otrzymaliśmy Twój wniosek dotyczący zamówienia <strong>#${returnRequest.orderDisplayId}</strong>.</p>
-					<p style="color: #666;">Odpowiemy w ciągu 2 dni roboczych na adres ${email}.</p>
-					<p style="color: #666; font-size: 14px; margin-top: 32px;">RetroHouse</p>
-				</div>
-			`,
+		const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sklep-retrohouse.pl";
+
+		const caseVars = buildCaseRenderVarsForNewWithdrawal({
+			orderDisplayId: order.displayId,
+			productTitles: items.map((item) => item.productTitle),
+		});
+		const customerBodies = buildCustomerCaseEmailBodies({
+			tab: "zwroty",
+			textBody:
+				`Otrzymaliśmy Twój wniosek o odstąpienie od umowy (zamówienie #${order.displayId}).\n\n` +
+				`Odpowiemy w ciągu 2 dni roboczych.`,
+			htmlBody:
+				`<h2 style="color:#2D1810;margin:0 0 12px">Wniosek o odstąpienie</h2>` +
+				`<p>Zamówienie <strong>#${order.displayId}</strong></p>` +
+				`<p style="color:#666">Odpowiemy w ciągu 2 dni roboczych.</p>`,
 		});
 
-		// Wyślij email do admina
+		await sendCaseCustomerEmail({
+			templateType: "withdrawal_received",
+			to: email,
+			vars: caseVars,
+			fallback: {
+				subject: "Złożono wniosek o odstąpienie od umowy — RetroHouse",
+				text: customerBodies.text,
+				html: customerBodies.html,
+			},
+		});
+
 		await sendTransactionalEmail({
 			to: EMAIL_CONTACT,
-			subject: `Nowy zwrot: zamówienie #${returnRequest.orderDisplayId}`,
-			text: `Klient ${email} złożył wniosek o zwrot.\n\nPowód: ${reason}\n\nZobacz: ${process.env.NEXT_PUBLIC_SITE_URL}/magazyn/zwroty`,
-			html: `
-				<div style="font-family: system-ui, sans-serif;">
-					<h3>Nowy wniosek o zwrot</h3>
-					<p><strong>Zamówienie:</strong> #${returnRequest.orderDisplayId}</p>
-					<p><strong>Email:</strong> ${email}</p>
-					<p><strong>Powód:</strong> ${reason}</p>
-					<a href="${process.env.NEXT_PUBLIC_SITE_URL}/magazyn/zwroty" style="display: inline-block; margin-top: 16px; padding: 8px 16px; background: #7D5A3C; color: white; text-decoration: none; border-radius: 4px;">Zobacz w magazynie</a>
-				</div>
-			`,
+			subject: `Nowy zwrot: zamówienie #${order.displayId}`,
+			text:
+				`Klient ${email} złożył wniosek o odstąpienie.\n\n` +
+				`Powód: ${reason}\n\n` +
+				`Panel: ${siteUrl}/magazyn/zwroty/${returnRequest.id}`,
+			html: `<div style="font-family:system-ui,sans-serif"><h3>Nowe odstąpienie</h3><p><strong>#${order.displayId}</strong> · ${email}</p><p>${reason}</p><p><a href="${siteUrl}/magazyn/zwroty/${returnRequest.id}">Magazyn</a></p></div>`,
 		});
+
+		revalidatePath("/magazyn/zwroty");
 
 		return NextResponse.json({ ok: true, returnId: returnRequest.id });
 	} catch (error) {

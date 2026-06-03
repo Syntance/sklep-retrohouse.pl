@@ -2,9 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
-import { formatCurrency } from "@/lib/format";
+import { formatPrice } from "@/lib/format";
 import { getReturnDetailAction } from "../actions";
 import { ReturnActions } from "./return-actions";
+import { CLAIM_REMEDY_LABELS } from "@/lib/claims/labels";
 
 const STATUS_LABELS: Record<string, string> = {
 	pending_approval: "Oczekuje na akceptację",
@@ -25,6 +26,8 @@ export default async function ReturnDetailPage({ params }: { params: Promise<{ i
 	}
 
 	const ret = result.return;
+	const isClaim = ret.requestType === "claim";
+	const typeLabel = isClaim ? "Reklamacja" : "Odstąpienie od umowy";
 
 	return (
 		<div className="space-y-6">
@@ -42,12 +45,26 @@ export default async function ReturnDetailPage({ params }: { params: Promise<{ i
 				<div className="lg:col-span-2 space-y-6">
 					<div className="rounded-xl border border-border bg-card p-6">
 						<h1 className="font-serif text-2xl text-foreground mb-4">
-							Zwrot: zamówienie #{ret.orderDisplayId}
+							{typeLabel}: zamówienie #{ret.orderDisplayId}
 						</h1>
 
 						<dl className="grid grid-cols-2 gap-4 text-sm">
+							{isClaim && ret.claimReferenceId ? (
+								<div>
+									<dt className="font-medium text-muted-foreground">Nr reklamacji</dt>
+									<dd className="mt-1 font-mono text-foreground">{ret.claimReferenceId}</dd>
+								</div>
+							) : null}
+							{isClaim && ret.claimRemedy ? (
+								<div>
+									<dt className="font-medium text-muted-foreground">Żądanie klienta</dt>
+									<dd className="mt-1 text-foreground">
+										{CLAIM_REMEDY_LABELS[ret.claimRemedy]}
+									</dd>
+								</div>
+							) : null}
 							<div>
-								<dt className="font-medium text-muted-foreground">Email klienta</dt>
+								<dt className="font-medium text-muted-foreground">E-mail klienta</dt>
 								<dd className="mt-1 text-foreground">{ret.customerEmail}</dd>
 							</div>
 							<div>
@@ -67,7 +84,7 @@ export default async function ReturnDetailPage({ params }: { params: Promise<{ i
 							<div>
 								<dt className="font-medium text-muted-foreground">Kwota do zwrotu</dt>
 								<dd className="mt-1 font-medium text-foreground">
-									{formatCurrency(ret.totalToRefund)}
+									{formatPrice(ret.totalToRefund)}
 								</dd>
 							</div>
 						</dl>
@@ -90,12 +107,12 @@ export default async function ReturnDetailPage({ params }: { params: Promise<{ i
 									<div className="flex-1">
 										<p className="font-medium text-foreground">{item.productTitle}</p>
 										<p className="text-sm text-muted-foreground">
-											{formatCurrency(item.unitPrice)} × {item.quantity}
+											{formatPrice(item.unitPrice)} × {item.quantity}
 										</p>
 									</div>
 									<div className="text-right">
 										<p className="font-medium text-foreground">
-											{formatCurrency(item.unitPrice * item.quantity)}
+											{formatPrice(item.unitPrice * item.quantity)}
 										</p>
 									</div>
 								</div>
@@ -104,7 +121,9 @@ export default async function ReturnDetailPage({ params }: { params: Promise<{ i
 					</div>
 
 					<div className="rounded-xl border border-border bg-card p-6">
-						<h2 className="font-serif text-lg text-foreground mb-4">Powód zwrotu</h2>
+						<h2 className="font-serif text-lg text-foreground mb-4">
+							{isClaim ? "Opis niezgodności" : "Powód zwrotu"}
+						</h2>
 						<p className="text-sm text-foreground/80 leading-relaxed">{ret.reason}</p>
 					</div>
 

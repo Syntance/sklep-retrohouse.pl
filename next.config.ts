@@ -23,6 +23,12 @@ function medusaImagePatterns(): RemotePattern[] {
 				...(url.port ? { port: url.port } : {}),
 				pathname: "/static/**",
 			});
+			patterns.push({
+				protocol: url.protocol.replace(":", "") as "http" | "https",
+				hostname: url.hostname,
+				...(url.port ? { port: url.port } : {}),
+				pathname: "/products/**",
+			});
 		} catch {
 			// ignore invalid env at build time
 		}

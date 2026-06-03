@@ -1,3 +1,8 @@
+/** Odstąpienie (14 dni) lub reklamacja (zgodność z umową). */
+export type ReturnRequestType = "withdrawal" | "claim";
+
+export type ClaimRemedy = "repair" | "price_reduction" | "withdrawal";
+
 /** Status wniosku o zwrot/odstąpienie od umowy (14 dni UPK art. 27). */
 export type ReturnStatus =
 	| "pending_approval" // Złożony przez klienta, czeka na akceptację
@@ -20,11 +25,17 @@ export type ReturnItem = {
 /** Wniosek o zwrot — pełne dane. */
 export type ReturnRequest = {
 	id: string;
+	requestType: ReturnRequestType;
 	orderId: string;
 	orderDisplayId: number;
 	customerEmail: string;
 	status: ReturnStatus;
-	reason: string; // "Zmiana decyzji" / "Produkt nie spełnił oczekiwań" / inne
+	/** Opis (reklamacja) lub powód zwrotu (odstąpienie). */
+	reason: string;
+	/** Tylko reklamacje — żądanie klienta. */
+	claimRemedy: ClaimRemedy | null;
+	/** Numer RK-… dla reklamacji (email do klienta). */
+	claimReferenceId: string | null;
 	items: ReturnItem[];
 	totalToRefund: number; // Suma pozycji (może być < order total jeśli partial)
 	createdAt: string;
@@ -41,6 +52,7 @@ export type ReturnRequest = {
 /** Wiersz listy zwrotów w panelu magazynu. */
 export type AdminReturnRow = {
 	id: string;
+	requestType: ReturnRequestType;
 	orderDisplayId: number;
 	customerEmail: string;
 	status: ReturnStatus;

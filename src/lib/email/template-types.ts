@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * Model danych wizualnego edytora maili transakcyjnych.
+ * Model danych wizualnego edytora e-maili transakcyjnych.
  *
  * Edytor jest blokowy (email-safe): bloki układane pionowo + kolumny + odstępy.
  * Brak absolutnego pozycjonowania — w klientach pocztowych (Gmail/Outlook)
@@ -19,7 +19,7 @@ export const FONT_STACKS: Record<FontKey, string> = {
 	mono: "'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace",
 };
 
-/** Globalny motyw maila — kolory, font, szerokość, nagłówek marki. */
+/** Globalny motyw e-maila — kolory, font, szerokość, nagłówek marki. */
 export type EmailTheme = {
 	bg: string;
 	contentBg: string;
@@ -129,7 +129,7 @@ export type Block = LeafBlock | OrderItemsBlock | FooterBlock | ColumnsBlock;
 
 export type BlockType = Block["type"];
 
-export type EmailTemplateType =
+export type OrderEmailTemplateType =
 	| "placed"
 	| "realization_started"
 	| "shipped"
@@ -137,13 +137,44 @@ export type EmailTemplateType =
 	| "cancelled"
 	| "confirmation";
 
+export type CaseEmailTemplateType =
+	| "claim_received"
+	| "withdrawal_received"
+	| "claim_approved"
+	| "withdrawal_approved"
+	| "case_refunded"
+	| "claim_rejected"
+	| "withdrawal_rejected";
+
+export type EmailTemplateType = OrderEmailTemplateType | CaseEmailTemplateType;
+
+const CASE_EMAIL_TEMPLATE_TYPES: CaseEmailTemplateType[] = [
+	"claim_received",
+	"withdrawal_received",
+	"claim_approved",
+	"withdrawal_approved",
+	"case_refunded",
+	"claim_rejected",
+	"withdrawal_rejected",
+];
+
+export function isCaseEmailTemplateType(type: EmailTemplateType): type is CaseEmailTemplateType {
+	return (CASE_EMAIL_TEMPLATE_TYPES as EmailTemplateType[]).includes(type);
+}
+
 export type EmailTemplate = {
 	type: EmailTemplateType;
 	subject: string;
 	preheader: string;
 	theme: EmailTheme;
 	blocks: Block[];
+	/** Domyślnie włączone; `false` wyłącza automatyczną wysyłkę tego etapu. */
+	enabled?: boolean;
 };
+
+export function isEmailTemplateEnabled(template: EmailTemplate | null | undefined): boolean {
+	return template?.enabled !== false;
+}
 
 /** Kolejność + etykiety zakładek szablonów w edytorze. */
 export const EMAIL_TEMPLATE_TYPES: Array<{
@@ -161,7 +192,63 @@ export const EMAIL_TEMPLATE_TYPES: Array<{
 	{ type: "completed", label: "Zakończone", description: "Po zakończeniu zamówienia." },
 	{ type: "cancelled", label: "Anulowane", description: "Po anulowaniu zamówienia." },
 	{ type: "confirmation", label: "Potwierdzenie", description: "Pełne potwierdzenie zamówienia." },
+	{
+		type: "claim_received",
+		label: "Reklamacja · przyjęta",
+		description: "Po złożeniu reklamacji przez klienta.",
+	},
+	{
+		type: "withdrawal_received",
+		label: "Odstąpienie · przyjęte",
+		description: "Po złożeniu wniosku o odstąpienie (14 dni).",
+	},
+	{
+		type: "claim_approved",
+		label: "Reklamacja · zaakceptowana",
+		description: "Po zmianie statusu w magazynie na zaakceptowaną.",
+	},
+	{
+		type: "withdrawal_approved",
+		label: "Odstąpienie · zaakceptowane",
+		description: "Po zaakceptowaniu odstąpienia — adres zwrotu.",
+	},
+	{
+		type: "case_refunded",
+		label: "Zwrot środków",
+		description: "Po rozliczeniu reklamacji lub odstąpienia.",
+	},
+	{
+		type: "claim_rejected",
+		label: "Reklamacja · odrzucona",
+		description: "Po odrzuceniu reklamacji.",
+	},
+	{
+		type: "withdrawal_rejected",
+		label: "Odstąpienie · odrzucone",
+		description: "Po odrzuceniu wniosku o odstąpienie.",
+	},
 ];
+
+export type EmailTemplateCategoryId = "order" | "returns";
+
+/** Grupy szablonów w edytorze magazynu (/magazyn/maile). */
+export const EMAIL_TEMPLATE_CATEGORIES: Array<{
+	id: EmailTemplateCategoryId;
+	title: string;
+}> = [
+	{ id: "order", title: "Zamówienie" },
+	{ id: "returns", title: "Zwroty" },
+];
+
+export function getEmailTemplatesByCategory(
+	category: EmailTemplateCategoryId,
+): typeof EMAIL_TEMPLATE_TYPES {
+	return EMAIL_TEMPLATE_TYPES.filter((entry) =>
+		category === "returns"
+			? isCaseEmailTemplateType(entry.type)
+			: !isCaseEmailTemplateType(entry.type),
+	);
+}
 
 /** Zmienne danych zamówienia dostępne w treści jako {{token}}. */
 export const MERGE_VARIABLES: Array<{
@@ -180,10 +267,37 @@ export const MERGE_VARIABLES: Array<{
 	{ token: "adres", label: "Adres dostawy", sample: "ul. Ludźmierska 25A, 34-400 Nowy Targ" },
 ];
 
+/** Zmienne dla e-maili reklamacji / odstąpienia ({{token}}). */
+export const CASE_MERGE_VARIABLES: Array<{
+	token: string;
+	label: string;
+	sample: string;
+}> = [
+	{ token: "nrZamowienia", label: "Numer zamówienia", sample: "1042" },
+	{ token: "numerZgloszenia", label: "Numer reklamacji (RK-…)", sample: "RK-2026-0042" },
+	{ token: "zadanieReklamacji", label: "Żądanie reklamacji", sample: "Naprawa" },
+	{ token: "kwotaZwrotu", label: "Kwota zwrotu", sample: "420 zł" },
+	{ token: "powodOdrzucenia", label: "Powód odrzucenia", sample: "Brak dokumentacji uszkodzenia." },
+	{
+		token: "produkty",
+		label: "Produkty objęte sprawą",
+		sample: "Wazon Rosenthal Art Deco 1934",
+	},
+	{
+		token: "linkKonto",
+		label: "Link do panelu konta",
+		sample: "https://sklep-retrohouse.pl/konto?tab=reklamacje",
+	},
+];
+
+export function getMergeVariablesForTemplate(type: EmailTemplateType) {
+	return isCaseEmailTemplateType(type) ? CASE_MERGE_VARIABLES : MERGE_VARIABLES;
+}
+
 export const MERGE_TOKENS = MERGE_VARIABLES.map((v) => v.token);
 
 /* ────────────────────────────────────────────── */
-/* Domyślny motyw + szablony (odtwarzają obecne maile) */
+/* Domyślny motyw + szablony (odtwarzają obecne e-maile) */
 /* ────────────────────────────────────────────── */
 
 export const DEFAULT_THEME: EmailTheme = {
@@ -211,6 +325,8 @@ type StageContent = {
 	paragraphs: string[];
 	withItems: boolean;
 	links?: string;
+	/** Przycisk „Przejdź do panelu konta” ({{linkKonto}}). */
+	withKontoButton?: boolean;
 };
 
 const STAGE_CONTENT: Record<EmailTemplateType, StageContent> = {
@@ -272,13 +388,96 @@ const STAGE_CONTENT: Record<EmailTemplateType, StageContent> = {
 		withItems: true,
 		links: "Reklamacje: https://sklep-retrohouse.pl/reklamacje · Regulamin: https://sklep-retrohouse.pl/regulamin",
 	},
+	claim_received: {
+		subject: "[RetroHouse] Reklamacja przyjęta — {{numerZgloszenia}}",
+		preheader: "Przyjęliśmy Twoją reklamację.",
+		headline: "Reklamacja przyjęta",
+		paragraphs: [
+			"Przyjęliśmy reklamację do zamówienia #{{nrZamowienia}}.",
+			"Numer zgłoszenia: {{numerZgloszenia}}. Żądanie: {{zadanieReklamacji}}.",
+			"Ustosunkujemy się w terminie 14 dni. Zdjęcia możesz dosłać odpowiadając na ten e-mail.",
+		],
+		withItems: false,
+		withKontoButton: true,
+	},
+	withdrawal_received: {
+		subject: "Złożono wniosek o odstąpienie od umowy — RetroHouse",
+		preheader: "Otrzymaliśmy wniosek o odstąpienie.",
+		headline: "Wniosek o odstąpienie",
+		paragraphs: [
+			"Otrzymaliśmy Twój wniosek o odstąpienie od umowy (zamówienie #{{nrZamowienia}}).",
+			"Dotyczy: {{produkty}}.",
+			"Odpowiemy w ciągu 2 dni roboczych.",
+		],
+		withItems: false,
+		withKontoButton: true,
+	},
+	claim_approved: {
+		subject: "Reklamacja zaakceptowana — RetroHouse",
+		preheader: "Zaakceptowaliśmy reklamację.",
+		headline: "Reklamacja zaakceptowana",
+		paragraphs: [
+			"Zaakceptowaliśmy Twoją reklamację (zamówienie #{{nrZamowienia}}, {{numerZgloszenia}}).",
+			"Wyślij przesyłkę zwrotną na adres: RetroHouse, ul. Ludźmierska 25A, 34-400 Nowy Targ.",
+			"Po otrzymaniu towaru prześlemy rozliczenie.",
+		],
+		withItems: false,
+		withKontoButton: true,
+	},
+	withdrawal_approved: {
+		subject: "Odstąpienie zaakceptowane — RetroHouse",
+		preheader: "Zaakceptowaliśmy odstąpienie od umowy.",
+		headline: "Odstąpienie zaakceptowane",
+		paragraphs: [
+			"Zaakceptowaliśmy odstąpienie od umowy (zamówienie #{{nrZamowienia}}).",
+			"Wyślij przesyłkę zwrotną na adres: RetroHouse, ul. Ludźmierska 25A, 34-400 Nowy Targ.",
+			"Po otrzymaniu towaru prześlemy rozliczenie.",
+		],
+		withItems: false,
+		withKontoButton: true,
+	},
+	case_refunded: {
+		subject: "Zwrot środków — RetroHouse",
+		preheader: "Zwróciliśmy środki.",
+		headline: "Zwrot środków",
+		paragraphs: [
+			"Zwróciliśmy środki (zamówienie #{{nrZamowienia}}).",
+			"Kwota {{kwotaZwrotu}} zostanie na Twoim koncie w ciągu 3–5 dni roboczych.",
+		],
+		withItems: false,
+		withKontoButton: true,
+	},
+	claim_rejected: {
+		subject: "Reklamacja odrzucona — RetroHouse",
+		preheader: "Reklamacja została odrzucona.",
+		headline: "Reklamacja odrzucona",
+		paragraphs: [
+			"Twój wniosek o reklamację (zamówienie #{{nrZamowienia}}, {{numerZgloszenia}}) został odrzucony.",
+			"Powód: {{powodOdrzucenia}}",
+			"Masz pytania? Odpowiedz na ten e-mail.",
+		],
+		withItems: false,
+		withKontoButton: true,
+	},
+	withdrawal_rejected: {
+		subject: "Odstąpienie odrzucone — RetroHouse",
+		preheader: "Wniosek o odstąpienie został odrzucony.",
+		headline: "Odstąpienie odrzucone",
+		paragraphs: [
+			"Twój wniosek o odstąpienie od umowy (zamówienie #{{nrZamowienia}}) został odrzucony.",
+			"Powód: {{powodOdrzucenia}}",
+			"Masz pytania? Odpowiedz na ten e-mail.",
+		],
+		withItems: false,
+		withKontoButton: true,
+	},
 };
 
 function leafText(id: string, text: string, style: BlockStyle): TextBlock {
 	return { id, type: "text", text, style };
 }
 
-/** Domyślne bloki dla danego typu szablonu (odwzorowanie obecnych maili). */
+/** Domyślne bloki dla danego typu szablonu (odwzorowanie obecnych e-maili). */
 export function buildDefaultBlocks(type: EmailTemplateType): Block[] {
 	const content = STAGE_CONTENT[type];
 	const blocks: Block[] = [
@@ -320,6 +519,28 @@ export function buildDefaultBlocks(type: EmailTemplateType): Block[] {
 		);
 	}
 
+	if (content.withKontoButton) {
+		blocks.push({
+			id: `${type}-konto`,
+			type: "button",
+			label: "Przejdź do panelu konta",
+			href: "{{linkKonto}}",
+			bg: DEFAULT_THEME.accent,
+			color: "#fffdf8",
+			radius: 8,
+			align: "center",
+			paddingY: 16,
+		});
+		blocks.push(
+			leafText(`${type}-konto-hint`, "Logowanie kodem wysłanym na adres z zamówienia.", {
+				color: DEFAULT_THEME.muted,
+				fontSize: 12,
+				align: "center",
+				paddingY: 4,
+			}),
+		);
+	}
+
 	blocks.push({
 		id: `${type}-footer`,
 		type: "footer",
@@ -338,6 +559,7 @@ export function buildDefaultTemplate(type: EmailTemplateType): EmailTemplate {
 		preheader: content.preheader,
 		theme: { ...DEFAULT_THEME },
 		blocks: buildDefaultBlocks(type),
+		enabled: true,
 	};
 }
 
@@ -472,6 +694,13 @@ export const emailTemplateTypeSchema = z.enum([
 	"completed",
 	"cancelled",
 	"confirmation",
+	"claim_received",
+	"withdrawal_received",
+	"claim_approved",
+	"withdrawal_approved",
+	"case_refunded",
+	"claim_rejected",
+	"withdrawal_rejected",
 ]);
 
 export const emailTemplateSchema = z.object({
@@ -480,6 +709,7 @@ export const emailTemplateSchema = z.object({
 	preheader: z.string().max(200),
 	theme: themeSchema,
 	blocks: z.array(blockSchema).max(200),
+	enabled: z.boolean().optional(),
 });
 
 /** Bezpieczny parse jednego szablonu z nieznanego JSON (fallback = null). */

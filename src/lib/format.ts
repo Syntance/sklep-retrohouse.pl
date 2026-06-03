@@ -33,7 +33,7 @@ export function daysSince(value: Date | string): number {
 
 /**
  * Formatuje kwotę w groszach na walutę (np. 10000 groszy → "100,00 zł").
- * Używane w systemie zwrotów — Medusa przechowuje ceny jako integer grosze.
+ * Zwroty w bazie / metadata — NIE kwoty zamówień z Medusa Admin (te: `formatPrice`).
  */
 export function formatCurrency(amountInCents: number, currencyCode = "PLN"): string {
 	return new Intl.NumberFormat("pl-PL", {

@@ -1,16 +1,19 @@
 import type { AdminOrderDetail, OrderAddress } from "@/lib/admin/order-types";
 import {
+	CASE_MERGE_VARIABLES,
 	type Block,
 	type BlockStyle,
 	type ButtonBlock,
 	type ColumnsBlock,
 	type DividerBlock,
 	type EmailTemplate,
+	type EmailTemplateType,
 	type EmailTheme,
 	FONT_STACKS,
 	type FooterBlock,
 	type HeadingBlock,
 	type ImageBlock,
+	isCaseEmailTemplateType,
 	type LeafBlock,
 	type OrderItemsBlock,
 	type SpacerBlock,
@@ -55,7 +58,7 @@ function mergePlain(raw: string, vars: Record<string, string>): string {
 	return raw.replace(MERGE_RE, (_match, token: string) => vars[token] ?? "");
 }
 
-/** Scala zmienne w temacie maila (plaintext, np. „#{{nrZamowienia}}"). */
+/** Scala zmienne w temacie e-maila (plaintext, np. „#{{nrZamowienia}}"). */
 export function mergeSubject(raw: string, vars: Record<string, string>): string {
 	return mergePlain(raw, vars);
 }
@@ -103,7 +106,8 @@ function renderFooter(block: FooterBlock, theme: EmailTheme, vars: Record<string
 function renderImage(block: ImageBlock, vars: Record<string, string>): string {
 	if (!block.src) return "";
 	const img = `<img src="${esc(block.src)}" alt="${mergeHtml(block.alt, vars)}" width="${block.width}" style="display:block;border:0;outline:none;max-width:100%;height:auto;margin:${align(block.align) === "center" ? "0 auto" : "0"}" />`;
-	const inner = block.href ? `<a href="${esc(block.href)}" target="_blank" rel="noopener">${img}</a>` : img;
+	const href = block.href ? mergePlain(block.href, vars) : "";
+	const inner = href ? `<a href="${esc(href)}" target="_blank" rel="noopener">${img}</a>` : img;
 	return `<div style="text-align:${align(block.align)};padding:${block.paddingY ?? 8}px 0">${inner}</div>`;
 }
 
@@ -111,7 +115,8 @@ function renderButton(block: ButtonBlock, theme: EmailTheme, vars: Record<string
 	const bg = block.bg ?? theme.accent;
 	const color = block.color ?? "#ffffff";
 	const radius = block.radius ?? 8;
-	return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:${block.paddingY ?? 10}px ${align(block.align) === "center" ? "auto" : "0"}"><tr><td style="background:${bg};border-radius:${radius}px"><a href="${esc(block.href)}" target="_blank" rel="noopener" style="display:inline-block;padding:12px 24px;color:${color};font-weight:700;font-size:14px;text-decoration:none;border-radius:${radius}px">${mergeHtml(block.label, vars)}</a></td></tr></table>`;
+	const href = mergePlain(block.href, vars);
+	return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:${block.paddingY ?? 10}px ${align(block.align) === "center" ? "auto" : "0"}"><tr><td style="background:${bg};border-radius:${radius}px"><a href="${esc(href)}" target="_blank" rel="noopener" style="display:inline-block;padding:12px 24px;color:${color};font-weight:700;font-size:14px;text-decoration:none;border-radius:${radius}px">${mergeHtml(block.label, vars)}</a></td></tr></table>`;
 }
 
 function renderDivider(block: DividerBlock): string {
@@ -295,7 +300,19 @@ export function buildOrderRenderContext(order: AdminOrderDetail): EmailRenderCon
 	};
 }
 
-/** Kontekst przykładowy — podgląd w edytorze i test-send. */
+/** Kontekst przykładowy — podgląd / test (zamówienia lub sprawy). */
+export function sampleRenderContextForTemplate(type: EmailTemplateType): EmailRenderContext {
+	if (isCaseEmailTemplateType(type)) {
+		const vars: Record<string, string> = {};
+		for (const v of CASE_MERGE_VARIABLES) {
+			vars[v.token] = v.sample;
+		}
+		return { vars, items: [] };
+	}
+	return sampleRenderContext();
+}
+
+/** Kontekst przykładowy — podgląd w edytorze i test-send (zamówienia). */
 export function sampleRenderContext(): EmailRenderContext {
 	return {
 		vars: {

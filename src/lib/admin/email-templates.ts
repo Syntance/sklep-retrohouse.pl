@@ -5,6 +5,7 @@ import {
 	type EmailTemplate,
 	type EmailTemplateType,
 	emailTemplateSchema,
+	isEmailTemplateEnabled,
 	parseTemplate,
 } from "@/lib/email/template-types";
 import { adminFetch, catalogAdminFetch } from "./medusa-admin";
@@ -52,17 +53,43 @@ async function writeMap(store: MedusaStore, map: Record<string, EmailTemplate>):
 	});
 }
 
-/** Wszystkie 6 szablonów do edytora — zapisany lub domyślny gdy brak. */
+/** Wszystkie szablony do edytora — zapisany lub domyślny gdy brak. */
 export async function getAllEmailTemplates(): Promise<EmailTemplate[]> {
 	const store = await getStore();
 	const map = parseMap(store.metadata?.[METADATA_KEY]);
 	return EMAIL_TEMPLATE_TYPES.map(({ type }) => map[type] ?? buildDefaultTemplate(type));
 }
 
+/** Czy automatyczna wysyłka danego typu jest włączona (brak wpisu = włączone). */
+export async function isEmailTemplateEnabledForSend(
+	type: EmailTemplateType,
+): Promise<boolean> {
+	const data = await catalogAdminFetch<{ stores: MedusaStore[] }>(
+		"/admin/stores?limit=1&fields=id,metadata",
+	);
+	const raw = data?.stores?.[0]?.metadata?.[METADATA_KEY];
+	const map = parseMap(raw);
+	return isEmailTemplateEnabled(map[type] ?? null);
+}
+
+/** Włącza lub wyłącza wysyłkę bez edycji treści (zapisuje domyślny lub istniejący szablon). */
+export async function setEmailTemplateEnabled(
+	type: EmailTemplateType,
+	enabled: boolean,
+): Promise<EmailTemplate> {
+	const store = await getStore();
+	const map = parseMap(store.metadata?.[METADATA_KEY]);
+	const base = map[type] ?? buildDefaultTemplate(type);
+	const next: EmailTemplate = { ...base, enabled };
+	map[type] = next;
+	await writeMap(store, map);
+	return next;
+}
+
 /** Zapisuje pojedynczy szablon (merge do istniejącej mapy). */
 export async function saveEmailTemplate(template: EmailTemplate): Promise<void> {
 	const parsed = emailTemplateSchema.safeParse(template);
-	if (!parsed.success) throw new Error("Nieprawidłowy szablon maila.");
+	if (!parsed.success) throw new Error("Nieprawidłowy szablon e-maila.");
 
 	const store = await getStore();
 	const map = parseMap(store.metadata?.[METADATA_KEY]);

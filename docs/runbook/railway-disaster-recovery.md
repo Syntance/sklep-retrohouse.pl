@@ -19,7 +19,7 @@ Zasada docelowa: **kontener Medusa = tylko kod**. Zero ważnych danych na jego d
 | Zdjęcia produktów / uploady | Cloudflare R2 (lub S3) | TAK — po migracji z `/static/` |
 | Frontend sklepu | Vercel | TAK — niezależny od Railway |
 | Treści CMS (hero, blog) | Sanity | TAK |
-| Maile transakcyjne | Resend | TAK |
+| E-maile transakcyjne | Resend | TAK |
 | Sesje admina, cache | proces / Redis | nieistotne (odtwarzalne) |
 
 Jeśli którakolwiek z dwóch pierwszych warstw siedzi **na dysku kontenera Medusa** — to jest

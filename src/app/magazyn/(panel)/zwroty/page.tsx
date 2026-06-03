@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PackageX } from "lucide-react";
-import { formatCurrency } from "@/lib/format";
+import { formatPrice } from "@/lib/format";
 import { getReturnsListAction } from "./actions";
 
 const STATUS_LABELS: Record<string, string> = {
@@ -11,6 +11,16 @@ const STATUS_LABELS: Record<string, string> = {
 	refunded: "Zwrócono środki",
 	rejected: "Odrzucony",
 	canceled: "Anulowany",
+};
+
+const REQUEST_TYPE_LABELS: Record<string, string> = {
+	claim: "Reklamacja",
+	withdrawal: "Odstąpienie",
+};
+
+const REQUEST_TYPE_COLORS: Record<string, string> = {
+	claim: "bg-terracotta/15 text-terracotta",
+	withdrawal: "bg-muted text-muted-foreground",
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -42,7 +52,7 @@ export default async function ZwrotyPage() {
 	return (
 		<div className="space-y-6">
 			<div className="flex items-center justify-between">
-				<h1 className="font-serif text-2xl text-foreground">Zwroty</h1>
+				<h1 className="font-serif text-2xl text-foreground">Zwroty i reklamacje</h1>
 				<span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
 					{returns.length}
 				</span>
@@ -51,9 +61,9 @@ export default async function ZwrotyPage() {
 			{returns.length === 0 ? (
 				<div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-muted/30 py-16 px-6 text-center">
 					<PackageX className="size-12 text-muted-foreground mb-4" />
-					<p className="text-sm font-medium text-foreground">Brak wniosków o zwrot</p>
+					<p className="text-sm font-medium text-foreground">Brak wniosków</p>
 					<p className="mt-1 text-xs text-muted-foreground">
-						Gdy klient złoży wniosek, pojawi się tutaj
+						Zwroty (odstąpienie) i reklamacje pojawią się tutaj po złożeniu przez klienta
 					</p>
 				</div>
 			) : (
@@ -61,6 +71,9 @@ export default async function ZwrotyPage() {
 					<table className="w-full">
 						<thead className="border-b border-border bg-muted/50">
 							<tr>
+								<th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground">
+									Typ
+								</th>
 								<th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground">
 									Zamówienie
 								</th>
@@ -85,6 +98,13 @@ export default async function ZwrotyPage() {
 							{returns.map((ret) => (
 								<tr key={ret.id} className="hover:bg-muted/30 transition-colors">
 									<td className="px-4 py-3">
+										<span
+											className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${REQUEST_TYPE_COLORS[ret.requestType] ?? ""}`}
+										>
+											{REQUEST_TYPE_LABELS[ret.requestType] ?? ret.requestType}
+										</span>
+									</td>
+									<td className="px-4 py-3">
 										<span className="font-mono text-sm font-medium text-foreground">
 											#{ret.orderDisplayId}
 										</span>
@@ -101,7 +121,7 @@ export default async function ZwrotyPage() {
 									</td>
 									<td className="px-4 py-3 text-right">
 										<span className="text-sm font-medium text-foreground">
-											{formatCurrency(ret.totalToRefund)}
+											{formatPrice(ret.totalToRefund)}
 										</span>
 									</td>
 									<td className="px-4 py-3">

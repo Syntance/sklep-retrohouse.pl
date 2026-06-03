@@ -4,7 +4,46 @@ function medusaBackendOrigin(): string {
 	return env.NEXT_PUBLIC_MEDUSA_BACKEND_URL.replace(/\/$/, "");
 }
 
-/** Medusa zapisuje w DB URL z localhost:9000 — podmieniamy na skonfigurowany backend. */
+function mediaCdnOrigin(): string | undefined {
+	return env.NEXT_PUBLIC_MEDIA_CDN_URL?.replace(/\/$/, "");
+}
+
+function rewriteRelativeMediaPathToCdn(pathWithLeadingSlash: string): string | undefined {
+	const cdn = mediaCdnOrigin();
+	if (!cdn) return undefined;
+	if (
+		pathWithLeadingSlash.startsWith("/static/") ||
+		pathWithLeadingSlash.startsWith("/products/")
+	) {
+		return `${cdn}${pathWithLeadingSlash}`;
+	}
+	return undefined;
+}
+
+function rewriteBackendMediaUrlToCdn(absoluteUrl: string): string {
+	const cdn = mediaCdnOrigin();
+	if (!cdn) return absoluteUrl;
+
+	try {
+		const parsed = new URL(absoluteUrl);
+		const backend = new URL(medusaBackendOrigin());
+		const sameHost =
+			parsed.hostname === backend.hostname &&
+			(parsed.port || "") === (backend.port || "");
+		if (
+			sameHost &&
+			(parsed.pathname.startsWith("/static/") || parsed.pathname.startsWith("/products/"))
+		) {
+			return `${cdn}${parsed.pathname}${parsed.search}`;
+		}
+	} catch {
+		return absoluteUrl;
+	}
+
+	return absoluteUrl;
+}
+
+/** Medusa zapisuje w DB URL z localhost:9000 — podmieniamy na skonfigurowany backend / CDN. */
 export function resolveMedusaMediaUrl(url: string | null | undefined): string | undefined {
 	if (!url?.trim()) return undefined;
 
@@ -12,7 +51,7 @@ export function resolveMedusaMediaUrl(url: string | null | undefined): string | 
 	const backend = medusaBackendOrigin();
 
 	if (trimmed.startsWith("/")) {
-		return `${backend}${trimmed}`;
+		return rewriteRelativeMediaPathToCdn(trimmed) ?? `${backend}${trimmed}`;
 	}
 
 	try {
@@ -22,13 +61,14 @@ export function resolveMedusaMediaUrl(url: string | null | undefined): string | 
 			(parsed.port === "9000" || parsed.port === "");
 
 		if (isLocalMedusa) {
-			return `${backend}${parsed.pathname}${parsed.search}`;
+			const onBackend = `${backend}${parsed.pathname}${parsed.search}`;
+			return rewriteBackendMediaUrlToCdn(onBackend);
 		}
+
+		return rewriteBackendMediaUrlToCdn(trimmed);
 	} catch {
 		return trimmed;
 	}
-
-	return trimmed;
 }
 
 export function resolveMedusaMediaUrls(urls: string[]): string[] {

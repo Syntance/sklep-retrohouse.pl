@@ -1,16 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Breadcrumbs, Container, Eyebrow, Section } from "@/components/primitives";
+import { useCustomerSession } from "@/components/customer/customer-session-provider";
+import { Button } from "@/components/ui/button";
 import { CustomerLogin } from "./customer-login";
 import { CustomerOrders } from "./customer-orders";
 
 export default function OdstapienePage() {
-	const [token, setToken] = useState<string | null>(null);
-
-	function handleLogout() {
-		setToken(null);
-	}
+	const router = useRouter();
+	const { ready, token, isLoggedIn, login, logout } = useCustomerSession();
 
 	return (
 		<main id="main" className="flex flex-col">
@@ -31,9 +31,21 @@ export default function OdstapienePage() {
 					</p>
 
 					<div className="mt-8 space-y-8">
-						{!token ? (
+						{!ready ? (
+							<div className="py-8 text-center text-foreground/70">Ładowanie…</div>
+						) : !isLoggedIn || !token ? (
 							<>
-								<CustomerLogin onSuccess={setToken} />
+								<CustomerLogin onSuccess={login} />
+								<p className="text-center text-sm">
+									<Button
+										type="button"
+										variant="outline"
+										size="sm"
+										onClick={() => router.push("/konto?tab=zwroty")}
+									>
+										Otwórz panel konta
+									</Button>
+								</p>
 
 								<div className="space-y-6 text-foreground/80 leading-relaxed">
 									<h2 className="font-display text-2xl font-semibold text-foreground">
@@ -46,9 +58,11 @@ export default function OdstapienePage() {
 										30.05.2014).
 									</p>
 									<p>
-										Aby odstąpić od umowy — zaloguj się powyżej swoim emailem (tym, którym
-										składałeś zamówienie). Wyślemy Ci kod na email, a następnie zobaczysz swoje
-										zamówienia z możliwością złożenia wniosku o zwrot.
+										Zaloguj się w{" "}
+										<Link href="/konto" className="font-medium text-terracotta hover:underline">
+											Moim koncie
+										</Link>{" "}
+										e-mailem z zamówienia — w zakładce Zwroty złożysz wniosek o odstąpienie.
 									</p>
 									<p>
 										Antyki to rzeczy używane. Zapoznajesz się z opisem stanu przedmiotu przed
@@ -63,7 +77,22 @@ export default function OdstapienePage() {
 								</div>
 							</>
 						) : (
-							<CustomerOrders token={token} onLogout={handleLogout} />
+							<>
+								<div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3 text-sm">
+									<p className="text-foreground/80">
+										Zwroty i odstąpienia zarządzasz w{" "}
+										<strong className="text-foreground">Moim koncie</strong>.
+									</p>
+									<Button
+										type="button"
+										size="sm"
+										onClick={() => router.push("/konto?tab=zwroty")}
+									>
+										Panel konta
+									</Button>
+								</div>
+								<CustomerOrders token={token} onLogout={logout} />
+							</>
 						)}
 					</div>
 				</Container>

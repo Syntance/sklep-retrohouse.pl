@@ -13,6 +13,7 @@ import {
 } from "@/components/icons";
 import { CartDrawer } from "@/components/cart-drawer";
 import { cn } from "@/lib/utils";
+import { CustomerMenu, CustomerMenuMobileLinks } from "./customer-menu";
 import { PRIMARY_NAV, SHOP_MEGA_MENU } from "./nav-data";
 
 export function SiteHeader() {
@@ -189,6 +190,7 @@ export function SiteHeader() {
 					>
 						{mobileOpen ? <CloseIcon className="size-5" /> : <MenuIcon className="size-5" />}
 					</button>
+					<CustomerMenu />
 				</div>
 			</div>
 
@@ -226,6 +228,7 @@ export function SiteHeader() {
 									</Link>
 								</li>
 							))}
+							<CustomerMenuMobileLinks onNavigate={() => setMobileOpen(false)} />
 							<li className="mt-4 border-t border-walnut/15 pt-4">
 								<Link
 									href="/dla-projektantow"
