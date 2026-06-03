@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Breadcrumbs, Container, Eyebrow, Section } from "@/components/primitives";
+import { LEGAL_DOCUMENT_CONTACT } from "@/components/sections/legal-document-contact/presets";
+import { LegalDocumentContactSection } from "@/components/sections/legal-document-contact/section";
 import { KontoDashboard } from "./konto-dashboard";
 
 export const metadata: Metadata = {
@@ -42,6 +44,8 @@ export default function KontoPage() {
 					</div>
 				</Container>
 			</Section>
+
+			<LegalDocumentContactSection {...LEGAL_DOCUMENT_CONTACT.konto} />
 		</main>
 	);
 }

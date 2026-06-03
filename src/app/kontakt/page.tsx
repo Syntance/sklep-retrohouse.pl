@@ -12,7 +12,7 @@ import {
 import { JsonLd } from "@/components/json-ld";
 import { STORE_INFO } from "@/components/layout/site-header/nav-data";
 import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/components/primitives";
-import { ContactForm } from "./contact-form";
+import { KontaktFormSection } from "./kontakt-form-section";
 import { MapDirectionsLink, PhoneLink, WhatsAppLink } from "./contact-cta";
 
 export const metadata: Metadata = {
@@ -146,7 +146,7 @@ export default function KontaktPage() {
 			<Section spacing="md">
 				<Container size="xl">
 					<div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
-						<ContactForm />
+						<KontaktFormSection />
 
 						<aside className="space-y-4">
 							<div className="rounded-2xl border border-border bg-card p-6">

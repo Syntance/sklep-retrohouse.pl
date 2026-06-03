@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs, Container, Eyebrow, Section } from "@/components/primitives";
+import { LEGAL_DOCUMENT_CONTACT } from "@/components/sections/legal-document-contact/presets";
+import { LegalDocumentContactSection } from "@/components/sections/legal-document-contact/section";
 
 export const metadata: Metadata = {
 	title: "Deklaracja dostępności",
@@ -102,6 +104,8 @@ export default function DeklaracjaPage() {
 					</p>
 				</Container>
 			</Section>
+
+			<LegalDocumentContactSection {...LEGAL_DOCUMENT_CONTACT.accessibility} />
 		</main>
 	);
 }

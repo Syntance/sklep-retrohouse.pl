@@ -13,7 +13,9 @@ import {
 	type FooterBlock,
 	type HeadingBlock,
 	type ImageBlock,
+	CONTACT_MERGE_VARIABLES,
 	isCaseEmailTemplateType,
+	isContactEmailTemplateType,
 	type LeafBlock,
 	type OrderItemsBlock,
 	type SpacerBlock,
@@ -302,6 +304,13 @@ export function buildOrderRenderContext(order: AdminOrderDetail): EmailRenderCon
 
 /** Kontekst przykładowy — podgląd / test (zamówienia lub sprawy). */
 export function sampleRenderContextForTemplate(type: EmailTemplateType): EmailRenderContext {
+	if (isContactEmailTemplateType(type)) {
+		const vars: Record<string, string> = {};
+		for (const v of CONTACT_MERGE_VARIABLES) {
+			vars[v.token] = v.sample;
+		}
+		return { vars, items: [] };
+	}
 	if (isCaseEmailTemplateType(type)) {
 		const vars: Record<string, string> = {};
 		for (const v of CASE_MERGE_VARIABLES) {

@@ -146,7 +146,15 @@ export type CaseEmailTemplateType =
 	| "claim_rejected"
 	| "withdrawal_rejected";
 
-export type EmailTemplateType = OrderEmailTemplateType | CaseEmailTemplateType;
+/** Potwierdzenie dla klienta po wysłaniu formularza kontaktowego (wszystkie podstrony). */
+export type ContactEmailTemplateType = "contact_confirmation";
+
+export type EmailTemplateType =
+	| OrderEmailTemplateType
+	| CaseEmailTemplateType
+	| ContactEmailTemplateType;
+
+const CONTACT_EMAIL_TEMPLATE_TYPES: ContactEmailTemplateType[] = ["contact_confirmation"];
 
 const CASE_EMAIL_TEMPLATE_TYPES: CaseEmailTemplateType[] = [
 	"claim_received",
@@ -160,6 +168,12 @@ const CASE_EMAIL_TEMPLATE_TYPES: CaseEmailTemplateType[] = [
 
 export function isCaseEmailTemplateType(type: EmailTemplateType): type is CaseEmailTemplateType {
 	return (CASE_EMAIL_TEMPLATE_TYPES as EmailTemplateType[]).includes(type);
+}
+
+export function isContactEmailTemplateType(
+	type: EmailTemplateType,
+): type is ContactEmailTemplateType {
+	return (CONTACT_EMAIL_TEMPLATE_TYPES as EmailTemplateType[]).includes(type);
 }
 
 export type EmailTemplate = {
@@ -227,9 +241,15 @@ export const EMAIL_TEMPLATE_TYPES: Array<{
 		label: "Odstąpienie · odrzucone",
 		description: "Po odrzuceniu wniosku o odstąpienie.",
 	},
+	{
+		type: "contact_confirmation",
+		label: "Formularz kontaktowy · potwierdzenie",
+		description:
+			"Jeden szablon dla wszystkich formularzy — temat i numer sprawy z {{temat}} i {{numerSprawy}}.",
+	},
 ];
 
-export type EmailTemplateCategoryId = "order" | "returns";
+export type EmailTemplateCategoryId = "order" | "returns" | "contact";
 
 /** Grupy szablonów w edytorze magazynu (/magazyn/maile). */
 export const EMAIL_TEMPLATE_CATEGORIES: Array<{
@@ -238,16 +258,17 @@ export const EMAIL_TEMPLATE_CATEGORIES: Array<{
 }> = [
 	{ id: "order", title: "Zamówienie" },
 	{ id: "returns", title: "Zwroty" },
+	{ id: "contact", title: "Formularze" },
 ];
 
 export function getEmailTemplatesByCategory(
 	category: EmailTemplateCategoryId,
 ): typeof EMAIL_TEMPLATE_TYPES {
-	return EMAIL_TEMPLATE_TYPES.filter((entry) =>
-		category === "returns"
-			? isCaseEmailTemplateType(entry.type)
-			: !isCaseEmailTemplateType(entry.type),
-	);
+	return EMAIL_TEMPLATE_TYPES.filter((entry) => {
+		if (category === "returns") return isCaseEmailTemplateType(entry.type);
+		if (category === "contact") return isContactEmailTemplateType(entry.type);
+		return !isCaseEmailTemplateType(entry.type) && !isContactEmailTemplateType(entry.type);
+	});
 }
 
 /** Zmienne danych zamówienia dostępne w treści jako {{token}}. */
@@ -290,8 +311,41 @@ export const CASE_MERGE_VARIABLES: Array<{
 	},
 ];
 
+/** Zmienne formularza kontaktowego ({{token}}) — szablon contact_confirmation. */
+export const CONTACT_MERGE_VARIABLES: Array<{
+	token: string;
+	label: string;
+	sample: string;
+}> = [
+	{ token: "imie", label: "Imię nadawcy", sample: "Anna" },
+	{ token: "email", label: "E-mail nadawcy", sample: "anna@przyklad.pl" },
+	{ token: "temat", label: "Temat z formularza", sample: "Pytanie o produkt" },
+	{
+		token: "numerSprawy",
+		label: "Numer sprawy (FK-…)",
+		sample: "FK-2026-00042",
+	},
+	{
+		token: "numerFormularza",
+		label: "Numer formularza (alias numerSprawy)",
+		sample: "FK-2026-00042",
+	},
+	{
+		token: "linkKonto",
+		label: "Link do panelu konta (zwroty / reklamacje)",
+		sample: "https://sklep-retrohouse.pl/konto",
+	},
+	{
+		token: "wiadomosc",
+		label: "Treść wiadomości (skrót)",
+		sample: "Szukam wazonu Art Deco z lat 30. do salonu…",
+	},
+];
+
 export function getMergeVariablesForTemplate(type: EmailTemplateType) {
-	return isCaseEmailTemplateType(type) ? CASE_MERGE_VARIABLES : MERGE_VARIABLES;
+	if (isContactEmailTemplateType(type)) return CONTACT_MERGE_VARIABLES;
+	if (isCaseEmailTemplateType(type)) return CASE_MERGE_VARIABLES;
+	return MERGE_VARIABLES;
 }
 
 export const MERGE_TOKENS = MERGE_VARIABLES.map((v) => v.token);
@@ -467,6 +521,18 @@ const STAGE_CONTENT: Record<EmailTemplateType, StageContent> = {
 			"Twój wniosek o odstąpienie od umowy (zamówienie #{{nrZamowienia}}) został odrzucony.",
 			"Powód: {{powodOdrzucenia}}",
 			"Masz pytania? Odpowiedz na ten e-mail.",
+		],
+		withItems: false,
+		withKontoButton: true,
+	},
+	contact_confirmation: {
+		subject: "[RetroHouse] Otrzymaliśmy wiadomość — {{numerSprawy}}",
+		preheader: "Temat: {{temat}}",
+		headline: "Dziękujemy za wiadomość",
+		paragraphs: [
+			"Cześć {{imie}}, potwierdzamy odbiór formularza kontaktowego.",
+			"Numer sprawy: {{numerSprawy}}. Temat: {{temat}}.",
+			"Odpowiadamy w 12 godzin roboczych (średnia 4h).",
 		],
 		withItems: false,
 		withKontoButton: true,
@@ -701,6 +767,7 @@ export const emailTemplateTypeSchema = z.enum([
 	"case_refunded",
 	"claim_rejected",
 	"withdrawal_rejected",
+	"contact_confirmation",
 ]);
 
 export const emailTemplateSchema = z.object({

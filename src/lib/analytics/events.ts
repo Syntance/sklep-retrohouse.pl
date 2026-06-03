@@ -33,7 +33,9 @@ export type PaymentMethod = "blik" | "card" | "transfer";
 
 export type CheckoutStep = "data" | "shipping" | "payment" | "acceptance";
 
-export type ContactTopic = "produkt" | "b2b" | "wysylka" | "inne";
+import type { ContactTopicValue } from "@/lib/validation/contact";
+
+export type ContactTopic = ContactTopicValue;
 
 export type ScrollSection =
 	| "hero"

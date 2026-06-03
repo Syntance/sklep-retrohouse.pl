@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Breadcrumbs, Container, Eyebrow, Section } from "@/components/primitives";
+import { LEGAL_DOCUMENT_CONTACT } from "@/components/sections/legal-document-contact/presets";
+import { LegalDocumentContactSection } from "@/components/sections/legal-document-contact/section";
 
 export const metadata: Metadata = {
 	title: "Regulamin sklepu",
@@ -63,18 +64,6 @@ export default function RegulaminPage() {
 					<h1 className="mt-3 font-display text-[clamp(2.4rem,5vw,4rem)] font-semibold leading-[1.05]">
 						Regulamin sklepu
 					</h1>
-					<p className="mt-4 max-w-2xl text-foreground/70">
-						Wersja z dnia {new Date().toLocaleDateString("pl-PL")}. Roboczy szkielet — finalna treść
-						po konsultacji z radcą prawnym (zgodność z UPK, Omnibus, DSA, RODO).
-					</p>
-
-					<aside className="mt-6 rounded-2xl border border-brass/40 bg-terracotta/15 p-5 text-sm">
-						<p className="font-display text-base">Wersja robocza</p>
-						<p className="mt-1 text-foreground/80">
-							Strona służy jako szablon. Pełną treść regulaminu dostarczymy po finalnym audycie
-							prawnym (zgodnie z 56-legal.mdc).
-						</p>
-					</aside>
 				</Container>
 			</Section>
 
@@ -93,30 +82,7 @@ export default function RegulaminPage() {
 				</Container>
 			</Section>
 
-			<Section spacing="md" tone="muted">
-				<Container size="md">
-					<div className="rounded-3xl border border-border bg-card p-8 md:p-12">
-						<h2 className="font-display text-2xl font-semibold">Pytania o regulamin?</h2>
-						<p className="mt-2 text-foreground/70">
-							Napisz na{" "}
-							<Link
-								href="mailto:kontakt@sklep-retrohouse.pl"
-								className="font-semibold text-foreground underline underline-offset-4 hover:text-terracotta"
-							>
-								kontakt@sklep-retrohouse.pl
-							</Link>{" "}
-							lub przez{" "}
-							<Link
-								href="/kontakt"
-								className="font-semibold text-foreground underline underline-offset-4 hover:text-terracotta"
-							>
-								formularz kontaktowy
-							</Link>
-							.
-						</p>
-					</div>
-				</Container>
-			</Section>
+			<LegalDocumentContactSection {...LEGAL_DOCUMENT_CONTACT.regulamin} />
 		</main>
 	);
 }

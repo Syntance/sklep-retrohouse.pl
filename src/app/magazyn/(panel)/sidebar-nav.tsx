@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, LayoutGrid, Mail, Package, PackageX, ShoppingBag, Tags } from "lucide-react";
+import { Clock, FileText, LayoutGrid, Mail, Package, PackageX, ShoppingBag, Tags } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,7 @@ const LINKS = [
 	{ href: "/magazyn/kategorie", label: "Kategorie", icon: Tags, exact: false },
 	{ href: "/magazyn/epoki", label: "Epoki", icon: Clock, exact: false },
 	{ href: "/magazyn/zwroty", label: "Zwroty / reklam.", icon: PackageX, exact: false },
+	{ href: "/magazyn/formularze", label: "Formularze", icon: FileText, exact: false },
 	{ href: "/magazyn/maile", label: "E-maile", icon: Mail, exact: false },
 ];
 

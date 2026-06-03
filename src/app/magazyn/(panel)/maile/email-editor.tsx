@@ -11,6 +11,7 @@ import {
 	type EmailTemplateType,
 	getMergeVariablesForTemplate,
 	isCaseEmailTemplateType,
+	isContactEmailTemplateType,
 	isEmailTemplateEnabled,
 } from "@/lib/email/template-types";
 import { cn } from "@/lib/utils";
@@ -419,9 +420,11 @@ export function EmailEditor({ initialTemplates }: { initialTemplates: EmailTempl
 					<div className="flex items-center justify-between">
 						<h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
 							Podgląd (
-							{isCaseEmailTemplateType(activeType)
-								? "przykładowa sprawa"
-								: "przykładowe zamówienie"}
+							{isContactEmailTemplateType(activeType)
+								? "przykładowy formularz"
+								: isCaseEmailTemplateType(activeType)
+									? "przykładowa sprawa"
+									: "przykładowe zamówienie"}
 							)
 						</h3>
 						<div className={segmentTrack}>

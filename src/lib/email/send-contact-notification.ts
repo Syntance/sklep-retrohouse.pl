@@ -3,16 +3,9 @@ import "server-only";
 import { Resend } from "resend";
 import { env } from "@/env";
 import { EMAIL_CONTACT, EMAIL_FROM } from "@/lib/email/constants";
-import type { ContactData } from "@/lib/validation/contact";
+import { formatContactTopicLabel, type ContactData } from "@/lib/validation/contact";
 
 const RESEND_TIMEOUT_MS = 5_000;
-
-const TOPIC_LABEL: Record<ContactData["topic"], string> = {
-	produkt: "Produkt",
-	b2b: "B2B",
-	wysylka: "Wysyłka",
-	inne: "Inne",
-};
 
 /** Domyślny odbiorca gdy brak RESEND_CONTACT_TO. */
 const DEFAULT_CONTACT_INBOX = EMAIL_CONTACT;
@@ -23,18 +16,33 @@ export type SendContactResult = { ok: true; skipped?: boolean } | { ok: false; m
  * Wysyła treść formularza /kontakt na skrzynkę zespołu przez Resend.
  * Bez RESEND_API_KEY zwraca sukces (skipped) — preview i CI bez sekretów.
  */
-export async function sendContactNotification(data: ContactData): Promise<SendContactResult> {
+export type SendContactNotificationOptions = {
+	recipientEmail: string;
+	caseNumber: string;
+	formName?: string;
+};
+
+export async function sendContactNotification(
+	data: ContactData,
+	options: SendContactNotificationOptions,
+): Promise<SendContactResult> {
 	const apiKey = env.RESEND_API_KEY;
 	if (!apiKey) {
 		return { ok: true, skipped: true };
 	}
 
 	const from = env.RESEND_FROM_EMAIL ? `RetroHouse <${env.RESEND_FROM_EMAIL}>` : EMAIL_FROM;
-	const to = env.RESEND_CONTACT_TO ?? DEFAULT_CONTACT_INBOX;
+	const to =
+		(options.recipientEmail.trim() || env.RESEND_CONTACT_TO) ?? DEFAULT_CONTACT_INBOX;
 
-	const topicLabel = TOPIC_LABEL[data.topic];
+	const topicLabel = formatContactTopicLabel(data);
+	const formLine = options.formName ? `Formularz: ${options.formName}\n` : "";
 	const text =
-		`Temat: ${topicLabel}\n` + `Od: ${data.name} <${data.email}>\n\n` + `${data.message}\n`;
+		`Numer sprawy: ${options.caseNumber}\n` +
+		formLine +
+		`Temat: ${topicLabel}\n` +
+		`Od: ${data.name} <${data.email}>\n\n` +
+		`${data.message}\n`;
 
 	const resend = new Resend(apiKey);
 
@@ -42,7 +50,7 @@ export async function sendContactNotification(data: ContactData): Promise<SendCo
 		from,
 		to: [to],
 		replyTo: data.email,
-		subject: `[RetroHouse · Kontakt] ${topicLabel} — ${data.name}`,
+		subject: `[RetroHouse · Kontakt] ${options.caseNumber} — ${topicLabel} — ${data.name}`,
 		text,
 	});
 

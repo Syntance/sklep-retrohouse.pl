@@ -7,14 +7,10 @@ import { BrassRule, Container, Eyebrow, Section } from "@/components/primitives"
 import { track } from "@/lib/analytics/posthog";
 import type { ContactTopic } from "@/lib/analytics/events";
 import { submitContact, type ContactState } from "@/app/kontakt/actions";
+import { getContactTopicOptions } from "@/lib/validation/contact";
 import { TESTIMONIALS } from "@/lib/mock/testimonials";
 
-const TOPIC_OPTIONS: Array<{ value: ContactTopic; label: string }> = [
-	{ value: "produkt", label: "Pytanie o produkt" },
-	{ value: "wysylka", label: "Wysyłka i zwroty" },
-	{ value: "b2b", label: "Współpraca B2B" },
-	{ value: "inne", label: "Inne" },
-];
+const HOME_TOPIC_OPTIONS = getContactTopicOptions("kontakt");
 
 /**
  * Social proof — opinie z DM / IG / Google (po zgodzie klientki).
@@ -127,12 +123,28 @@ function ContactCard() {
 	return (
 		<div className="mx-auto max-w-xl rounded-3xl border border-walnut/15 bg-card p-8 shadow-card md:p-10">
 			<form action={formAction} noValidate className="flex flex-col gap-4">
+				<input type="hidden" name="formPreset" value="kontakt" />
 				<div className="grid gap-4 sm:grid-cols-2">
 					<Field label="Imię" name="name" required error={errors.name} />
 					<Field label="E-mail" name="email" type="email" required error={errors.email} />
 				</div>
 
-				<TopicField value={topic} error={errors.topic} onChange={handleTopicChange} />
+				<TopicField
+					options={HOME_TOPIC_OPTIONS}
+					value={topic}
+					error={errors.topic}
+					onChange={handleTopicChange}
+				/>
+
+				{topic === "inne" ? (
+					<Field
+						label="Twój temat"
+						name="topicOther"
+						required
+						placeholder="Np. współpraca, reklama, pytanie ogólne…"
+						error={errors.topicOther}
+					/>
+				) : null}
 
 				<Field
 					label="Wiadomość"
@@ -143,6 +155,14 @@ function ContactCard() {
 					placeholder="Napisz, czego szukasz — dopasujemy z najnowszej dostawy."
 					error={errors.message}
 				/>
+
+				<p className="text-xs text-foreground/45">
+					Wysyłając akceptujesz{" "}
+					<Link href="/polityka-prywatnosci" className="underline underline-offset-4 hover:text-terracotta">
+						politykę prywatności
+					</Link>
+					.
+				</p>
 
 				{formError ? (
 					<p
@@ -173,14 +193,6 @@ function ContactCard() {
 						@retrohouse
 					</Link>
 				</div>
-
-				<p className="text-xs text-foreground/45">
-					Wysyłając akceptujesz{" "}
-					<Link href="/polityka-prywatnosci" className="underline underline-offset-4 hover:text-terracotta">
-						politykę prywatności
-					</Link>
-					.
-				</p>
 			</form>
 		</div>
 	);
@@ -245,10 +257,12 @@ function Field({ label, name, type = "text", required, textarea, rows = 4, place
 }
 
 function TopicField({
+	options,
 	value,
 	error,
 	onChange,
 }: {
+	options: Array<{ value: ContactTopic; label: string }>;
 	value: ContactTopic | "";
 	error?: string;
 	onChange: (v: ContactTopic) => void;
@@ -275,7 +289,7 @@ function TopicField({
 				<option value="" disabled>
 					Wybierz temat…
 				</option>
-				{TOPIC_OPTIONS.map((o) => (
+				{options.map((o) => (
 					<option key={o.value} value={o.value}>
 						{o.label}
 					</option>

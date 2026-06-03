@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { STORE_INFO } from "@/components/layout/site-header/nav-data";
 import { Breadcrumbs, Container, Eyebrow, Section } from "@/components/primitives";
+import { LEGAL_DOCUMENT_CONTACT } from "@/components/sections/legal-document-contact/presets";
+import { LegalDocumentContactSection } from "@/components/sections/legal-document-contact/section";
 import { EMAIL_CONTACT } from "@/lib/email/constants";
 import { ReklamacjePortal } from "./reklamacje-portal";
 
@@ -241,44 +243,7 @@ export default function ReklamacjePage() {
 				</Container>
 			</Section>
 
-			<Section spacing="md">
-				<Container size="md">
-					<div className="rounded-3xl border border-border bg-card p-8 md:p-12">
-						<h2 className="font-display text-2xl font-semibold">Pytania o reklamację?</h2>
-						<p className="mt-2 text-foreground/70 leading-relaxed">
-							Napisz na{" "}
-							<Link
-								href={mailtoClaims}
-								className="font-semibold text-foreground underline underline-offset-4 hover:text-terracotta"
-							>
-								{EMAIL_CONTACT}
-							</Link>
-							. Powiązane dokumenty:{" "}
-							<Link
-								href="/regulamin"
-								className="font-semibold underline underline-offset-4 hover:text-terracotta"
-							>
-								Regulamin
-							</Link>
-							,{" "}
-							<Link
-								href="/wysylka"
-								className="font-semibold underline underline-offset-4 hover:text-terracotta"
-							>
-								Wysyłka i zwroty
-							</Link>
-							,{" "}
-							<Link
-								href="/odstapienie"
-								className="font-semibold underline underline-offset-4 hover:text-terracotta"
-							>
-								Odstąpienie od umowy
-							</Link>
-							.
-						</p>
-					</div>
-				</Container>
-			</Section>
+			<LegalDocumentContactSection {...LEGAL_DOCUMENT_CONTACT.claims} />
 		</main>
 	);
 }

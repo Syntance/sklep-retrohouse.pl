@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Breadcrumbs, Container, Eyebrow, Section } from "@/components/primitives";
+import { LEGAL_DOCUMENT_CONTACT } from "@/components/sections/legal-document-contact/presets";
+import { LegalDocumentContactSection } from "@/components/sections/legal-document-contact/section";
 import { EMAIL_CONTACT } from "@/lib/email/constants";
 
 export const metadata: Metadata = {
@@ -86,23 +87,7 @@ export default function PolitykaPage() {
 				</Container>
 			</Section>
 
-			<Section spacing="md" tone="muted">
-				<Container size="md">
-					<div className="rounded-3xl border border-border bg-card p-8 md:p-12">
-						<h2 className="font-display text-2xl font-semibold">Kontakt w sprawie danych</h2>
-						<p className="mt-2 text-foreground/70">
-							E-mail:{" "}
-							<Link
-								href={`mailto:${EMAIL_CONTACT}`}
-								className="font-semibold text-foreground underline underline-offset-4 hover:text-terracotta"
-							>
-								{EMAIL_CONTACT}
-							</Link>
-							. Odpowiadamy w 14 dni roboczych.
-						</p>
-					</div>
-				</Container>
-			</Section>
+			<LegalDocumentContactSection {...LEGAL_DOCUMENT_CONTACT.privacy} />
 		</main>
 	);
 }

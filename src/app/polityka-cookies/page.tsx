@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Breadcrumbs, Container, Eyebrow, Section } from "@/components/primitives";
 import { CookieSettingsButton } from "@/components/layout/site-footer/cookie-settings-button";
+import { LEGAL_DOCUMENT_CONTACT } from "@/components/sections/legal-document-contact/presets";
+import { LegalDocumentContactSection } from "@/components/sections/legal-document-contact/section";
 
 export const metadata: Metadata = {
 	title: "Polityka cookies",
@@ -66,6 +68,8 @@ export default function PolitykaCookiesPage() {
 					</div>
 				</Container>
 			</Section>
+
+			<LegalDocumentContactSection {...LEGAL_DOCUMENT_CONTACT.cookies} />
 		</main>
 	);
 }
