@@ -5,10 +5,8 @@ import Link from "next/link";
 import { ArrowRightIcon } from "@/components/icons";
 import { PrivacyPolicyLink } from "@/components/primitives";
 import { track } from "@/lib/analytics/posthog";
-import type { ContactTopic } from "@/lib/analytics/events";
 import {
 	type ContactTopicPreset,
-	type ContactTopicValue,
 	formatContactTopicLabel,
 	getContactTopicOptions,
 } from "@/lib/validation/contact";
@@ -16,7 +14,7 @@ import { submitContact, type ContactState } from "./actions";
 
 const INITIAL: ContactState = { status: "idle" };
 
-type TopicOption = { value: ContactTopicValue; label: string };
+type TopicOption = { value: string; label: string };
 
 type ContactFormProps = {
 	/** Na stronach dokumentów — bez duplikatu nagłówka i boxu B2B. */
@@ -35,8 +33,8 @@ export function ContactForm({
 	const topicOptions = topicOptionsProp ?? getContactTopicOptions(topicPreset);
 	const embedded = variant === "embedded";
 	const [state, formAction, isPending] = useActionState(submitContact, INITIAL);
-	const [topic, setTopic] = useState<ContactTopic | "">("");
-	const lastSubmittedTopicRef = useRef<ContactTopic | null>(null);
+	const [topic, setTopic] = useState("");
+	const lastSubmittedTopicRef = useRef<string | null>(null);
 
 	useEffect(() => {
 		if (state.status === "success" && lastSubmittedTopicRef.current !== state.topic) {
@@ -45,7 +43,7 @@ export function ContactForm({
 		}
 	}, [state]);
 
-	const handleTopicChange = (value: ContactTopic) => {
+	const handleTopicChange = (value: string) => {
 		setTopic(value);
 		track({ name: "contact_topic_selected", properties: { topic: value } });
 		if (value === "b2b") {
@@ -253,9 +251,9 @@ function TopicSelect({
 	onChange,
 }: {
 	options: TopicOption[];
-	value: ContactTopic | "";
+	value: string;
 	error?: string;
-	onChange: (value: ContactTopic) => void;
+	onChange: (value: string) => void;
 }) {
 	const id = useId();
 	const errId = `${id}-err`;
@@ -273,7 +271,7 @@ function TopicSelect({
 				value={value}
 				aria-invalid={Boolean(error)}
 				aria-describedby={error ? errId : undefined}
-				onChange={(event) => onChange(event.target.value as ContactTopic)}
+				onChange={(event) => onChange(event.target.value)}
 				className={`mt-2 h-11 w-full rounded-xl border bg-background px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta ${borderClass}`}
 			>
 				<option value="" disabled>

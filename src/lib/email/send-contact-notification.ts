@@ -3,7 +3,9 @@ import "server-only";
 import { Resend } from "resend";
 import { env } from "@/env";
 import { EMAIL_CONTACT, EMAIL_FROM } from "@/lib/email/constants";
-import { formatContactTopicLabel, type ContactData } from "@/lib/validation/contact";
+import type { ContactFormTopicConfig } from "@/lib/contact/default-forms";
+import { resolveTopicLabel } from "@/lib/admin/contact-submissions";
+import type { ContactData } from "@/lib/validation/contact";
 
 const RESEND_TIMEOUT_MS = 5_000;
 
@@ -20,6 +22,7 @@ export type SendContactNotificationOptions = {
 	recipientEmail: string;
 	caseNumber: string;
 	formName?: string;
+	topics?: ContactFormTopicConfig[];
 };
 
 export async function sendContactNotification(
@@ -35,7 +38,11 @@ export async function sendContactNotification(
 	const to =
 		(options.recipientEmail.trim() || env.RESEND_CONTACT_TO) ?? DEFAULT_CONTACT_INBOX;
 
-	const topicLabel = formatContactTopicLabel(data);
+	const topicLabel = resolveTopicLabel({
+		topic: data.topic,
+		topicOther: data.topicOther,
+		topics: options.topics,
+	});
 	const formLine = options.formName ? `Formularz: ${options.formName}\n` : "";
 	const text =
 		`Numer sprawy: ${options.caseNumber}\n` +

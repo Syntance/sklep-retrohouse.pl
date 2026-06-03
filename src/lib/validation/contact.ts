@@ -89,7 +89,7 @@ export const ContactSchema = z
 	.object({
 		name: z.string().trim().min(2, "Podaj imię."),
 		email: z.string().email("Podaj prawidłowy e-mail."),
-		topic: z.enum(ALL_CONTACT_TOPICS),
+		topic: z.string().trim().min(1, "Wybierz temat."),
 		topicOther: z.string().trim().max(80).optional(),
 		message: z.string().trim().min(20, "Wiadomość musi mieć minimum 20 znaków."),
 	})
@@ -106,13 +106,16 @@ export const ContactSchema = z
 	});
 
 export function formatContactTopicLabel(data: {
-	topic: ContactTopicValue;
+	topic: string;
 	topicOther?: string;
 }): string {
 	if (data.topic === "inne" && data.topicOther?.trim()) {
 		return data.topicOther.trim();
 	}
-	return CONTACT_TOPIC_LABELS[data.topic];
+	if (data.topic in CONTACT_TOPIC_LABELS) {
+		return CONTACT_TOPIC_LABELS[data.topic as ContactTopicValue];
+	}
+	return data.topic;
 }
 
 export type ContactInput = z.input<typeof ContactSchema>;

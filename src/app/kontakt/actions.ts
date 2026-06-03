@@ -7,6 +7,7 @@ import {
 	getContactFormsConfig,
 	getRecipientEmailForPreset,
 } from "@/lib/admin/contact-forms";
+import { createContactSubmission } from "@/lib/admin/contact-submissions";
 import { sendContactConfirmationEmail } from "@/lib/email/send-contact-confirmation";
 import { sendContactNotification } from "@/lib/email/send-contact-notification";
 import { rateLimit } from "@/lib/rate-limit";
@@ -22,7 +23,7 @@ export type ContactState =
 	| { status: "error"; errors: Record<string, string>; message?: string }
 	| {
 			status: "success";
-			topic: ContactTopicValue;
+			topic: string;
 			topicOther?: string;
 			caseNumber: string;
 	  };
@@ -106,12 +107,15 @@ export async function submitContact(
 		recipientEmail,
 		caseNumber,
 		formName: formDef.name,
+		topics: formDef.topics,
 	});
 	if (!mail.ok) {
 		return { status: "error", errors: {}, message: mail.message };
 	}
 
-	const confirmation = await sendContactConfirmationEmail(parsed.data, caseNumber);
+	const confirmation = await sendContactConfirmationEmail(parsed.data, caseNumber, {
+		topics: formDef.topics,
+	});
 	if (!confirmation.ok) {
 		return {
 			status: "error",
@@ -119,6 +123,18 @@ export async function submitContact(
 			message: confirmation.message,
 		};
 	}
+
+	await createContactSubmission({
+		caseNumber,
+		formPreset,
+		formName: formDef.name,
+		customerName: parsed.data.name,
+		customerEmail: parsed.data.email,
+		topic: parsed.data.topic,
+		topicOther: parsed.data.topicOther,
+		message: parsed.data.message,
+		topics: formDef.topics,
+	});
 
 	return {
 		status: "success",

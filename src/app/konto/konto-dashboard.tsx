@@ -8,13 +8,19 @@ import { CustomerOrders } from "@/app/odstapienie/customer-orders";
 import { useCustomerSession } from "@/components/customer/customer-session-provider";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CustomerContactSubmissions } from "@/components/customer/customer-contact-submissions";
 import { CustomerOrdersOverview } from "./customer-orders-overview";
 
-const TABS = ["zamowienia", "reklamacje", "zwroty"] as const;
+const TABS = ["zamowienia", "reklamacje", "zwroty", "formularze"] as const;
 type KontoTab = (typeof TABS)[number];
 
 function parseTab(value: string | null): KontoTab {
-	if (value === "reklamacje" || value === "zwroty" || value === "zamowienia") {
+	if (
+		value === "reklamacje" ||
+		value === "zwroty" ||
+		value === "zamowienia" ||
+		value === "formularze"
+	) {
 		return value;
 	}
 	return "zamowienia";
@@ -75,6 +81,9 @@ export function KontoDashboard() {
 					<TabsTrigger value="zwroty" className="flex-1">
 						Zwroty
 					</TabsTrigger>
+					<TabsTrigger value="formularze" className="flex-1">
+						Wysłane formularze
+					</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value="zamowienia">
@@ -94,6 +103,10 @@ export function KontoDashboard() {
 
 				<TabsContent value="zwroty">
 					<CustomerOrders token={token} onLogout={logout} hideLogout />
+				</TabsContent>
+
+				<TabsContent value="formularze">
+					<CustomerContactSubmissions token={token} />
 				</TabsContent>
 			</Tabs>
 

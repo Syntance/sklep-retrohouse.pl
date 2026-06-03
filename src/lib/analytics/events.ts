@@ -35,7 +35,8 @@ export type CheckoutStep = "data" | "shipping" | "payment" | "acceptance";
 
 import type { ContactTopicValue } from "@/lib/validation/contact";
 
-export type ContactTopic = ContactTopicValue;
+/** Wartość tematu z formularza (preset lub własny slug z magazynu). */
+export type ContactTopic = ContactTopicValue | (string & {});
 
 export type ScrollSection =
 	| "hero"

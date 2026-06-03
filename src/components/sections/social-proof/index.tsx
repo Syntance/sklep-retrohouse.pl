@@ -90,8 +90,8 @@ const INITIAL: ContactState = { status: "idle" };
 
 function ContactCard() {
 	const [state, formAction, isPending] = useActionState(submitContact, INITIAL);
-	const [topic, setTopic] = useState<ContactTopic | "">("");
-	const lastTopicRef = useRef<ContactTopic | null>(null);
+	const [topic, setTopic] = useState("");
+	const lastTopicRef = useRef<string | null>(null);
 
 	useEffect(() => {
 		if (state.status === "success" && lastTopicRef.current !== state.topic) {
@@ -100,7 +100,7 @@ function ContactCard() {
 		}
 	}, [state]);
 
-	const handleTopicChange = (value: ContactTopic) => {
+	const handleTopicChange = (value: string) => {
 		setTopic(value);
 		track({ name: "contact_topic_selected", properties: { topic: value } });
 		if (value === "b2b") track({ name: "b2b_topic_selected", properties: {} });
@@ -262,10 +262,10 @@ function TopicField({
 	error,
 	onChange,
 }: {
-	options: Array<{ value: ContactTopic; label: string }>;
-	value: ContactTopic | "";
+	options: Array<{ value: string; label: string }>;
+	value: string;
 	error?: string;
-	onChange: (v: ContactTopic) => void;
+	onChange: (v: string) => void;
 }) {
 	const id = useId();
 	const errId = `${id}-err`;
@@ -283,7 +283,7 @@ function TopicField({
 				value={value}
 				aria-invalid={Boolean(error)}
 				aria-describedby={error ? errId : undefined}
-				onChange={(e) => onChange(e.target.value as ContactTopic)}
+				onChange={(e) => onChange(e.target.value)}
 				className={`mt-1.5 h-11 w-full rounded-xl border bg-background px-3 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta ${border}`}
 			>
 				<option value="" disabled>

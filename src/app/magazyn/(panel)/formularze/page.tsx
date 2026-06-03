@@ -2,6 +2,7 @@ import { FileText } from "lucide-react";
 import Link from "next/link";
 import { getContactFormsConfig } from "@/lib/admin/contact-forms";
 import { loadAdmin } from "@/lib/admin/load";
+import { FormsSubnav } from "./forms-subnav";
 import { FormsManager } from "./forms-manager";
 
 export const dynamic = "force-dynamic";
@@ -27,6 +28,8 @@ export default async function FormularzePage() {
 					</p>
 				</div>
 			</header>
+
+			<FormsSubnav />
 
 			<FormsManager initialConfig={config} />
 		</div>

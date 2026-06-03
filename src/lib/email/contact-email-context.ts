@@ -1,5 +1,7 @@
+import type { ContactFormTopicConfig } from "@/lib/contact/default-forms";
 import { getCustomerKontoUrl } from "@/lib/email/customer-case-email";
-import { formatContactTopicLabel, type ContactData } from "@/lib/validation/contact";
+import { resolveTopicLabel } from "@/lib/admin/contact-submissions";
+import type { ContactData } from "@/lib/validation/contact";
 
 export type ContactEmailRenderVars = {
 	imie: string;
@@ -22,8 +24,13 @@ function truncateMessage(message: string): string {
 export function buildContactEmailRenderVars(
 	data: ContactData,
 	caseNumber: string,
+	options?: { topics?: ContactFormTopicConfig[] },
 ): ContactEmailRenderVars {
-	const temat = formatContactTopicLabel(data);
+	const temat = resolveTopicLabel({
+		topic: data.topic,
+		topicOther: data.topicOther,
+		topics: options?.topics,
+	});
 	const linkKonto = getCustomerKontoUrl();
 	return {
 		imie: data.name,

@@ -8,6 +8,7 @@ import { buildContactEmailRenderVars } from "@/lib/email/contact-email-context";
 import { buildDefaultTemplate } from "@/lib/email/template-types";
 import { mergeSubject, renderTemplate } from "@/lib/email/render-template";
 import { sendTransactionalEmail } from "@/lib/email/send-transactional";
+import type { ContactFormTopicConfig } from "@/lib/contact/default-forms";
 import type { ContactData } from "@/lib/validation/contact";
 
 export type SendContactConfirmationResult =
@@ -18,6 +19,7 @@ export type SendContactConfirmationResult =
 export async function sendContactConfirmationEmail(
 	data: ContactData,
 	caseNumber: string,
+	options?: { topics?: ContactFormTopicConfig[] },
 ): Promise<SendContactConfirmationResult> {
 	const templateType = "contact_confirmation" as const;
 
@@ -25,7 +27,7 @@ export async function sendContactConfirmationEmail(
 		return { ok: true, skipped: true };
 	}
 
-	const vars = buildContactEmailRenderVars(data, caseNumber);
+	const vars = buildContactEmailRenderVars(data, caseNumber, options);
 	const ctx = { vars: { ...vars }, items: [] };
 
 	const saved = await getEmailTemplateForSend(templateType).catch(() => null);

@@ -124,12 +124,12 @@ export function getContactFormByPreset(
 export function getContactTopicOptionsFromConfig(
 	config: ContactFormsConfig,
 	preset: ContactTopicPreset,
-): Array<{ value: ContactTopicValue; label: string }> {
+): Array<{ value: string; label: string }> {
 	const form = getContactFormByPreset(config, preset);
 	if (!form.enabled) return [];
 	return form.topics
 		.filter((t) => t.enabled)
-		.map((t) => ({ value: t.value as ContactTopicValue, label: t.label }));
+		.map((t) => ({ value: t.value, label: t.label }));
 }
 
 export function getRecipientEmailForPreset(
@@ -143,6 +143,9 @@ export function getRecipientEmailForPreset(
 export function resetTopicsToCodeDefaults(preset: ContactTopicPreset): ContactFormTopicConfig[] {
 	return buildDefaultTopicsForPreset(preset).map((t) => ({
 		...t,
-		label: CONTACT_TOPIC_LABELS[t.value],
+		label:
+			t.value in CONTACT_TOPIC_LABELS
+				? CONTACT_TOPIC_LABELS[t.value as ContactTopicValue]
+				: t.label,
 	}));
 }

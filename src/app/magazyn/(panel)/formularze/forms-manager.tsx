@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Mail } from "lucide-react";
+import { FileText, Mail, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -21,12 +21,63 @@ export function FormsManager({ initialConfig }: Props) {
 	const [activeId, setActiveId] = useState(initialConfig.forms[0]?.id ?? "");
 	const [error, setError] = useState<string | null>(null);
 	const [pending, startTransition] = useTransition();
+	const [newTopicValue, setNewTopicValue] = useState("");
+	const [newTopicLabel, setNewTopicLabel] = useState("");
 
 	const activeForm = config.forms.find((f) => f.id === activeId) ?? config.forms[0];
 
 	function updateForm(id: string, patch: Partial<ContactFormDefinition>) {
 		setConfig((prev) => ({
 			forms: prev.forms.map((f) => (f.id === id ? { ...f, ...patch } : f)),
+		}));
+	}
+
+	function normalizeTopicValue(raw: string): string {
+		return raw
+			.trim()
+			.toLowerCase()
+			.replace(/\s+/g, "_")
+			.replace(/[^a-z0-9_]/g, "")
+			.slice(0, 48);
+	}
+
+	function addTopic(formId: string) {
+		const value = normalizeTopicValue(newTopicValue || newTopicLabel);
+		const label = newTopicLabel.trim() || newTopicValue.trim();
+		if (!value || !label) {
+			setError("Podaj wartość (slug) i etykietę nowego tematu.");
+			return;
+		}
+		const form = config.forms.find((f) => f.id === formId);
+		if (form?.topics.some((t) => t.value === value)) {
+			setError("Temat o takiej wartości już istnieje.");
+			return;
+		}
+		setError(null);
+		setConfig((prev) => ({
+			forms: prev.forms.map((f) =>
+				f.id === formId
+					? { ...f, topics: [...f.topics, { value, label, enabled: true }] }
+					: f,
+			),
+		}));
+		setNewTopicValue("");
+		setNewTopicLabel("");
+	}
+
+	function removeTopic(formId: string, topicValue: string) {
+		const form = config.forms.find((f) => f.id === formId);
+		if (!form || form.topics.length <= 1) {
+			setError("Formularz musi mieć co najmniej jeden temat.");
+			return;
+		}
+		setError(null);
+		setConfig((prev) => ({
+			forms: prev.forms.map((f) =>
+				f.id === formId
+					? { ...f, topics: f.topics.filter((t) => t.value !== topicValue) }
+					: f,
+			),
 		}));
 	}
 
@@ -163,7 +214,7 @@ export function FormsManager({ initialConfig }: Props) {
 										updateTopic(activeForm.id, topic.value, { label: e.target.value })
 									}
 								/>
-								<div className="flex items-center gap-2 sm:shrink-0">
+								<div className="flex flex-wrap items-center gap-2 sm:shrink-0">
 									<Switch
 										id={`topic-${activeForm.id}-${topic.value}`}
 										checked={topic.enabled}
@@ -177,10 +228,50 @@ export function FormsManager({ initialConfig }: Props) {
 									>
 										Widoczny
 									</label>
+									<Button
+										type="button"
+										variant="ghost"
+										size="sm"
+										className="text-destructive hover:text-destructive"
+										onClick={() => removeTopic(activeForm.id, topic.value)}
+										aria-label={`Usuń temat ${topic.label}`}
+									>
+										<Trash2 className="size-4" aria-hidden />
+									</Button>
 								</div>
 							</li>
 						))}
 					</ul>
+					<div className="border-t border-border px-4 py-4">
+						<p className="text-xs font-medium text-foreground">Dodaj temat</p>
+						<div className="mt-3 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
+							<label className="flex flex-col gap-1 text-xs">
+								<span className="text-muted-foreground">Wartość (slug)</span>
+								<Input
+									value={newTopicValue}
+									onChange={(e) => setNewTopicValue(e.target.value)}
+									placeholder="np. dostawa_express"
+								/>
+							</label>
+							<label className="flex flex-col gap-1 text-xs">
+								<span className="text-muted-foreground">Etykieta w polu wyboru</span>
+								<Input
+									value={newTopicLabel}
+									onChange={(e) => setNewTopicLabel(e.target.value)}
+									placeholder="np. Dostawa ekspresowa"
+								/>
+							</label>
+							<Button
+								type="button"
+								variant="outline"
+								className="self-end"
+								onClick={() => addTopic(activeForm.id)}
+							>
+								<Plus className="size-4" aria-hidden />
+								Dodaj
+							</Button>
+						</div>
+					</div>
 				</div>
 
 				<div className="rounded-xl border border-brass/30 bg-terracotta/10 p-4 text-sm">

@@ -7,7 +7,7 @@ import {
 } from "@/lib/validation/contact";
 
 export type ContactFormTopicConfig = {
-	value: ContactTopicValue;
+	value: string;
 	label: string;
 	enabled: boolean;
 };
