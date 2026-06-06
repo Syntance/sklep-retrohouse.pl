@@ -75,6 +75,8 @@ export function PriceRangeFilter({ params, priceMin, priceMax }: PriceRangeFilte
 
 const inputClass = cn(
 	"h-10 w-full rounded-xl border border-border bg-background px-3 text-sm tabular-nums",
+	"[appearance:textfield] [-moz-appearance:textfield]",
+	"[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
 	"placeholder:text-foreground/40",
 	"focus-visible:border-terracotta/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta",
 );
