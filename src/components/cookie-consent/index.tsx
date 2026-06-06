@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useId } from "react";
 import { useConsent } from "@/lib/analytics/use-consent";
-import { track } from "@/lib/analytics/posthog";
 import { CustomizeDialog } from "./customize-dialog";
 
 /**
@@ -26,21 +25,12 @@ export function CookieConsentBanner() {
 
 	const handleAcceptAll = () => {
 		update({ analytics: true, marketing: true, preferences: true });
-		track({
-			name: "consent_updated",
-			properties: { analytics: true, marketing: true, preferences: true },
-		});
 	};
 	const handleRejectAll = () => {
 		update({ analytics: false, marketing: false, preferences: false });
-		track({
-			name: "consent_updated",
-			properties: { analytics: false, marketing: false, preferences: false },
-		});
 	};
 	const handleSaveCustom = (next: { analytics: boolean; marketing: boolean; preferences: boolean }) => {
 		update(next);
-		track({ name: "consent_updated", properties: next });
 	};
 
 	return (

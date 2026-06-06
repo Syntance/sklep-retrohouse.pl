@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRightIcon } from "@/components/icons";
 import { PrivacyPolicyLink } from "@/components/primitives";
 import { track } from "@/lib/analytics/posthog";
+import { CONTACT_FORM_RESPONSE } from "@/lib/contact/response-time";
 import {
 	type ContactTopicPreset,
 	formatContactTopicLabel,
@@ -61,7 +62,7 @@ export function ContactForm({
 					Dziękujemy — wiadomość przyjęta.
 				</p>
 				<p className="mt-3 max-w-xl text-pretty text-foreground/80 md:mx-auto">
-					Odpowiadamy w 12 godzin roboczych (średnia 4h). Najszybciej odpowiemy w temacie:{" "}
+					Odpowiadamy w {CONTACT_FORM_RESPONSE.withAverage}. Najszybciej odpowiemy w temacie:{" "}
 					<strong>
 						{formatContactTopicLabel({
 							topic: state.topic,
@@ -97,7 +98,7 @@ export function ContactForm({
 					</p>
 					<h2 className="mt-3 font-display text-3xl font-semibold leading-tight">Napisz do nas</h2>
 					<p className="mt-2 max-w-xl text-foreground/70">
-						Odpowiadamy w 12 godzin roboczych. W weekendy i święta — w poniedziałek rano.
+						Odpowiadamy w {CONTACT_FORM_RESPONSE.label}. {CONTACT_FORM_RESPONSE.weekendNote}
 					</p>
 				</>
 			)}

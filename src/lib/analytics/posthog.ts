@@ -21,6 +21,10 @@ import type { AnalyticsEvent } from "./events";
 let initialized = false;
 let consented = false;
 
+export function isAnalyticsConsented(): boolean {
+	return consented;
+}
+
 function isEnabled(): boolean {
 	return Boolean(env.NEXT_PUBLIC_POSTHOG_KEY);
 }

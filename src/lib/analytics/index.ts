@@ -12,8 +12,18 @@ export type {
 	ShippingMethod,
 } from "./events";
 export { KNOWN_EVENT_NAMES } from "./events";
+export { CONSENT_CHANGED_EVENT, CONSENT_STORAGE_KEY, hasConsentCategory, readConsent } from "./consent";
+export { applyConsentChange, hydrateConsent } from "./apply-consent";
+export { setMarketingConsent, trackMetaPurchase } from "./marketing";
+export {
+	clearShopPreferences,
+	readShopPreferences,
+	shopPreferencesToQuery,
+	writeShopPreferences,
+} from "./preferences";
 export {
 	identify,
+	isAnalyticsConsented,
 	resetAnalytics,
 	setAnalyticsConsent,
 	startScopedSessionRecording,

@@ -12,13 +12,14 @@ import {
 import { JsonLd } from "@/components/json-ld";
 import { STORE_INFO } from "@/components/layout/site-header/nav-data";
 import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/components/primitives";
+import { CONTACT_FAST_RESPONSE, CONTACT_FORM_RESPONSE } from "@/lib/contact/response-time";
 import { KontaktFormSection } from "./kontakt-form-section";
 import { MapDirectionsLink, PhoneLink, WhatsAppLink } from "./contact-cta";
 
 export const metadata: Metadata = {
 	title: "Sklep z antykami w Nowym Targu — kontakt",
 	description:
-		"Napisz lub odwiedź sklep RetroHouse w Nowym Targu. Pytania o produkty, B2B, wysyłka — odpowiemy w ciągu 12 godzin.",
+		`Napisz lub odwiedź sklep RetroHouse w Nowym Targu. Pytania o produkty, B2B, wysyłka — odpowiemy w ciągu ${CONTACT_FORM_RESPONSE.labelShort}.`,
 	alternates: { canonical: "/kontakt" },
 };
 
@@ -105,9 +106,9 @@ export default function KontaktPage() {
 							Sklep z antykami w Nowym Targu — RetroHouse
 						</h1>
 						<Lead className="mt-4">
-							Napisz do nas lub odwiedź nas osobiście. Gwarantujemy odpowiedź w ciągu 24 godzin
-							roboczych — w godzinach otwarcia DM na Instagramie i&nbsp;WhatsApp odpisujemy
-							w&nbsp;ciągu pół godziny.
+							Napisz do nas lub odwiedź nas osobiście. Gwarantujemy odpowiedź w ciągu{" "}
+							{CONTACT_FORM_RESPONSE.label} — w godzinach otwarcia DM na Instagramie i&nbsp;WhatsApp
+							odpisujemy {CONTACT_FAST_RESPONSE.within}.
 						</Lead>
 					</div>
 				</Container>
@@ -194,8 +195,7 @@ export default function KontaktPage() {
 							<div className="rounded-2xl border border-border bg-cream p-6">
 								<p className="font-display text-lg">Najszybsza droga</p>
 								<p className="mt-1 text-sm text-foreground/70">
-									DM na Instagramie albo WhatsApp — staramy się odpisywać w godzinach
-									otwarcia w ciągu 30 minut.
+									{CONTACT_FAST_RESPONSE.openingHoursNote}
 								</p>
 								<div className="mt-4 flex flex-wrap items-center gap-2">
 									<CtaLink href={STORE_INFO.instagramHref} variant="secondary">

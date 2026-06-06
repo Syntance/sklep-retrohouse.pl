@@ -74,8 +74,8 @@ export const FOOTER_COLUMNS: NavGroup[] = [
 		heading: "Sklep",
 		items: [
 			{ label: "Wszystkie skarby", href: "/sklep" },
-			{ label: "Nowości z Wiednia", href: "/sklep?sort=najnowsze" },
 			{ label: "Prezent z duszą", href: "/prezent" },
+			{ label: "Moje konto", href: "/konto" },
 			{ label: "Dla projektantów", href: "/dla-projektantow" },
 		],
 	},
@@ -94,7 +94,6 @@ export const FOOTER_COLUMNS: NavGroup[] = [
 			{ label: "Regulamin", href: "/regulamin" },
 			{ label: "Polityka prywatności", href: "/polityka-prywatnosci" },
 			{ label: "Polityka cookies", href: "/polityka-cookies" },
-			{ label: "Moje konto", href: "/konto" },
 			{ label: "Reklamacje", href: "/reklamacje" },
 			{ label: "Odstąpienie od umowy", href: "/odstapienie" },
 			{ label: "Deklaracja dostępności", href: "/deklaracja-dostepnosci" },
@@ -123,6 +122,6 @@ export const STORE_INFO = {
 		"https://www.google.com/maps?q=ul.+Lud%C5%BAmierska+25A,+34-400+Nowy+Targ&z=15&output=embed",
 	googleReviewsHref:
 		"https://search.google.com/local/writereview?placeid=ChIJN1t_tDeuFkcRmSrV3Vo8AAQ",
-	madeBy: "Syntance",
+	madeBy: "Syntance.com",
 	madeByHref: "https://syntance.com",
 };

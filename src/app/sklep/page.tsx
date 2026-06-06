@@ -13,6 +13,7 @@ import {
 import { getEpochOptions } from "@/lib/catalog/epochs";
 import { listProducts } from "@/lib/products/queries";
 import { cn } from "@/lib/utils";
+import { ShopPreferencesSync } from "@/components/shop/shop-preferences-sync";
 import { PriceRangeFilter } from "./price-range-filter";
 import { ShopCategoryAutoScroll } from "./shop-category-scroll";
 import { SortDropdown } from "./sort-dropdown";
@@ -85,6 +86,7 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 	return (
 		<main id="main" className="flex flex-col">
 			<Suspense fallback={null}>
+				<ShopPreferencesSync />
 				<ShopCategoryAutoScroll />
 			</Suspense>
 			<Section spacing="md" tone="muted">
@@ -163,8 +165,8 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 								Napisz — doradzimy.
 							</h2>
 							<p className="mt-3 max-w-lg text-foreground/70">
-								Co 2 tygodnie wracamy z Wiednia z 30–50 nowymi przedmiotami. Powiedz, czego szukasz
-								— odezwiemy się gdy znajdziemy coś idealnego.
+								Regularnie odstarczamy do sklepu nowe przedmioty
+								— odezwiemy się gdy znajdziemy coś idealnego dla Ciebie.
 							</p>
 						</div>
 						<div className="flex flex-col items-start justify-center gap-3 md:items-end">

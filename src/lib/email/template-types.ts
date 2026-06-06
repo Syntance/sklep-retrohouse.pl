@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CONTACT_FORM_RESPONSE } from "@/lib/contact/response-time";
 
 /**
  * Model danych wizualnego edytora e-maili transakcyjnych.
@@ -532,7 +533,7 @@ const STAGE_CONTENT: Record<EmailTemplateType, StageContent> = {
 		paragraphs: [
 			"Cześć {{imie}}, potwierdzamy odbiór formularza kontaktowego.",
 			"Numer sprawy: {{numerSprawy}}. Temat: {{temat}}.",
-			"Odpowiadamy w 12 godzin roboczych (średnia 4h).",
+			`Odpowiadamy w ${CONTACT_FORM_RESPONSE.withAverage}.`,
 		],
 		withItems: false,
 		withKontoButton: true,

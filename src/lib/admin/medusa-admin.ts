@@ -102,7 +102,7 @@ async function adminFetchWithToken<T>(
 	return (await res.json()) as T;
 }
 
-/** Odczyt Admin API bez sesji panelu — do konfiguracji katalogu na storefront (epoki). */
+/** Odczyt Admin API bez sesji panelu — storefront / server actions (MEDUSA_ADMIN_*). */
 export async function catalogAdminFetch<T>(path: string, init: AdminFetchInit = {}): Promise<T | null> {
 	const token = await getCatalogAdminToken();
 	if (!token) return null;
@@ -111,6 +111,11 @@ export async function catalogAdminFetch<T>(path: string, init: AdminFetchInit = 
 	} catch {
 		return null;
 	}
+}
+
+/** Zapis Admin API kontem serwisowym — np. licznik numerów spraw FK na storefront. */
+export async function catalogAdminMutate<T>(path: string, init: AdminFetchInit = {}): Promise<T | null> {
+	return catalogAdminFetch<T>(path, init);
 }
 
 /** Wywołanie Admin API z tokenem z sesji. Rzuca AdminUnauthorizedError przy 401. */

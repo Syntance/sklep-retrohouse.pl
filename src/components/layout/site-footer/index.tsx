@@ -120,10 +120,10 @@ export function SiteFooter() {
 
 				<div className="mt-10 flex flex-col gap-3 text-xs text-ink-foreground/55 md:flex-row md:items-center md:justify-between">
 					<p>
-						© {new Date().getFullYear()} {STORE_INFO.name}. Każdy przedmiot z prawdziwą historią.
+						© {new Date().getFullYear()} {STORE_INFO.name}.
 					</p>
 					<p>
-						Strona:{" "}
+						Projekt strony i wdrożenie:{" "}
 						<Link
 							href={STORE_INFO.madeByHref}
 							target="_blank"

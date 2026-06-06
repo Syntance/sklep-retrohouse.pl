@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { ArrowRightIcon, GiftIcon, InstagramIcon, PinIcon } from "@/components/icons";
+import { trackMetaPurchase } from "@/lib/analytics/marketing";
 import { track } from "@/lib/analytics/posthog";
 
 type PurchaseTrackerProps = {
@@ -24,6 +25,12 @@ export function PurchaseTracker({ orderId, value, itemsCount }: PurchaseTrackerP
 		track({
 			name: "purchase",
 			properties: { value, currency: "PLN", order_id: orderId, items: itemsCount },
+		});
+		trackMetaPurchase({
+			value,
+			currency: "PLN",
+			orderId,
+			itemsCount,
 		});
 	}, [orderId, value, itemsCount]);
 

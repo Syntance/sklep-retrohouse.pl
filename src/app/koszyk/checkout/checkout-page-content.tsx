@@ -3,6 +3,7 @@
 import { CheckoutProgress } from "@/components/checkout-progress";
 import { Container, CtaLink, Eyebrow, Section } from "@/components/primitives";
 import { useCartProducts } from "@/lib/cart/use-cart-products";
+import { CONTACT_FAST_RESPONSE } from "@/lib/contact/response-time";
 import { CheckoutForm } from "./checkout-form";
 
 export function CheckoutPageContent() {
@@ -52,7 +53,7 @@ export function CheckoutPageContent() {
 					<div className="rounded-3xl border border-border bg-card p-8 text-center md:p-12">
 						<Eyebrow className="justify-center">Wątpliwości?</Eyebrow>
 						<h2 className="mt-3 font-display text-3xl font-semibold leading-tight md:text-4xl">
-							Napisz — odpowiemy w kilka minut
+							Napisz — odpowiemy {CONTACT_FAST_RESPONSE.within}
 						</h2>
 						<p className="mx-auto mt-3 max-w-xl text-foreground/70">
 							Każdy przedmiot to unikat. Jeśli masz pytanie o stan, wymiary albo wysyłkę — wolimy

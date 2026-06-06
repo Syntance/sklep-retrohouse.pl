@@ -2,19 +2,9 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect } from "react";
-import {
-	CONSENT_CHANGED_EVENT,
-	type ConsentState,
-	readConsent,
-} from "./consent";
-import {
-	initPostHog,
-	resetAnalytics,
-	setAnalyticsConsent,
-	startScopedSessionRecording,
-	stopScopedSessionRecording,
-	track,
-} from "./posthog";
+import { applyConsentChange, hydrateConsent } from "./apply-consent";
+import { CONSENT_CHANGED_EVENT, type ConsentState, readConsent } from "./consent";
+import { initPostHog, startScopedSessionRecording, stopScopedSessionRecording, track } from "./posthog";
 
 type AnalyticsProviderProps = { children: React.ReactNode };
 
@@ -43,16 +33,12 @@ function AnalyticsRouter() {
 	useEffect(() => {
 		initPostHog();
 		const stored = readConsent();
-		if (stored?.categories.analytics) setAnalyticsConsent(true);
+		if (stored) hydrateConsent(stored);
 
 		const handler = (event: Event) => {
 			const detail = (event as CustomEvent<ConsentState>).detail;
 			if (!detail) return;
-			setAnalyticsConsent(detail.categories.analytics);
-			if (!detail.categories.analytics) {
-				stopScopedSessionRecording();
-				resetAnalytics();
-			}
+			applyConsentChange(detail);
 		};
 		window.addEventListener(CONSENT_CHANGED_EVENT, handler);
 		return () => window.removeEventListener(CONSENT_CHANGED_EVENT, handler);

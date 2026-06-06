@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { CheckIcon } from "@/components/icons";
 import type { ConsentCategories } from "@/lib/analytics/consent";
 import { cn } from "@/lib/utils";
 
@@ -72,13 +73,13 @@ export function CustomizeDialog({ open, current, onClose, onSave }: CustomizeDia
 					/>
 					<ConsentRow
 						title="Marketing"
-						description="Personalizacja komunikatów handlowych. Aktualnie nieużywane — pole gotowe na przyszłe kampanie."
+						description="Piksel Meta (Facebook / Instagram) — mierzenie skuteczności kampanii i remarketing. Ładuje się dopiero po Twojej zgodzie."
 						checked={marketing}
 						onChange={setMarketing}
 					/>
 					<ConsentRow
 						title="Preferencje"
-						description="Pamięć ustawień (kategoria, język). Dziś używamy minimalnie, w przyszłości przy filtrach sklepu."
+						description="Zapamiętanie filtrów sklepu (kategoria, cena, epoka, sortowanie), żeby wrócić tam, gdzie skończyłaś."
 						checked={preferences}
 						onChange={setPreferences}
 					/>
@@ -128,20 +129,24 @@ function ConsentRow({ title, description, checked, disabled, onChange }: Consent
 				</label>
 				<p className="mt-1 text-xs leading-relaxed text-foreground/65">{description}</p>
 			</div>
-			<input
-				id={id}
-				type="checkbox"
-				checked={checked}
-				disabled={disabled}
-				onChange={(e) => onChange(e.target.checked)}
+			<label
+				htmlFor={id}
 				className={cn(
-					"mt-1 size-5 cursor-pointer appearance-none rounded border border-walnut/40 transition-colors",
-					"checked:border-terracotta checked:bg-terracotta",
-					"checked:[background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Cpath d='M13.78 4.22a.75.75 0 0 1 0 1.06l-7 7a.75.75 0 0 1-1.06 0l-3.5-3.5a.75.75 0 1 1 1.06-1.06L6.25 10.69l6.47-6.47a.75.75 0 0 1 1.06 0Z'/%3E%3C/svg%3E\")] checked:bg-no-repeat checked:bg-center",
-					"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta",
-					disabled && "cursor-not-allowed",
+					"mt-1 grid size-5 shrink-0 place-items-center rounded border border-walnut/35 bg-background",
+					"has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-terracotta",
+					disabled ? "cursor-not-allowed" : "cursor-pointer",
 				)}
-			/>
+			>
+				<input
+					id={id}
+					type="checkbox"
+					checked={checked}
+					disabled={disabled}
+					onChange={(e) => onChange(e.target.checked)}
+					className="sr-only"
+				/>
+				{checked ? <CheckIcon className="size-3.5 text-terracotta" aria-hidden /> : null}
+			</label>
 		</li>
 	);
 }

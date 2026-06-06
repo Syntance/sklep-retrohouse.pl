@@ -42,13 +42,10 @@ export function KontoDashboard() {
 
 	if (!isLoggedIn || !token) {
 		return (
-			<div className="space-y-8">
-				<div className="max-w-md">
-					<p className="text-sm text-foreground/70">
-						Jedno logowanie e-mailem z zamówienia — zarządzasz zamówieniami, reklamacjami i
-						odstąpieniami w jednym miejscu.
-					</p>
-				</div>
+			<div className="space-y-6">
+				<h1 className="font-display text-[clamp(1.75rem,3.5vw,2.5rem)] font-semibold leading-tight">
+					Zaloguj się, aby zarządzać swoimi zamówieniami
+				</h1>
 				<CustomerLogin onSuccess={login} />
 			</div>
 		);

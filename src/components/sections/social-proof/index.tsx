@@ -7,6 +7,7 @@ import { BrassRule, Container, Eyebrow, Section } from "@/components/primitives"
 import { track } from "@/lib/analytics/posthog";
 import type { ContactTopic } from "@/lib/analytics/events";
 import { submitContact, type ContactState } from "@/app/kontakt/actions";
+import { CONTACT_FORM_RESPONSE } from "@/lib/contact/response-time";
 import { getContactTopicOptions } from "@/lib/validation/contact";
 import { TESTIMONIALS } from "@/lib/mock/testimonials";
 
@@ -25,7 +26,7 @@ export function SocialProofSection() {
 				<header className="mb-10 flex flex-col items-center gap-3 text-center">
 					<Eyebrow variant="script">{hasReviews ? "co mówią" : "napisz do nas"}</Eyebrow>
 					<h2 className="max-w-xl font-display text-3xl font-medium leading-tight md:text-4xl">
-						{hasReviews ? "Twoje listy po odbiorze paczki." : "Odpowiemy w 12 godzin."}
+						{hasReviews ? "Twoje listy po odbiorze paczki." : `Odpowiemy w ${CONTACT_FORM_RESPONSE.labelShort}.`}
 					</h2>
 					<BrassRule className="my-2 max-w-[140px]" />
 				</header>
@@ -114,7 +115,7 @@ function ContactCard() {
 			<div className="mx-auto max-w-xl rounded-3xl border border-walnut/15 bg-card p-8 text-center shadow-card md:p-10">
 				<p className="font-display text-2xl font-medium">Dziękujemy — wiadomość przyjęta.</p>
 				<p className="mt-3 text-pretty text-sm leading-relaxed text-foreground/70">
-					Odpowiadamy w 12 godzin roboczych. Potwierdzenie leci na Twoją skrzynkę.
+					Odpowiadamy w {CONTACT_FORM_RESPONSE.label}. Potwierdzenie leci na Twoją skrzynkę.
 				</p>
 			</div>
 		);

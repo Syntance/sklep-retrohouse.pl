@@ -63,6 +63,12 @@ export const env = createEnv({
 		NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
 		NEXT_PUBLIC_POSTHOG_HOST: z.string().url().default("https://eu.posthog.com"),
 
+		/** Meta Pixel — ładowany wyłącznie po zgodzie marketingowej (art. 173 PT). */
+		NEXT_PUBLIC_META_PIXEL_ID: z
+			.string()
+			.regex(/^\d+$/)
+			.optional(),
+
 		NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
 
 		NEXT_PUBLIC_SITE_URL: z.string().url().default("https://sklep-retrohouse.pl"),
@@ -96,6 +102,7 @@ export const env = createEnv({
 
 		NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
 		NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+		NEXT_PUBLIC_META_PIXEL_ID: process.env.NEXT_PUBLIC_META_PIXEL_ID,
 
 		NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
 		SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,

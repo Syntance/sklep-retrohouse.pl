@@ -1,22 +1,11 @@
 "use client";
 
-/**
- * Przycisk „Ustawienia cookies" w stopce.
- *
- * Ponownie otwiera banner GDPR (Klaro / własny consent manager).
- * Wywołuje `window.__klaro?.show()` lub własny event `open-cookie-banner`,
- * który nasłuchuje implementacja consent managera.
- *
- * Zgodność: UODO 2023 — przycisk Odrzuć / Ustawienia musi być równie dostępny
- * co Akceptuj. Dark pattern = brak tego przycisku w stopce.
- */
+import { OPEN_COOKIE_BANNER_EVENT } from "@/lib/analytics/consent";
+
+/** Przycisk „Ustawienia cookies" — otwiera dialog dostosowania zgód (UODO 2023). */
 export function CookieSettingsButton() {
 	const handleClick = () => {
-		// Klaro: window.__klaro?.show()
-		// Własny event — consent manager nasłuchuje i otwiera modal.
-		if (typeof window !== "undefined") {
-			window.dispatchEvent(new CustomEvent("open-cookie-banner"));
-		}
+		window.dispatchEvent(new CustomEvent(OPEN_COOKIE_BANNER_EVENT));
 	};
 
 	return (

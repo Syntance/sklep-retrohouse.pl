@@ -1,13 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import {
-	ArrowRightIcon,
-	CheckIcon,
-	ChevronDownIcon,
-	GiftIcon,
-	HeartIcon,
-	PackageIcon,
-} from "@/components/icons";
+import { ArrowRightIcon, ChevronDownIcon } from "@/components/icons";
 import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/components/primitives";
 import { ProductCard } from "@/components/product-card";
 import { GiftBudgetTiles } from "@/components/sections/gift-budget-tiles";
@@ -164,54 +157,6 @@ export default async function PrezentPage() {
 				</Container>
 			</Section>
 
-			<Section spacing="lg">
-				<Container size="xl">
-					<div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-						<div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl border border-border bg-card">
-							<div
-								aria-hidden
-								className="absolute inset-0"
-								style={{
-									backgroundImage:
-										"radial-gradient(80% 60% at 30% 30%, oklch(0.92 0.04 80), transparent 60%), linear-gradient(160deg, oklch(0.78 0.06 60), oklch(0.52 0.15 38))",
-								}}
-							/>
-							<div className="relative flex h-full items-end p-6 text-ink-foreground">
-								<p className="rounded-2xl border border-ink-foreground/30 bg-ink-foreground/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
-									Każdy element starannie zapakowany. Karta z historią dla obdarowanego.
-									Dedykacja od&nbsp;ręki.
-								</p>
-							</div>
-						</div>
-						<div>
-							<Eyebrow>Pakowanie z duszą</Eyebrow>
-							<h2 className="mt-3 font-display text-4xl font-semibold leading-tight md:text-5xl">
-								Każdy prezent pakujemy elegancko
-							</h2>
-							<ul className="mt-6 space-y-3 text-foreground/80">
-								<PackingItem
-									icon={<PackageIcon className="size-4" />}
-									text="Bibułka ochronna i ozdobna"
-								/>
-								<PackingItem
-									icon={<HeartIcon className="size-4" />}
-									text="Karta z historią przedmiotu"
-								/>
-								<PackingItem icon={<CheckIcon className="size-4" />} text="Wizytówka RetroHouse" />
-								<PackingItem
-									icon={<GiftIcon className="size-4" />}
-									text="Opcjonalna dedykacja w koszyku (+0 zł)"
-								/>
-								<PackingItem
-									icon={<GiftIcon className="size-4" />}
-									text="Pakowanie premium w eleganckim pudełku (+25 zł)"
-								/>
-							</ul>
-						</div>
-					</div>
-				</Container>
-			</Section>
-
 			<Section spacing="md" tone="ink">
 				<Container size="xl">
 					<div className="grid gap-6 rounded-3xl border border-ink-foreground/15 bg-ink-foreground/5 p-8 md:grid-cols-[1.4fr_1fr] md:items-center md:p-12">
@@ -244,16 +189,5 @@ export default async function PrezentPage() {
 				</Container>
 			</Section>
 		</main>
-	);
-}
-
-function PackingItem({ icon, text }: { icon: React.ReactNode; text: string }) {
-	return (
-		<li className="flex items-start gap-3">
-			<span className="mt-0.5 grid size-7 place-items-center rounded-full bg-terracotta/20 text-brass">
-				{icon}
-			</span>
-			<span>{text}</span>
-		</li>
 	);
 }

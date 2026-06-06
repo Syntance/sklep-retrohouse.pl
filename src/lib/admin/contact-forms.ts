@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import { z } from "zod";
 import {
 	buildDefaultContactFormsConfig,
@@ -14,7 +15,9 @@ import {
 	type ContactTopicPreset,
 	type ContactTopicValue,
 } from "@/lib/validation/contact";
-import { adminFetch } from "./medusa-admin";
+import { adminFetch, AdminUnauthorizedError, catalogAdminFetch } from "./medusa-admin";
+
+const STORE_READ_PATH = "/admin/stores?limit=1&fields=id,metadata";
 
 const METADATA_KEY = "contact_forms_config";
 
@@ -42,10 +45,26 @@ type MedusaStore = {
 	metadata?: Record<string, unknown> | null;
 };
 
-async function getStore(): Promise<MedusaStore> {
-	const data = await adminFetch<{ stores: MedusaStore[] }>("/admin/stores?limit=1&fields=id,metadata");
-	const store = data.stores[0];
-	if (!store) throw new Error("Nie znaleziono sklepu w Medusa.");
+async function getStoreFromSession(): Promise<MedusaStore | null> {
+	try {
+		const data = await adminFetch<{ stores: MedusaStore[] }>(STORE_READ_PATH);
+		return data.stores[0] ?? null;
+	} catch (error) {
+		if (error instanceof AdminUnauthorizedError) return null;
+		throw error;
+	}
+}
+
+/** Odczyt metadanych sklepu — konto serwisowe na storefront, sesja panelu w /magazyn. */
+async function getStoreForRead(): Promise<MedusaStore | null> {
+	const catalog = await catalogAdminFetch<{ stores: MedusaStore[] }>(STORE_READ_PATH);
+	if (catalog?.stores[0]) return catalog.stores[0];
+	return getStoreFromSession();
+}
+
+async function getStoreForWrite(): Promise<MedusaStore> {
+	const store = await getStoreFromSession();
+	if (!store) throw new AdminUnauthorizedError();
 	return store;
 }
 
@@ -90,17 +109,17 @@ function mergeWithDefaults(saved: ContactFormsConfig | null): ContactFormsConfig
 	};
 }
 
-export async function getContactFormsConfig(): Promise<ContactFormsConfig> {
-	const store = await getStore();
-	const saved = parseConfig(store.metadata?.[METADATA_KEY]);
+export const getContactFormsConfig = cache(async (): Promise<ContactFormsConfig> => {
+	const store = await getStoreForRead();
+	const saved = store ? parseConfig(store.metadata?.[METADATA_KEY]) : null;
 	return mergeWithDefaults(saved);
-}
+});
 
 export async function saveContactFormsConfig(config: ContactFormsConfig): Promise<void> {
 	const parsed = configSchema.safeParse(config);
 	if (!parsed.success) throw new Error("Nieprawidłowa konfiguracja formularzy.");
 
-	const store = await getStore();
+	const store = await getStoreForWrite();
 	await adminFetch(`/admin/stores/${store.id}`, {
 		method: "POST",
 		body: JSON.stringify({

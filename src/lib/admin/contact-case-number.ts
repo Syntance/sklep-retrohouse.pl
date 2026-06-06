@@ -1,6 +1,6 @@
 import "server-only";
 
-import { adminFetch } from "./medusa-admin";
+import { catalogAdminMutate, catalogAdminFetch } from "./medusa-admin";
 
 const COUNTER_KEY = "contact_case_counter";
 const YEAR_KEY = "contact_case_year";
@@ -10,16 +10,18 @@ type MedusaStore = {
 	metadata?: Record<string, unknown> | null;
 };
 
-async function getStore(): Promise<MedusaStore> {
-	const data = await adminFetch<{ stores: MedusaStore[] }>("/admin/stores?limit=1&fields=id,metadata");
-	const store = data.stores[0];
-	if (!store) throw new Error("Nie znaleziono sklepu w Medusa.");
-	return store;
-}
+const STORE_READ_PATH = "/admin/stores?limit=1&fields=id,metadata";
 
 /** Numer sprawy formularza kontaktowego: FK-2026-00042 */
 export async function allocateContactCaseNumber(): Promise<string> {
-	const store = await getStore();
+	const data = await catalogAdminFetch<{ stores: MedusaStore[] }>(STORE_READ_PATH);
+	const store = data?.stores[0];
+	if (!store) {
+		throw new Error(
+			"Brak konta serwisowego Medusa (MEDUSA_ADMIN_EMAIL / MEDUSA_ADMIN_PASSWORD) do nadania numeru sprawy.",
+		);
+	}
+
 	const meta = store.metadata ?? {};
 	const year = new Date().getFullYear();
 	const storedYear = Number(meta[YEAR_KEY]) || 0;
@@ -30,7 +32,7 @@ export async function allocateContactCaseNumber(): Promise<string> {
 	}
 	counter += 1;
 
-	await adminFetch(`/admin/stores/${store.id}`, {
+	const updated = await catalogAdminMutate(`/admin/stores/${store.id}`, {
 		method: "POST",
 		body: JSON.stringify({
 			metadata: {
@@ -40,6 +42,9 @@ export async function allocateContactCaseNumber(): Promise<string> {
 			},
 		}),
 	});
+	if (!updated) {
+		throw new Error("Nie udało się zapisać licznika numerów spraw w Medusa.");
+	}
 
 	return `FK-${year}-${String(counter).padStart(5, "0")}`;
 }

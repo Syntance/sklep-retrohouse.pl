@@ -34,6 +34,12 @@ export const DEFAULT_CONSENT: ConsentCategories = {
 	preferences: false,
 };
 
+export function hasConsentCategory(
+	category: keyof Omit<ConsentCategories, "necessary">,
+): boolean {
+	return Boolean(readConsent()?.categories[category]);
+}
+
 export function readConsent(): ConsentState | null {
 	if (typeof window === "undefined") return null;
 	try {
@@ -78,6 +84,9 @@ export function writeConsent(categories: Omit<ConsentCategories, "necessary">): 
  * AnalyticsProvider mógł zareagować bez globalnego state managera.
  */
 export const CONSENT_CHANGED_EVENT = "rh:consent-changed";
+
+/** Stopka / polityka cookies — ponowne otwarcie dialogu „Dostosuj”. */
+export const OPEN_COOKIE_BANNER_EVENT = "open-cookie-banner";
 
 export function emitConsentChange(state: ConsentState) {
 	if (typeof window === "undefined") return;

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import {
 	CONSENT_CHANGED_EVENT,
+	OPEN_COOKIE_BANNER_EVENT,
 	type ConsentCategories,
 	type ConsentState,
 	emitConsentChange,
@@ -39,13 +40,18 @@ export function useConsent(): UseConsentReturn {
 		setConsent(stored ? stored.categories : null);
 		setIsLoaded(true);
 
-		const handler = (event: Event) => {
+		const onConsentChanged = (event: Event) => {
 			const detail = (event as CustomEvent<ConsentState>).detail;
 			if (!detail) return;
 			setConsent(detail.categories);
 		};
-		window.addEventListener(CONSENT_CHANGED_EVENT, handler);
-		return () => window.removeEventListener(CONSENT_CHANGED_EVENT, handler);
+		const onOpenSettings = () => setIsOpen(true);
+		window.addEventListener(CONSENT_CHANGED_EVENT, onConsentChanged);
+		window.addEventListener(OPEN_COOKIE_BANNER_EVENT, onOpenSettings);
+		return () => {
+			window.removeEventListener(CONSENT_CHANGED_EVENT, onConsentChanged);
+			window.removeEventListener(OPEN_COOKIE_BANNER_EVENT, onOpenSettings);
+		};
 	}, []);
 
 	const update = (next: Omit<ConsentCategories, "necessary">) => {
