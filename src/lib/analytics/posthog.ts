@@ -43,11 +43,6 @@ export function initPostHog(): PostHog | null {
 		disable_session_recording: true,
 		persistence: "localStorage+cookie",
 		opt_out_capturing_by_default: true,
-		loaded: (ph) => {
-			if (env.NODE_ENV === "development") {
-				ph.debug(false);
-			}
-		},
 		before_send: (eventPayload) => {
 			if (!eventPayload) return null;
 			const props = eventPayload.properties ?? {};

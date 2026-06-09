@@ -11,7 +11,9 @@ import {
 import { STORE_INFO } from "@/components/layout/site-header/nav-data";
 import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/components/primitives";
 import { AboutCtaCards } from "@/components/sections/about-cta-cards";
+import { PageHeroImage } from "@/components/sections/page-hero-image";
 import { CONTACT_FORM_RESPONSE } from "@/lib/contact/response-time";
+import { PAGE_HERO_IMAGES } from "@/lib/content/hero-images";
 import { StoreMap } from "@/components/sections/store-map";
 
 export const metadata: Metadata = {
@@ -116,25 +118,13 @@ export default function ONasPage() {
 							</div>
 						</div>
 
-						<div className="relative aspect-[5/6] w-full overflow-hidden rounded-3xl border border-border bg-card shadow-xl">
-							<div
-								aria-hidden
-								className="absolute inset-0"
-								style={{
-									backgroundImage:
-										"radial-gradient(120% 80% at 30% 20%, oklch(0.92 0.04 80), transparent 60%), linear-gradient(160deg, oklch(0.55 0.08 60), oklch(0.39 0.07 45))",
-								}}
-							/>
-							<div className="relative flex h-full flex-col justify-between p-6 text-ink-foreground sm:p-8">
-								<span className="rounded-full bg-ink/85 px-3 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-ink-foreground backdrop-blur">
-									Behind the scenes · Wiedeń
-								</span>
-								<p className="rounded-2xl border border-ink-foreground/30 bg-ink-foreground/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
-									Każda kamienica to rozmowa. Każda rozmowa to historia. Każda historia trafia
-									do karty obok przedmiotu.
-								</p>
-							</div>
-						</div>
+						<PageHeroImage
+							src={PAGE_HERO_IMAGES.oNas.src}
+							alt={PAGE_HERO_IMAGES.oNas.alt}
+							priority
+							badge="Behind the scenes · Wiedeń"
+							caption="Każda kamienica to rozmowa. Każda rozmowa to historia. Każda historia trafia do karty obok przedmiotu."
+						/>
 					</div>
 				</Container>
 			</Section>

@@ -5,7 +5,8 @@ import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/compo
 import { ProductCard } from "@/components/product-card";
 import { GiftBudgetTiles } from "@/components/sections/gift-budget-tiles";
 import { GiftThemes } from "@/components/sections/gift-themes";
-import { GiftHeroProduct, pickGiftHeroProduct } from "./gift-hero-product";
+import { PageHeroImage } from "@/components/sections/page-hero-image";
+import { PAGE_HERO_IMAGES } from "@/lib/content/hero-images";
 import { SmoothScrollAnchor } from "./smooth-scroll-anchor";
 import { PRICE_BUCKETS } from "@/lib/products";
 import { listProducts } from "@/lib/products/queries";
@@ -39,7 +40,6 @@ function bucketCaption(id: string) {
 export default async function PrezentPage() {
 	const PRODUCTS = await listProducts();
 	const giftPicks = PRODUCTS.filter((product) => product.giftBestseller).slice(0, 6);
-	const heroProduct = pickGiftHeroProduct(PRODUCTS);
 
 	return (
 		<main id="main" className="flex flex-col">
@@ -77,21 +77,12 @@ export default async function PrezentPage() {
 								</CtaLink>
 							</div>
 						</div>
-						{heroProduct ? (
-							<GiftHeroProduct
-								product={heroProduct}
-								className="lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-start"
-							/>
-						) : (
-							<div
-								aria-hidden
-								className="aspect-5/6 w-full rounded-3xl border border-border bg-card shadow-xl lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-start"
-								style={{
-									backgroundImage:
-										"radial-gradient(120% 80% at 30% 20%, oklch(0.78 0.06 60), transparent 60%), linear-gradient(135deg, oklch(0.52 0.15 38), oklch(0.74 0.10 80))",
-								}}
-							/>
-						)}
+						<PageHeroImage
+							src={PAGE_HERO_IMAGES.prezent.src}
+							alt={PAGE_HERO_IMAGES.prezent.alt}
+							priority
+							className="lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-start"
+						/>
 					</div>
 				</Container>
 			</Section>
