@@ -37,6 +37,7 @@ describe("analytics events contract", () => {
 		"checkout_step_completed",
 		"shipping_selected",
 		"payment_selected",
+		"payment_provider_selected",
 		"invoice_requested",
 		"gift_wrapping_selected",
 		"purchase",

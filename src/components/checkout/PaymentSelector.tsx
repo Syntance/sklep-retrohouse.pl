@@ -74,6 +74,7 @@ export function PaymentSelector({
           <button
             key={option.id}
             type="button"
+            data-payment-provider={option.id}
             onClick={() => onSelect(option.id)}
             className={`flex w-full items-start gap-4 rounded-lg border-2 p-4 text-left transition-colors ${
               isSelected

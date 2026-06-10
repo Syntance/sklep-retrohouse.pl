@@ -1,11 +1,14 @@
 import "server-only";
 import { env } from "@/env";
+import {
+	SYSTEM_PAYMENT_PROVIDER_ID,
+	TPAY_PROVIDER_ID,
+} from "@/lib/medusa/checkout-helpers";
 import { getProductBySlug } from "@/lib/products/queries";
 import type { CheckoutInput } from "@/lib/validation/checkout";
 
 const BASE_URL = env.NEXT_PUBLIC_MEDUSA_BACKEND_URL.replace(/\/$/, "");
 const PUBLISHABLE_KEY = env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY;
-const MANUAL_PAYMENT_PROVIDER = "pp_system_default";
 
 const SHIPPING_LABELS: Record<CheckoutInput["shipping"], string> = {
 	inpost: "InPost Paczkomaty",
@@ -14,14 +17,14 @@ const SHIPPING_LABELS: Record<CheckoutInput["shipping"], string> = {
 	pickup_nt: "Odbiór osobisty — Nowy Targ",
 };
 
-const PAYMENT_LABELS: Record<CheckoutInput["payment"], string> = {
-	blik: "BLIK (test)",
-	card: "Karta (test)",
-	transfer: "Przelewy24 (test)",
+const PAYMENT_LABELS: Record<CheckoutInput["payment_provider_id"], string> = {
+	[TPAY_PROVIDER_ID]: "Tpay (BLIK / przelew / karta)",
+	[SYSTEM_PAYMENT_PROVIDER_ID]: "Przelew tradycyjny",
 };
 
 export type CreateOrderResult =
 	| { ok: true; orderId: string; displayId: number }
+	| { ok: true; redirectUrl: string; cartId: string }
 	| { ok: false; error: string };
 
 async function storeFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
@@ -33,7 +36,7 @@ async function storeFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
 		...init,
 		headers,
 		cache: "no-store",
-		signal: AbortSignal.timeout(15_000),
+		signal: AbortSignal.timeout(30_000),
 	});
 
 	const text = await res.text();
@@ -59,12 +62,15 @@ type StoreCart = {
 
 type StoreShippingOption = { id: string; name: string };
 
+type PaymentSessionData = {
+	payment_url?: string;
+};
+
 /**
- * Pełny flow zakupu w Medusa: koszyk → wysyłka → płatność (manualna/testowa) → zamówienie.
+ * Pełny flow zakupu w Medusa: koszyk → wysyłka → płatność → zamówienie lub redirect Tpay.
  * Cena liczona po stronie Medusa (region PLN), klient przekazuje tylko sluga pozycji.
  */
 export async function createMedusaOrder(input: CheckoutInput): Promise<CreateOrderResult> {
-	// 1. Region PLN + warianty z katalogu (walidacja, że produkt istnieje).
 	const { regions } = await storeFetch<{ regions: Array<{ id: string; currency_code: string }> }>(
 		"/store/regions",
 	);
@@ -94,7 +100,8 @@ export async function createMedusaOrder(input: CheckoutInput): Promise<CreateOrd
 
 	const metadata: Record<string, string> = {
 		shipping: SHIPPING_LABELS[input.shipping],
-		payment: PAYMENT_LABELS[input.payment],
+		payment: PAYMENT_LABELS[input.payment_provider_id],
+		payment_provider_id: input.payment_provider_id,
 	};
 	if (input.invoice) {
 		metadata.invoice = "tak";
@@ -102,7 +109,6 @@ export async function createMedusaOrder(input: CheckoutInput): Promise<CreateOrd
 		if (input.companyName) metadata.companyName = input.companyName;
 	}
 
-	// 2. Koszyk.
 	const { cart } = await storeFetch<{ cart: StoreCart }>("/store/carts", {
 		method: "POST",
 		body: JSON.stringify({
@@ -115,7 +121,6 @@ export async function createMedusaOrder(input: CheckoutInput): Promise<CreateOrd
 		}),
 	});
 
-	// 3. Metoda wysyłki — dopasuj do wyboru z UI (odbiór vs kurier).
 	const { shipping_options: options } = await storeFetch<{
 		shipping_options: StoreShippingOption[];
 	}>(`/store/shipping-options?cart_id=${cart.id}`);
@@ -137,7 +142,6 @@ export async function createMedusaOrder(input: CheckoutInput): Promise<CreateOrd
 		body: JSON.stringify({ option_id: chosen.id }),
 	});
 
-	// 4. Płatność manualna (test) — kolekcja + sesja.
 	await storeFetch("/store/payment-collections", {
 		method: "POST",
 		body: JSON.stringify({ cart_id: cart.id }),
@@ -151,12 +155,39 @@ export async function createMedusaOrder(input: CheckoutInput): Promise<CreateOrd
 		return { ok: false, error: "Nie udało się zainicjować płatności." };
 	}
 
+	const providerId = input.payment_provider_id ?? SYSTEM_PAYMENT_PROVIDER_ID;
+
 	await storeFetch(`/store/payment-collections/${paymentCollectionId}/payment-sessions`, {
 		method: "POST",
-		body: JSON.stringify({ provider_id: MANUAL_PAYMENT_PROVIDER }),
+		body: JSON.stringify({ provider_id: providerId }),
 	});
 
-	// 5. Finalizacja → zamówienie.
+	if (providerId === TPAY_PROVIDER_ID) {
+		const { payment_collection } = await storeFetch<{
+			payment_collection: {
+				payment_sessions?: Array<{
+					provider_id: string;
+					data?: PaymentSessionData;
+				}>;
+			};
+		}>(`/store/payment-collections/${paymentCollectionId}?fields=*payment_sessions`);
+
+		const tpaySession = payment_collection.payment_sessions?.find(
+			(session) => session.provider_id === TPAY_PROVIDER_ID,
+		);
+		const paymentUrl = tpaySession?.data?.payment_url;
+
+		if (!paymentUrl) {
+			return { ok: false, error: "Nie udało się zainicjować płatności Tpay." };
+		}
+
+		return {
+			ok: true,
+			redirectUrl: paymentUrl,
+			cartId: cart.id,
+		};
+	}
+
 	const completed = await storeFetch<
 		| { type: "order"; order: { id: string; display_id: number } }
 		| { type: "cart"; error?: { message?: string } }

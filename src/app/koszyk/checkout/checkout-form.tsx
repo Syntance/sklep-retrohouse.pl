@@ -1,113 +1,105 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useForm, type UseFormRegisterReturn } from "react-hook-form";
+import { PaymentSelector } from "@/components/checkout/PaymentSelector";
 import { CheckIcon, ShieldIcon } from "@/components/icons";
 import { CheckboxInput } from "@/components/ui/checkbox-input";
 import { RadioInput } from "@/components/ui/radio-input";
 import { track } from "@/lib/analytics/posthog";
-import type {
-	CheckoutStep,
-	PaymentMethod,
-	ShippingMethod,
-} from "@/lib/analytics/events";
+import type { CheckoutStep, ShippingMethod } from "@/lib/analytics/events";
 import { useCartStore } from "@/lib/cart/store";
-import { formatPrice } from "@/lib/format";
-import type { Product } from "@/lib/products/types";
+import { calculateCheckoutTotal } from "@/lib/checkout/calculate-total";
+import { generateIdempotencyKey } from "@/lib/checkout/idempotency";
+import { lookupCity } from "@/lib/checkout/postal-code-lookup";
+import { SHIPPING_OPTIONS } from "@/lib/checkout/shipping-options";
+import { formatCurrency } from "@/lib/format";
+import { TPAY_PROVIDER_ID } from "@/lib/medusa/checkout-helpers";
 import type { OrderAcceptance } from "@/lib/order-acceptance";
+import type { Product } from "@/lib/products/types";
+import { CheckoutSchema, type CheckoutInput } from "@/lib/validation/checkout";
 import { AcceptanceStep } from "./acceptance-step";
 import { CheckoutSectionFieldset } from "./checkout-section-fieldset";
 
 type CheckoutFormProps = {
 	items: Product[];
-	subtotal: number;
 };
 
-const SHIPPING_OPTIONS: Array<{
-	value: ShippingMethod;
-	radio: string;
-	title: string;
-	description: string;
-	price: string;
-	defaultChecked?: boolean;
-}> = [
-	{
-		value: "inpost",
-		radio: "paczkomat",
-		title: "InPost Paczkomaty",
-		description: "2–3 dni robocze · domyślny wybór",
-		price: "19 zł",
-		defaultChecked: true,
-	},
-	{
-		value: "dpd",
-		radio: "kurier-dpd",
-		title: "Kurier DPD",
-		description: "1–2 dni robocze · standardowe gabaryty",
-		price: "29 zł",
-	},
-	{
-		value: "dhl",
-		radio: "kurier-dhl",
-		title: "Kurier DHL",
-		description: "1–2 dni robocze · większe gabaryty",
-		price: "39 zł",
-	},
-	{
-		value: "pickup_nt",
-		radio: "odbior-nt",
-		title: "Odbiór osobisty w Nowym Targu",
-		description: "Tego samego dnia, po wcześniejszym kontakcie",
-		price: "0 zł",
-	},
-];
-
-const PAYMENT_OPTIONS: Array<{
-	value: PaymentMethod;
-	title: string;
-	description: string;
-	price: string;
-	defaultChecked?: boolean;
-}> = [
-	{
-		value: "blik",
-		title: "BLIK",
-		description: "6-cyfrowy kod, błyskawiczna płatność",
-		price: "bez prowizji",
-		defaultChecked: true,
-	},
-	{
-		value: "card",
-		title: "Karta — Visa / Mastercard",
-		description: "3-D Secure (SCA) · zapis karty opcjonalny",
-		price: "bez prowizji",
-	},
-	{
-		value: "transfer",
-		title: "Szybki przelew (Przelewy24)",
-		description: "Wszystkie banki w Polsce",
-		price: "bez prowizji",
-	},
-];
-
-export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
-	const total = subtotal;
+export function CheckoutForm({ items }: CheckoutFormProps) {
 	const formId = useId();
 	const router = useRouter();
 	const clearCart = useCartStore((state) => state.clear);
-	const [shipping, setShipping] = useState<ShippingMethod>("inpost");
-	const [payment, setPayment] = useState<PaymentMethod>("blik");
-	const [invoice, setInvoice] = useState(false);
-	const [nipFilled, setNipFilled] = useState(false);
+	const idempotencyKeyRef = useRef(generateIdempotencyKey());
 	const [acceptance, setAcceptance] = useState<OrderAcceptance | null>(null);
-	const [submitting, setSubmitting] = useState(false);
 	const [submitError, setSubmitError] = useState<string | null>(null);
+	const [nipFilled, setNipFilled] = useState(false);
 	const completedRef = useRef<Record<CheckoutStep, boolean>>({
 		data: false,
 		shipping: false,
 		payment: false,
 		acceptance: false,
 	});
+
+	const {
+		register,
+		handleSubmit,
+		watch,
+		setValue,
+		formState: { errors, isSubmitting },
+	} = useForm<CheckoutInput>({
+		resolver: zodResolver(CheckoutSchema),
+		defaultValues: {
+			items: items.map((item) => item.slug),
+			firstName: "",
+			lastName: "",
+			email: "",
+			phone: "",
+			address: "",
+			postal: "",
+			city: "",
+			shipping: "inpost",
+			payment_provider_id: TPAY_PROVIDER_ID,
+			invoice: false,
+			nip: "",
+			companyName: "",
+		},
+	});
+
+	const shipping = watch("shipping");
+	const paymentProviderId = watch("payment_provider_id");
+	const invoice = watch("invoice");
+	const postalCode = watch("postal");
+
+	const { subtotalInCents, shippingInCents, totalInCents } = useMemo(
+		() => calculateCheckoutTotal(items, shipping),
+		[items, shipping],
+	);
+
+	useEffect(() => {
+		setValue(
+			"items",
+			items.map((item) => item.slug),
+		);
+	}, [items, setValue]);
+
+	useEffect(() => {
+		track({ name: "shipping_selected", properties: { method: "inpost" } });
+		track({
+			name: "payment_provider_selected",
+			properties: { provider_id: TPAY_PROVIDER_ID },
+		});
+	}, []);
+
+	useEffect(() => {
+		const fetchCity = async () => {
+			if (!postalCode || postalCode.replace(/\s|-/g, "").length !== 5) return;
+			const city = await lookupCity(postalCode);
+			if (city) setValue("city", city, { shouldValidate: true });
+		};
+		void fetchCity();
+	}, [postalCode, setValue]);
 
 	const handleStepCompleted = (step: CheckoutStep) => {
 		if (completedRef.current[step]) return;
@@ -116,92 +108,83 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 	};
 
 	const handleShippingChange = (method: ShippingMethod) => {
-		setShipping(method);
+		setValue("shipping", method, { shouldValidate: true });
 		track({ name: "shipping_selected", properties: { method } });
 		handleStepCompleted("shipping");
 	};
 
-	const handlePaymentChange = (method: PaymentMethod) => {
-		setPayment(method);
-		track({ name: "payment_selected", properties: { method } });
+	const handlePaymentProviderChange = (providerId: string) => {
+		setValue(
+			"payment_provider_id",
+			providerId as CheckoutInput["payment_provider_id"],
+			{ shouldValidate: true },
+		);
+		track({ name: "payment_provider_selected", properties: { provider_id: providerId } });
 		handleStepCompleted("payment");
 	};
 
 	const handleInvoiceToggle = (checked: boolean) => {
-		setInvoice(checked);
+		setValue("invoice", checked);
 		if (checked) {
 			track({ name: "invoice_requested", properties: { has_nip: nipFilled } });
 		}
 	};
 
-	useEffect(() => {
-		// Pierwszy event po mount: domyślne `inpost` + `blik`. Bez tego
-		// PostHog nie widzi wyboru, gdy user nic nie zmienia.
-		track({ name: "shipping_selected", properties: { method: "inpost" } });
-		track({ name: "payment_selected", properties: { method: "blik" } });
-		// Brak deps — strzelamy raz przy mount.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	const onSubmit = async (data: CheckoutInput) => {
+		if (!acceptance || isSubmitting) return;
 
-	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		if (!acceptance || submitting) return;
-
-		const formData = new FormData(event.currentTarget);
-		const value = (name: string) => String(formData.get(name) ?? "").trim();
-
-		const payload = {
-			items: items.map((item) => item.slug),
-			firstName: value("firstName"),
-			lastName: value("lastName"),
-			email: value("email"),
-			phone: value("phone"),
-			address: value("address"),
-			postal: value("postal"),
-			city: value("city"),
-			shipping,
-			payment,
-			invoice,
-			nip: value("nip"),
-			companyName: value("companyName"),
-		};
-
-		setSubmitting(true);
 		setSubmitError(null);
+
+		const payload: CheckoutInput = {
+			...data,
+			items: items.map((item) => item.slug),
+		};
 
 		try {
 			const response = await fetch("/api/checkout", {
 				method: "POST",
-				headers: { "Content-Type": "application/json" },
+				headers: {
+					"Content-Type": "application/json",
+					"X-Idempotency-Key": idempotencyKeyRef.current,
+				},
 				body: JSON.stringify(payload),
 			});
-			const data = (await response.json()) as {
+
+			const result = (await response.json()) as {
 				ok: boolean;
 				error?: string;
+				redirect?: boolean;
+				url?: string;
+				cartId?: string;
 				displayId?: number;
 			};
 
-			if (!response.ok || !data.ok) {
-				setSubmitError(data.error ?? "Nie udało się złożyć zamówienia. Spróbuj ponownie.");
-				setSubmitting(false);
+			if (!response.ok || !result.ok) {
+				setSubmitError(result.error ?? "Nie udało się złożyć zamówienia. Spróbuj ponownie.");
 				return;
 			}
 
 			clearCart();
-			router.push(data.displayId ? `/dziekujemy?order=${data.displayId}` : "/dziekujemy");
+
+			if (result.redirect && result.url) {
+				window.location.href = result.url;
+				return;
+			}
+
+			router.push(
+				result.displayId ? `/dziekujemy?order=${result.displayId}` : "/dziekujemy",
+			);
 		} catch {
 			setSubmitError("Błąd połączenia. Sprawdź internet i spróbuj ponownie.");
-			setSubmitting(false);
 		}
 	};
 
 	return (
 		<form
 			id={formId}
-			onSubmit={handleSubmit}
+			onSubmit={handleSubmit(onSubmit)}
 			className="mt-10 grid gap-10 lg:grid-cols-[1.4fr_1fr]"
 			onBlur={(event) => {
-				// Po opuszczeniu sekcji "dane" — emit `checkout_step_completed`.
 				const target = event.relatedTarget;
 				const dataFieldset = event.currentTarget.querySelector<HTMLFieldSetElement>(
 					"fieldset[data-step='data']",
@@ -220,18 +203,58 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 					dataStep="data"
 				>
 					<div className="grid gap-4 sm:grid-cols-2">
-						<TextField label="Imię" name="firstName" required />
-						<TextField label="Nazwisko" name="lastName" required />
-						<TextField label="E-mail" name="email" type="email" required />
-						<TextField label="Telefon" name="phone" type="tel" required />
+						<TextField
+							label="Imię"
+							autoComplete="given-name"
+							error={errors.firstName?.message}
+							{...register("firstName")}
+							required
+						/>
+						<TextField
+							label="Nazwisko"
+							autoComplete="family-name"
+							error={errors.lastName?.message}
+							{...register("lastName")}
+							required
+						/>
+						<TextField
+							label="E-mail"
+							type="email"
+							autoComplete="email"
+							error={errors.email?.message}
+							{...register("email")}
+							required
+						/>
+						<TextField
+							label="Telefon"
+							type="tel"
+							autoComplete="tel"
+							error={errors.phone?.message}
+							{...register("phone")}
+							required
+						/>
 						<TextField
 							label="Ulica i numer"
-							name="address"
-							required
+							autoComplete="shipping street-address"
+							error={errors.address?.message}
 							className="sm:col-span-2"
+							{...register("address")}
+							required
 						/>
-						<TextField label="Kod pocztowy" name="postal" required />
-						<TextField label="Miasto" name="city" required />
+						<TextField
+							label="Kod pocztowy"
+							autoComplete="shipping postal-code"
+							error={errors.postal?.message}
+							{...register("postal")}
+							required
+						/>
+						<TextField
+							label="Miasto"
+							autoComplete="shipping address-level2"
+							error={errors.city?.message}
+							{...register("city")}
+							required
+						/>
 					</div>
 					<label className="mt-4 flex items-center gap-2 text-sm">
 						<CheckboxInput
@@ -247,13 +270,17 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 							<div className="mt-3 grid gap-4 sm:grid-cols-2">
 								<TextField
 									label="NIP"
-									name="nip"
-									onChange={(value) => setNipFilled(value.trim().length === 10)}
+									error={errors.nip?.message}
+									{...register("nip", {
+										onChange: (event) =>
+											setNipFilled(event.target.value.trim().length === 10),
+									})}
 								/>
 								<TextField
 									label="Nazwa firmy"
-									name="companyName"
+									error={errors.companyName?.message}
 									className="sm:col-span-2"
+									{...register("companyName")}
 								/>
 							</div>
 						</div>
@@ -266,9 +293,9 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 							key={option.value}
 							name="shipping"
 							value={option.radio}
-							title={option.title}
+							title={option.label}
 							description={option.description}
-							price={option.price}
+							price={formatCurrency(option.priceInCents)}
 							checked={shipping === option.value}
 							onSelect={() => handleShippingChange(option.value)}
 						/>
@@ -276,18 +303,15 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 				</CheckoutSectionFieldset>
 
 				<CheckoutSectionFieldset step={3} title="Płatność" eyebrow="Bezpieczne 256-bit">
-					{PAYMENT_OPTIONS.map((option) => (
-						<RadioCard
-							key={option.value}
-							name="payment"
-							value={option.value}
-							title={option.title}
-							description={option.description}
-							price={option.price}
-							checked={payment === option.value}
-							onSelect={() => handlePaymentChange(option.value)}
-						/>
-					))}
+					<PaymentSelector
+						selectedProviderId={paymentProviderId}
+						onSelect={handlePaymentProviderChange}
+					/>
+					{errors.payment_provider_id ? (
+						<p className="mt-2 text-xs text-destructive" role="alert">
+							{errors.payment_provider_id.message}
+						</p>
+					) : null}
 				</CheckoutSectionFieldset>
 
 				<AcceptanceStep
@@ -306,27 +330,30 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 						{items.map((item) => (
 							<li key={item.slug} className="flex items-baseline justify-between gap-3">
 								<span className="line-clamp-1 font-medium">{item.name}</span>
-								<span className="tabular text-foreground/80">{formatPrice(item.price)}</span>
+								<span className="tabular text-foreground/80">
+									{formatCurrency(Math.round(item.price * 100))}
+								</span>
 							</li>
 						))}
 					</ul>
 					<dl className="mt-4 space-y-2 border-t border-border pt-4 text-sm">
 						<div className="flex items-center justify-between">
 							<dt>Suma cząstkowa</dt>
-							<dd className="tabular">{formatPrice(subtotal)}</dd>
+							<dd className="tabular">{formatCurrency(subtotalInCents)}</dd>
 						</div>
 						<div className="flex items-center justify-between">
 							<dt>Wysyłka</dt>
-							<dd className="tabular">obliczana wyżej</dd>
+							<dd className="tabular">{formatCurrency(shippingInCents)}</dd>
 						</div>
 					</dl>
 					<div className="mt-4 flex items-baseline justify-between border-t border-border pt-4">
 						<dt className="font-display text-lg">Razem</dt>
-						<dd className="font-display text-3xl font-semibold tabular">{formatPrice(total)}</dd>
+						<dd className="font-display text-3xl font-semibold tabular">
+							{formatCurrency(totalInCents)}
+						</dd>
 					</div>
 				</div>
 
-				{/* Acceptance payload przekazywany do action jako JSON */}
 				{acceptance ? (
 					<input
 						type="hidden"
@@ -336,12 +363,12 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 				) : null}
 				<button
 					type="submit"
-					disabled={!acceptance || submitting}
-					aria-disabled={!acceptance || submitting}
+					disabled={!acceptance || isSubmitting}
+					aria-disabled={!acceptance || isSubmitting}
 					className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-terracotta px-6 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground shadow-md transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
 				>
 					<ShieldIcon className="size-4 text-brass" />
-					{submitting ? "Składanie zamówienia…" : "Zapłać bezpiecznie"}
+					{isSubmitting ? "Składanie zamówienia…" : "Zapłać bezpiecznie"}
 				</button>
 				{submitError ? (
 					<p
@@ -358,7 +385,7 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 					</li>
 					<li className="flex items-start gap-2">
 						<CheckIcon className="size-4 text-brass" />
-						Dane chronione przez Przelewy24 (PCI-DSS)
+						Dane chronione przez Tpay (PCI-DSS)
 					</li>
 					<li className="flex items-start gap-2">
 						<CheckIcon className="size-4 text-brass" />
@@ -370,22 +397,30 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 	);
 }
 
-function TextField({
-	label,
-	name,
-	type = "text",
-	required,
-	className,
-	onChange,
-}: {
+type TextFieldProps = {
 	label: string;
-	name: string;
+	error?: string;
+	autoComplete?: string;
 	type?: string;
 	required?: boolean;
 	className?: string;
-	onChange?: (value: string) => void;
-}) {
+} & UseFormRegisterReturn;
+
+function TextField({
+	label,
+	error,
+	autoComplete,
+	type = "text",
+	required,
+	className,
+	name,
+	onBlur,
+	onChange,
+	ref,
+}: TextFieldProps) {
 	const id = useId();
+	const errorId = `${name}-error`;
+
 	return (
 		<label htmlFor={id} className={className}>
 			<span className="text-xs font-semibold uppercase tracking-[0.14em] text-foreground/60">
@@ -396,9 +431,19 @@ function TextField({
 				name={name}
 				type={type}
 				required={required}
-				onChange={onChange ? (event) => onChange(event.target.value) : undefined}
-				className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-3 text-sm focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
+				autoComplete={autoComplete}
+				aria-invalid={!!error}
+				aria-describedby={error ? errorId : undefined}
+				onBlur={onBlur}
+				onChange={onChange}
+				ref={ref}
+				className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-3 text-sm focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta aria-invalid:border-destructive"
 			/>
+			{error ? (
+				<p id={errorId} className="mt-1 text-xs text-destructive" role="alert">
+					{error}
+				</p>
+			) : null}
 		</label>
 	);
 }

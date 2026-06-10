@@ -8,7 +8,6 @@ import { CheckoutForm } from "./checkout-form";
 
 export function CheckoutPageContent() {
 	const products = useCartProducts();
-	const subtotal = products.reduce((acc, item) => acc + item.price, 0);
 
 	if (products.length === 0) {
 		return (
@@ -44,7 +43,7 @@ export function CheckoutPageContent() {
 
 					<CheckoutProgress step={2} />
 
-					<CheckoutForm items={products} subtotal={subtotal} />
+					<CheckoutForm items={products} />
 				</Container>
 			</Section>
 

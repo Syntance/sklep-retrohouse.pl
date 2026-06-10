@@ -4,7 +4,7 @@ import { CheckoutPageContent } from "./checkout-page-content";
 
 export const metadata: Metadata = {
 	title: "Płatność i dostawa",
-	description: "Krok 2 z 3 — adres dostawy, sposób wysyłki i bezpieczna płatność Przelewy24.",
+	description: "Krok 2 z 3 — adres dostawy, sposób wysyłki i bezpieczna płatność Tpay.",
 	robots: { index: false, follow: false },
 };
 

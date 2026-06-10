@@ -91,6 +91,7 @@ export type AnalyticsEvent =
 	| { name: "checkout_step_completed"; properties: { step: CheckoutStep } }
 	| { name: "shipping_selected"; properties: { method: ShippingMethod } }
 	| { name: "payment_selected"; properties: { method: PaymentMethod } }
+	| { name: "payment_provider_selected"; properties: { provider_id: string } }
 	| { name: "invoice_requested"; properties: { has_nip: boolean } }
 	| { name: "gift_wrapping_selected"; properties: Record<string, never> }
 	| { name: "purchase"; properties: { value: number; currency: "PLN"; order_id: string; items: number } }
@@ -166,6 +167,7 @@ export const KNOWN_EVENT_NAMES = [
 	"checkout_step_completed",
 	"shipping_selected",
 	"payment_selected",
+	"payment_provider_selected",
 	"invoice_requested",
 	"gift_wrapping_selected",
 	"purchase",
