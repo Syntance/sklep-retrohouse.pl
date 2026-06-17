@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
@@ -76,9 +77,11 @@ export function SiteHeader() {
 		});
 	};
 
+	const isCompact = scrolled || mobileOpen;
+
 	return (
 		<header
-			data-scrolled={scrolled || mobileOpen ? "true" : "false"}
+			data-scrolled={isCompact ? "true" : "false"}
 			className={cn(
 				"sticky top-0 z-40 w-full transition-colors",
 				"data-[scrolled=true]:bg-ink-foreground/90 data-[scrolled=true]:backdrop-blur-md data-[scrolled=true]:shadow-[0_1px_0_0_color-mix(in_oklch,var(--color-walnut)_25%,transparent)]",
@@ -91,27 +94,15 @@ export function SiteHeader() {
 					aria-label="RetroHouse — strona główna"
 					className="group flex items-center gap-2 font-display text-xl font-semibold tracking-tight text-foreground"
 				>
-					<span
-						aria-hidden="true"
-						className="grid size-9 place-items-center rounded-full border border-walnut/30 bg-background text-terracotta transition-colors group-hover:border-terracotta"
-					>
-						<svg
-							viewBox="0 0 24 24"
-							className="size-5"
-							role="presentation"
-							focusable="false"
-							fill="none"
-							stroke="currentColor"
-							strokeWidth={1.5}
-							strokeLinecap="round"
-							strokeLinejoin="round"
-						>
-							<title>Logo RetroHouse</title>
-							<path d="M4 11 12 4l8 7" />
-							<path d="M6 10v9h12v-9" />
-							<path d="M10 19v-5h4v5" />
-						</svg>
-					</span>
+					<Image
+						src="/brand/retrohouse-logo.png"
+						alt=""
+						width={40}
+						height={40}
+						unoptimized
+						priority
+						className="size-9 shrink-0 rounded-full object-cover sm:size-10"
+					/>
 					<span className="hidden sm:inline">RetroHouse</span>
 				</Link>
 
