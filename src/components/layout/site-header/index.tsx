@@ -79,6 +79,8 @@ export function SiteHeader() {
 
 	const isCompact = scrolled || mobileOpen;
 
+	if (pathname.startsWith("/magazyn")) return null;
+
 	return (
 		<header
 			data-scrolled={isCompact ? "true" : "false"}

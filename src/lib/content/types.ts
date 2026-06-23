@@ -1,0 +1,70 @@
+/** Identyfikatory podstron zarządzanych przez CMS. */
+export type ContentPageId = "home" | "o-nas" | "prezent" | "kontakt";
+
+export type SeoMeta = {
+	metaTitle?: string;
+	metaDescription?: string;
+	ogTitle?: string;
+	ogDescription?: string;
+	ogImageUrl?: string;
+	canonicalUrl?: string;
+	noIndex?: boolean;
+	noFollow?: boolean;
+};
+
+export type AnnouncementBar = {
+	enabled: boolean;
+	text: string;
+	link?: string;
+};
+
+export type SocialLinks = {
+	instagram?: string;
+	facebook?: string;
+	whatsapp?: string;
+};
+
+export type SiteSettings = {
+	title: string;
+	description: string;
+	announcementBar?: AnnouncementBar;
+	socialLinks?: SocialLinks;
+	footerText?: string;
+	titleTemplate?: string;
+	defaultOgImageUrl?: string;
+	googleSiteVerification?: string;
+	seo?: SeoMeta;
+};
+
+export type HeroContent = {
+	headline: string;
+	subLead?: string;
+	description: string;
+	ctaLabel: string;
+	ctaHref: string;
+	ctaSecondaryLabel?: string;
+	ctaSecondaryHref?: string;
+	productImageUrl?: string;
+	productImageAlt?: string;
+	productImageWidth?: number;
+	productImageHeight?: number;
+};
+
+export type FaqItem = {
+	id: string;
+	question: string;
+	answer: string;
+	order: number;
+};
+
+export type PageContent = {
+	hero?: HeroContent;
+	faq?: FaqItem[];
+};
+
+export type GlobalContent = {
+	announcementBar?: AnnouncementBar;
+};
+
+export type PageSeoMap = Partial<Record<ContentPageId, SeoMeta>>;
+export type PageContentMap = Partial<Record<ContentPageId, PageContent>>;

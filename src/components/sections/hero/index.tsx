@@ -6,29 +6,32 @@ import { ArrowRightIcon, ChevronDownIcon } from "@/components/icons";
 import { Container, CtaLink, Eyebrow, Section, ctaPrimaryButtonClassName } from "@/components/primitives";
 import { track } from "@/lib/analytics/posthog";
 import type { HeroProductImage } from "@/lib/sanity/home-hero";
+import type { HeroContent } from "@/lib/content/types";
+import { DEFAULT_HOME_HERO } from "@/lib/content/defaults";
 import { cn } from "@/lib/utils";
-
-const HERO_HEADLINE = "Antyki z\u00a0prawdziwą historią";
-const HERO_SUB_LEAD = "Prosto z\u00a0Wiednia";
-const HERO_SUB =
-	"Zero pośredników, 100% pewność pochodzenia. Sklep w\u00a0Nowym Targu i\u00a0wysyłka po\u00a0całej Polsce.";
 
 type HeroSectionProps = {
 	liveBadge?: { dateLabel: string; dropTitle: string } | null;
 	heroProduct?: HeroProductImage | null;
+	/** Treść z CMS (hero block). Gdy undefined — używa DEFAULT_HOME_HERO. */
+	cmsHero?: HeroContent | null;
 };
 
 /**
  * Hero homepage — H1 + podtytuł + lead, CTA scroll / sklep.
  *
- * Prawa kolumna: zdjęcie produktu z Sanity (`homePage`), albo domyślne `/images/hero-gallery.jpg`.
- * Pierwszy CTA: „POZNAJ NAS” → smooth scroll do `#home-kategorie`.
- * Bez fabricated cytatów klientów — Social proof przeniesiony do dedykowanej sekcji.
+ * Prawa kolumna: zdjęcie produktu z CMS (URL), Sanity lub domyślne `/images/hero-gallery.jpg`.
+ * Teksty: z CMS (getPageContent("home").hero) lub DEFAULT_HOME_HERO.
  */
-export function HeroSection({ liveBadge, heroProduct }: HeroSectionProps) {
+export function HeroSection({ liveBadge, heroProduct, cmsHero }: HeroSectionProps) {
+	const hero = cmsHero ?? DEFAULT_HOME_HERO;
+
 	const scrollToDiscoverSection = () => {
 		track({ name: "hero_cta_clicked", properties: { variant: "primary" } });
-		const el = document.getElementById("home-kategorie");
+		const targetId = hero.ctaHref.startsWith("#")
+			? hero.ctaHref.slice(1)
+			: "home-kategorie";
+		const el = document.getElementById(targetId);
 		if (!el) return;
 		const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 		el.scrollIntoView({
@@ -36,6 +39,8 @@ export function HeroSection({ liveBadge, heroProduct }: HeroSectionProps) {
 			block: "start",
 		});
 	};
+
+	const isScrollCta = hero.ctaHref.startsWith("#");
 
 	return (
 		<Section spacing="lg" tone="paper" id="hero" className="scroll-mt-16 overflow-hidden">
@@ -52,37 +57,53 @@ export function HeroSection({ liveBadge, heroProduct }: HeroSectionProps) {
 					<div className="flex flex-col gap-6">
 						<Eyebrow variant="script">Witamy w RetroHouse</Eyebrow>
 						<h1 className="text-balance font-display text-[clamp(2.1rem,4.8vw,3.8rem)] font-medium leading-[1.04] text-foreground">
-							<span className="block">{HERO_HEADLINE}</span>
-							<span className="mt-1 block text-foreground/80">{HERO_SUB_LEAD}</span>
+							<span className="block">{hero.headline}</span>
+							{hero.subLead ? (
+								<span className="mt-1 block text-foreground/80">{hero.subLead}</span>
+							) : null}
 						</h1>
 						<p className="max-w-xl text-pretty text-base leading-relaxed text-foreground/75 md:text-lg">
-							{HERO_SUB}
+							{hero.description}
 						</p>
 						<div className="mt-1 flex flex-wrap items-center gap-3">
-							<button
-								type="button"
-								onClick={scrollToDiscoverSection}
-								className={cn(ctaPrimaryButtonClassName)}
-								aria-label="Przewiń do sekcji poniżej — Poznaj nas"
-							>
-								<span className="flex items-center gap-2">POZNAJ NAS</span>
-								<ChevronDownIcon
-									className="size-4 motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover/cta:translate-y-0.5"
-									aria-hidden="true"
-								/>
-							</button>
-							<CtaLink
-								href="/sklep"
-								variant="secondary"
-								onClick={() =>
-									track({
-										name: "hero_cta_clicked",
-										properties: { variant: "secondary" },
-									})
-								}
-							>
-								ZOBACZ SKLEP
-							</CtaLink>
+							{isScrollCta ? (
+								<button
+									type="button"
+									onClick={scrollToDiscoverSection}
+									className={cn(ctaPrimaryButtonClassName)}
+									aria-label={`Przewiń do sekcji poniżej — ${hero.ctaLabel}`}
+								>
+									<span className="flex items-center gap-2">{hero.ctaLabel}</span>
+									<ChevronDownIcon
+										className="size-4 motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover/cta:translate-y-0.5"
+										aria-hidden="true"
+									/>
+								</button>
+							) : (
+								<CtaLink
+									href={hero.ctaHref}
+									onClick={() =>
+										track({ name: "hero_cta_clicked", properties: { variant: "primary" } })
+									}
+								>
+									{hero.ctaLabel}
+								</CtaLink>
+							)}
+
+							{hero.ctaSecondaryHref && hero.ctaSecondaryLabel ? (
+								<CtaLink
+									href={hero.ctaSecondaryHref}
+									variant="secondary"
+									onClick={() =>
+										track({
+											name: "hero_cta_clicked",
+											properties: { variant: "secondary" },
+										})
+									}
+								>
+									{hero.ctaSecondaryLabel}
+								</CtaLink>
+							) : null}
 						</div>
 
 						{liveBadge ? (
@@ -127,13 +148,14 @@ function HeroProductPlaceholder({ className }: { className?: string }) {
 				className,
 			)}
 			role="img"
-			aria-label="Placeholder: zdjęcie produktu na hero — do uzupełnienia w Sanity"
+			aria-label="Placeholder: zdjęcie produktu na hero — do uzupełnienia w panelu CMS (/magazyn/cms)"
 		>
 			<span aria-hidden="true" className="font-display text-3xl text-walnut/35">
 				◆
 			</span>
 			<p className="max-w-56 text-pretty text-sm leading-relaxed text-foreground/55">
-				Tu wyświetli się zdjęcie produktu ustawione w Sanity (Strona główna).
+				Tu wyświetli się zdjęcie produktu — ustaw URL w panelu{" "}
+				<span className="font-medium text-foreground/70">/magazyn/cms</span>.
 			</p>
 		</div>
 	);

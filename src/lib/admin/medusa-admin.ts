@@ -169,4 +169,9 @@ export async function adminUpload(files: File[]): Promise<string[]> {
 	return (data.files ?? []).map((f) => f.url).filter((url): url is string => Boolean(url));
 }
 
+/** Token serwisowy (MEDUSA_ADMIN_EMAIL/PASSWORD) — do ISR-friendly fetch w module CMS. */
+export async function getCmsServiceToken(): Promise<string | null> {
+	return getCatalogAdminToken();
+}
+
 export { BASE_URL as MEDUSA_BASE_URL };

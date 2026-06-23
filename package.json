@@ -4,6 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "next dev",
+		"prebuild": "tsx scripts/sync-cms-to-static.ts",
 		"build": "next build",
 		"build:analyze": "ANALYZE=true next build",
 		"start": "next start",
@@ -27,6 +28,7 @@
 		"@dnd-kit/utilities": "^3.2.2",
 		"@fontsource-variable/inter": "^5.2.8",
 		"@fontsource/playfair-display": "^5.2.8",
+		"@google-analytics/data": "^5.2.1",
 		"@gsap/react": "^2.1.2",
 		"@medusajs/js-sdk": "2.15.2",
 		"@portabletext/react": "^6.0.3",
@@ -55,6 +57,7 @@
 		"react": "19.2.4",
 		"react-dom": "19.2.4",
 		"react-hook-form": "^7.74.0",
+		"recharts": "^2.15.4",
 		"resend": "^6.12.3",
 		"server-only": "^0.0.1",
 		"shadcn": "^4.6.0",
@@ -86,7 +89,9 @@
 		"knip": "^6.8.0",
 		"react-email": "^6.0.5",
 		"sanity": "^5.22.0",
+		"sharp": "^0.34.5",
 		"tailwindcss": "^4",
+		"tsx": "^4.21.0",
 		"typescript": "^5",
 		"vitest": "^4.1.5"
 	},

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PackageX } from "lucide-react";
 import { formatPrice } from "@/lib/format";
+import { Badge, PageHeader } from "@/components/panel/chrome";
 import { getReturnsListAction } from "./actions";
 
 const STATUS_LABELS: Record<string, string> = {
@@ -38,9 +39,9 @@ export default async function ZwrotyPage() {
 
 	if (!result.ok) {
 		return (
-			<div className="space-y-6">
-				<h1 className="font-serif text-2xl text-foreground">Zwroty</h1>
-				<div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
+			<div className="flex flex-col gap-6">
+				<PageHeader className="mb-0" title="Zwroty i reklamacje" />
+				<div className="rounded-xl border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
 					{result.error}
 				</div>
 			</div>
@@ -50,13 +51,12 @@ export default async function ZwrotyPage() {
 	const returns = result.returns;
 
 	return (
-		<div className="space-y-6">
-			<div className="flex items-center justify-between">
-				<h1 className="font-serif text-2xl text-foreground">Zwroty i reklamacje</h1>
-				<span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
-					{returns.length}
-				</span>
-			</div>
+		<div className="flex flex-col gap-6">
+			<PageHeader
+				className="mb-0"
+				title="Zwroty i reklamacje"
+				action={<Badge tone="neutral">{returns.length}</Badge>}
+			/>
 
 			{returns.length === 0 ? (
 				<div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-muted/30 py-16 px-6 text-center">

@@ -3,6 +3,7 @@ import { resolveMedusaMediaUrl } from "@/lib/medusa/media-url";
 import type {
 	AdminOrderDetail,
 	AdminOrderRow,
+	AdminOrderStatsRow,
 	OrderAddress,
 	OrderFulfillment,
 	OrderFulfillmentStatus,
@@ -17,6 +18,7 @@ import { getSessionToken } from "./session";
 export type {
 	AdminOrderDetail,
 	AdminOrderRow,
+	AdminOrderStatsRow,
 	OrderAddress,
 	OrderFulfillment,
 	OrderFulfillmentStatus,
@@ -169,6 +171,79 @@ const DETAIL_FIELDS = [
 	"fulfillments.items.quantity",
 	"fulfillments.items.line_item_id",
 ].join(",");
+
+const STATS_FIELDS = [
+	"id",
+	"display_id",
+	"status",
+	"payment_status",
+	"fulfillment_status",
+	"email",
+	"currency_code",
+	"total",
+	"created_at",
+	"items.id",
+	"items.title",
+	"items.product_title",
+	"items.quantity",
+	"items.total",
+	"shipping_address.first_name",
+	"shipping_address.last_name",
+	"shipping_methods.name",
+	"billing_address.first_name",
+	"billing_address.last_name",
+].join(",");
+
+const STATS_PAGE_SIZE = 100;
+const STATS_MAX_ORDERS = 2000;
+
+function mapOrderToStatsRow(order: MedusaOrder): AdminOrderStatsRow {
+	return {
+		id: order.id,
+		displayId: order.display_id ?? 0,
+		status: order.status ?? "pending",
+		paymentStatus: order.payment_status ?? "not_paid",
+		fulfillmentStatus: order.fulfillment_status ?? "not_fulfilled",
+		email: order.email ?? "",
+		customerName: customerNameFrom(order),
+		currencyCode: (order.currency_code ?? "pln").toUpperCase(),
+		total: order.total ?? 0,
+		itemCount: (order.items ?? []).reduce((sum, item) => sum + (item.quantity ?? 0), 0),
+		createdAt: order.created_at ?? "",
+		shippingMethodName: order.shipping_methods?.[0]?.name ?? null,
+		lineItems: (order.items ?? []).map((item) => ({
+			title: (item.title ?? item.product_title ?? "Produkt").trim(),
+			quantity: item.quantity ?? 0,
+			totalPln: item.total ?? (item.unit_price ?? 0) * (item.quantity ?? 0),
+		})),
+	};
+}
+
+/** Wszystkie zamówienia do statystyk — paginacja Admin API (max 2000). */
+export async function listAdminOrdersForStatistics(): Promise<{
+	orders: AdminOrderStatsRow[];
+	truncated: boolean;
+}> {
+	const all: AdminOrderStatsRow[] = [];
+	let offset = 0;
+	let truncated = false;
+
+	while (all.length < STATS_MAX_ORDERS) {
+		const data = await adminFetch<{ orders: MedusaOrder[] }>(
+			`/admin/orders?limit=${STATS_PAGE_SIZE}&offset=${offset}&order=-created_at&fields=${STATS_FIELDS}`,
+		);
+		const batch = data.orders.map(mapOrderToStatsRow);
+		all.push(...batch);
+		if (batch.length < STATS_PAGE_SIZE) break;
+		offset += STATS_PAGE_SIZE;
+		if (all.length >= STATS_MAX_ORDERS) {
+			truncated = true;
+			break;
+		}
+	}
+
+	return { orders: all.slice(0, STATS_MAX_ORDERS), truncated };
+}
 
 export async function listAdminOrders(): Promise<AdminOrderRow[]> {
 	const data = await adminFetch<{ orders: MedusaOrder[] }>(

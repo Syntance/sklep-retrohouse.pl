@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import {
 	FacebookIcon,
@@ -23,47 +24,56 @@ export function SiteFooter() {
 		<footer className="mt-auto bg-ink text-ink-foreground">
 			<Container size="lg" className="py-12 md:py-16">
 				<div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.1fr_repeat(3,0.9fr)]">
-					<div>
-						<Link
-							href="/"
-							className="inline-flex items-baseline gap-2 font-display text-2xl font-medium tracking-tight text-ink-foreground"
-						>
-							RetroHouse
-							<span className="font-sans text-xs uppercase tracking-[0.2em] text-brass">
-								est. 2026
-							</span>
+					<div className="flex flex-col items-start gap-5">
+						<Link href="/" className="shrink-0" aria-label="RetroHouse — strona główna">
+							<Image
+								src="/brand/retrohouse-logo.png"
+								alt=""
+								width={179}
+								height={179}
+								unoptimized
+								className="size-[9.625rem] rounded-full object-cover md:size-[11.1875rem]"
+							/>
 						</Link>
-						<p className="mt-4 max-w-xs text-sm leading-relaxed text-ink-foreground/70">
-							Skarby z wiedeńskich kamienic, które dostają drugie życie w polskich domach.
-						</p>
-						<div className="mt-6 flex items-center gap-2">
+						<div>
 							<Link
-								aria-label="Instagram @retrohouse"
-								href={STORE_INFO.instagramHref}
-								target="_blank"
-								rel="me noreferrer"
-								className="grid size-9 place-items-center rounded-full border border-ink-foreground/20 text-ink-foreground/80 transition-colors hover:border-terracotta hover:text-terracotta"
+								href="/"
+								className="font-display text-2xl font-medium tracking-tight text-ink-foreground"
 							>
-								<InstagramIcon className="size-4" />
+								RetroHouse
 							</Link>
-							<Link
-								aria-label="Facebook RetroHouse"
-								href={STORE_INFO.facebookHref}
-								target="_blank"
-								rel="me noreferrer"
-								className="grid size-9 place-items-center rounded-full border border-ink-foreground/20 text-ink-foreground/80 transition-colors hover:border-terracotta hover:text-terracotta"
-							>
-								<FacebookIcon className="size-4" />
-							</Link>
-							<Link
-								aria-label="WhatsApp"
-								href={`https://wa.me/${STORE_INFO.whatsapp.replace(/\s|\+/g, "")}`}
-								target="_blank"
-								rel="noreferrer"
-								className="grid size-9 place-items-center rounded-full border border-ink-foreground/20 text-ink-foreground/80 transition-colors hover:border-terracotta hover:text-terracotta"
-							>
-								<WhatsAppIcon className="size-4" />
-							</Link>
+							<p className="mt-4 max-w-xs text-sm leading-relaxed text-ink-foreground/70">
+								Skarby z wiedeńskich kamienic, które dostają drugie życie w polskich domach.
+							</p>
+							<div className="mt-6 flex items-center gap-2">
+								<Link
+									aria-label="Instagram @retrohouse"
+									href={STORE_INFO.instagramHref}
+									target="_blank"
+									rel="me noreferrer"
+									className="grid size-9 place-items-center rounded-full border border-ink-foreground/20 text-ink-foreground/80 transition-colors hover:border-terracotta hover:text-terracotta"
+								>
+									<InstagramIcon className="size-4" />
+								</Link>
+								<Link
+									aria-label="Facebook RetroHouse"
+									href={STORE_INFO.facebookHref}
+									target="_blank"
+									rel="me noreferrer"
+									className="grid size-9 place-items-center rounded-full border border-ink-foreground/20 text-ink-foreground/80 transition-colors hover:border-terracotta hover:text-terracotta"
+								>
+									<FacebookIcon className="size-4" />
+								</Link>
+								<Link
+									aria-label="WhatsApp"
+									href={`https://wa.me/${STORE_INFO.whatsapp.replace(/\s|\+/g, "")}`}
+									target="_blank"
+									rel="noreferrer"
+									className="grid size-9 place-items-center rounded-full border border-ink-foreground/20 text-ink-foreground/80 transition-colors hover:border-terracotta hover:text-terracotta"
+								>
+									<WhatsAppIcon className="size-4" />
+								</Link>
+							</div>
 						</div>
 					</div>
 

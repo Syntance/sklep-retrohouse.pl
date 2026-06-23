@@ -6,7 +6,8 @@ import { ProductCard } from "@/components/product-card";
 import { GiftBudgetTiles } from "@/components/sections/gift-budget-tiles";
 import { GiftThemes } from "@/components/sections/gift-themes";
 import { PageHeroImage } from "@/components/sections/page-hero-image";
-import { PAGE_HERO_IMAGES } from "@/lib/content/hero-images";
+import { getPageContent } from "@/lib/content";
+import { resolveStaticHeroProductImage } from "@/lib/content/resolve-hero-image";
 import { SmoothScrollAnchor } from "./smooth-scroll-anchor";
 import { PRICE_BUCKETS } from "@/lib/products";
 import { listProducts } from "@/lib/products/queries";
@@ -40,6 +41,8 @@ function bucketCaption(id: string) {
 export default async function PrezentPage() {
 	const PRODUCTS = await listProducts();
 	const giftPicks = PRODUCTS.filter((product) => product.giftBestseller).slice(0, 6);
+	const cmsHero = (await getPageContent("prezent")).hero;
+	const heroImage = resolveStaticHeroProductImage("prezent", cmsHero);
 
 	return (
 		<main id="main" className="flex flex-col">
@@ -77,12 +80,14 @@ export default async function PrezentPage() {
 								</CtaLink>
 							</div>
 						</div>
-						<PageHeroImage
-							src={PAGE_HERO_IMAGES.prezent.src}
-							alt={PAGE_HERO_IMAGES.prezent.alt}
-							priority
-							className="lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-start"
-						/>
+						{heroImage ? (
+							<PageHeroImage
+								src={heroImage.src}
+								alt={heroImage.alt}
+								priority
+								className="lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-start"
+							/>
+						) : null}
 					</div>
 				</Container>
 			</Section>

@@ -1,5 +1,6 @@
 import { listCategories } from "@/lib/admin/categories";
 import { loadAdmin } from "@/lib/admin/load";
+import { PageHeader } from "@/components/panel/chrome";
 import { CategoriesManager } from "./categories-manager";
 
 export const dynamic = "force-dynamic";
@@ -9,13 +10,11 @@ export default async function CategoriesPage() {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<header>
-				<h1 className="font-serif text-2xl text-foreground">Kategorie</h1>
-				<p className="mt-1 text-sm text-muted-foreground">
-					Działy sklepu — produkty przypisujesz przy edycji.
-				</p>
-			</header>
-
+			<PageHeader
+				className="mb-0"
+				title="Kategorie"
+				description="Działy sklepu — produkty przypisujesz przy edycji."
+			/>
 			<CategoriesManager categories={categories} />
 		</div>
 	);

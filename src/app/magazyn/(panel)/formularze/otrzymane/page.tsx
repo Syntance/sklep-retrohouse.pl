@@ -1,9 +1,9 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
-import { Inbox } from "lucide-react";
 import { FormsSubnav } from "../forms-subnav";
 import { getSubmissionsListAction } from "../submissions-actions";
+import { PageHeader } from "@/components/panel/chrome";
 
 function formatWhen(iso: string): string {
 	try {
@@ -21,15 +21,11 @@ export default async function OtrzymaneFormularzePage() {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<header>
-				<h1 className="flex items-center gap-2 font-serif text-2xl text-foreground">
-					<Inbox className="size-6 text-terracotta" aria-hidden />
-					Formularze
-				</h1>
-				<p className="mt-1 text-sm text-muted-foreground">
-					Archiwum wiadomości z formularzy kontaktowych na podstronach sklepu.
-				</p>
-			</header>
+			<PageHeader
+				className="mb-0"
+				title="Otrzymane formularze"
+				description="Archiwum wiadomości z formularzy kontaktowych na podstronach sklepu."
+			/>
 
 			<FormsSubnav />
 

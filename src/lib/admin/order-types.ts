@@ -84,6 +84,12 @@ export type AdminOrderRow = {
 	createdAt: string;
 };
 
+/** Zamówienie z polami pod agregację statystyk sprzedaży. */
+export type AdminOrderStatsRow = AdminOrderRow & {
+	lineItems: Array<{ title: string; quantity: number; totalPln: number }>;
+	shippingMethodName: string | null;
+};
+
 export type AdminOrderDetail = {
 	id: string;
 	displayId: number;

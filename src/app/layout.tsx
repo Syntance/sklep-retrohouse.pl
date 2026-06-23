@@ -4,6 +4,7 @@ import type { Metadata, Viewport } from "next";
 import { AppToaster } from "@/components/app-toaster";
 import { CookieConsentBanner } from "@/components/cookie-consent";
 import { CartAddedCallout } from "@/components/cart-added-callout";
+import { HideOnMagazyn } from "@/components/layout/hide-on-magazyn";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { CustomerSessionProvider } from "@/components/customer/customer-session-provider";
@@ -80,22 +81,30 @@ export default function RootLayout({
 	return (
 		<html lang="pl" className="h-full antialiased">
 			<body className="min-h-full flex flex-col bg-background text-foreground">
-				<a
-					href="#main"
-					className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-terracotta focus:px-4 focus:py-2 focus:text-terracotta-foreground focus:shadow-lg"
-				>
-					Przejdź do treści
-				</a>
+				<HideOnMagazyn>
+					<a
+						href="#main"
+						className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-terracotta focus:px-4 focus:py-2 focus:text-terracotta-foreground focus:shadow-lg"
+					>
+						Przejdź do treści
+					</a>
+				</HideOnMagazyn>
 				<AnalyticsProvider>
 					<CustomerSessionProvider>
 						<SiteHeader />
 						{children}
-						<SiteFooter />
+						<HideOnMagazyn>
+							<SiteFooter />
+						</HideOnMagazyn>
 					</CustomerSessionProvider>
 				</AnalyticsProvider>
 				<AppToaster />
-				<CookieConsentBanner />
-				<CartAddedCallout />
+				<HideOnMagazyn>
+					<CookieConsentBanner />
+				</HideOnMagazyn>
+				<HideOnMagazyn>
+					<CartAddedCallout />
+				</HideOnMagazyn>
 				<SpeedInsights />
 				<Analytics />
 			</body>

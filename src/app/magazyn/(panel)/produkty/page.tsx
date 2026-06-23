@@ -4,6 +4,7 @@ import { formatPrice } from "@/lib/format";
 import { BADGE_TONE_CLASS } from "@/lib/admin/order-status";
 import { loadAdmin } from "@/lib/admin/load";
 import { type AdminProductRow, listAdminProducts } from "@/lib/admin/products";
+import { PageHeader } from "@/components/panel/chrome";
 import { cn } from "@/lib/utils";
 import { DeleteProductButton } from "./delete-product-button";
 import { ProductListThumbnail } from "./product-list-thumbnail";
@@ -26,21 +27,20 @@ export default async function ProductsPage() {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<header className="flex flex-wrap items-end justify-between gap-4">
-				<div>
-					<h1 className="font-serif text-2xl text-foreground">Produkty</h1>
-					<p className="mt-1 text-sm text-muted-foreground">
-						{products.length} {products.length === 1 ? "pozycja" : "pozycji"} w magazynie
-					</p>
-				</div>
-				<Link
-					href="/magazyn/produkty/nowy"
-					className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-				>
-					<Plus className="size-4" aria-hidden />
-					Dodaj produkt
-				</Link>
-			</header>
+			<PageHeader
+				className="mb-0"
+				title="Produkty"
+				description={`${products.length} ${products.length === 1 ? "pozycja" : "pozycji"} w magazynie`}
+				action={
+					<Link
+						href="/magazyn/produkty/nowy"
+						className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+					>
+						<Plus className="size-4" aria-hidden />
+						Dodaj produkt
+					</Link>
+				}
+			/>
 
 			{products.length === 0 ? (
 				<div className="rounded-xl border border-dashed border-border p-12 text-center">

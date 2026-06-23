@@ -4,6 +4,7 @@ import { Loader2, Monitor, Plus, RotateCcw, Save, Send, Smartphone } from "lucid
 import { useCallback, useMemo, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { renderTemplate, sampleRenderContextForTemplate } from "@/lib/email/render-template";
 import {
 	type Block,
@@ -46,10 +47,18 @@ function toRecord(templates: EmailTemplate[]): Record<EmailTemplateType, EmailTe
 	return record;
 }
 
-export function EmailEditor({ initialTemplates }: { initialTemplates: EmailTemplate[] }) {
+export function EmailEditor({
+	initialTemplates,
+	initialType,
+	hideTemplatePicker = false,
+}: {
+	initialTemplates: EmailTemplate[];
+	initialType?: EmailTemplateType;
+	hideTemplatePicker?: boolean;
+}) {
 	const [templates, setTemplates] = useState(() => toRecord(initialTemplates));
 	const [activeType, setActiveType] = useState<EmailTemplateType>(
-		initialTemplates[0]?.type ?? "placed",
+		initialType ?? initialTemplates[0]?.type ?? "placed",
 	);
 	const [selectedId, setSelectedId] = useState<string | null>(null);
 	const [leftPanelTab, setLeftPanelTab] = useState<"block" | "theme">("theme");
@@ -222,21 +231,49 @@ export function EmailEditor({ initialTemplates }: { initialTemplates: EmailTempl
 
 	return (
 		<div className="flex flex-col gap-4">
-			<EmailTemplatePicker
-				activeType={activeType}
-				onSelect={switchTemplate}
-				enabledByType={enabledByType}
-				onToggleEnabled={onToggleEnabled}
-				togglingType={togglingType}
-			/>
+			{hideTemplatePicker ? null : (
+				<EmailTemplatePicker
+					activeType={activeType}
+					onSelect={switchTemplate}
+					enabledByType={enabledByType}
+					onToggleEnabled={onToggleEnabled}
+					togglingType={togglingType}
+				/>
+			)}
+
+			{hideTemplatePicker ? (
+				<div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card px-4 py-3">
+					<div>
+						<p className="text-sm font-medium text-foreground">Wysyłka automatyczna</p>
+						<p className="text-xs text-muted-foreground">
+							Wyłączony szablon nie trafi do klientów przy danym etapie.
+						</p>
+					</div>
+					<div className="flex shrink-0 items-center gap-2">
+						{togglingType === activeType ? (
+							<Loader2 className="size-4 animate-spin text-muted-foreground" aria-hidden />
+						) : null}
+						<Switch
+							checked={activeEnabled}
+							disabled={togglingType !== null}
+							aria-label={
+								activeEnabled
+									? "Wyłącz automatyczną wysyłkę tego e-maila"
+									: "Włącz automatyczną wysyłkę tego e-maila"
+							}
+							onCheckedChange={(next) => onToggleEnabled(activeType, next)}
+						/>
+					</div>
+				</div>
+			) : null}
 
 			{!activeEnabled ? (
 				<p
 					role="status"
 					className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-foreground"
 				>
-					Wysyłka automatyczna wyłączona dla tego szablonu. Możesz edytować treść i włączyć
-					ją suwakiem w liście powyżej.
+					Wysyłka automatyczna wyłączona dla tego szablonu. Możesz edytować treść
+					{hideTemplatePicker ? " i włączyć ją suwakiem powyżej." : " i włączyć ją suwakiem w liście powyżej."}
 				</p>
 			) : null}
 

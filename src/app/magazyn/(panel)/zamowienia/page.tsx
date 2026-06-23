@@ -1,5 +1,6 @@
 import { loadAdmin } from "@/lib/admin/load";
 import { listAdminOrders } from "@/lib/admin/orders";
+import { PageHeader } from "@/components/panel/chrome";
 import { OrdersList } from "./orders-list";
 
 export const dynamic = "force-dynamic";
@@ -10,13 +11,11 @@ export default async function OrdersPage() {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<header>
-				<h1 className="font-serif text-2xl text-foreground">Zamówienia</h1>
-				<p className="mt-1 text-sm text-muted-foreground">
-					Przeszukuj, filtruj i sortuj klikając nagłówki kolumn.
-				</p>
-			</header>
-
+			<PageHeader
+				className="mb-0"
+				title="Zamówienia"
+				description="Przeszukuj, filtruj i sortuj klikając nagłówki kolumn."
+			/>
 			<OrdersList orders={orders} />
 		</div>
 	);

@@ -5,12 +5,14 @@ import { LiveBanner } from "@/components/sections/live-banner";
 import { SocialProofSection } from "@/components/sections/social-proof";
 import { Container, Section } from "@/components/primitives";
 import { env } from "@/env";
-import { getHomeHeroProduct, DEFAULT_HERO_PRODUCT } from "@/lib/sanity/home-hero";
+import { getPageContent } from "@/lib/content";
+import { resolveHomeHeroProductImage } from "@/lib/content/resolve-hero-image";
+import { getHomeHeroProduct } from "@/lib/sanity/home-hero";
 import { listProducts } from "@/lib/products/queries";
 
 /**
  * Homepage:
- *  1. Hero        — headline + obraz (Sanity lub domyślne zdjęcie galerii sklepu)
+ *  1. Hero        — teksty z CMS (live), zdjęcie: static CMS po redeploy > Sanity > domyślne
  *  2. Categories  — 6 kafli, drugi entry point
  *  3. Bestsellers — 4 karty (BOFU)
  *  4. Live banner — warunkowy (LIVE_SCHEDULED=true)
@@ -20,7 +22,10 @@ export default async function HomePage() {
 	const products = await listProducts();
 	const bestsellers = [...products].sort((a, b) => b.popularity - a.popularity).slice(0, 4);
 
-	const heroProduct = (await getHomeHeroProduct()) ?? DEFAULT_HERO_PRODUCT;
+	const content = await getPageContent("home");
+	const hero = content.hero;
+
+	const heroProduct = resolveHomeHeroProductImage(hero, await getHomeHeroProduct());
 
 	const liveScheduled =
 		env.NEXT_PUBLIC_LIVE_SCHEDULED &&
@@ -36,7 +41,7 @@ export default async function HomePage() {
 
 	return (
 		<main id="main" className="flex flex-col">
-			<HeroSection liveBadge={liveBadge} heroProduct={heroProduct} />
+			<HeroSection liveBadge={liveBadge} heroProduct={heroProduct} cmsHero={hero} />
 			<CategoriesSection />
 			<BestsellersSection products={bestsellers} />
 			{liveScheduled && env.NEXT_PUBLIC_LIVE_DATE ? (

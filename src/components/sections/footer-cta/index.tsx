@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRightIcon, InstagramIcon } from "@/components/icons";
+import { ArrowRightIcon } from "@/components/icons";
 import { Container, Eyebrow, Section } from "@/components/primitives";
 import { track } from "@/lib/analytics/posthog";
 import { useState } from "react";
@@ -40,17 +40,6 @@ export function FooterCtaSection() {
 							Świeża dostawa z&nbsp;Wiednia w&nbsp;Twojej skrzynce. Bez spamu, z&nbsp;linkiem
 							do&nbsp;priorytetowej rezerwacji.
 						</p>
-						<div className="mt-5 flex flex-wrap items-center gap-2">
-							<Link
-								href="https://instagram.com/retrohouse"
-								target="_blank"
-								rel="noreferrer"
-								className="cta-text inline-flex items-center gap-2 text-xs text-ink-foreground/65 hover:text-terracotta"
-							>
-								<InstagramIcon className="size-4" />
-								@retrohouse
-							</Link>
-						</div>
 					</div>
 
 					<form onSubmit={handleNewsletter} className="flex flex-col gap-3">
