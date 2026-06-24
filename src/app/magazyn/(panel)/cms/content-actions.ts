@@ -1,9 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { AdminApiError, AdminUnauthorizedError, adminUpload } from "@/lib/admin/medusa-admin";
+import { AdminApiError, AdminUnauthorizedError } from "@/lib/admin/medusa-admin";
+import { uploadCmsMediaFiles } from "@/lib/admin/cms-media-upload";
+import { isR2UploadConfigured } from "@/lib/admin/r2-upload";
 import { prepareCmsUploadFiles } from "@/lib/content/normalize-cms-image";
-import { resolveMedusaMediaUrls } from "@/lib/medusa/media-url";
 import { savePageContent, mergeSiteSettings } from "@/lib/admin/content-store";
 import { CMS_PAGES } from "@/lib/content/metadata-keys";
 import { pageContentSchema, cmsGlobalSettingsSchema } from "@/lib/content/parsers";
@@ -76,9 +77,17 @@ export async function uploadCmsImagesAction(formData: FormData): Promise<UploadC
 	const files = formData.getAll("files").filter((f): f is File => f instanceof File && f.size > 0);
 	if (files.length === 0) return { urls: [], error: "Nie wybrano plików." };
 
+	if (!isR2UploadConfigured()) {
+		return {
+			urls: [],
+			error:
+				"Upload CMS wymaga R2 w Vercel (S3_ENDPOINT, S3_BUCKET, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY). Skopiuj z Railway Medusa.",
+		};
+	}
+
 	try {
 		const prepared = await prepareCmsUploadFiles(files);
-		const urls = resolveMedusaMediaUrls(await adminUpload(prepared));
+		const urls = await uploadCmsMediaFiles(prepared);
 		return { urls, error: null };
 	} catch (error) {
 		if (error instanceof AdminUnauthorizedError) redirect("/magazyn/auth/logout");

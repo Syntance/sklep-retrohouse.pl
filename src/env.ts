@@ -42,6 +42,32 @@ export const env = createEnv({
 			(val) => (typeof val === "string" ? val.trim() : val),
 			z.string().min(1).optional(),
 		),
+
+		/** Bezpośredni upload CMS do Cloudflare R2 (omija Medusa /admin/uploads). Te same wartości co na backendzie Medusa. */
+		S3_ENDPOINT: z.preprocess(
+			(val) => (typeof val === "string" ? val.trim() : val),
+			z.string().url().optional(),
+		),
+		S3_BUCKET: z.preprocess(
+			(val) => (typeof val === "string" ? val.trim() : val),
+			z.string().min(1).optional(),
+		),
+		S3_ACCESS_KEY_ID: z.preprocess(
+			(val) => (typeof val === "string" ? val.trim() : val),
+			z.string().min(1).optional(),
+		),
+		S3_SECRET_ACCESS_KEY: z.preprocess(
+			(val) => (typeof val === "string" ? val.trim() : val),
+			z.string().min(1).optional(),
+		),
+		S3_PUBLIC_URL: z.preprocess(
+			(val) => (typeof val === "string" ? val.trim() : val),
+			z.string().url().optional(),
+		),
+		S3_REGION: z.preprocess(
+			(val) => (typeof val === "string" ? val.trim() : val),
+			z.string().min(1).optional(),
+		),
 	},
 	client: {
 		/** URL backendu Medusa (Railway). Używany przez Medusa JS SDK. */
@@ -127,6 +153,13 @@ export const env = createEnv({
 
 		MEDUSA_ADMIN_EMAIL: process.env.MEDUSA_ADMIN_EMAIL,
 		MEDUSA_ADMIN_PASSWORD: process.env.MEDUSA_ADMIN_PASSWORD,
+
+		S3_ENDPOINT: process.env.S3_ENDPOINT,
+		S3_BUCKET: process.env.S3_BUCKET,
+		S3_ACCESS_KEY_ID: process.env.S3_ACCESS_KEY_ID,
+		S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY,
+		S3_PUBLIC_URL: process.env.S3_PUBLIC_URL,
+		S3_REGION: process.env.S3_REGION,
 
 		NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
 
