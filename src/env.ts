@@ -34,8 +34,14 @@ export const env = createEnv({
 		 * Opcjonalne — odczyt konfiguracji katalogu (epoki) w SSR sklepu bez sesji admina.
 		 * Te same dane logowania co do panelu /magazyn.
 		 */
-		MEDUSA_ADMIN_EMAIL: z.string().email().optional(),
-		MEDUSA_ADMIN_PASSWORD: z.string().min(1).optional(),
+		MEDUSA_ADMIN_EMAIL: z.preprocess(
+			(val) => (typeof val === "string" ? val.trim() : val),
+			z.string().email().optional(),
+		),
+		MEDUSA_ADMIN_PASSWORD: z.preprocess(
+			(val) => (typeof val === "string" ? val.trim() : val),
+			z.string().min(1).optional(),
+		),
 	},
 	client: {
 		/** URL backendu Medusa (Railway). Używany przez Medusa JS SDK. */
@@ -45,8 +51,14 @@ export const env = createEnv({
 			.default("https://medusa-backend-production-9270.up.railway.app"),
 		/** Publishable API key ze sklepu Medusa (Settings → Publishable API Keys). */
 		NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: isStrictEnv
-			? z.string().min(1)
-			: z.string().min(1).optional(),
+			? z.preprocess(
+					(val) => (typeof val === "string" ? val.trim() : val),
+					z.string().min(1),
+				)
+			: z.preprocess(
+					(val) => (typeof val === "string" ? val.trim() : val),
+					z.string().min(1).optional(),
+				),
 
 		NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: z.string().optional(),
 

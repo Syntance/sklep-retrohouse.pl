@@ -57,7 +57,9 @@ function isRemoteImageUrl(url: string): boolean {
 }
 
 async function getAdminToken(): Promise<string | null> {
-	if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
+	const email = ADMIN_EMAIL?.trim();
+	const password = ADMIN_PASSWORD?.trim();
+	if (!email || !password) {
 		console.warn("⚠ MEDUSA_ADMIN_EMAIL / MEDUSA_ADMIN_PASSWORD nie ustawione — pomijam sync hero.");
 		return null;
 	}
@@ -65,7 +67,7 @@ async function getAdminToken(): Promise<string | null> {
 	const res = await fetch(`${MEDUSA_URL}/auth/user/emailpass`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ email: ADMIN_EMAIL.trim(), password: ADMIN_PASSWORD }),
+		body: JSON.stringify({ email, password }),
 		signal: AbortSignal.timeout(15_000),
 	});
 
