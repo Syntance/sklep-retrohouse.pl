@@ -8,6 +8,7 @@ export const CMS_HERO_WEBP_QUALITY = 92;
 export const CMS_HERO_STATIC_FILES = {
 	home: "home-hero.webp",
 	prezent: "prezent-hero.webp",
+	kontakt: "kontakt-hero.webp",
 } as const;
 
 export type CmsHeroPageKey = keyof typeof CMS_HERO_STATIC_FILES;

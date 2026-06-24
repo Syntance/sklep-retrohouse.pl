@@ -12,6 +12,13 @@ const PREZENT_FALLBACK: HeroProductImage = {
 	height: 1500,
 };
 
+const KONTAKT_FALLBACK: HeroProductImage = {
+	src: PAGE_HERO_IMAGES.kontakt.src,
+	alt: PAGE_HERO_IMAGES.kontakt.alt,
+	width: 1200,
+	height: 1500,
+};
+
 /**
  * Obraz hero z ostatniego buildu (`/images/cms/…`).
  * Tekst alt może pochodzić live z CMS (revalidate) — src zawsze lokalny po redeploy.
@@ -23,6 +30,7 @@ export function resolveStaticHeroProductImage(
 	const baked = STATIC_CMS_HERO[pageKey];
 	if (!baked?.productImageUrl) {
 		if (pageKey === "prezent") return PREZENT_FALLBACK;
+		if (pageKey === "kontakt") return KONTAKT_FALLBACK;
 		return null;
 	}
 

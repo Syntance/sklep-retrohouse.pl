@@ -104,7 +104,7 @@ function HeroEditor({
 					ctaHref: "",
 				});
 
-	const showHeroImage = pageId === "home" || pageId === "prezent";
+	const showHeroImage = pageId === "home" || pageId === "prezent" || pageId === "kontakt";
 
 	return (
 		<fieldset className="flex flex-col gap-3 rounded-xl border border-border p-4">

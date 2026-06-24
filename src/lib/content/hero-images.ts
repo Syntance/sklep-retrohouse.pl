@@ -11,4 +11,8 @@ export const PAGE_HERO_IMAGES = {
 		src: "/images/hero/o-nas.jpg",
 		alt: "RetroHouse — odkup antyków z wiedeńskich kamienic",
 	},
+	kontakt: {
+		src: "/images/hero/kontakt.jpg",
+		alt: "RetroHouse — sklep z antykami w Nowym Targu",
+	},
 } as const;
