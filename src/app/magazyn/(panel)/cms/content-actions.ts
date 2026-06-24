@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { AdminApiError, AdminUnauthorizedError, adminUpload } from "@/lib/admin/medusa-admin";
+import { prepareCmsUploadFiles } from "@/lib/content/normalize-cms-image";
 import { resolveMedusaMediaUrls } from "@/lib/medusa/media-url";
 import { savePageContent, mergeSiteSettings } from "@/lib/admin/content-store";
 import { CMS_PAGES } from "@/lib/content/metadata-keys";
@@ -76,11 +77,13 @@ export async function uploadCmsImagesAction(formData: FormData): Promise<UploadC
 	if (files.length === 0) return { urls: [], error: "Nie wybrano plików." };
 
 	try {
-		const urls = resolveMedusaMediaUrls(await adminUpload(files));
+		const prepared = await prepareCmsUploadFiles(files);
+		const urls = resolveMedusaMediaUrls(await adminUpload(prepared));
 		return { urls, error: null };
 	} catch (error) {
 		if (error instanceof AdminUnauthorizedError) redirect("/magazyn/auth/logout");
 		if (error instanceof AdminApiError) return { urls: [], error: error.message };
+		if (error instanceof Error) return { urls: [], error: error.message };
 		return { urls: [], error: "Upload nie powiódł się." };
 	}
 }

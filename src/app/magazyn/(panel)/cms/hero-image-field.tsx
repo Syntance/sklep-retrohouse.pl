@@ -4,6 +4,7 @@ import { ImagePlus, Loader2, X } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useId, useState } from "react";
 import { resolveMedusaMediaUrl } from "@/lib/medusa/media-url";
+import { CMS_HERO_MAX_LONG_EDGE } from "@/lib/content/cms-hero-image";
 import { isImageFile, useFileDropZone } from "@/lib/hooks/use-file-drop-zone";
 import { cn } from "@/lib/utils";
 import { uploadCmsImagesAction } from "./content-actions";
@@ -66,8 +67,8 @@ export function HeroImageField({ label, value, alt, onChangeUrl, onChangeAlt }: 
 		<div className="flex flex-col gap-2">
 			<span className="text-sm font-medium">{label}</span>
 			<p className="text-xs text-muted-foreground">
-				Przeciągnij zdjęcie lub kliknij, aby wgrać. Na stronie pojawi się po{" "}
-				<strong className="font-medium text-foreground">Redeploy</strong> (build synchronizuje do{" "}
+				JPG/PNG są automatycznie konwertowane na WebP (max {CMS_HERO_MAX_LONG_EDGE}px, wysoka jakość). Na
+				pojawią się po <strong className="font-medium text-foreground">Redeploy</strong> (sync do{" "}
 				<code className="text-[0.7rem]">/images/cms/</code>).
 			</p>
 			<div

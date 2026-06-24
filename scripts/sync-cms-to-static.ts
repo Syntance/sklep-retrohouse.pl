@@ -8,12 +8,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { Readable } from "node:stream";
-import sharp from "sharp";
-import {
-	CMS_HERO_MAX_LONG_EDGE,
-	CMS_HERO_STATIC_FILES,
-	CMS_HERO_WEBP_QUALITY,
-} from "../src/lib/content/cms-hero-image";
+import { CMS_HERO_STATIC_FILES } from "../src/lib/content/cms-hero-image";
+import { normalizeCmsImageToWebp } from "../src/lib/content/normalize-cms-image";
 import { PAGE_HERO_IMAGES } from "../src/lib/content/hero-images";
 
 const MEDUSA_URL = (
@@ -112,14 +108,7 @@ function readHeroFields(pageContentMap: Record<string, unknown>, pageKey: HeroPa
 }
 
 async function writeNormalizedHeroImage(buffer: Buffer, filepath: string): Promise<void> {
-	const webp = await sharp(buffer)
-		.rotate()
-		.resize(CMS_HERO_MAX_LONG_EDGE, CMS_HERO_MAX_LONG_EDGE, {
-			fit: "inside",
-			withoutEnlargement: true,
-		})
-		.webp({ quality: CMS_HERO_WEBP_QUALITY, effort: 4 })
-		.toBuffer();
+	const webp = await normalizeCmsImageToWebp(buffer);
 	fs.writeFileSync(filepath, webp);
 }
 
