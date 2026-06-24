@@ -94,18 +94,17 @@ export function SiteHeader() {
 					href="/"
 					onClick={handleBrandClick}
 					aria-label="RetroHouse — strona główna"
-					className="group flex items-center gap-2 font-display text-xl font-semibold tracking-tight text-foreground"
+					className="group flex shrink-0 items-center"
 				>
 					<Image
-						src="/brand/retrohouse-logo.png"
+						src="/brand/retrohouse-wordmark.png"
 						alt=""
-						width={40}
-						height={40}
+						width={300}
+						height={52}
 						unoptimized
 						priority
-						className="size-9 shrink-0 rounded-full object-cover sm:size-10"
+						className="h-9 w-auto object-contain sm:h-10"
 					/>
-					<span className="hidden sm:inline">RetroHouse</span>
 				</Link>
 
 				<nav aria-label="Menu główne" className="hidden items-center gap-1 lg:flex">
