@@ -3,6 +3,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { env } from "@/env";
+import { cmsR2PublicBaseUrl } from "@/lib/content/cms-media-url";
 
 let client: S3Client | null = null;
 
@@ -12,14 +13,16 @@ export function isR2UploadConfigured(): boolean {
 			env.S3_BUCKET &&
 			env.S3_ACCESS_KEY_ID &&
 			env.S3_SECRET_ACCESS_KEY &&
-			(env.S3_PUBLIC_URL ?? env.NEXT_PUBLIC_MEDIA_CDN_URL),
+			cmsR2PublicBaseUrl(),
 	);
 }
 
 function publicBaseUrl(): string {
-	const base = env.S3_PUBLIC_URL ?? env.NEXT_PUBLIC_MEDIA_CDN_URL;
-	if (!base) throw new Error("Brak publicznego URL storage (S3_PUBLIC_URL / NEXT_PUBLIC_MEDIA_CDN_URL).");
-	return base.replace(/\/$/, "");
+	const base = cmsR2PublicBaseUrl();
+	if (!base) {
+		throw new Error("Brak publicznego URL R2 (S3_FILE_URL / S3_PUBLIC_URL / NEXT_PUBLIC_MEDIA_CDN_URL).");
+	}
+	return base;
 }
 
 function getR2Client(): S3Client {

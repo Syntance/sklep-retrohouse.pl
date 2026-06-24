@@ -5,12 +5,31 @@ type RemotePattern = NonNullable<NonNullable<NextConfig["images"]>["remotePatter
 
 const MEDIA_CDN_HOSTNAME = "assets.sklep-retrohouse.pl";
 
+function cmsUploadImagePatterns(): RemotePattern[] {
+	const fileUrl = process.env.S3_FILE_URL ?? process.env.NEXT_PUBLIC_CMS_MEDIA_BASE_URL;
+	if (!fileUrl) return [];
+	try {
+		const url = new URL(fileUrl);
+		if (url.hostname === MEDIA_CDN_HOSTNAME) return [];
+		return [
+			{
+				protocol: url.protocol.replace(":", "") as "http" | "https",
+				hostname: url.hostname,
+				pathname: "/**",
+			},
+		];
+	} catch {
+		return [];
+	}
+}
+
 function medusaImagePatterns(): RemotePattern[] {
 	const patterns: RemotePattern[] = [
 		{ protocol: "http", hostname: "localhost", port: "9000", pathname: "/static/**" },
 		{ protocol: "http", hostname: "127.0.0.1", port: "9000", pathname: "/static/**" },
 		// Cloudflare R2 — obrazy z Medusa po migracji storage (dev + prod bez wymogu ENV).
 		{ protocol: "https", hostname: MEDIA_CDN_HOSTNAME, pathname: "/**" },
+		...cmsUploadImagePatterns(),
 	];
 
 	const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;

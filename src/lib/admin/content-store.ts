@@ -9,6 +9,7 @@ import {
 } from "@/lib/content/metadata-keys";
 import { siteSettingsSchema } from "@/lib/content/parsers";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/content/defaults";
+import { resolveCmsMediaPublicUrl } from "@/lib/content/cms-media-url";
 import type {
 	PageSeoMap,
 	SeoMeta,
@@ -104,12 +105,31 @@ function parseSiteSettingsFromStore(raw: unknown): SiteSettings | null {
 
 /* ── Page Content ──────────────────────────────────────────────────────── */
 
+function normalizePageContent(content: PageContent): PageContent {
+	const url = content.hero?.productImageUrl;
+	if (!url) return content;
+	const resolved = resolveCmsMediaPublicUrl(url);
+	if (!resolved || resolved === url) return content;
+	return {
+		...content,
+		hero: { ...content.hero!, productImageUrl: resolved },
+	};
+}
+
+function normalizePageContentMap(map: PageContentMap): PageContentMap {
+	const out: PageContentMap = {};
+	for (const [pageId, content] of Object.entries(map)) {
+		out[pageId as ContentPageId] = normalizePageContent(content);
+	}
+	return out;
+}
+
 async function readPageContentMap(): Promise<PageContentMap> {
 	const store = await getStore();
 	const raw = store.metadata?.[RETROHOUSE_PAGE_CONTENT_KEY];
 	if (typeof raw !== "string") return {};
 	try {
-		return JSON.parse(raw) as PageContentMap;
+		return normalizePageContentMap(JSON.parse(raw) as PageContentMap);
 	} catch {
 		return {};
 	}
@@ -126,7 +146,10 @@ export async function savePageContent(
 ): Promise<void> {
 	const store = await getStore();
 	const currentMap = await readPageContentMap();
-	const nextMap: PageContentMap = { ...currentMap, [pageId]: content };
+	const nextMap: PageContentMap = {
+		...currentMap,
+		[pageId]: normalizePageContent(content),
+	};
 	await patchStoreMetadata(
 		store.id,
 		store.metadata,
@@ -208,7 +231,10 @@ export async function readAdminCmsSnapshot(): Promise<AdminCmsSnapshot> {
 
 	return {
 		siteSettings: tryParse<SiteSettings>(RETROHOUSE_SITE_SETTINGS_KEY),
-		pageContentMap: tryParse<PageContentMap>(RETROHOUSE_PAGE_CONTENT_KEY) ?? {},
+		pageContentMap:
+			normalizePageContentMap(
+				tryParse<PageContentMap>(RETROHOUSE_PAGE_CONTENT_KEY) ?? {},
+			),
 		globalContent: tryParse<GlobalContent>(RETROHOUSE_GLOBAL_CONTENT_KEY),
 		pageSeoMap: tryParse<PageSeoMap>(RETROHOUSE_PAGE_SEO_KEY) ?? {},
 	};

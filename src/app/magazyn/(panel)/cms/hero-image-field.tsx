@@ -1,9 +1,8 @@
 "use client";
 
 import { ImagePlus, Loader2, X } from "lucide-react";
-import Image from "next/image";
 import { useCallback, useId, useState } from "react";
-import { resolveMedusaMediaUrl } from "@/lib/medusa/media-url";
+import { resolveCmsMediaPublicUrl } from "@/lib/content/cms-media-url";
 import { isImageFile, useFileDropZone } from "@/lib/hooks/use-file-drop-zone";
 import { cn } from "@/lib/utils";
 import { uploadCmsImagesAction } from "./content-actions";
@@ -14,15 +13,23 @@ type Props = {
 	alt: string;
 	onChangeUrl: (url: string) => void;
 	onChangeAlt: (alt: string) => void;
+	onUploadComplete?: (url: string) => void;
 };
 
 function resolveAdminPreviewUrl(url: string): string {
 	if (!url.trim()) return "";
 	if (url.startsWith("/")) return url;
-	return resolveMedusaMediaUrl(url) ?? url;
+	return resolveCmsMediaPublicUrl(url) ?? url;
 }
 
-export function HeroImageField({ label, value, alt, onChangeUrl, onChangeAlt }: Props) {
+export function HeroImageField({
+	label,
+	value,
+	alt,
+	onChangeUrl,
+	onChangeAlt,
+	onUploadComplete,
+}: Props) {
 	const fileId = useId();
 	const [uploading, setUploading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -47,7 +54,10 @@ export function HeroImageField({ label, value, alt, onChangeUrl, onChangeAlt }: 
 					return;
 				}
 				const url = result.urls[0];
-				if (url) onChangeUrl(url);
+				if (url) {
+					onChangeUrl(url);
+					onUploadComplete?.(url);
+				}
 			} catch (err) {
 				const message = err instanceof Error ? err.message : null;
 				setError(message?.trim() || "Upload nie powiódł się. Spróbuj ponownie.");
@@ -55,7 +65,7 @@ export function HeroImageField({ label, value, alt, onChangeUrl, onChangeAlt }: 
 				setUploading(false);
 			}
 		},
-		[onChangeUrl],
+		[onChangeUrl, onUploadComplete],
 	);
 
 	const { isDragging, dropZoneProps } = useFileDropZone({
@@ -70,10 +80,8 @@ export function HeroImageField({ label, value, alt, onChangeUrl, onChangeAlt }: 
 		<div className="flex flex-col gap-2">
 			<span className="text-sm font-medium">{label}</span>
 			<p className="text-xs text-muted-foreground">
-				Akceptujemy zdjęcia z telefonu (JPG, HEIC, PNG) — konwertujemy do WebP przed wysłaniem. Po zapisie
-				widać podgląd w panelu; na stronie
-				pojawią się po <strong className="font-medium text-foreground">Redeploy</strong> (sync do{" "}
-				<code className="text-[0.7rem]">/images/cms/</code>).
+				JPG, HEIC, PNG — konwertujemy do WebP. Po wrzuceniu zapisujemy automatycznie; na stronie
+				pojawi się po <strong className="font-medium text-foreground">Redeploy</strong>.
 			</p>
 			<div
 				{...dropZoneProps}
@@ -84,14 +92,8 @@ export function HeroImageField({ label, value, alt, onChangeUrl, onChangeAlt }: 
 			>
 				{previewUrl ? (
 					<div className="relative h-32 w-48 overflow-hidden rounded-lg border border-border bg-muted">
-						<Image
-							src={previewUrl}
-							alt=""
-							fill
-							sizes="192px"
-							className="object-cover"
-							unoptimized
-						/>
+						{/* eslint-disable-next-line @next/next/no-img-element -- podgląd admina, dowolny CDN R2 */}
+						<img src={previewUrl} alt="" className="size-full object-cover" />
 						<button
 							type="button"
 							aria-label="Usuń obraz"

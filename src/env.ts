@@ -64,6 +64,11 @@ export const env = createEnv({
 			(val) => (typeof val === "string" ? val.trim() : val),
 			z.string().url().optional(),
 		),
+		/** Publiczny URL bucketu R2 (pub-*.r2.dev) — działa dla uploadów CMS. */
+		S3_FILE_URL: z.preprocess(
+			(val) => (typeof val === "string" ? val.trim() : val),
+			z.string().url().optional(),
+		),
 		S3_REGION: z.preprocess(
 			(val) => (typeof val === "string" ? val.trim() : val),
 			z.string().min(1).optional(),
@@ -94,6 +99,9 @@ export const env = createEnv({
 		 * trafia do `images.remotePatterns` w next.config.ts. Patrz docs/runbook/railway-disaster-recovery.md.
 		 */
 		NEXT_PUBLIC_MEDIA_CDN_URL: z.string().url().optional(),
+
+		/** Publiczny URL R2 dla uploadów CMS (pub-*.r2.dev). Ustaw taki sam jak S3_FILE_URL. */
+		NEXT_PUBLIC_CMS_MEDIA_BASE_URL: z.string().url().optional(),
 
 		NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().optional(),
 		NEXT_PUBLIC_SANITY_DATASET: z.string().default("production"),
@@ -133,6 +141,7 @@ export const env = createEnv({
 
 		NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
 		NEXT_PUBLIC_MEDIA_CDN_URL: process.env.NEXT_PUBLIC_MEDIA_CDN_URL,
+		NEXT_PUBLIC_CMS_MEDIA_BASE_URL: process.env.NEXT_PUBLIC_CMS_MEDIA_BASE_URL,
 
 		SANITY_API_READ_TOKEN: process.env.SANITY_API_READ_TOKEN,
 		NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -159,6 +168,7 @@ export const env = createEnv({
 		S3_ACCESS_KEY_ID: process.env.S3_ACCESS_KEY_ID,
 		S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY,
 		S3_PUBLIC_URL: process.env.S3_PUBLIC_URL,
+		S3_FILE_URL: process.env.S3_FILE_URL,
 		S3_REGION: process.env.S3_REGION,
 
 		NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,

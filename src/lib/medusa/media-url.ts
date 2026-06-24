@@ -1,4 +1,5 @@
 import { env } from "@/env";
+import { resolveCmsMediaPublicUrl } from "@/lib/content/cms-media-url";
 
 function medusaBackendOrigin(): string {
 	return env.NEXT_PUBLIC_MEDUSA_BACKEND_URL.replace(/\/$/, "");
@@ -65,7 +66,7 @@ export function resolveMedusaMediaUrl(url: string | null | undefined): string | 
 			return rewriteBackendMediaUrlToCdn(onBackend);
 		}
 
-		return rewriteBackendMediaUrlToCdn(trimmed);
+		return resolveCmsMediaPublicUrl(rewriteBackendMediaUrlToCdn(trimmed)) ?? rewriteBackendMediaUrlToCdn(trimmed);
 	} catch {
 		return trimmed;
 	}

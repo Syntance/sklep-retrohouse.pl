@@ -19,6 +19,7 @@ $vars = @(
 	"S3_ACCESS_KEY_ID",
 	"S3_SECRET_ACCESS_KEY",
 	"S3_PUBLIC_URL",
+	"S3_FILE_URL",
 	"S3_REGION"
 )
 
@@ -28,8 +29,14 @@ foreach ($name in $vars) {
 		Write-Warning "Brak $name w Railway — pomijam."
 		continue
 	}
-	Write-Host "==> vercel env add $name (production, preview, development)" -ForegroundColor Green
-	$value | vercel env add $name production preview development --force
+	Write-Host "==> vercel env add $name (production, preview)" -ForegroundColor Green
+	$value | vercel env add $name production preview --force
+}
+
+$fileUrl = (railway variables get S3_FILE_URL 2>$null)
+if ($fileUrl) {
+	Write-Host "==> vercel env add NEXT_PUBLIC_CMS_MEDIA_BASE_URL (production, preview)" -ForegroundColor Green
+	$fileUrl | vercel env add NEXT_PUBLIC_CMS_MEDIA_BASE_URL production preview --force
 }
 
 Write-Host "`nGotowe. Uruchom redeploy na Vercel." -ForegroundColor Green

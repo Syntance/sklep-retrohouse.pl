@@ -5,7 +5,12 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { ContentBlockKey } from "@/lib/content/metadata-keys";
-import type { ContentPageId, FaqItem, HeroContent, PageContent } from "@/lib/content/types";
+import type {
+	ContentPageId,
+	FaqItem,
+	HeroContent,
+	PageContent,
+} from "@/lib/content/types";
 import { DEFAULT_HOME_HERO } from "@/lib/content/defaults";
 import { usePreventWindowFileDrop } from "@/lib/hooks/use-prevent-window-file-drop";
 import { savePageContentAction } from "./content-actions";
@@ -43,6 +48,21 @@ export function PageContentEditor({ pageId, path, blocks, initial }: Props) {
 		});
 	}
 
+	async function saveHero(hero: HeroContent) {
+		setError(null);
+		setSuccessMessage(null);
+		const nextContent = { ...content, hero };
+		setContent(nextContent);
+		startTransition(async () => {
+			const result = await savePageContentAction(pageId, path, nextContent);
+			if (!result.ok) {
+				setError(result.error);
+				return;
+			}
+			setSuccessMessage("Zdjęcie zapisane. Użyj Redeploy, żeby opublikować je na stronie.");
+		});
+	}
+
 	return (
 		<form onSubmit={onSubmit} className="flex max-w-3xl flex-col gap-6">
 			{blocks.includes("hero") ? (
@@ -51,6 +71,9 @@ export function PageContentEditor({ pageId, path, blocks, initial }: Props) {
 					pageId={pageId}
 					onChange={(hero) => {
 						setContent((c) => ({ ...c, hero }));
+					}}
+					onSaveHero={(hero) => {
+						void saveHero(hero);
 					}}
 				/>
 			) : null}
@@ -88,10 +111,12 @@ function HeroEditor({
 	value,
 	pageId,
 	onChange,
+	onSaveHero,
 }: {
 	value?: HeroContent;
 	pageId: ContentPageId;
 	onChange: (v: HeroContent) => void;
+	onSaveHero: (hero: HeroContent) => void;
 }) {
 	const hero =
 		value ??
@@ -181,6 +206,9 @@ function HeroEditor({
 					alt={hero.productImageAlt ?? ""}
 					onChangeUrl={(url) => {
 						onChange({ ...hero, productImageUrl: url || undefined });
+					}}
+					onUploadComplete={(url) => {
+						onSaveHero({ ...hero, productImageUrl: url });
 					}}
 					onChangeAlt={(productImageAlt) => {
 						onChange({ ...hero, productImageAlt });

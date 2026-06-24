@@ -158,11 +158,30 @@ function defaultEntry(pageKey: HeroPageKey): StaticHeroEntry | null {
 	return null;
 }
 
+function resolveCmsHeroDownloadUrl(url: string): string {
+	const r2Base = (
+		process.env.S3_FILE_URL ?? process.env.NEXT_PUBLIC_CMS_MEDIA_BASE_URL
+	)?.replace(/\/$/, "");
+	if (!r2Base) return url;
+	try {
+		const parsed = new URL(url);
+		if (
+			parsed.hostname === "assets.sklep-retrohouse.pl" &&
+			parsed.pathname.startsWith("/cms/")
+		) {
+			return `${r2Base}${parsed.pathname}`;
+		}
+	} catch {
+		return url;
+	}
+	return url;
+}
+
 async function syncHeroPage(
 	pageKey: HeroPageKey,
 	fields: HeroFields,
 ): Promise<StaticHeroEntry | null> {
-	const remoteUrl = fields.productImageUrl?.trim();
+	const remoteUrl = resolveCmsHeroDownloadUrl(fields.productImageUrl?.trim() ?? "");
 	const filename = CMS_HERO_STATIC_FILES[pageKey];
 	const localPath = `/images/cms/${filename}`;
 
