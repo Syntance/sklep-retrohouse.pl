@@ -11,6 +11,7 @@ import { Readable } from "node:stream";
 import { CMS_HERO_STATIC_FILES } from "../src/lib/content/cms-hero-image";
 import { normalizeCmsImageToWebp } from "../src/lib/content/normalize-cms-image";
 import { PAGE_HERO_IMAGES } from "../src/lib/content/hero-images";
+import { parseStoreMetadataJson } from "../src/lib/content/metadata-json";
 
 const MEDUSA_URL = (
 	process.env.MEDUSA_BACKEND_URL ||
@@ -92,13 +93,7 @@ async function fetchPageContentMap(token: string): Promise<Record<string, unknow
 
 	const data = (await res.json()) as { stores: Array<{ metadata?: Record<string, unknown> }> };
 	const raw = data.stores[0]?.metadata?.[RETROHOUSE_PAGE_CONTENT_KEY];
-	if (typeof raw !== "string") return {};
-
-	try {
-		return JSON.parse(raw) as Record<string, unknown>;
-	} catch {
-		return {};
-	}
+	return parseStoreMetadataJson<Record<string, unknown>>(raw) ?? {};
 }
 
 function readHeroFields(pageContentMap: Record<string, unknown>, pageKey: HeroPageKey): HeroFields {

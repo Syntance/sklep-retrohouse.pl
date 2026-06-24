@@ -13,7 +13,7 @@ import type {
 } from "@/lib/content/types";
 import { DEFAULT_HOME_HERO } from "@/lib/content/defaults";
 import { usePreventWindowFileDrop } from "@/lib/hooks/use-prevent-window-file-drop";
-import { savePageContentAction } from "./content-actions";
+import { savePageContentAction, savePageHeroImageAction } from "./content-actions";
 import { cmsSaveSuccessMessage } from "./cms-save-feedback";
 import { HeroImageField } from "./hero-image-field";
 
@@ -31,6 +31,7 @@ export function PageContentEditor({ pageId, path, blocks, initial }: Props) {
 	const [content, setContent] = useState<PageContent>(initial);
 	const [error, setError] = useState<string | null>(null);
 	const [successMessage, setSuccessMessage] = useState<string | null>(null);
+	const [heroSaving, setHeroSaving] = useState(false);
 	const [pending, startTransition] = useTransition();
 	usePreventWindowFileDrop();
 
@@ -48,19 +49,24 @@ export function PageContentEditor({ pageId, path, blocks, initial }: Props) {
 		});
 	}
 
-	async function saveHero(hero: HeroContent) {
+	async function saveHeroImage(url: string, alt?: string) {
 		setError(null);
 		setSuccessMessage(null);
-		const nextContent = { ...content, hero };
-		setContent(nextContent);
-		startTransition(async () => {
-			const result = await savePageContentAction(pageId, path, nextContent);
+		setHeroSaving(true);
+
+		try {
+			const result = await savePageHeroImageAction(pageId, path, {
+				productImageUrl: url,
+				...(alt !== undefined && alt !== "" ? { productImageAlt: alt } : {}),
+			});
 			if (!result.ok) {
 				setError(result.error);
 				return;
 			}
 			setSuccessMessage("Zdjęcie zapisane. Użyj Redeploy, żeby opublikować je na stronie.");
-		});
+		} finally {
+			setHeroSaving(false);
+		}
 	}
 
 	return (
@@ -69,12 +75,11 @@ export function PageContentEditor({ pageId, path, blocks, initial }: Props) {
 				<HeroEditor
 					value={content.hero}
 					pageId={pageId}
+					heroSaving={heroSaving}
 					onChange={(hero) => {
 						setContent((c) => ({ ...c, hero }));
 					}}
-					onSaveHero={(hero) => {
-						void saveHero(hero);
-					}}
+					onSaveHeroImage={(url, alt) => saveHeroImage(url, alt)}
 				/>
 			) : null}
 			{blocks.includes("faq") ? (
@@ -95,7 +100,7 @@ export function PageContentEditor({ pageId, path, blocks, initial }: Props) {
 					{successMessage}
 				</p>
 			) : null}
-			<Button type="submit" disabled={pending} className="h-10 w-fit gap-1.5">
+			<Button type="submit" disabled={pending || heroSaving} className="h-10 w-fit gap-1.5">
 				{pending ? (
 					<Loader2 className="size-4 animate-spin" aria-hidden />
 				) : (
@@ -110,13 +115,15 @@ export function PageContentEditor({ pageId, path, blocks, initial }: Props) {
 function HeroEditor({
 	value,
 	pageId,
+	heroSaving,
 	onChange,
-	onSaveHero,
+	onSaveHeroImage,
 }: {
-	value?: HeroContent;
+	value?: Partial<HeroContent>;
 	pageId: ContentPageId;
-	onChange: (v: HeroContent) => void;
-	onSaveHero: (hero: HeroContent) => void;
+	heroSaving: boolean;
+	onChange: (v: Partial<HeroContent>) => void;
+	onSaveHeroImage: (url: string, alt?: string) => Promise<void>;
 }) {
 	const hero =
 		value ??
@@ -204,11 +211,12 @@ function HeroEditor({
 					label="Zdjęcie hero"
 					value={hero.productImageUrl ?? ""}
 					alt={hero.productImageAlt ?? ""}
+					saving={heroSaving}
 					onChangeUrl={(url) => {
 						onChange({ ...hero, productImageUrl: url || undefined });
 					}}
-					onUploadComplete={(url) => {
-						onSaveHero({ ...hero, productImageUrl: url });
+					onUploadComplete={async (url) => {
+						await onSaveHeroImage(url, hero.productImageAlt);
 					}}
 					onChangeAlt={(productImageAlt) => {
 						onChange({ ...hero, productImageAlt });

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { parseStoreMetadataJson } from "./metadata-json";
 import type {
 	SiteSettings,
 	HeroContent,
@@ -62,6 +63,11 @@ export const siteSettingsSchema = z.object({
 
 /* ---------- page content ---------- */
 
+const heroImageUrlSchema = z.preprocess(
+	(v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
+	z.string().url().optional(),
+);
+
 export const heroContentSchema = z.object({
 	headline: z.string().min(1).max(200),
 	subLead: z.string().max(100).optional(),
@@ -70,13 +76,30 @@ export const heroContentSchema = z.object({
 	ctaHref: z.string().min(1).max(500),
 	ctaSecondaryLabel: z.string().max(60).optional(),
 	ctaSecondaryHref: z.string().max(500).optional(),
-	productImageUrl: z.preprocess(
-		(v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
-		z.string().url().optional(),
-	),
+	productImageUrl: heroImageUrlSchema,
 	productImageAlt: z.string().max(200).optional(),
 	productImageWidth: z.number().int().positive().optional(),
 	productImageHeight: z.number().int().positive().optional(),
+});
+
+/** Odczyt z Medusa — hero może mieć tylko URL obrazu (bez copy). */
+export const heroContentReadSchema = z.object({
+	headline: z.string().max(200).optional(),
+	subLead: z.string().max(100).optional(),
+	description: z.string().max(500).optional(),
+	ctaLabel: z.string().max(60).optional(),
+	ctaHref: z.string().max(500).optional(),
+	ctaSecondaryLabel: z.string().max(60).optional(),
+	ctaSecondaryHref: z.string().max(500).optional(),
+	productImageUrl: heroImageUrlSchema,
+	productImageAlt: z.string().max(200).optional(),
+	productImageWidth: z.number().int().positive().optional(),
+	productImageHeight: z.number().int().positive().optional(),
+});
+
+export const heroImagePatchSchema = z.object({
+	productImageUrl: z.string().url(),
+	productImageAlt: z.string().max(200).optional(),
 });
 
 export const faqItemSchema = z.object({
@@ -91,12 +114,18 @@ export const pageContentSchema = z.object({
 	faq: z.array(faqItemSchema).optional(),
 });
 
+export const pageContentReadSchema = z.object({
+	hero: heroContentReadSchema.optional(),
+	faq: z.array(faqItemSchema).optional(),
+});
+
 export const globalContentSchema = z.object({
 	announcementBar: announcementBarSchema.optional(),
 });
 
 export const pageSeoMapSchema = z.record(z.string(), seoMetaSchema);
 export const pageContentMapSchema = z.record(z.string(), pageContentSchema);
+export const pageContentMapReadSchema = z.record(z.string(), pageContentReadSchema);
 
 export const cmsGlobalSettingsSchema = z.object({
 	announcementBar: announcementBarSchema.optional(),
@@ -107,14 +136,10 @@ export const cmsGlobalSettingsSchema = z.object({
 /* ---------- helpers ---------- */
 
 function parseJsonBlob<T>(raw: unknown, schema: z.ZodType<T>): T | null {
-	if (typeof raw !== "string" || !raw.trim()) return null;
-	try {
-		const parsed = JSON.parse(raw) as unknown;
-		const result = schema.safeParse(parsed);
-		return result.success ? result.data : null;
-	} catch {
-		return null;
-	}
+	const parsed = parseStoreMetadataJson<unknown>(raw);
+	if (!parsed) return null;
+	const result = schema.safeParse(parsed);
+	return result.success ? result.data : null;
 }
 
 export function parseSiteSettings(raw: unknown): SiteSettings | null {
@@ -122,7 +147,7 @@ export function parseSiteSettings(raw: unknown): SiteSettings | null {
 }
 
 export function parsePageContentMap(raw: unknown): PageContentMap | null {
-	return parseJsonBlob(raw, pageContentMapSchema);
+	return parseJsonBlob(raw, pageContentMapReadSchema);
 }
 
 export function parsePageSeoMap(raw: unknown): PageSeoMap | null {

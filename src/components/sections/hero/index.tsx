@@ -14,7 +14,7 @@ type HeroSectionProps = {
 	liveBadge?: { dateLabel: string; dropTitle: string } | null;
 	heroProduct?: HeroProductImage | null;
 	/** Treść z CMS (hero block). Gdy undefined — używa DEFAULT_HOME_HERO. */
-	cmsHero?: HeroContent | null;
+	cmsHero?: Partial<HeroContent> | null;
 };
 
 /**
@@ -24,7 +24,7 @@ type HeroSectionProps = {
  * Teksty: z CMS (getPageContent("home").hero) lub DEFAULT_HOME_HERO.
  */
 export function HeroSection({ liveBadge, heroProduct, cmsHero }: HeroSectionProps) {
-	const hero = cmsHero ?? DEFAULT_HOME_HERO;
+	const hero: HeroContent = { ...DEFAULT_HOME_HERO, ...cmsHero };
 
 	const scrollToDiscoverSection = () => {
 		track({ name: "hero_cta_clicked", properties: { variant: "primary" } });

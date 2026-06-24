@@ -25,7 +25,7 @@ const KONTAKT_FALLBACK: HeroProductImage = {
  */
 export function resolveStaticHeroProductImage(
 	pageKey: CmsHeroPageKey,
-	cmsHero?: HeroContent,
+	cmsHero?: Partial<HeroContent>,
 ): HeroProductImage | null {
 	const baked = STATIC_CMS_HERO[pageKey];
 	if (!baked?.productImageUrl) {
@@ -44,7 +44,7 @@ export function resolveStaticHeroProductImage(
 
 /** Kolejność: static CMS → (home) Sanity → domyślne. */
 export function resolveHomeHeroProductImage(
-	cmsHero: HeroContent | undefined,
+	cmsHero: Partial<HeroContent> | undefined,
 	sanityFallback: HeroProductImage | null,
 ): HeroProductImage {
 	return (

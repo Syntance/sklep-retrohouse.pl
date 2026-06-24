@@ -58,7 +58,7 @@ export type FaqItem = {
 };
 
 export type PageContent = {
-	hero?: HeroContent;
+	hero?: Partial<HeroContent>;
 	faq?: FaqItem[];
 };
 

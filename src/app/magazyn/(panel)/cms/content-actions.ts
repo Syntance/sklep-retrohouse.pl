@@ -2,9 +2,9 @@
 
 import { redirect } from "next/navigation";
 import { AdminApiError, AdminUnauthorizedError } from "@/lib/admin/medusa-admin";
-import { savePageContent, mergeSiteSettings } from "@/lib/admin/content-store";
+import { savePageContent, savePageHeroImage, mergeSiteSettings } from "@/lib/admin/content-store";
 import { CMS_PAGES } from "@/lib/content/metadata-keys";
-import { pageContentSchema, cmsGlobalSettingsSchema } from "@/lib/content/parsers";
+import { pageContentSchema, cmsGlobalSettingsSchema, heroImagePatchSchema } from "@/lib/content/parsers";
 import { revalidateContentCache, triggerCmsRedeploy } from "@/lib/content/revalidate-content";
 import type { ContentPageId, PageContent } from "@/lib/content/types";
 
@@ -34,6 +34,26 @@ export async function savePageContentAction(
 		await savePageContent(pageId, parsed.data);
 	} catch (error) {
 		return handleError(error, "Nie udało się zapisać treści podstrony.");
+	}
+
+	await revalidateContentCache([path]);
+	return { ok: true, error: null };
+}
+
+export async function savePageHeroImageAction(
+	pageId: ContentPageId,
+	path: string,
+	image: { productImageUrl: string; productImageAlt?: string },
+): Promise<SaveContentState> {
+	const parsed = heroImagePatchSchema.safeParse(image);
+	if (!parsed.success) {
+		return { ok: false, error: parsed.error.issues[0]?.message ?? "Nieprawidłowy adres obrazu." };
+	}
+
+	try {
+		await savePageHeroImage(pageId, parsed.data);
+	} catch (error) {
+		return handleError(error, "Nie udało się zapisać zdjęcia hero.");
 	}
 
 	await revalidateContentCache([path]);

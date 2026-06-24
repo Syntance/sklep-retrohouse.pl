@@ -16,15 +16,17 @@ type Props = {
 	label: string;
 	value: string;
 	alt: string;
+	saving?: boolean;
 	onChangeUrl: (url: string) => void;
 	onChangeAlt: (alt: string) => void;
-	onUploadComplete?: (url: string) => void;
+	onUploadComplete?: (url: string) => void | Promise<void>;
 };
 
 export function HeroImageField({
 	label,
 	value,
 	alt,
+	saving = false,
 	onChangeUrl,
 	onChangeAlt,
 	onUploadComplete,
@@ -32,6 +34,8 @@ export function HeroImageField({
 	const fileId = useId();
 	const [uploading, setUploading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const busy = uploading || saving;
+
 	const previewUrl = value ? (resolveCmsAdminPreviewUrl(value) ?? value) : "";
 
 	const uploadFiles = useCallback(
@@ -55,7 +59,7 @@ export function HeroImageField({
 				const prepared = await prepareCmsImageForUpload(file);
 				const url = await uploadCmsImageFromBrowser(prepared);
 				onChangeUrl(url);
-				onUploadComplete?.(url);
+				await onUploadComplete?.(url);
 			} catch (err) {
 				setError(formatCmsBrowserUploadError(err));
 			} finally {
@@ -66,7 +70,7 @@ export function HeroImageField({
 	);
 
 	const { isDragging, dropZoneProps } = useFileDropZone({
-		disabled: uploading,
+		disabled: busy,
 		accept: isImageFile,
 		onDropFiles: (files) => {
 			void uploadFiles(files);
@@ -108,11 +112,14 @@ export function HeroImageField({
 					className={cn(
 						"grid h-32 min-w-[10rem] flex-1 cursor-pointer place-items-center rounded-lg border border-dashed border-border px-4 text-sm text-muted-foreground transition-colors hover:bg-muted",
 						isDragging && "border-primary bg-primary/5",
-						uploading && "pointer-events-none opacity-60",
+						busy && "pointer-events-none opacity-60",
 					)}
 				>
-					{uploading ? (
-						<Loader2 className="size-5 animate-spin" aria-hidden />
+					{busy ? (
+						<span className="flex flex-col items-center gap-1.5 text-center">
+							<Loader2 className="size-5 animate-spin" aria-hidden />
+							{saving && !uploading ? "Zapisywanie…" : "Wysyłanie…"}
+						</span>
 					) : (
 						<span className="flex flex-col items-center gap-1.5 text-center">
 							<ImagePlus className="size-5" aria-hidden />
@@ -125,7 +132,7 @@ export function HeroImageField({
 					type="file"
 					accept="image/*"
 					className="sr-only"
-					disabled={uploading}
+					disabled={busy}
 					onChange={(e) => {
 						const file = e.target.files?.[0];
 						if (file) void uploadFiles([file]);

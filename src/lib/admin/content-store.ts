@@ -10,6 +10,7 @@ import {
 import { siteSettingsSchema } from "@/lib/content/parsers";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/content/defaults";
 import { resolveCmsMediaPublicUrl } from "@/lib/content/cms-media-url";
+import { parseStoreMetadataJson } from "@/lib/content/metadata-json";
 import type {
 	PageSeoMap,
 	SeoMeta,
@@ -124,15 +125,15 @@ function normalizePageContentMap(map: PageContentMap): PageContentMap {
 	return out;
 }
 
+function parsePageContentMapFromRaw(raw: unknown): PageContentMap {
+	const parsed = parseStoreMetadataJson<PageContentMap>(raw);
+	if (!parsed || typeof parsed !== "object") return {};
+	return normalizePageContentMap(parsed);
+}
+
 async function readPageContentMap(): Promise<PageContentMap> {
 	const store = await getStore();
-	const raw = store.metadata?.[RETROHOUSE_PAGE_CONTENT_KEY];
-	if (typeof raw !== "string") return {};
-	try {
-		return normalizePageContentMap(JSON.parse(raw) as PageContentMap);
-	} catch {
-		return {};
-	}
+	return parsePageContentMapFromRaw(store.metadata?.[RETROHOUSE_PAGE_CONTENT_KEY]);
 }
 
 export async function readPageContent(pageId: ContentPageId): Promise<PageContent | null> {
@@ -145,11 +146,46 @@ export async function savePageContent(
 	content: PageContent,
 ): Promise<void> {
 	const store = await getStore();
-	const currentMap = await readPageContentMap();
+	const currentMap = parsePageContentMapFromRaw(store.metadata?.[RETROHOUSE_PAGE_CONTENT_KEY]);
 	const nextMap: PageContentMap = {
 		...currentMap,
 		[pageId]: normalizePageContent(content),
 	};
+	await patchStoreMetadata(
+		store.id,
+		store.metadata,
+		RETROHOUSE_PAGE_CONTENT_KEY,
+		JSON.stringify(nextMap),
+	);
+}
+
+export async function savePageHeroImage(
+	pageId: ContentPageId,
+	patch: { productImageUrl: string; productImageAlt?: string },
+): Promise<void> {
+	const store = await getStore();
+	const currentMap = parsePageContentMapFromRaw(store.metadata?.[RETROHOUSE_PAGE_CONTENT_KEY]);
+	const currentPage = currentMap[pageId] ?? {};
+	const currentHero = currentPage.hero ?? {};
+	const resolvedUrl =
+		resolveCmsMediaPublicUrl(patch.productImageUrl) ?? patch.productImageUrl.trim();
+
+	const nextPage: PageContent = normalizePageContent({
+		...currentPage,
+		hero: {
+			...currentHero,
+			productImageUrl: resolvedUrl,
+			...(patch.productImageAlt !== undefined
+				? { productImageAlt: patch.productImageAlt }
+				: {}),
+		},
+	});
+
+	const nextMap: PageContentMap = {
+		...currentMap,
+		[pageId]: nextPage,
+	};
+
 	await patchStoreMetadata(
 		store.id,
 		store.metadata,
@@ -220,13 +256,7 @@ export async function readAdminCmsSnapshot(): Promise<AdminCmsSnapshot> {
 	const meta = store.metadata ?? {};
 
 	function tryParse<T>(key: string): T | null {
-		const raw = meta[key];
-		if (typeof raw !== "string") return null;
-		try {
-			return JSON.parse(raw) as T;
-		} catch {
-			return null;
-		}
+		return parseStoreMetadataJson<T>(meta[key]);
 	}
 
 	return {
