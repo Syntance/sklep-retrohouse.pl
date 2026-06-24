@@ -24,8 +24,12 @@ export class AdminApiError extends Error {
 
 function extractMessage(raw: string, fallback: string): string {
 	try {
-		const parsed = JSON.parse(raw) as { message?: string };
-		return parsed.message?.trim() || fallback;
+		const parsed = JSON.parse(raw) as { message?: string; type?: string };
+		const message = parsed.message?.trim();
+		if (parsed.type === "unknown_error") {
+			return "Serwer mediów odrzucił plik. Spróbuj ponownie za chwilę.";
+		}
+		return message || fallback;
 	} catch {
 		return fallback;
 	}
@@ -150,13 +154,17 @@ export async function adminUpload(files: File[]): Promise<string[]> {
 	if (!token) throw new AdminUnauthorizedError();
 
 	const form = new FormData();
-	for (const file of files) form.append("files", file);
+	for (const file of files) {
+		const bytes = new Uint8Array(await file.arrayBuffer());
+		const blob = new Blob([bytes], { type: file.type || "application/octet-stream" });
+		form.append("files", blob, file.name || "upload.webp");
+	}
 
 	const res = await fetch(`${BASE_URL}/admin/uploads`, {
 		method: "POST",
 		headers: { Authorization: `Bearer ${token}` },
 		body: form,
-		signal: AbortSignal.timeout(30_000),
+		signal: AbortSignal.timeout(60_000),
 	});
 
 	if (res.status === 401) throw new AdminUnauthorizedError();

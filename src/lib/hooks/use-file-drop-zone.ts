@@ -1,4 +1,7 @@
 import { useCallback, useRef, useState } from "react";
+import { isImageFile } from "@/lib/content/image-file";
+
+export { isImageFile };
 
 type Options = {
 	onDropFiles: (files: File[]) => void;
@@ -61,8 +64,3 @@ export function useFileDropZone({ onDropFiles, disabled = false, accept }: Optio
 	};
 }
 
-const IMAGE_EXT = /\.(jpe?g|png|webp|gif|heic|heif|avif|tiff?)$/i;
-
-export function isImageFile(file: File): boolean {
-	return file.type.startsWith("image/") || IMAGE_EXT.test(file.name);
-}

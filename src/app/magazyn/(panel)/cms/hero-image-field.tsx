@@ -31,7 +31,10 @@ export function HeroImageField({ label, value, alt, onChangeUrl, onChangeAlt }: 
 	const uploadFiles = useCallback(
 		async (files: File[]) => {
 			const images = files.filter(isImageFile);
-			if (images.length === 0) return;
+			if (images.length === 0) {
+				setError("Nierozpoznany format pliku. Użyj JPG, PNG lub HEIC.");
+				return;
+			}
 
 			setUploading(true);
 			setError(null);
@@ -45,8 +48,9 @@ export function HeroImageField({ label, value, alt, onChangeUrl, onChangeAlt }: 
 				}
 				const url = result.urls[0];
 				if (url) onChangeUrl(url);
-			} catch {
-				setError("Upload nie powiódł się. Spróbuj ponownie.");
+			} catch (err) {
+				const message = err instanceof Error ? err.message : null;
+				setError(message?.trim() || "Upload nie powiódł się. Spróbuj ponownie.");
 			} finally {
 				setUploading(false);
 			}
@@ -66,7 +70,8 @@ export function HeroImageField({ label, value, alt, onChangeUrl, onChangeAlt }: 
 		<div className="flex flex-col gap-2">
 			<span className="text-sm font-medium">{label}</span>
 			<p className="text-xs text-muted-foreground">
-				Akceptujemy zdjęcia z telefonu (JPG, HEIC, PNG). Po zapisie widać podgląd w panelu; na stronie
+				Akceptujemy zdjęcia z telefonu (JPG, HEIC, PNG) — konwertujemy do WebP przed wysłaniem. Po zapisie
+				widać podgląd w panelu; na stronie
 				pojawią się po <strong className="font-medium text-foreground">Redeploy</strong> (sync do{" "}
 				<code className="text-[0.7rem]">/images/cms/</code>).
 			</p>
