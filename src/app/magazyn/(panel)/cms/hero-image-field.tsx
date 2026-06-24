@@ -17,6 +17,7 @@ type Props = {
 	value: string;
 	alt: string;
 	saving?: boolean;
+	requiresRedeploy?: boolean;
 	onChangeUrl: (url: string) => void;
 	onChangeAlt: (alt: string) => void;
 	onUploadComplete?: (url: string) => void | Promise<void>;
@@ -27,6 +28,7 @@ export function HeroImageField({
 	value,
 	alt,
 	saving = false,
+	requiresRedeploy = true,
 	onChangeUrl,
 	onChangeAlt,
 	onUploadComplete,
@@ -81,8 +83,16 @@ export function HeroImageField({
 		<div className="flex flex-col gap-2">
 			<span className="text-sm font-medium">{label}</span>
 			<p className="text-xs text-muted-foreground">
-				JPG, HEIC, PNG — konwertujemy do WebP. Po wrzuceniu zapisujemy automatycznie; na stronie
-				pojawi się po <strong className="font-medium text-foreground">Redeploy</strong>.
+				JPG, HEIC, PNG — konwertujemy do WebP. Po wrzuceniu zapisujemy automatycznie
+				{requiresRedeploy ? (
+					<>
+						{" "}
+						; na stronie pojawi się po{" "}
+						<strong className="font-medium text-foreground">Redeploy</strong>.
+					</>
+				) : (
+					" — zmiana widoczna po odświeżeniu strony sklepu."
+				)}
 			</p>
 			<div
 				{...dropZoneProps}

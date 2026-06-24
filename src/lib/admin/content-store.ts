@@ -11,6 +11,10 @@ import { siteSettingsSchema } from "@/lib/content/parsers";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/content/defaults";
 import { resolveCmsMediaPublicUrl } from "@/lib/content/cms-media-url";
 import { parseStoreMetadataJson } from "@/lib/content/metadata-json";
+import {
+	migrateKontaktHeroToONas,
+	pageContentMapNeedsHeroMigration,
+} from "@/lib/content/migrate-hero-pages";
 import type {
 	PageSeoMap,
 	SeoMeta,
@@ -106,14 +110,28 @@ function parseSiteSettingsFromStore(raw: unknown): SiteSettings | null {
 
 /* ── Page Content ──────────────────────────────────────────────────────── */
 
+function normalizeHeroMediaUrl(url: string | undefined): string | undefined {
+	if (!url) return undefined;
+	return resolveCmsMediaPublicUrl(url) ?? url;
+}
+
 function normalizePageContent(content: PageContent): PageContent {
-	const url = content.hero?.productImageUrl;
-	if (!url) return content;
-	const resolved = resolveCmsMediaPublicUrl(url);
-	if (!resolved || resolved === url) return content;
+	const hero = content.hero;
+	if (!hero) return content;
+
+	const productImageUrl = normalizeHeroMediaUrl(hero.productImageUrl);
+	const backgroundImageUrl = normalizeHeroMediaUrl(hero.backgroundImageUrl);
+
+	if (
+		productImageUrl === hero.productImageUrl &&
+		backgroundImageUrl === hero.backgroundImageUrl
+	) {
+		return content;
+	}
+
 	return {
 		...content,
-		hero: { ...content.hero!, productImageUrl: resolved },
+		hero: { ...hero, productImageUrl, backgroundImageUrl },
 	};
 }
 
@@ -128,7 +146,7 @@ function normalizePageContentMap(map: PageContentMap): PageContentMap {
 function parsePageContentMapFromRaw(raw: unknown): PageContentMap {
 	const parsed = parseStoreMetadataJson<PageContentMap>(raw);
 	if (!parsed || typeof parsed !== "object") return {};
-	return normalizePageContentMap(parsed);
+	return migrateKontaktHeroToONas(normalizePageContentMap(parsed));
 }
 
 async function readPageContentMap(): Promise<PageContentMap> {
@@ -177,6 +195,41 @@ export async function savePageHeroImage(
 			productImageUrl: resolvedUrl,
 			...(patch.productImageAlt !== undefined
 				? { productImageAlt: patch.productImageAlt }
+				: {}),
+		},
+	});
+
+	const nextMap: PageContentMap = {
+		...currentMap,
+		[pageId]: nextPage,
+	};
+
+	await patchStoreMetadata(
+		store.id,
+		store.metadata,
+		RETROHOUSE_PAGE_CONTENT_KEY,
+		JSON.stringify(nextMap),
+	);
+}
+
+export async function savePageHeroBackground(
+	pageId: ContentPageId,
+	patch: { backgroundImageUrl: string; backgroundImageAlt?: string },
+): Promise<void> {
+	const store = await getStore();
+	const currentMap = parsePageContentMapFromRaw(store.metadata?.[RETROHOUSE_PAGE_CONTENT_KEY]);
+	const currentPage = currentMap[pageId] ?? {};
+	const currentHero = currentPage.hero ?? {};
+	const resolvedUrl =
+		resolveCmsMediaPublicUrl(patch.backgroundImageUrl) ?? patch.backgroundImageUrl.trim();
+
+	const nextPage: PageContent = normalizePageContent({
+		...currentPage,
+		hero: {
+			...currentHero,
+			backgroundImageUrl: resolvedUrl,
+			...(patch.backgroundImageAlt !== undefined
+				? { backgroundImageAlt: patch.backgroundImageAlt }
 				: {}),
 		},
 	});
@@ -259,12 +312,28 @@ export async function readAdminCmsSnapshot(): Promise<AdminCmsSnapshot> {
 		return parseStoreMetadataJson<T>(meta[key]);
 	}
 
+	const rawPageContent =
+		normalizePageContentMap(tryParse<PageContentMap>(RETROHOUSE_PAGE_CONTENT_KEY) ?? {});
+
+	if (pageContentMapNeedsHeroMigration(rawPageContent)) {
+		const migrated = migrateKontaktHeroToONas(rawPageContent);
+		await patchStoreMetadata(
+			store.id,
+			store.metadata,
+			RETROHOUSE_PAGE_CONTENT_KEY,
+			JSON.stringify(migrated),
+		);
+		return {
+			siteSettings: tryParse<SiteSettings>(RETROHOUSE_SITE_SETTINGS_KEY),
+			pageContentMap: migrated,
+			globalContent: tryParse<GlobalContent>(RETROHOUSE_GLOBAL_CONTENT_KEY),
+			pageSeoMap: tryParse<PageSeoMap>(RETROHOUSE_PAGE_SEO_KEY) ?? {},
+		};
+	}
+
 	return {
 		siteSettings: tryParse<SiteSettings>(RETROHOUSE_SITE_SETTINGS_KEY),
-		pageContentMap:
-			normalizePageContentMap(
-				tryParse<PageContentMap>(RETROHOUSE_PAGE_CONTENT_KEY) ?? {},
-			),
+		pageContentMap: rawPageContent,
 		globalContent: tryParse<GlobalContent>(RETROHOUSE_GLOBAL_CONTENT_KEY),
 		pageSeoMap: tryParse<PageSeoMap>(RETROHOUSE_PAGE_SEO_KEY) ?? {},
 	};

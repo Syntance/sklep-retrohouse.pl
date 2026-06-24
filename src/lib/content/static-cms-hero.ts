@@ -10,16 +10,16 @@ export type StaticCmsHeroEntry = {
 	productImageHeight: number;
 };
 
-export const STATIC_CMS_HERO: Partial<Record<"home" | "prezent" | "kontakt", StaticCmsHeroEntry>> = {
+export const STATIC_CMS_HERO: Partial<Record<"home" | "prezent" | "o-nas", StaticCmsHeroEntry>> = {
 	prezent: {
 		productImageUrl: PAGE_HERO_IMAGES.prezent.src,
 		productImageAlt: PAGE_HERO_IMAGES.prezent.alt,
 		productImageWidth: 1200,
 		productImageHeight: 1500,
 	},
-	kontakt: {
-		productImageUrl: PAGE_HERO_IMAGES.kontakt.src,
-		productImageAlt: PAGE_HERO_IMAGES.kontakt.alt,
+	"o-nas": {
+		productImageUrl: PAGE_HERO_IMAGES.oNas.src,
+		productImageAlt: PAGE_HERO_IMAGES.oNas.alt,
 		productImageWidth: 1200,
 		productImageHeight: 1500,
 	},

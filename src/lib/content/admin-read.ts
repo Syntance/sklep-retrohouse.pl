@@ -21,6 +21,7 @@ import {
 	DEFAULT_PAGE_CONTENT_MAP,
 	DEFAULT_GLOBAL_CONTENT,
 } from "./defaults";
+import { migrateKontaktHeroToONas } from "./migrate-hero-pages";
 import type { SiteSettings, PageContentMap, PageSeoMap, GlobalContent } from "./types";
 
 type StoreMetadataBlob = {
@@ -95,9 +96,10 @@ export const fetchStoreMetadataBlob = cache(async (): Promise<StoreMetadataBlob>
 			siteSettings:
 				parseSiteSettings(metadata[RETROHOUSE_SITE_SETTINGS_KEY]) ??
 				DEFAULT_SITE_SETTINGS,
-			pageContentMap:
+			pageContentMap: migrateKontaktHeroToONas(
 				parsePageContentMap(metadata[RETROHOUSE_PAGE_CONTENT_KEY]) ??
-				DEFAULT_PAGE_CONTENT_MAP,
+					DEFAULT_PAGE_CONTENT_MAP,
+			),
 			pageSeoMap: parsePageSeoMap(metadata[RETROHOUSE_PAGE_SEO_KEY]) ?? {},
 			globalContent:
 				parseGlobalContent(metadata[RETROHOUSE_GLOBAL_CONTENT_KEY]) ??

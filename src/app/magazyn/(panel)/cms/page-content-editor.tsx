@@ -13,7 +13,7 @@ import type {
 } from "@/lib/content/types";
 import { DEFAULT_HOME_HERO } from "@/lib/content/defaults";
 import { usePreventWindowFileDrop } from "@/lib/hooks/use-prevent-window-file-drop";
-import { savePageContentAction, savePageHeroImageAction } from "./content-actions";
+import { savePageContentAction, savePageHeroImageAction, savePageHeroBackgroundAction } from "./content-actions";
 import { cmsSaveSuccessMessage } from "./cms-save-feedback";
 import { HeroImageField } from "./hero-image-field";
 
@@ -55,15 +55,25 @@ export function PageContentEditor({ pageId, path, blocks, initial }: Props) {
 		setHeroSaving(true);
 
 		try {
-			const result = await savePageHeroImageAction(pageId, path, {
-				productImageUrl: url,
-				...(alt !== undefined && alt !== "" ? { productImageAlt: alt } : {}),
-			});
+			const result =
+				pageId === "sklep"
+					? await savePageHeroBackgroundAction(pageId, path, {
+							backgroundImageUrl: url,
+							...(alt !== undefined && alt !== "" ? { backgroundImageAlt: alt } : {}),
+						})
+					: await savePageHeroImageAction(pageId, path, {
+							productImageUrl: url,
+							...(alt !== undefined && alt !== "" ? { productImageAlt: alt } : {}),
+						});
 			if (!result.ok) {
 				setError(result.error);
 				return;
 			}
-			setSuccessMessage("Zdjęcie zapisane. Użyj Redeploy, żeby opublikować je na stronie.");
+			setSuccessMessage(
+				pageId === "sklep"
+					? "Tło zapisane — odśwież /sklep, żeby zobaczyć zmianę."
+					: "Zdjęcie zapisane. Użyj Redeploy, żeby opublikować je na stronie.",
+			);
 		} finally {
 			setHeroSaving(false);
 		}
@@ -100,7 +110,7 @@ export function PageContentEditor({ pageId, path, blocks, initial }: Props) {
 					{successMessage}
 				</p>
 			) : null}
-			<Button type="submit" disabled={pending || heroSaving} className="h-10 w-fit gap-1.5">
+			<Button type="submit" disabled={pending || heroSaving || pageId === "sklep"} className="h-10 w-fit gap-1.5">
 				{pending ? (
 					<Loader2 className="size-4 animate-spin" aria-hidden />
 				) : (
@@ -136,11 +146,15 @@ function HeroEditor({
 					ctaHref: "",
 				});
 
-	const showHeroImage = pageId === "home" || pageId === "prezent" || pageId === "kontakt";
+	const showHeroImage =
+		pageId === "home" || pageId === "prezent" || pageId === "o-nas" || pageId === "sklep";
+	const isShopBackground = pageId === "sklep";
 
 	return (
 		<fieldset className="flex flex-col gap-3 rounded-xl border border-border p-4">
-			<legend className="px-1 text-sm font-medium">Hero</legend>
+			<legend className="px-1 text-sm font-medium">
+				{isShopBackground ? "Tło hero sklepu" : "Hero"}
+			</legend>
 			{pageId === "home" ? (
 				<>
 					<Input
@@ -208,18 +222,38 @@ function HeroEditor({
 			) : null}
 			{showHeroImage ? (
 				<HeroImageField
-					label="Zdjęcie hero"
-					value={hero.productImageUrl ?? ""}
-					alt={hero.productImageAlt ?? ""}
+					label={isShopBackground ? "Zdjęcie panoramiczne (tło)" : "Zdjęcie hero"}
+					value={
+						isShopBackground
+							? (hero.backgroundImageUrl ?? "")
+							: (hero.productImageUrl ?? "")
+					}
+					alt={
+						isShopBackground
+							? (hero.backgroundImageAlt ?? "")
+							: (hero.productImageAlt ?? "")
+					}
 					saving={heroSaving}
+					requiresRedeploy={!isShopBackground}
 					onChangeUrl={(url) => {
+						if (isShopBackground) {
+							onChange({ ...hero, backgroundImageUrl: url || undefined });
+							return;
+						}
 						onChange({ ...hero, productImageUrl: url || undefined });
 					}}
 					onUploadComplete={async (url) => {
-						await onSaveHeroImage(url, hero.productImageAlt);
+						await onSaveHeroImage(
+							url,
+							isShopBackground ? hero.backgroundImageAlt : hero.productImageAlt,
+						);
 					}}
-					onChangeAlt={(productImageAlt) => {
-						onChange({ ...hero, productImageAlt });
+					onChangeAlt={(alt) => {
+						if (isShopBackground) {
+							onChange({ ...hero, backgroundImageAlt: alt });
+							return;
+						}
+						onChange({ ...hero, productImageAlt: alt });
 					}}
 				/>
 			) : (

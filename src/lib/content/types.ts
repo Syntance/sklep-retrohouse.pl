@@ -1,5 +1,5 @@
 /** Identyfikatory podstron zarządzanych przez CMS. */
-export type ContentPageId = "home" | "o-nas" | "prezent" | "kontakt";
+export type ContentPageId = "home" | "o-nas" | "prezent" | "kontakt" | "sklep";
 
 export type SeoMeta = {
 	metaTitle?: string;
@@ -48,6 +48,9 @@ export type HeroContent = {
 	productImageAlt?: string;
 	productImageWidth?: number;
 	productImageHeight?: number;
+	/** Panorama tła hero (np. /sklep). */
+	backgroundImageUrl?: string;
+	backgroundImageAlt?: string;
 };
 
 export type FaqItem = {

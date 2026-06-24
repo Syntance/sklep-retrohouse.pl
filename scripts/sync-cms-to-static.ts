@@ -12,6 +12,7 @@ import { CMS_HERO_STATIC_FILES } from "../src/lib/content/cms-hero-image";
 import { normalizeCmsImageToWebp } from "../src/lib/content/normalize-cms-image";
 import { PAGE_HERO_IMAGES } from "../src/lib/content/hero-images";
 import { parseStoreMetadataJson } from "../src/lib/content/metadata-json";
+import { migrateKontaktHeroToONas } from "../src/lib/content/migrate-hero-pages";
 
 const MEDUSA_URL = (
 	process.env.MEDUSA_BACKEND_URL ||
@@ -27,7 +28,7 @@ const PUBLIC_DIR = path.join(process.cwd(), "public");
 const CMS_IMAGES_DIR = path.join(PUBLIC_DIR, "images", "cms");
 const STATIC_HERO_FILE = path.join(process.cwd(), "src", "lib", "content", "static-cms-hero.ts");
 
-const HERO_PAGES = ["home", "prezent", "kontakt"] as const;
+const HERO_PAGES = ["home", "prezent", "o-nas"] as const;
 
 type HeroPageKey = (typeof HERO_PAGES)[number];
 
@@ -93,7 +94,9 @@ async function fetchPageContentMap(token: string): Promise<Record<string, unknow
 
 	const data = (await res.json()) as { stores: Array<{ metadata?: Record<string, unknown> }> };
 	const raw = data.stores[0]?.metadata?.[RETROHOUSE_PAGE_CONTENT_KEY];
-	return parseStoreMetadataJson<Record<string, unknown>>(raw) ?? {};
+	return migrateKontaktHeroToONas(
+		parseStoreMetadataJson<Record<string, unknown>>(raw) ?? {},
+	);
 }
 
 function readHeroFields(pageContentMap: Record<string, unknown>, pageKey: HeroPageKey): HeroFields {
@@ -129,7 +132,7 @@ async function downloadHeroImage(url: string, filename: string): Promise<boolean
 function heroAltFallback(pageKey: HeroPageKey, fieldsAlt?: string): string {
 	if (fieldsAlt?.trim()) return fieldsAlt.trim();
 	if (pageKey === "prezent") return PAGE_HERO_IMAGES.prezent.alt;
-	if (pageKey === "kontakt") return PAGE_HERO_IMAGES.kontakt.alt;
+	if (pageKey === "o-nas") return PAGE_HERO_IMAGES.oNas.alt;
 	return "RetroHouse — hero";
 }
 
@@ -142,10 +145,10 @@ function defaultEntry(pageKey: HeroPageKey): StaticHeroEntry | null {
 			productImageHeight: 1500,
 		};
 	}
-	if (pageKey === "kontakt") {
+	if (pageKey === "o-nas") {
 		return {
-			productImageUrl: PAGE_HERO_IMAGES.kontakt.src,
-			productImageAlt: PAGE_HERO_IMAGES.kontakt.alt,
+			productImageUrl: PAGE_HERO_IMAGES.oNas.src,
+			productImageAlt: PAGE_HERO_IMAGES.oNas.alt,
 			productImageWidth: 1200,
 			productImageHeight: 1500,
 		};
@@ -219,7 +222,7 @@ export type StaticCmsHeroEntry = {
 	productImageHeight: number;
 };
 
-export const STATIC_CMS_HERO: Partial<Record<"home" | "prezent" | "kontakt", StaticCmsHeroEntry>> = ${JSON.stringify(entries, null, "\t")};
+export const STATIC_CMS_HERO: Partial<Record<"home" | "prezent" | "o-nas", StaticCmsHeroEntry>> = ${JSON.stringify(entries, null, "\t")};
 `;
 	fs.writeFileSync(STATIC_HERO_FILE, content, "utf-8");
 	console.log(`\n✓ Zapisano ${path.relative(process.cwd(), STATIC_HERO_FILE)}`);

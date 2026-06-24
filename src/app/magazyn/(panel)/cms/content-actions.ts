@@ -2,9 +2,14 @@
 
 import { redirect } from "next/navigation";
 import { AdminApiError, AdminUnauthorizedError } from "@/lib/admin/medusa-admin";
-import { savePageContent, savePageHeroImage, mergeSiteSettings } from "@/lib/admin/content-store";
+import { savePageContent, savePageHeroImage, savePageHeroBackground, mergeSiteSettings } from "@/lib/admin/content-store";
 import { CMS_PAGES } from "@/lib/content/metadata-keys";
-import { pageContentSchema, cmsGlobalSettingsSchema, heroImagePatchSchema } from "@/lib/content/parsers";
+import {
+	pageContentSchema,
+	cmsGlobalSettingsSchema,
+	heroImagePatchSchema,
+	heroBackgroundPatchSchema,
+} from "@/lib/content/parsers";
 import { revalidateContentCache, triggerCmsRedeploy } from "@/lib/content/revalidate-content";
 import type { ContentPageId, PageContent } from "@/lib/content/types";
 
@@ -54,6 +59,26 @@ export async function savePageHeroImageAction(
 		await savePageHeroImage(pageId, parsed.data);
 	} catch (error) {
 		return handleError(error, "Nie udało się zapisać zdjęcia hero.");
+	}
+
+	await revalidateContentCache([path]);
+	return { ok: true, error: null };
+}
+
+export async function savePageHeroBackgroundAction(
+	pageId: ContentPageId,
+	path: string,
+	image: { backgroundImageUrl: string; backgroundImageAlt?: string },
+): Promise<SaveContentState> {
+	const parsed = heroBackgroundPatchSchema.safeParse(image);
+	if (!parsed.success) {
+		return { ok: false, error: parsed.error.issues[0]?.message ?? "Nieprawidłowy adres obrazu." };
+	}
+
+	try {
+		await savePageHeroBackground(pageId, parsed.data);
+	} catch (error) {
+		return handleError(error, "Nie udało się zapisać tła hero.");
 	}
 
 	await revalidateContentCache([path]);

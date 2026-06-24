@@ -80,6 +80,8 @@ export const heroContentSchema = z.object({
 	productImageAlt: z.string().max(200).optional(),
 	productImageWidth: z.number().int().positive().optional(),
 	productImageHeight: z.number().int().positive().optional(),
+	backgroundImageUrl: heroImageUrlSchema,
+	backgroundImageAlt: z.string().max(200).optional(),
 });
 
 /** Odczyt z Medusa — hero może mieć tylko URL obrazu (bez copy). */
@@ -95,11 +97,18 @@ export const heroContentReadSchema = z.object({
 	productImageAlt: z.string().max(200).optional(),
 	productImageWidth: z.number().int().positive().optional(),
 	productImageHeight: z.number().int().positive().optional(),
+	backgroundImageUrl: heroImageUrlSchema,
+	backgroundImageAlt: z.string().max(200).optional(),
 });
 
 export const heroImagePatchSchema = z.object({
 	productImageUrl: z.string().url(),
 	productImageAlt: z.string().max(200).optional(),
+});
+
+export const heroBackgroundPatchSchema = z.object({
+	backgroundImageUrl: z.string().url(),
+	backgroundImageAlt: z.string().max(200).optional(),
 });
 
 export const faqItemSchema = z.object({

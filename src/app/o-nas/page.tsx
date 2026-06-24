@@ -13,7 +13,9 @@ import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/compo
 import { AboutCtaCards } from "@/components/sections/about-cta-cards";
 import { PageHeroImage } from "@/components/sections/page-hero-image";
 import { CONTACT_FORM_RESPONSE } from "@/lib/contact/response-time";
+import { getPageContent } from "@/lib/content";
 import { PAGE_HERO_IMAGES } from "@/lib/content/hero-images";
+import { resolveStaticHeroProductImage } from "@/lib/content/resolve-hero-image";
 import { StoreMap } from "@/components/sections/store-map";
 
 export const metadata: Metadata = {
@@ -78,7 +80,16 @@ const VALUES = [
 	},
 ];
 
-export default function ONasPage() {
+export default async function ONasPage() {
+	const cmsHero = (await getPageContent("o-nas")).hero;
+	const heroImage =
+		resolveStaticHeroProductImage("o-nas", cmsHero) ?? {
+			src: PAGE_HERO_IMAGES.oNas.src,
+			alt: PAGE_HERO_IMAGES.oNas.alt,
+			width: 1200,
+			height: 1500,
+		};
+
 	return (
 		<main id="main" className="flex flex-col">
 			<Section spacing="sm">
@@ -119,8 +130,8 @@ export default function ONasPage() {
 						</div>
 
 						<PageHeroImage
-							src={PAGE_HERO_IMAGES.oNas.src}
-							alt={PAGE_HERO_IMAGES.oNas.alt}
+							src={heroImage.src}
+							alt={heroImage.alt}
 							priority
 							badge="Behind the scenes · Wiedeń"
 							caption="Każda kamienica to rozmowa. Każda rozmowa to historia. Każda historia trafia do karty obok przedmiotu."

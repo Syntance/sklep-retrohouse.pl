@@ -3,8 +3,9 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { ArrowRightIcon, InstagramIcon } from "@/components/icons";
 import { MobileCartFab } from "@/components/mobile-cart-fab";
-import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/components/primitives";
+import { Container, CtaLink, Eyebrow, Section } from "@/components/primitives";
 import { ProductCard } from "@/components/product-card";
+import { ShopHero } from "@/components/sections/shop-hero";
 import {
 	PRODUCT_CATEGORIES,
 	type Product,
@@ -12,6 +13,7 @@ import {
 } from "@/lib/products";
 import { getEpochOptions } from "@/lib/catalog/epochs";
 import { listProducts } from "@/lib/products/queries";
+import { getPageContent } from "@/lib/content";
 import { cn } from "@/lib/utils";
 import { ShopPreferencesSync } from "@/components/shop/shop-preferences-sync";
 import { PriceRangeFilter } from "./price-range-filter";
@@ -45,7 +47,11 @@ type SearchParams = ShopSearchParams;
 
 export default async function SklepPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
 	const params = await searchParams;
-	const [PRODUCTS, epochOptions] = await Promise.all([listProducts(), getEpochOptions()]);
+	const [PRODUCTS, epochOptions, shopContent] = await Promise.all([
+		listProducts(),
+		getEpochOptions(),
+		getPageContent("sklep"),
+	]);
 	const activeCategory = parseEnum<ProductCategory>(
 		params.kategoria,
 		PRODUCT_CATEGORIES.map((c) => c.value),
@@ -89,17 +95,10 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 				<ShopPreferencesSync />
 				<ShopCategoryAutoScroll />
 			</Suspense>
-			<Section spacing="md" tone="muted">
-				<Container size="xl">
-					<Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Sklep" }]} />
-					<div className="mt-8 flex flex-col items-center text-center">
-						<h1 className="max-w-2xl font-display text-5xl font-semibold leading-tight md:text-6xl">
-							Nasza kolekcja
-						</h1>
-						<Lead className="mt-4 max-w-xl">Antyki, które już się nie powtórzą.</Lead>
-					</div>
-				</Container>
-			</Section>
+			<ShopHero
+				backgroundImageUrl={shopContent.hero?.backgroundImageUrl}
+				backgroundImageAlt={shopContent.hero?.backgroundImageAlt}
+			/>
 
 			<Section spacing="md">
 				<Container size="xl">

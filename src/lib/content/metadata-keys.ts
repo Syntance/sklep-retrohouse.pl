@@ -24,7 +24,8 @@ export const CMS_PAGES: CmsPageConfig[] = [
 	{ id: "home", label: "Strona główna", path: "/", blocks: ["hero"] },
 	{ id: "o-nas", label: "O nas", path: "/o-nas", blocks: ["hero"] },
 	{ id: "prezent", label: "Prezenty", path: "/prezent", blocks: ["hero"] },
-	{ id: "kontakt", label: "Kontakt", path: "/kontakt", blocks: ["hero", "faq"] },
+	{ id: "kontakt", label: "Kontakt", path: "/kontakt", blocks: ["faq"] },
+	{ id: "sklep", label: "Sklep", path: "/sklep", blocks: ["hero"] },
 ];
 
 export const CMS_BASE_PATH = "/magazyn/cms";

@@ -12,10 +12,7 @@ import {
 import { JsonLd } from "@/components/json-ld";
 import { STORE_INFO } from "@/components/layout/site-header/nav-data";
 import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/components/primitives";
-import { PageHeroImage } from "@/components/sections/page-hero-image";
 import { CONTACT_FAST_RESPONSE, CONTACT_FORM_RESPONSE } from "@/lib/contact/response-time";
-import { getPageContent } from "@/lib/content";
-import { resolveStaticHeroProductImage } from "@/lib/content/resolve-hero-image";
 import { KontaktFormSection } from "./kontakt-form-section";
 import { MapDirectionsLink, PhoneLink, WhatsAppLink } from "./contact-cta";
 
@@ -52,8 +49,6 @@ const FAQS = [
 export default async function KontaktPage() {
 	const phoneHref = `tel:${STORE_INFO.phone.replace(/\s/g, "")}`;
 	const whatsappHref = `https://wa.me/${STORE_INFO.whatsapp.replace(/\s|\+/g, "")}`;
-	const cmsHero = (await getPageContent("kontakt")).hero;
-	const heroImage = resolveStaticHeroProductImage("kontakt", cmsHero);
 
 	const localBusiness = {
 		"@context": "https://schema.org",
@@ -99,30 +94,17 @@ export default async function KontaktPage() {
 		<main id="main" className="flex flex-col">
 			<Section spacing="md" className="overflow-hidden bg-transparent !pt-10 md:!pt-12">
 				<Container size="xl">
-					<div className="grid gap-x-12 gap-y-8 lg:grid-cols-[1.1fr_0.9fr]">
-						<Breadcrumbs
-							className="lg:col-start-1 lg:row-start-1 lg:self-start"
-							items={[{ label: "Home", href: "/" }, { label: "Kontakt" }]}
-						/>
-						<div className="lg:col-start-1 lg:row-start-2">
-							<Eyebrow>Local SEO · Nowy Targ</Eyebrow>
-							<h1 className="mt-3 font-display text-[clamp(2.4rem,5vw,4rem)] font-semibold leading-[1.05]">
-								Sklep z antykami w Nowym Targu — RetroHouse
-							</h1>
-							<Lead className="mt-4">
-								Napisz do nas lub odwiedź nas osobiście. Gwarantujemy odpowiedź w ciągu{" "}
-								{CONTACT_FORM_RESPONSE.label} — w godzinach otwarcia DM na Instagramie
-								i&nbsp;WhatsApp odpisujemy {CONTACT_FAST_RESPONSE.within}.
-							</Lead>
-						</div>
-						{heroImage ? (
-							<PageHeroImage
-								src={heroImage.src}
-								alt={heroImage.alt}
-								priority
-								className="lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-start"
-							/>
-						) : null}
+					<Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Kontakt" }]} />
+					<div className="mt-8 max-w-3xl">
+						<Eyebrow>Local SEO · Nowy Targ</Eyebrow>
+						<h1 className="mt-3 font-display text-[clamp(2.4rem,5vw,4rem)] font-semibold leading-[1.05]">
+							Sklep z antykami w Nowym Targu — RetroHouse
+						</h1>
+						<Lead className="mt-4">
+							Napisz do nas lub odwiedź nas osobiście. Gwarantujemy odpowiedź w ciągu{" "}
+							{CONTACT_FORM_RESPONSE.label} — w godzinach otwarcia DM na Instagramie
+							i&nbsp;WhatsApp odpisujemy {CONTACT_FAST_RESPONSE.within}.
+						</Lead>
 					</div>
 				</Container>
 			</Section>
