@@ -102,6 +102,7 @@ export const env = createEnv({
 
 		/** Publiczny URL R2 dla uploadów CMS (pub-*.r2.dev). Ustaw taki sam jak S3_FILE_URL. */
 		NEXT_PUBLIC_CMS_MEDIA_BASE_URL: z.string().url().optional(),
+		NEXT_PUBLIC_S3_FILE_URL: z.string().url().optional(),
 
 		NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().optional(),
 		NEXT_PUBLIC_SANITY_DATASET: z.string().default("production"),
@@ -142,6 +143,7 @@ export const env = createEnv({
 		NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
 		NEXT_PUBLIC_MEDIA_CDN_URL: process.env.NEXT_PUBLIC_MEDIA_CDN_URL,
 		NEXT_PUBLIC_CMS_MEDIA_BASE_URL: process.env.NEXT_PUBLIC_CMS_MEDIA_BASE_URL,
+		NEXT_PUBLIC_S3_FILE_URL: process.env.NEXT_PUBLIC_S3_FILE_URL,
 
 		SANITY_API_READ_TOKEN: process.env.SANITY_API_READ_TOKEN,
 		NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,

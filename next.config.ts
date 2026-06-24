@@ -5,22 +5,40 @@ type RemotePattern = NonNullable<NonNullable<NextConfig["images"]>["remotePatter
 
 const MEDIA_CDN_HOSTNAME = "assets.sklep-retrohouse.pl";
 
+function collectMediaCdnOrigins(): string[] {
+	const origins = new Set<string>();
+	for (const raw of [
+		process.env.S3_FILE_URL,
+		process.env.NEXT_PUBLIC_S3_FILE_URL,
+		process.env.NEXT_PUBLIC_CMS_MEDIA_BASE_URL,
+	]) {
+		if (!raw?.trim()) continue;
+		try {
+			origins.add(new URL(raw.trim()).origin);
+		} catch {
+			/* skip invalid */
+		}
+	}
+	return [...origins];
+}
+
 function cmsUploadImagePatterns(): RemotePattern[] {
-	const fileUrl = process.env.S3_FILE_URL ?? process.env.NEXT_PUBLIC_CMS_MEDIA_BASE_URL;
-	if (!fileUrl) return [];
-	try {
-		const url = new URL(fileUrl);
-		if (url.hostname === MEDIA_CDN_HOSTNAME) return [];
-		return [
-			{
+	const patterns: RemotePattern[] = [];
+	for (const origin of collectMediaCdnOrigins()) {
+		try {
+			const url = new URL(origin);
+			if (url.hostname === MEDIA_CDN_HOSTNAME) continue;
+			patterns.push({
 				protocol: url.protocol.replace(":", "") as "http" | "https",
 				hostname: url.hostname,
+				...(url.port ? { port: url.port } : {}),
 				pathname: "/**",
-			},
-		];
-	} catch {
-		return [];
+			});
+		} catch {
+			/* skip invalid */
+		}
 	}
+	return patterns;
 }
 
 function medusaImagePatterns(): RemotePattern[] {

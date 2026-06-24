@@ -2,10 +2,15 @@
 
 import { ImagePlus, Loader2, X } from "lucide-react";
 import { useCallback, useId, useState } from "react";
-import { resolveCmsMediaPublicUrl } from "@/lib/content/cms-media-url";
+import { resolveCmsAdminPreviewUrl } from "@/lib/content/asset-url";
 import { isImageFile, useFileDropZone } from "@/lib/hooks/use-file-drop-zone";
+import {
+	formatCmsBrowserUploadError,
+	prepareCmsImageForUpload,
+	uploadCmsImageFromBrowser,
+	validateCmsBrowserUploadFile,
+} from "@/lib/product-upload/cms-image-upload.client";
 import { cn } from "@/lib/utils";
-import { uploadCmsImagesAction } from "./content-actions";
 
 type Props = {
 	label: string;
@@ -15,12 +20,6 @@ type Props = {
 	onChangeAlt: (alt: string) => void;
 	onUploadComplete?: (url: string) => void;
 };
-
-function resolveAdminPreviewUrl(url: string): string {
-	if (!url.trim()) return "";
-	if (url.startsWith("/")) return url;
-	return resolveCmsMediaPublicUrl(url) ?? url;
-}
 
 export function HeroImageField({
 	label,
@@ -33,7 +32,7 @@ export function HeroImageField({
 	const fileId = useId();
 	const [uploading, setUploading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const previewUrl = value ? resolveAdminPreviewUrl(value) : "";
+	const previewUrl = value ? (resolveCmsAdminPreviewUrl(value) ?? value) : "";
 
 	const uploadFiles = useCallback(
 		async (files: File[]) => {
@@ -43,24 +42,22 @@ export function HeroImageField({
 				return;
 			}
 
+			const file = images[0];
+			const validationError = validateCmsBrowserUploadFile(file);
+			if (validationError) {
+				setError(validationError);
+				return;
+			}
+
 			setUploading(true);
 			setError(null);
 			try {
-				const formData = new FormData();
-				formData.append("files", images[0]);
-				const result = await uploadCmsImagesAction(formData);
-				if (result.error) {
-					setError(result.error);
-					return;
-				}
-				const url = result.urls[0];
-				if (url) {
-					onChangeUrl(url);
-					onUploadComplete?.(url);
-				}
+				const prepared = await prepareCmsImageForUpload(file);
+				const url = await uploadCmsImageFromBrowser(prepared);
+				onChangeUrl(url);
+				onUploadComplete?.(url);
 			} catch (err) {
-				const message = err instanceof Error ? err.message : null;
-				setError(message?.trim() || "Upload nie powiódł się. Spróbuj ponownie.");
+				setError(formatCmsBrowserUploadError(err));
 			} finally {
 				setUploading(false);
 			}

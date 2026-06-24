@@ -35,6 +35,8 @@ foreach ($name in $vars) {
 
 $fileUrl = (railway variables get S3_FILE_URL 2>$null)
 if ($fileUrl) {
+	Write-Host "==> vercel env add NEXT_PUBLIC_S3_FILE_URL (production, preview)" -ForegroundColor Green
+	$fileUrl | vercel env add NEXT_PUBLIC_S3_FILE_URL production preview --force
 	Write-Host "==> vercel env add NEXT_PUBLIC_CMS_MEDIA_BASE_URL (production, preview)" -ForegroundColor Green
 	$fileUrl | vercel env add NEXT_PUBLIC_CMS_MEDIA_BASE_URL production preview --force
 }
