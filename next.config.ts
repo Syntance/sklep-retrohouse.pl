@@ -91,6 +91,9 @@ const nextConfig: NextConfig = {
 		],
 	},
 	experimental: {
+		serverActions: {
+			bodySizeLimit: "15mb",
+		},
 		optimizePackageImports: [
 			"lucide-react",
 			"@react-three/drei",

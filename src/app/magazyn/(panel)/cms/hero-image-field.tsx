@@ -4,7 +4,6 @@ import { ImagePlus, Loader2, X } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useId, useState } from "react";
 import { resolveMedusaMediaUrl } from "@/lib/medusa/media-url";
-import { CMS_HERO_MAX_LONG_EDGE } from "@/lib/content/cms-hero-image";
 import { isImageFile, useFileDropZone } from "@/lib/hooks/use-file-drop-zone";
 import { cn } from "@/lib/utils";
 import { uploadCmsImagesAction } from "./content-actions";
@@ -47,7 +46,7 @@ export function HeroImageField({ label, value, alt, onChangeUrl, onChangeAlt }: 
 				const url = result.urls[0];
 				if (url) onChangeUrl(url);
 			} catch {
-				setError("Upload nie powiódł się. Spróbuj ponownie lub mniejszy plik.");
+				setError("Upload nie powiódł się. Spróbuj ponownie.");
 			} finally {
 				setUploading(false);
 			}
@@ -67,7 +66,7 @@ export function HeroImageField({ label, value, alt, onChangeUrl, onChangeAlt }: 
 		<div className="flex flex-col gap-2">
 			<span className="text-sm font-medium">{label}</span>
 			<p className="text-xs text-muted-foreground">
-				JPG/PNG są automatycznie konwertowane na WebP (max {CMS_HERO_MAX_LONG_EDGE}px, wysoka jakość). Na
+				Akceptujemy zdjęcia z telefonu (JPG, HEIC, PNG). Po zapisie widać podgląd w panelu; na stronie
 				pojawią się po <strong className="font-medium text-foreground">Redeploy</strong> (sync do{" "}
 				<code className="text-[0.7rem]">/images/cms/</code>).
 			</p>
