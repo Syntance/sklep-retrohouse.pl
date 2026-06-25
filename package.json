@@ -3,6 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
+		"predev": "tsx scripts/sync-cms-to-static.ts",
 		"dev": "next dev",
 		"prebuild": "tsx scripts/sync-cms-to-static.ts",
 		"build": "next build",

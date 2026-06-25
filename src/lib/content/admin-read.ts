@@ -72,17 +72,31 @@ async function getServiceToken(): Promise<string | null> {
  */
 export const fetchStoreMetadataBlob = cache(async (): Promise<StoreMetadataBlob> => {
 	const token = await getServiceToken();
-	if (!token) return FALLBACK;
+	if (!token) {
+		if (env.NODE_ENV === "development") {
+			console.warn(
+				"[cms] Brak MEDUSA_ADMIN_EMAIL / MEDUSA_ADMIN_PASSWORD — localhost używa domyślnych treści CMS. Ustaw w .env.local, żeby pobrać zdjęcia z Medusy.",
+			);
+		}
+		return FALLBACK;
+	}
+
+	const fetchInit: RequestInit =
+		env.NODE_ENV === "development"
+			? { cache: "no-store" }
+			: {
+					next: {
+						revalidate: 3600,
+						tags: [RETROHOUSE_CONTENT_CACHE_TAG],
+					},
+				};
 
 	try {
 		const res = await fetch(
 			`${MEDUSA_BASE_URL}/admin/stores?limit=1&fields=id,metadata`,
 			{
 				headers: { Authorization: `Bearer ${token}` },
-				next: {
-					revalidate: 3600,
-					tags: [RETROHOUSE_CONTENT_CACHE_TAG],
-				},
+				...fetchInit,
 				signal: AbortSignal.timeout(30_000),
 			},
 		);

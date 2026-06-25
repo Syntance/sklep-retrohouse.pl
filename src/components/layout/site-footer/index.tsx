@@ -8,6 +8,7 @@ import {
 	PinIcon,
 	WhatsAppIcon,
 } from "@/components/icons";
+import { getSiteSettings } from "@/lib/content";
 import { FOOTER_COLUMNS, STORE_INFO } from "@/components/layout/site-header/nav-data";
 import { Container } from "@/components/primitives";
 import { CookieSettingsButton } from "./cookie-settings-button";
@@ -18,8 +19,8 @@ import { CookieSettingsButton } from "./cookie-settings-button";
  *  - bez dużego newsletter callout (jest na homepage), tylko link „zapisz się"
  *  - mniejszy padding (py-12 / 16 zamiast 16 / 20)
  *  - vintage divider zamiast brass-rule + ramki
+ *  - Social links z CMS (usuwamy puste)
  */
-export function SiteFooter() {
 	return (
 		<footer className="mt-auto bg-ink text-ink-foreground">
 			<Container size="lg" className="py-12 md:py-16">
@@ -46,33 +47,39 @@ export function SiteFooter() {
 								Skarby z wiedeńskich kamienic, które dostają drugie życie w polskich domach.
 							</p>
 							<div className="mt-6 flex items-center gap-2">
-								<Link
-									aria-label="Instagram @retrohouse"
-									href={STORE_INFO.instagramHref}
-									target="_blank"
-									rel="me noreferrer"
-									className="grid size-9 place-items-center rounded-full border border-ink-foreground/20 text-ink-foreground/80 transition-colors hover:border-terracotta hover:text-terracotta"
-								>
-									<InstagramIcon className="size-4" />
-								</Link>
-								<Link
-									aria-label="Facebook RetroHouse"
-									href={STORE_INFO.facebookHref}
-									target="_blank"
-									rel="me noreferrer"
-									className="grid size-9 place-items-center rounded-full border border-ink-foreground/20 text-ink-foreground/80 transition-colors hover:border-terracotta hover:text-terracotta"
-								>
-									<FacebookIcon className="size-4" />
-								</Link>
-								<Link
-									aria-label="WhatsApp"
-									href={`https://wa.me/${STORE_INFO.whatsapp.replace(/\s|\+/g, "")}`}
-									target="_blank"
-									rel="noreferrer"
-									className="grid size-9 place-items-center rounded-full border border-ink-foreground/20 text-ink-foreground/80 transition-colors hover:border-terracotta hover:text-terracotta"
-								>
-									<WhatsAppIcon className="size-4" />
-								</Link>
+								{socialLinks?.instagram && (
+									<Link
+										aria-label={`Instagram ${socialLinks.instagram}`}
+										href={socialLinks.instagram}
+										target="_blank"
+										rel="me noreferrer"
+										className="grid size-9 place-items-center rounded-full border border-ink-foreground/20 text-ink-foreground/80 transition-colors hover:border-terracotta hover:text-terracotta"
+									>
+										<InstagramIcon className="size-4" />
+									</Link>
+								)}
+								{socialLinks?.facebook && (
+									<Link
+										aria-label="Facebook RetroHouse"
+										href={socialLinks.facebook}
+										target="_blank"
+										rel="me noreferrer"
+										className="grid size-9 place-items-center rounded-full border border-ink-foreground/20 text-ink-foreground/80 transition-colors hover:border-terracotta hover:text-terracotta"
+									>
+										<FacebookIcon className="size-4" />
+									</Link>
+								)}
+								{socialLinks?.whatsapp && (
+									<Link
+										aria-label="WhatsApp"
+										href={`https://wa.me/${socialLinks.whatsapp.replace(/\s|\+/g, "")}`}
+										target="_blank"
+										rel="noreferrer"
+										className="grid size-9 place-items-center rounded-full border border-ink-foreground/20 text-ink-foreground/80 transition-colors hover:border-terracotta hover:text-terracotta"
+									>
+										<WhatsAppIcon className="size-4" />
+									</Link>
+								)}
 							</div>
 						</div>
 					</div>
@@ -148,3 +155,4 @@ export function SiteFooter() {
 		</footer>
 	);
 }
+

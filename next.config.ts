@@ -47,6 +47,8 @@ function medusaImagePatterns(): RemotePattern[] {
 		{ protocol: "http", hostname: "127.0.0.1", port: "9000", pathname: "/static/**" },
 		// Cloudflare R2 — obrazy z Medusa po migracji storage (dev + prod bez wymogu ENV).
 		{ protocol: "https", hostname: MEDIA_CDN_HOSTNAME, pathname: "/**" },
+		// Pub bucket R2 (pub-*.r2.dev) — uploady CMS na localhost bez pełnego zestawu ENV.
+		{ protocol: "https", hostname: "**.r2.dev", pathname: "/**" },
 		...cmsUploadImagePatterns(),
 	];
 

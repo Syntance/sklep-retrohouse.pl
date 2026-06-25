@@ -1,5 +1,6 @@
 import type { HeroProductImage } from "@/lib/sanity/home-hero";
 import { DEFAULT_HERO_PRODUCT } from "@/lib/sanity/home-hero";
+import { resolveCmsMediaPublicUrl } from "./cms-media-url";
 import type { CmsHeroPageKey } from "./cms-hero-image";
 import { PAGE_HERO_IMAGES } from "./hero-images";
 import { STATIC_CMS_HERO } from "./static-cms-hero";
@@ -19,14 +20,43 @@ const O_NAS_FALLBACK: HeroProductImage = {
 	height: 1500,
 };
 
+const PAGE_ALT_FALLBACK: Partial<Record<CmsHeroPageKey, string>> = {
+	home: "RetroHouse — hero",
+	prezent: PAGE_HERO_IMAGES.prezent.alt,
+	"o-nas": PAGE_HERO_IMAGES.oNas.alt,
+};
+
+function preferLiveCmsImages(): boolean {
+	return process.env.NODE_ENV === "development";
+}
+
+function resolveLiveCmsProductImage(
+	cmsHero: Partial<HeroContent> | undefined,
+	pageKey: CmsHeroPageKey,
+): HeroProductImage | null {
+	const liveUrl = resolveCmsMediaPublicUrl(cmsHero?.productImageUrl);
+	if (!liveUrl) return null;
+
+	return {
+		src: liveUrl,
+		alt: cmsHero?.productImageAlt?.trim() || PAGE_ALT_FALLBACK[pageKey] || "RetroHouse",
+		width: cmsHero?.productImageWidth ?? 1200,
+		height: cmsHero?.productImageHeight ?? 1500,
+	};
+}
+
 /**
- * Obraz hero z ostatniego buildu (`/images/cms/…`).
- * Tekst alt może pochodzić live z CMS (revalidate) — src zawsze lokalny po redeploy.
+ * Obraz hero: na localhost live z CMS (R2), na produkcji — pliki z ostatniego buildu (`/images/cms/…`).
  */
 export function resolveStaticHeroProductImage(
 	pageKey: CmsHeroPageKey,
 	cmsHero?: Partial<HeroContent>,
 ): HeroProductImage | null {
+	if (preferLiveCmsImages()) {
+		const live = resolveLiveCmsProductImage(cmsHero, pageKey);
+		if (live) return live;
+	}
+
 	const baked = STATIC_CMS_HERO[pageKey];
 	if (!baked?.productImageUrl) {
 		if (pageKey === "prezent") return PREZENT_FALLBACK;

@@ -8,11 +8,14 @@
 import fs from "node:fs";
 import path from "node:path";
 import { Readable } from "node:stream";
+import { loadEnvConfig } from "@next/env";
 import { CMS_HERO_STATIC_FILES } from "../src/lib/content/cms-hero-image";
 import { normalizeCmsImageToWebp } from "../src/lib/content/normalize-cms-image";
 import { PAGE_HERO_IMAGES } from "../src/lib/content/hero-images";
 import { parseStoreMetadataJson } from "../src/lib/content/metadata-json";
 import { migrateKontaktHeroToONas } from "../src/lib/content/migrate-hero-pages";
+
+loadEnvConfig(process.cwd());
 
 const MEDUSA_URL = (
 	process.env.MEDUSA_BACKEND_URL ||

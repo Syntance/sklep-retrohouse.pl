@@ -28,7 +28,7 @@ const TIMELINE = [
 	{
 		icon: <PinIcon className="size-5" />,
 		label: "Wiedeń",
-		description: "Pukamy do drzwi prywatnych mieszkań we Wiedniu.",
+		description: "Pukamy do drzwi prywatnych mieszkań w Wiedniu.",
 	},
 	{
 		icon: <ScrollIcon className="size-5" />,
