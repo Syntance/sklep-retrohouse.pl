@@ -21,6 +21,8 @@ import { CookieSettingsButton } from "./cookie-settings-button";
  *  - vintage divider zamiast brass-rule + ramki
  *  - Social links z CMS (usuwamy puste)
  */
+export async function SiteFooter() {
+	const { socialLinks } = await getSiteSettings();
 	return (
 		<footer className="mt-auto bg-ink text-ink-foreground">
 			<Container size="lg" className="py-12 md:py-16">

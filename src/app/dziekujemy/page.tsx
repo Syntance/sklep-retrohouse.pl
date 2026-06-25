@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckoutProgress } from "@/components/checkout-progress";
 import { HeartIcon, InstagramIcon, ArrowRightIcon } from "@/components/icons";
+import { getSiteSettings } from "@/lib/content";
 import { STORE_INFO } from "@/components/layout/site-header/nav-data";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { Container, CtaLink, Eyebrow, Section } from "@/components/primitives";
@@ -21,6 +22,7 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Sea
 	const orderId = params.order ?? "—";
 	const value = Number.parseFloat(params.value ?? "0");
 	const itemsCount = Number.parseInt(params.items ?? "0", 10);
+	const { socialLinks } = await getSiteSettings();
 
 	return (
 		<main id="main" className="flex flex-col">
@@ -71,7 +73,7 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Sea
 								/>
 							</ol>
 						</div>
-						<UgcCtaCard href={STORE_INFO.instagramHref} />
+						{socialLinks?.instagram && <UgcCtaCard href={socialLinks.instagram} />}
 					</div>
 
 					<div className="mt-6">
@@ -110,12 +112,13 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Sea
 						<ReviewCard href={STORE_INFO.googleReviewsHref} />
 					</div>
 
-					<div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-						<CtaLink href="/sklep" variant="secondary" withArrow={false}>
-							Wróć do sklepu
-						</CtaLink>
+				<div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+					<CtaLink href="/sklep" variant="secondary" withArrow={false}>
+						Wróć do sklepu
+					</CtaLink>
+					{socialLinks?.instagram && (
 						<Link
-							href={STORE_INFO.instagramHref}
+							href={socialLinks.instagram}
 							target="_blank"
 							rel="noreferrer"
 							className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-terracotta"
@@ -123,7 +126,8 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Sea
 							<InstagramIcon className="size-4" />
 							@retrohouse
 						</Link>
-					</div>
+					)}
+				</div>
 				</Container>
 			</Section>
 		</main>

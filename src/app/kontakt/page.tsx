@@ -10,6 +10,7 @@ import {
 	WhatsAppIcon,
 } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
+import { getSiteSettings } from "@/lib/content";
 import { STORE_INFO } from "@/components/layout/site-header/nav-data";
 import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/components/primitives";
 import { CONTACT_FAST_RESPONSE, CONTACT_FORM_RESPONSE } from "@/lib/contact/response-time";
@@ -47,6 +48,7 @@ const FAQS = [
 ];
 
 export default async function KontaktPage() {
+	const { socialLinks } = await getSiteSettings();
 	const phoneHref = `tel:${STORE_INFO.phone.replace(/\s/g, "")}`;
 	const whatsappHref = `https://wa.me/${STORE_INFO.whatsapp.replace(/\s|\+/g, "")}`;
 
@@ -87,7 +89,7 @@ export default async function KontaktPage() {
 			},
 		],
 		priceRange: "20–5000 PLN",
-		sameAs: [STORE_INFO.instagramHref, STORE_INFO.facebookHref],
+		sameAs: [socialLinks?.instagram, socialLinks?.facebook].filter(Boolean),
 	};
 
 	return (
@@ -178,12 +180,14 @@ export default async function KontaktPage() {
 										href={whatsappHref}
 										kind="whatsapp"
 									/>
-									<ContactRow
-										icon={<InstagramIcon className="size-4" />}
-										label="Instagram"
-										value={STORE_INFO.instagram}
-										href={STORE_INFO.instagramHref}
-									/>
+									{socialLinks?.instagram && (
+										<ContactRow
+											icon={<InstagramIcon className="size-4" />}
+											label="Instagram"
+											value={socialLinks.instagram}
+											href={socialLinks.instagram}
+										/>
+									)}
 								</ul>
 							</div>
 
@@ -192,10 +196,12 @@ export default async function KontaktPage() {
 								<p className="mt-1 text-sm text-foreground/70">
 									{CONTACT_FAST_RESPONSE.openingHoursNote}
 								</p>
-								<div className="mt-4 flex flex-wrap items-center gap-2">
-									<CtaLink href={STORE_INFO.instagramHref} variant="secondary">
+							<div className="mt-4 flex flex-wrap items-center gap-2">
+								{socialLinks?.instagram && (
+									<CtaLink href={socialLinks.instagram} variant="secondary">
 										DM na IG
 									</CtaLink>
+								)}
 									<WhatsAppLink
 										href={whatsappHref}
 										className="inline-flex h-11 items-center gap-2 rounded-full border border-border bg-background px-5 text-xs font-semibold uppercase tracking-[0.08em] text-foreground transition-colors hover:border-terracotta hover:text-terracotta"

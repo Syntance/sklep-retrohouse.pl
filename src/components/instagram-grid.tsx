@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { InstagramIcon } from "@/components/icons";
-import { STORE_INFO } from "@/components/layout/site-header/nav-data";
+import { getSiteSettings } from "@/lib/content";
 
 /**
  * Placeholder grid 6 IG postów. Etap 2: podmiana na komponent
@@ -16,26 +16,31 @@ const IG_TILES: Array<{ id: string; hue: string; alt: string }> = [
 	{ id: "ig-6", hue: "oklch(0.84 0.04 90)", alt: "Wazon Rosenthal w pełnym świetle" },
 ];
 
-export function InstagramGrid() {
+export async function InstagramGrid() {
+	const { socialLinks } = await getSiteSettings();
+	const instagramHref = socialLinks?.instagram;
+
+	if (!instagramHref) return null;
+
 	return (
 		<div>
 			<div className="flex items-center justify-between gap-3">
 				<p className="font-display text-lg">Instagram</p>
 				<Link
-					href={STORE_INFO.instagramHref}
+					href={instagramHref}
 					target="_blank"
 					rel="noreferrer"
 					className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-terracotta"
 				>
 					<InstagramIcon className="size-3.5" />
-					{STORE_INFO.instagram}
+					{instagramHref}
 				</Link>
 			</div>
 			<ul className="mt-3 grid grid-cols-3 gap-1.5">
 				{IG_TILES.map((tile) => (
 					<li key={tile.id}>
 						<Link
-							href={STORE_INFO.instagramHref}
+							href={instagramHref}
 							target="_blank"
 							rel="noreferrer"
 							aria-label={tile.alt}

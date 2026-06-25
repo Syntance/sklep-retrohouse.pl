@@ -114,9 +114,6 @@ export const STORE_INFO = {
 	emailB2B: EMAIL_B2B,
 	phone: "+48 530 062 677",
 	whatsapp: "+48 530 062 677",
-	instagram: "@retrohouse",
-	instagramHref: "https://instagram.com/retrohouse",
-	facebookHref: "https://facebook.com/retrohouse",
 	mapsHref: "https://maps.google.com/?q=ul.+Lud%C5%BAmierska+25A,+34-400+Nowy+Targ",
 	googleMapsEmbedSrc:
 		"https://www.google.com/maps?q=ul.+Lud%C5%BAmierska+25A,+34-400+Nowy+Targ&z=15&output=embed",
