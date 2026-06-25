@@ -17,7 +17,7 @@ const HOME_TOPIC_OPTIONS = getContactTopicOptions("kontakt");
  * Social proof — opinie z DM / IG / Google (po zgodzie klientki).
  * Pre-launch: zamiast pustej sekcji pokazuje mini formularz kontaktowy.
  */
-export function SocialProofSection() {
+export function SocialProofSection({ instagramHref }: { instagramHref?: string }) {
 	const hasReviews = TESTIMONIALS.length > 0;
 
 	return (

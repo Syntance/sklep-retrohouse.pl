@@ -9,6 +9,7 @@ import {
 	WhatsAppIcon,
 } from "@/components/icons";
 import { getSiteSettings } from "@/lib/content";
+import { buildWhatsAppHref, hasSocialLink } from "@/lib/content/social-links";
 import { FOOTER_COLUMNS, STORE_INFO } from "@/components/layout/site-header/nav-data";
 import { Container } from "@/components/primitives";
 import { CookieSettingsButton } from "./cookie-settings-button";
@@ -49,7 +50,7 @@ export async function SiteFooter() {
 								Skarby z wiedeńskich kamienic, które dostają drugie życie w polskich domach.
 							</p>
 							<div className="mt-6 flex items-center gap-2">
-								{socialLinks?.instagram && (
+								{hasSocialLink(socialLinks?.instagram) && (
 									<Link
 										aria-label={`Instagram ${socialLinks.instagram}`}
 										href={socialLinks.instagram}
@@ -60,7 +61,7 @@ export async function SiteFooter() {
 										<InstagramIcon className="size-4" />
 									</Link>
 								)}
-								{socialLinks?.facebook && (
+								{hasSocialLink(socialLinks?.facebook) && (
 									<Link
 										aria-label="Facebook RetroHouse"
 										href={socialLinks.facebook}
@@ -71,10 +72,10 @@ export async function SiteFooter() {
 										<FacebookIcon className="size-4" />
 									</Link>
 								)}
-								{socialLinks?.whatsapp && (
+								{hasSocialLink(socialLinks?.whatsapp) && (
 									<Link
 										aria-label="WhatsApp"
-										href={`https://wa.me/${socialLinks.whatsapp.replace(/\s|\+/g, "")}`}
+										href={buildWhatsAppHref(socialLinks.whatsapp)}
 										target="_blank"
 										rel="noreferrer"
 										className="grid size-9 place-items-center rounded-full border border-ink-foreground/20 text-ink-foreground/80 transition-colors hover:border-terracotta hover:text-terracotta"

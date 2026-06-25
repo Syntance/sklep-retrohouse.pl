@@ -3,7 +3,8 @@ import "server-only";
 import { cache } from "react";
 import { fetchStoreMetadataBlob } from "./admin-read";
 import { DEFAULT_HOME_HERO, DEFAULT_GLOBAL_CONTENT, DEFAULT_SITE_SETTINGS } from "./defaults";
-import type { ContentPageId, SiteSettings, PageContent, SeoMeta, GlobalContent } from "./types";
+import { normalizeSocialLinks } from "./social-links";
+import type { ContentPageId, SiteSettings, PageContent, SeoMeta, GlobalContent, SocialLinks } from "./types";
 
 export type { ContentPageId, SiteSettings, PageContent, SeoMeta, GlobalContent };
 export type { HeroContent, FaqItem, PageSeoMap, PageContentMap, AnnouncementBar, SocialLinks } from "./types";
@@ -14,7 +15,16 @@ export type { HeroContent, FaqItem, PageSeoMap, PageContentMap, AnnouncementBar,
  */
 export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
 	const { siteSettings } = await fetchStoreMetadataBlob();
-	return siteSettings;
+	return {
+		...siteSettings,
+		socialLinks: normalizeSocialLinks(siteSettings.socialLinks),
+	};
+});
+
+/** Social media z CMS — tylko wypełnione linki. */
+export const getSocialLinks = cache(async (): Promise<SocialLinks | undefined> => {
+	const { socialLinks } = await getSiteSettings();
+	return socialLinks;
 });
 
 /**

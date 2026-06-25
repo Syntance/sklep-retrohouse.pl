@@ -64,7 +64,7 @@ export function PageHeroImage({
 						<span />
 					)}
 					{caption ? (
-						<p className="rounded-2xl border border-ink-foreground/30 bg-ink-foreground/15 p-5 font-display text-lg italic leading-snug backdrop-blur-md">
+						<p className="rounded-2xl border border-white/30 bg-ink/40 p-5 font-display text-lg italic leading-snug text-[oklch(0.99_0.004_85)] backdrop-blur-md">
 							{caption}
 						</p>
 					) : null}

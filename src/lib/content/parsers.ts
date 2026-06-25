@@ -29,23 +29,29 @@ export const announcementBarSchema = z.object({
 	link: z.string().max(500).optional(),
 });
 
-export const socialLinksSchema = z.object({
-	instagram: z
+const optionalSocialLink = z.preprocess(
+	(v) => (typeof v === "string" ? v.trim() : v),
+	z
 		.string()
 		.max(200)
 		.optional()
 		.transform((v) => v || undefined),
-	facebook: z
-		.string()
-		.max(200)
-		.optional()
-		.transform((v) => v || undefined),
-	whatsapp: z
-		.string()
-		.max(30)
-		.optional()
-		.transform((v) => v || undefined),
-});
+);
+
+export const socialLinksSchema = z
+	.object({
+		instagram: optionalSocialLink,
+		facebook: optionalSocialLink,
+		whatsapp: optionalSocialLink,
+	})
+	.transform((links) => {
+		const normalized = {
+			...(links.instagram ? { instagram: links.instagram } : {}),
+			...(links.facebook ? { facebook: links.facebook } : {}),
+			...(links.whatsapp ? { whatsapp: links.whatsapp } : {}),
+		};
+		return Object.keys(normalized).length > 0 ? normalized : undefined;
+	});
 
 /* ---------- site settings ---------- */
 

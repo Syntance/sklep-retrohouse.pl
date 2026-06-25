@@ -8,6 +8,7 @@ import {
 	RETROHOUSE_GLOBAL_CONTENT_KEY,
 } from "@/lib/content/metadata-keys";
 import { siteSettingsSchema } from "@/lib/content/parsers";
+import { normalizeSocialLinks } from "@/lib/content/social-links";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/content/defaults";
 import { resolveCmsMediaPublicUrl } from "@/lib/content/cms-media-url";
 import { parseStoreMetadataJson } from "@/lib/content/metadata-json";
@@ -87,6 +88,9 @@ export async function mergeSiteSettings(patch: Partial<SiteSettings>): Promise<S
 		DEFAULT_SITE_SETTINGS;
 
 	const merged: SiteSettings = { ...current, ...patch };
+	if (patch.socialLinks !== undefined) {
+		merged.socialLinks = normalizeSocialLinks(patch.socialLinks);
+	}
 	const parsed = siteSettingsSchema.parse(merged);
 	await patchStoreMetadata(
 		store.id,

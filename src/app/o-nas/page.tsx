@@ -9,9 +9,10 @@ import {
 	ShieldIcon,
 } from "@/components/icons";
 import { STORE_INFO } from "@/components/layout/site-header/nav-data";
-import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/components/primitives";
+import { Breadcrumbs, Container, CtaLink, Eyebrow, Section } from "@/components/primitives";
 import { AboutCtaCards } from "@/components/sections/about-cta-cards";
 import { PageHeroImage } from "@/components/sections/page-hero-image";
+import { PageHeroSplit } from "@/components/sections/page-hero-split";
 import { CONTACT_FORM_RESPONSE } from "@/lib/contact/response-time";
 import { getPageContent } from "@/lib/content";
 import { PAGE_HERO_IMAGES } from "@/lib/content/hero-images";
@@ -92,13 +93,7 @@ export default async function ONasPage() {
 
 	return (
 		<main id="main" className="flex flex-col">
-			<Section spacing="sm">
-				<Container size="xl">
-					<Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "O nas" }]} />
-				</Container>
-			</Section>
-
-			<Section spacing="lg" className="overflow-hidden">
+			<Section spacing="md" className="overflow-hidden bg-transparent !pt-10 md:!pt-12">
 				<div
 					aria-hidden
 					className="absolute inset-0 -z-10"
@@ -108,35 +103,33 @@ export default async function ONasPage() {
 					}}
 				/>
 				<Container size="xl">
-					<div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
-						<div>
-							<Eyebrow>O nas</Eyebrow>
+					<PageHeroSplit
+						breadcrumbs={<Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "O nas" }]} />}
+						eyebrow={<Eyebrow>O nas</Eyebrow>}
+						title={
 							<h1 className="mt-3 font-display text-[clamp(2.4rem,5.5vw,4.4rem)] font-semibold leading-[1.04]">
 								Ratujemy skarby z wiedeńskich kamienic
 							</h1>
-							<Lead className="mt-6">
-								Odkupujemy antyki bezpośrednio od prywatnych właścicieli wiedeńskich mieszkań. Bez
-								hurtowni i pośredników — 100% pewność pochodzenia. Sklep w Nowym Targu, wysyłka w
-								całej Polsce.
-							</Lead>
-							<div className="mt-8 flex flex-wrap items-center gap-3">
+						}
+						actions={
+							<>
 								<CtaLink href="/sklep" variant="primary">
 									Zobacz nasze antyki
 								</CtaLink>
 								<CtaLink href="/kontakt" variant="ghost">
 									Odwiedź sklep w Nowym Targu
 								</CtaLink>
-							</div>
-						</div>
-
-						<PageHeroImage
-							src={heroImage.src}
-							alt={heroImage.alt}
-							priority
-							badge="Behind the scenes · Wiedeń"
-							caption="Każda kamienica to rozmowa. Każda rozmowa to historia. Każda historia trafia do karty obok przedmiotu."
-						/>
-					</div>
+							</>
+						}
+						image={
+							<PageHeroImage
+								src={heroImage.src}
+								alt={heroImage.alt}
+								priority
+								caption="Odkupujemy antyki bezpośrednio od prywatnych właścicieli wiedeńskich mieszkań. Bez hurtowni i pośredników — 100% pewność pochodzenia. Sklep w Nowym Targu, wysyłka w całej Polsce."
+							/>
+						}
+					/>
 				</Container>
 			</Section>
 

@@ -6,6 +6,7 @@ import { ProductCard } from "@/components/product-card";
 import { GiftBudgetTiles } from "@/components/sections/gift-budget-tiles";
 import { GiftThemes } from "@/components/sections/gift-themes";
 import { PageHeroImage } from "@/components/sections/page-hero-image";
+import { PageHeroSplit } from "@/components/sections/page-hero-split";
 import { getPageContent } from "@/lib/content";
 import { resolveStaticHeroProductImage } from "@/lib/content/resolve-hero-image";
 import { SmoothScrollAnchor } from "./smooth-scroll-anchor";
@@ -38,11 +39,15 @@ function bucketCaption(id: string) {
 	}
 }
 
+const PREZENT_HERO_DESCRIPTION =
+	"Każdy przedmiot ma za sobą kilkadziesiąt lat życia w Wiedniu. Dajesz w prezencie coś, co przetrwało epoki — i ma jeszcze co opowiedzieć.";
+
 export default async function PrezentPage() {
 	const PRODUCTS = await listProducts();
 	const giftPicks = PRODUCTS.filter((product) => product.giftBestseller).slice(0, 6);
 	const cmsHero = (await getPageContent("prezent")).hero;
 	const heroImage = resolveStaticHeroProductImage("prezent", cmsHero);
+	const heroDescription = cmsHero?.description?.trim() || PREZENT_HERO_DESCRIPTION;
 
 	return (
 		<main id="main" className="flex flex-col">
@@ -56,21 +61,19 @@ export default async function PrezentPage() {
 					}}
 				/>
 				<Container size="xl">
-					<div className="grid gap-x-12 gap-y-8 lg:grid-cols-[1.1fr_0.9fr]">
-						<Breadcrumbs
-							className="lg:col-start-1 lg:row-start-1 lg:self-start"
-							items={[{ label: "Home", href: "/" }, { label: "Prezent z duszą" }]}
-						/>
-						<div className="lg:col-start-1 lg:row-start-2">
-							<Eyebrow>Prezent z duszą</Eyebrow>
+					<PageHeroSplit
+						breadcrumbs={
+							<Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Prezent z duszą" }]} />
+						}
+						eyebrow={<Eyebrow>Prezent z duszą</Eyebrow>}
+						title={
 							<h1 className="mt-3 font-display text-[clamp(2.4rem,5.5vw,4.4rem)] font-semibold leading-[1.04]">
 								Podaruj upominek z historią
 							</h1>
-							<Lead className="mt-6">
-								Każdy przedmiot ma za sobą kilkadziesiąt lat życia w Wiedniu. Dajesz w prezencie coś,
-								co przetrwało epoki — i ma jeszcze co opowiedzieć.
-							</Lead>
-							<div className="mt-8 flex flex-wrap items-center gap-3">
+						}
+						lead={<Lead>{heroDescription}</Lead>}
+						actions={
+							<>
 								<SmoothScrollAnchor href="#budzet">
 									Wybierz po budżecie
 									<ChevronDownIcon className="size-4" aria-hidden="true" />
@@ -78,17 +81,14 @@ export default async function PrezentPage() {
 								<CtaLink href="/sklep" variant="primary">
 									Zobacz sklep
 								</CtaLink>
-							</div>
-						</div>
-						{heroImage ? (
-							<PageHeroImage
-								src={heroImage.src}
-								alt={heroImage.alt}
-								priority
-								className="lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-start"
-							/>
-						) : null}
-					</div>
+							</>
+						}
+						image={
+							heroImage ? (
+								<PageHeroImage src={heroImage.src} alt={heroImage.alt} priority />
+							) : null
+						}
+					/>
 				</Container>
 			</Section>
 
