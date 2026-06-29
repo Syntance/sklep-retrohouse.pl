@@ -13,6 +13,8 @@ import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sklep-retrohouse.pl";
 
+const allowSearchIndexing = process.env.VERCEL_ENV !== "preview";
+
 export const metadata: Metadata = {
 	metadataBase: new URL(SITE_URL),
 	title: {
@@ -35,10 +37,9 @@ export const metadata: Metadata = {
 		"Augarten",
 		"Rosenthal",
 	],
-	robots: {
-		index: false,
-		follow: false,
-	},
+	robots: allowSearchIndexing
+		? { index: true, follow: true, googleBot: { index: true, follow: true } }
+		: { index: false, follow: false, googleBot: { index: false, follow: false } },
 	alternates: {
 		canonical: "/",
 	},

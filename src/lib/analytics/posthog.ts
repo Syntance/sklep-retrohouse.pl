@@ -41,6 +41,7 @@ export function initPostHog(): PostHog | null {
 		capture_pageview: false,
 		capture_pageleave: true,
 		disable_session_recording: true,
+		disable_surveys: true,
 		persistence: "localStorage+cookie",
 		opt_out_capturing_by_default: true,
 		before_send: (eventPayload) => {

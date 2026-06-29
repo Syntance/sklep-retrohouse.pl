@@ -31,10 +31,22 @@ function AnalyticsRouter() {
 	const searchParams = useSearchParams();
 
 	useEffect(() => {
-		initPostHog();
-		const stored = readConsent();
-		if (stored) hydrateConsent(stored);
+		const bootstrap = () => {
+			initPostHog();
+			const stored = readConsent();
+			if (stored) hydrateConsent(stored);
+		};
 
+		if (typeof window.requestIdleCallback === "function") {
+			const idleId = window.requestIdleCallback(bootstrap, { timeout: 2500 });
+			return () => window.cancelIdleCallback(idleId);
+		}
+
+		const timerId = window.setTimeout(bootstrap, 1500);
+		return () => window.clearTimeout(timerId);
+	}, []);
+
+	useEffect(() => {
 		const handler = (event: Event) => {
 			const detail = (event as CustomEvent<ConsentState>).detail;
 			if (!detail) return;

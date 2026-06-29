@@ -36,8 +36,8 @@ export function CookieConsentBanner() {
 	return (
 		<>
 			{showBanner ? (
-				<aside
-					role="dialog"
+				<div
+					role="region"
 					aria-labelledby={headingId}
 					aria-describedby={`${headingId}-desc`}
 					className="fixed inset-x-0 bottom-0 z-50 px-4 pb-4 sm:inset-x-auto sm:bottom-4 sm:left-4 sm:max-w-xl sm:px-0"
@@ -81,7 +81,7 @@ export function CookieConsentBanner() {
 							</button>
 						</div>
 					</div>
-				</aside>
+				</div>
 			) : null}
 
 			<CustomizeDialog

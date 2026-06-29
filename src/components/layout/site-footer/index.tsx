@@ -31,11 +31,12 @@ export async function SiteFooter() {
 					<div className="flex flex-col items-start gap-5">
 						<Link href="/" className="shrink-0" aria-label="RetroHouse — strona główna">
 							<Image
-								src="/brand/retrohouse-logo.png"
+								src="/brand/retrohouse-logo.webp"
 								alt=""
 								width={179}
 								height={179}
-								unoptimized
+								sizes="(max-width: 768px) 154px, 179px"
+								loading="lazy"
 								className="size-[9.625rem] rounded-full object-cover md:size-[11.1875rem]"
 							/>
 						</Link>

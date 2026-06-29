@@ -97,11 +97,11 @@ export function SiteHeader() {
 					className="group flex shrink-0 items-center"
 				>
 					<Image
-						src="/brand/retrohouse-wordmark.png"
+						src="/brand/retrohouse-wordmark.webp"
 						alt=""
 						width={300}
 						height={52}
-						unoptimized
+						sizes="(max-width: 640px) 160px, 200px"
 						priority
 						className="h-9 w-auto object-contain sm:h-10"
 					/>

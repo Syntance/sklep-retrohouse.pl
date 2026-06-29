@@ -152,6 +152,14 @@ const nextConfig: NextConfig = {
 				headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
 			},
 			{
+				source: "/brand/:path*",
+				headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+			},
+			{
+				source: "/images/:path*",
+				headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+			},
+			{
 				source: "/.well-known/security.txt",
 				headers: [
 					{ key: "Content-Type", value: "text/plain; charset=utf-8" },
