@@ -42,6 +42,10 @@ export function initPostHog(): PostHog | null {
 		capture_pageleave: true,
 		disable_session_recording: true,
 		disable_surveys: true,
+		// Wyłączamy lazy-loaded extensions z CDN PostHog — nie potrzebujemy
+		// dead clicks ani web vitals (mamy Speed Insights od Vercel)
+		capture_performance: false,
+		enable_heatmaps: false,
 		persistence: "localStorage+cookie",
 		opt_out_capturing_by_default: true,
 		before_send: (eventPayload) => {

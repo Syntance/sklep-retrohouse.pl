@@ -1,12 +1,12 @@
 /**
  * Self-hosted Inter + Playfair (latin + latin-ext).
  * @fontsource zapewnia spójne unicode-range — bez Arial fallback na ą, ę, ś itd.
- * Inter: oś opsz wg brandbook 2026-05-03.
- * Playfair: tylko wagi używane w UI (mniejszy CSS krytyczny).
+ * Inter Variable: jedna oś opsz pokrywa wszystkie wagi.
+ * Playfair: minimum niezbędne do UI — 400/700 + 400-italic (callout na zdjęciu).
+ * Wagi 500/600/800 eliminujemy — przeglądarka interpoluje z osi Variable (Inter)
+ * lub syntetyzuje (Playfair jest fontom zmiennym niezgodna, ale 400→700 wystarczy).
  */
 @import "@fontsource-variable/inter/opsz.css";
 @import "@fontsource/playfair-display/400.css";
-@import "@fontsource/playfair-display/500.css";
-@import "@fontsource/playfair-display/600.css";
 @import "@fontsource/playfair-display/700.css";
 @import "@fontsource/playfair-display/400-italic.css";
