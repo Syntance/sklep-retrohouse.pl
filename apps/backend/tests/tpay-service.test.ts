@@ -128,7 +128,7 @@ describe("initiatePayment — rejestracja transakcji", () => {
     expect(body.amount).toBe(179.9);
     expect(body.merchantTransactionId).toMatch(/^tpay_[0-9a-f-]{36}$/);
     expect(body.callbacks.notification.url).toBe(
-      "https://api.example.com/hooks/payment/pp_tpay_tpay",
+      "https://api.example.com/hooks/payment/tpay_tpay",
     );
 
     const data = result.data as Record<string, unknown>;

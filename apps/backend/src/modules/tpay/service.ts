@@ -272,7 +272,11 @@ export default class TpayPaymentService extends AbstractPaymentProvider<TpayOpti
       (ctx.email as string | undefined) || customerCtx.email || "";
     const cartId = (ctx.cart_id as string | undefined) ?? "";
 
-    const notificationUrl = `${this.options_.backendUrl.replace(/\/$/, "")}/hooks/payment/pp_tpay_tpay`;
+    // Segment ścieżki BEZ prefiksu "pp_" — Medusa dokleja go sama
+    // (`getWebhookActionAndData` robi `pp_${provider}`); z prefiksem w URL
+    // resolver szukałby "pp_pp_tpay_tpay" i KAŻDA notyfikacja Tpay padałaby
+    // AwilixResolutionError (incydent P24 06.07.2026, ten sam mechanizm).
+    const notificationUrl = `${this.options_.backendUrl.replace(/\/$/, "")}/hooks/payment/tpay_tpay`;
     const successUrl = `${this.options_.storefrontUrl.replace(/\/$/, "")}/checkout/tpay/return${
       cartId ? `?cart_id=${encodeURIComponent(cartId)}` : ""
     }`;
