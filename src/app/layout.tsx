@@ -81,16 +81,6 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="pl" className="h-full antialiased">
-			{/* Preload LCP image — skraca resource load delay o ~200ms na mobile */}
-			<head>
-				<link
-					rel="preload"
-					as="image"
-					href="/images/cms/home-hero.webp"
-					fetchPriority="high"
-					type="image/webp"
-				/>
-			</head>
 			<body className="min-h-full flex flex-col bg-background text-foreground">
 				<HideOnMagazyn>
 					<a
