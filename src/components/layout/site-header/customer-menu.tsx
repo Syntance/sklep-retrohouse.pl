@@ -1,29 +1,30 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { UserIcon } from "@/components/icons";
 import { useCustomerSession } from "@/components/customer/customer-session-provider";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuGroup,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { ACCOUNT_LINKS, accountIconButtonClass } from "./customer-menu-shared";
 
-const ACCOUNT_LINKS = [
-	{ label: "Zamówienia", href: "/konto?tab=zamowienia" },
-	{ label: "Reklamacje", href: "/konto?tab=reklamacje" },
-	{ label: "Zwroty i odstąpienie", href: "/konto?tab=zwroty" },
-] as const;
-
-/** Ten sam rozmiar co Szukaj / Koszyk w headerze. */
-const accountIconButtonClass =
-	"relative grid size-10 place-items-center rounded-full text-foreground/70 transition-colors hover:bg-cream hover:text-terracotta focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring data-popup-open:bg-cream data-popup-open:text-terracotta";
+/**
+ * Dropdown (@base-ui) tylko dla zalogowanych — ładowany dynamicznie.
+ * Placeholder w trakcie ładowania = identyczna ikona (stan nieotwarty),
+ * więc wizualnie nie ma różnicy; chunk dociąga się w ~1 RTT po hydratacji.
+ */
+const CustomerMenuDropdown = dynamic(() => import("./customer-menu-dropdown"), {
+	ssr: false,
+	loading: () => (
+		<span className={accountIconButtonClass} aria-hidden="true">
+			<UserIcon className="size-5" />
+			<span
+				className="absolute top-1.5 right-1.5 size-2 rounded-full bg-success ring-2 ring-background"
+				aria-hidden="true"
+			/>
+		</span>
+	),
+});
 
 type Props = {
 	className?: string;
@@ -32,8 +33,7 @@ type Props = {
 
 export function CustomerMenu({ className, onNavigate }: Props) {
 	const pathname = usePathname();
-	const router = useRouter();
-	const { ready, isLoggedIn, email, logout } = useCustomerSession();
+	const { ready, isLoggedIn } = useCustomerSession();
 
 	const isAccountActive = pathname.startsWith("/konto");
 
@@ -64,62 +64,7 @@ export function CustomerMenu({ className, onNavigate }: Props) {
 		);
 	}
 
-	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger
-				className={cn(
-					accountIconButtonClass,
-					isAccountActive && "text-terracotta",
-					className,
-				)}
-				aria-label={
-					email ? `Menu konta — ${email}` : "Menu konta klienta"
-				}
-			>
-				<UserIcon className="size-5" />
-				<span
-					className="absolute top-1.5 right-1.5 size-2 rounded-full bg-success ring-2 ring-background"
-					aria-hidden="true"
-				/>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end" sideOffset={8} className="min-w-52">
-				<DropdownMenuGroup>
-					<DropdownMenuLabel className="truncate font-normal text-foreground">
-						{email}
-					</DropdownMenuLabel>
-				</DropdownMenuGroup>
-				<DropdownMenuSeparator />
-				<DropdownMenuGroup>
-					{ACCOUNT_LINKS.map((item) => (
-						<DropdownMenuItem
-							key={item.href}
-							onClick={() => {
-								onNavigate?.();
-								router.push(item.href);
-							}}
-						>
-							{item.label}
-						</DropdownMenuItem>
-					))}
-				</DropdownMenuGroup>
-				<DropdownMenuSeparator />
-				<DropdownMenuGroup>
-					<DropdownMenuItem
-						onClick={() => {
-							logout();
-							onNavigate?.();
-							if (pathname.startsWith("/konto")) {
-								router.push("/konto");
-							}
-						}}
-						variant="destructive"
-					>
-						Wyloguj się
-					</DropdownMenuItem>
-				</DropdownMenuGroup>
-			</DropdownMenuContent>
-		</DropdownMenu>
-	);
+	return <CustomerMenuDropdown className={className} onNavigate={onNavigate} />;
 }
 
 export function CustomerMenuMobileLinks({ onNavigate }: { onNavigate?: () => void }) {

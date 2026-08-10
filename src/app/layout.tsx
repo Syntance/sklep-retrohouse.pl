@@ -3,7 +3,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 import { AppToaster } from "@/components/app-toaster";
 import { CookieConsentBanner } from "@/components/cookie-consent";
-import { CartAddedCallout } from "@/components/cart-added-callout";
+import { CartAddedCalloutLazy } from "@/components/cart-added-callout-lazy";
 import { HideOnMagazyn } from "@/components/layout/hide-on-magazyn";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -104,7 +104,7 @@ export default function RootLayout({
 					<CookieConsentBanner />
 				</HideOnMagazyn>
 				<HideOnMagazyn>
-					<CartAddedCallout />
+					<CartAddedCalloutLazy />
 				</HideOnMagazyn>
 				<SpeedInsights />
 				<Analytics />

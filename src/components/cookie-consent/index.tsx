@@ -1,9 +1,19 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useId } from "react";
+import { useId, useRef } from "react";
 import { useConsent } from "@/lib/analytics/use-consent";
-import { CustomizeDialog } from "./customize-dialog";
+
+/**
+ * Dialog „Dostosuj" (@base-ui Dialog) — dynamiczny: otwierany rzadko,
+ * a jego kod nie musi wchodzić do initial JS. Montowany dopiero przy
+ * pierwszym otwarciu (potem zostaje, żeby zamknięcie miało animację).
+ */
+const CustomizeDialog = dynamic(
+	() => import("./customize-dialog").then((m) => m.CustomizeDialog),
+	{ ssr: false },
+);
 
 /**
  * CookieConsentBanner — sticky bottom + 3 przyciski równoważne (UODO 2023).
@@ -19,6 +29,8 @@ import { CustomizeDialog } from "./customize-dialog";
 export function CookieConsentBanner() {
 	const headingId = useId();
 	const { consent, isLoaded, isOpen, open, close, update } = useConsent();
+	const dialogEverOpenedRef = useRef(false);
+	if (isOpen) dialogEverOpenedRef.current = true;
 
 	if (!isLoaded) return null;
 	const showBanner = consent === null;
@@ -84,12 +96,14 @@ export function CookieConsentBanner() {
 				</div>
 			) : null}
 
-			<CustomizeDialog
-				open={isOpen}
-				current={consent}
-				onClose={close}
-				onSave={handleSaveCustom}
-			/>
+			{dialogEverOpenedRef.current ? (
+				<CustomizeDialog
+					open={isOpen}
+					current={consent}
+					onClose={close}
+					onSave={handleSaveCustom}
+				/>
+			) : null}
 		</>
 	);
 }

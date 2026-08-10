@@ -122,6 +122,12 @@ const nextConfig: NextConfig = {
 	productionBrowserSourceMaps: false,
 	images: {
 		formats: ["image/avif", "image/webp"],
+		/**
+		 * Rok cache dla /_next/image — bezpieczne, bo URL wariantu zawiera
+		 * ?dpl= per deployment (Vercel skew protection), więc nowy deploy
+		 * to nowy URL. Domyślne 1d obrywało w audycie "efficient cache TTL".
+		 */
+		minimumCacheTTL: 31536000,
 		remotePatterns: [
 			{ protocol: "https", hostname: "res.cloudinary.com" },
 			{ protocol: "https", hostname: "cdn.sanity.io" },
