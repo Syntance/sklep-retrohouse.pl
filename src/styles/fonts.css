@@ -1,15 +1,17 @@
 /**
  * Self-hosted Inter + Playfair (latin + latin-ext).
  * @fontsource zapewnia spójne unicode-range — bez Arial fallback na ą, ę, ś itd.
- * Inter Variable: oś wght (nie opsz) — oś optical-size kosztuje 71 KiB
- * (201 KiB -> 130 KiB dla latin+latin-ext), a nigdzie nie używamy
- * font-optical-sizing ani font-variation-settings. Ta sama rodzina
- * ('Inter Variable'), ten sam zakres wag 100-900, to samo latin-ext.
+ * Inter Variable: oś opsz — ZOSTAWIAMY mimo 71 KiB narzutu wzgledem osi
+ * wght. Optical sizing (font-optical-sizing: auto jest domyslne) dziala
+ * powyzej 14 px i realnie zmienia rysunek liter: bez niego tekst jest
+ * szerszy o 0,99% przy 16 px, 2,04% przy 18 px i 8,30% przy 34 px
+ * (zmierzone canvas measureText). Ponizej 14 px roznica to 0,00%.
+ * Nie zamieniac na wght.css — to zmiana wygladu, nie tylko rozmiaru.
  * Playfair: minimum niezbędne do UI — 400/700 + 400-italic (callout na zdjęciu).
  * Wagi 500/600/800 eliminujemy — przeglądarka interpoluje z osi Variable (Inter)
  * lub syntetyzuje (Playfair jest fontom zmiennym niezgodna, ale 400→700 wystarczy).
  */
-@import "@fontsource-variable/inter/wght.css";
+@import "@fontsource-variable/inter/opsz.css";
 @import "@fontsource/playfair-display/400.css";
 @import "@fontsource/playfair-display/700.css";
 @import "@fontsource/playfair-display/400-italic.css";
