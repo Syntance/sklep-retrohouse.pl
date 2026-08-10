@@ -1,7 +1,7 @@
 "use client";
 
 import type { PostHog } from "posthog-js";
-import { env } from "@/env";
+import { clientEnv } from "@/env.client";
 import type { AnalyticsEvent } from "./events";
 
 /**
@@ -31,7 +31,7 @@ export function isAnalyticsConsented(): boolean {
 }
 
 function isEnabled(): boolean {
-	return Boolean(env.NEXT_PUBLIC_POSTHOG_KEY);
+	return Boolean(clientEnv.NEXT_PUBLIC_POSTHOG_KEY);
 }
 
 export function initPostHog(): Promise<PostHog | null> {
@@ -40,8 +40,8 @@ export function initPostHog(): Promise<PostHog | null> {
 	if (posthogPromise) return posthogPromise;
 
 	posthogPromise = import("posthog-js").then(({ default: posthog }) => {
-		posthog.init(env.NEXT_PUBLIC_POSTHOG_KEY ?? "", {
-			api_host: env.NEXT_PUBLIC_POSTHOG_HOST,
+		posthog.init(clientEnv.NEXT_PUBLIC_POSTHOG_KEY ?? "", {
+			api_host: clientEnv.NEXT_PUBLIC_POSTHOG_HOST,
 			ui_host: "https://eu.posthog.com",
 			autocapture: false,
 			capture_pageview: false,

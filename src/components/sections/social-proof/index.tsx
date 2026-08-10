@@ -8,7 +8,7 @@ import { track } from "@/lib/analytics/posthog";
 import type { ContactTopic } from "@/lib/analytics/events";
 import { submitContact, type ContactState } from "@/app/kontakt/actions";
 import { CONTACT_FORM_RESPONSE } from "@/lib/contact/response-time";
-import { getContactTopicOptions } from "@/lib/validation/contact";
+import { getContactTopicOptions } from "@/lib/validation/contact-topics";
 import { TESTIMONIALS } from "@/lib/mock/testimonials";
 
 const HOME_TOPIC_OPTIONS = getContactTopicOptions("kontakt");

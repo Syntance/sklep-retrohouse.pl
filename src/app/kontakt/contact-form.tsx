@@ -10,7 +10,7 @@ import {
 	type ContactTopicPreset,
 	formatContactTopicLabel,
 	getContactTopicOptions,
-} from "@/lib/validation/contact";
+} from "@/lib/validation/contact-topics";
 import { submitContact, type ContactState } from "./actions";
 
 const INITIAL: ContactState = { status: "idle" };

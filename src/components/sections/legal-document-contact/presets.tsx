@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { EMAIL_ACCESS, EMAIL_CONTACT } from "@/lib/email/constants";
-import type { ContactTopicPreset } from "@/lib/validation/contact";
+import type { ContactTopicPreset } from "@/lib/validation/contact-topics";
 
 export type LegalDocumentContactSectionProps = {
 	heading: string;

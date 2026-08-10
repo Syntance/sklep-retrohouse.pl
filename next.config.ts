@@ -130,6 +130,14 @@ const nextConfig: NextConfig = {
 		],
 	},
 	experimental: {
+		/**
+		 * CSS inline w <style> zamiast render-blockingowego <link> — Tailwind
+		 * generuje ~24 KiB gz, a Lighthouse mobile wyceniał blokujący request
+		 * na ~2,7 s opóźnienia FCP/LCP przy Slow 4G. Ruch sklepu to głównie
+		 * pierwsze wizyty, więc utrata cache'owania arkusza to dobry trade-off
+		 * (rekomendacja z docs Next dla atomic CSS).
+		 */
+		inlineCss: true,
 		serverActions: {
 			bodySizeLimit: "15mb",
 		},
