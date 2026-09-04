@@ -53,7 +53,10 @@ export async function runOrderAction(
 	revalidatePath(`/magazyn/zamowienia/${orderId}`);
 	revalidatePath("/magazyn");
 
-	await sendOrderStatusEmail(orderId, ACTION_EMAIL[action]);
+	const mail = await sendOrderStatusEmail(orderId, ACTION_EMAIL[action]);
+	if (!mail.ok) {
+		console.error("[order] status zmieniony, mail nieudany", orderId, mail.error ?? "brak szczegolow");
+	}
 
 	return { ok: true, error: null };
 }

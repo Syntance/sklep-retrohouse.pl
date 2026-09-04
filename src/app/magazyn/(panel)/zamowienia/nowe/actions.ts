@@ -74,8 +74,19 @@ export async function createManualOrderAction(
 	}
 
 	if (parsed.data.sendConfirmationEmail) {
-		// Best-effort — brak maila nie unieważnia utworzonego zamówienia.
-		await sendOrderStatusEmail(orderId, "placed").catch(() => undefined);
+		// Best-effort — brak maila nie unieważnia utworzonego zamówienia, ale
+		// musi zostawić ślad (funkcja zwraca ok:false zamiast rzucać).
+		const mail = await sendOrderStatusEmail(orderId, "placed").catch((error: unknown) => ({
+			ok: false as const,
+			error: error instanceof Error ? error.message : "wyjatek",
+		}));
+		if (!mail.ok) {
+			console.error(
+				"[order.manual] zamowienie utworzone, mail nieudany",
+				orderId,
+				mail.error ?? "brak szczegolow",
+			);
+		}
 	}
 
 	revalidatePath("/magazyn/zamowienia");

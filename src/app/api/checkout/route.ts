@@ -48,13 +48,22 @@ export async function POST(request: Request) {
 		// Zamówienie JUŻ istnieje — awaria maila nie może zamienić sukcesu w błąd.
 		// Wcześniej rzucony mail leciał do catch → klient widział "nie udało się"
 		// i ponawiał, tworząc drugie realne zamówienie.
+		// Uwaga: te funkcje NIE rzucają przy błędzie Resenda — zwracają
+		// `{ ok: false, error }`. Samo `allSettled` nie wystarczy, trzeba
+		// sprawdzić wartość, inaczej awaria maila jest całkowicie niewidoczna.
 		const mailResults = await Promise.allSettled([
 			sendOrderStatusEmail(result.orderId, "placed"),
 			sendNewOrderShopNotification(result.orderId),
 		]);
 		for (const outcome of mailResults) {
 			if (outcome.status === "rejected") {
-				console.error("[checkout] order created, e-mail failed", result.orderId, outcome.reason);
+				console.error("[checkout] zamowienie zlozone, mail rzucil", result.orderId, outcome.reason);
+			} else if (!outcome.value.ok) {
+				console.error(
+					"[checkout] zamowienie zlozone, mail nieudany",
+					result.orderId,
+					outcome.value.error ?? "brak szczegolow",
+				);
 			}
 		}
 

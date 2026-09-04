@@ -218,11 +218,18 @@ function buildShopText(order: AdminOrderDetail): string {
 		.join("\n");
 }
 
+/**
+ * Wynik wysyłki. `ok: false` NIE jest wyjątkiem — wołający musi sam sprawdzić
+ * to pole. Wcześniej powód porażki Resenda ginął bez śladu, więc opakowanie
+ * wysyłki w `Promise.allSettled` nie logowało niczego.
+ */
+export type EmailOutcome = { ok: boolean; skipped?: boolean; error?: string };
+
 /** E-mail do klienta po zmianie statusu. */
 export async function sendOrderStatusEmail(
 	orderId: string,
 	stage: OrderEmailStage,
-): Promise<{ ok: boolean; skipped?: boolean }> {
+): Promise<EmailOutcome> {
 	const order = await getAdminOrderForEmail(orderId);
 	if (!order?.email.trim()) return { ok: true, skipped: true };
 
@@ -251,13 +258,11 @@ export async function sendOrderStatusEmail(
 	}
 
 	const result = await sendTransactionalEmail({ to: order.email, subject, text, html });
-	return result.ok ? { ok: true, skipped: result.skipped } : { ok: false };
+	return result.ok ? { ok: true, skipped: result.skipped } : { ok: false, error: result.message };
 }
 
 /** E-mail wewnętrzny — tylko przy nowym zamówieniu do akceptacji. */
-export async function sendNewOrderShopNotification(
-	orderId: string,
-): Promise<{ ok: boolean; skipped?: boolean }> {
+export async function sendNewOrderShopNotification(orderId: string): Promise<EmailOutcome> {
 	const order = await getAdminOrderForEmail(orderId);
 	if (!order) return { ok: true, skipped: true };
 
@@ -268,5 +273,5 @@ export async function sendNewOrderShopNotification(
 		html: buildShopHtml(order),
 	});
 
-	return result.ok ? { ok: true, skipped: result.skipped } : { ok: false };
+	return result.ok ? { ok: true, skipped: result.skipped } : { ok: false, error: result.message };
 }
