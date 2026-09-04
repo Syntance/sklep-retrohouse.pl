@@ -53,9 +53,16 @@ export function GET(): Response {
 }
 
 function formatIcs(date: Date): string {
-	return date.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+	return date
+		.toISOString()
+		.replace(/[-:]/g, "")
+		.replace(/\.\d{3}/, "");
 }
 
 function escapeIcs(value: string): string {
-	return value.replace(/\\/g, "\\\\").replace(/,/g, "\\,").replace(/;/g, "\\;").replace(/\n/g, "\\n");
+	return value
+		.replace(/\\/g, "\\\\")
+		.replace(/,/g, "\\,")
+		.replace(/;/g, "\\;")
+		.replace(/\n/g, "\\n");
 }

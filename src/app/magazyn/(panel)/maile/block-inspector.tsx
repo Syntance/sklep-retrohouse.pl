@@ -17,8 +17,8 @@ import type {
 	TextBlock,
 } from "@/lib/email/template-types";
 import { cn } from "@/lib/utils";
-import { editorBtnRounded } from "./editor-chrome";
 import { BLOCK_META, createBlock, LEAF_PALETTE } from "./block-meta";
+import { editorBtnRounded } from "./editor-chrome";
 import {
 	AlignField,
 	ColorField,
@@ -44,7 +44,11 @@ function StyleEditor({
 	return (
 		<div className="flex flex-col gap-3">
 			{withColor ? (
-				<ColorField label="Kolor tekstu" value={style.color ?? "#2a1f14"} onChange={(color) => patch({ color })} />
+				<ColorField
+					label="Kolor tekstu"
+					value={style.color ?? "#2a1f14"}
+					onChange={(color) => patch({ color })}
+				/>
 			) : null}
 			<div className="grid grid-cols-2 gap-3">
 				<NumberField
@@ -64,8 +68,16 @@ function StyleEditor({
 			</div>
 			<AlignField value={style.align ?? "left"} onChange={(align) => patch({ align })} />
 			<div className="flex gap-4">
-				<ToggleField label="Pogrubienie" checked={style.bold ?? false} onChange={(bold) => patch({ bold })} />
-				<ToggleField label="Kursywa" checked={style.italic ?? false} onChange={(italic) => patch({ italic })} />
+				<ToggleField
+					label="Pogrubienie"
+					checked={style.bold ?? false}
+					onChange={(bold) => patch({ bold })}
+				/>
+				<ToggleField
+					label="Kursywa"
+					checked={style.italic ?? false}
+					onChange={(italic) => patch({ italic })}
+				/>
 			</div>
 		</div>
 	);
@@ -135,7 +147,11 @@ function ImageEditor({
 				) : null}
 			</div>
 
-			<TextField label="Tekst alternatywny (alt)" value={block.alt} onChange={(alt) => onChange({ ...block, alt })} />
+			<TextField
+				label="Tekst alternatywny (alt)"
+				value={block.alt}
+				onChange={(alt) => onChange({ ...block, alt })}
+			/>
 			<TextField
 				label="Link po kliknięciu (opcjonalny)"
 				value={block.href ?? ""}
@@ -163,14 +179,36 @@ function ImageEditor({
 	);
 }
 
-function ButtonEditor({ block, onChange }: { block: ButtonBlock; onChange: (next: ButtonBlock) => void }) {
+function ButtonEditor({
+	block,
+	onChange,
+}: {
+	block: ButtonBlock;
+	onChange: (next: ButtonBlock) => void;
+}) {
 	return (
 		<div className="flex flex-col gap-3">
-			<TextField label="Etykieta" value={block.label} onChange={(label) => onChange({ ...block, label })} />
-			<TextField label="Adres (URL)" value={block.href} onChange={(href) => onChange({ ...block, href })} />
+			<TextField
+				label="Etykieta"
+				value={block.label}
+				onChange={(label) => onChange({ ...block, label })}
+			/>
+			<TextField
+				label="Adres (URL)"
+				value={block.href}
+				onChange={(href) => onChange({ ...block, href })}
+			/>
 			<div className="grid grid-cols-2 gap-3">
-				<ColorField label="Tło" value={block.bg ?? "#c8622a"} onChange={(bg) => onChange({ ...block, bg })} />
-				<ColorField label="Tekst" value={block.color ?? "#ffffff"} onChange={(color) => onChange({ ...block, color })} />
+				<ColorField
+					label="Tło"
+					value={block.bg ?? "#c8622a"}
+					onChange={(bg) => onChange({ ...block, bg })}
+				/>
+				<ColorField
+					label="Tekst"
+					value={block.color ?? "#ffffff"}
+					onChange={(color) => onChange({ ...block, color })}
+				/>
 			</div>
 			<div className="grid grid-cols-2 gap-3">
 				<NumberField
@@ -188,7 +226,10 @@ function ButtonEditor({ block, onChange }: { block: ButtonBlock; onChange: (next
 					onChange={(paddingY) => onChange({ ...block, paddingY })}
 				/>
 			</div>
-			<AlignField value={block.align ?? "left"} onChange={(align) => onChange({ ...block, align })} />
+			<AlignField
+				value={block.align ?? "left"}
+				onChange={(align) => onChange({ ...block, align })}
+			/>
 		</div>
 	);
 }
@@ -226,20 +267,35 @@ function LeafEditor({
 			const b = block as TextBlock;
 			return (
 				<div className="flex flex-col gap-3">
-					<TextAreaField label="Treść" value={b.text} onChange={(text) => onChange({ ...b, text })} rows={5} />
+					<TextAreaField
+						label="Treść"
+						value={b.text}
+						onChange={(text) => onChange({ ...b, text })}
+						rows={5}
+					/>
 					<StyleEditor style={b.style} onChange={(style) => onChange({ ...b, style })} />
 				</div>
 			);
 		}
 		case "image":
-			return <ImageEditor block={block as ImageBlock} onChange={(b) => onChange(b)} onUpload={onUpload} />;
+			return (
+				<ImageEditor
+					block={block as ImageBlock}
+					onChange={(b) => onChange(b)}
+					onUpload={onUpload}
+				/>
+			);
 		case "button":
 			return <ButtonEditor block={block as ButtonBlock} onChange={(b) => onChange(b)} />;
 		case "divider": {
 			const b = block as DividerBlock;
 			return (
 				<div className="flex flex-col gap-3">
-					<ColorField label="Kolor linii" value={b.color ?? "#e8dcc0"} onChange={(color) => onChange({ ...b, color })} />
+					<ColorField
+						label="Kolor linii"
+						value={b.color ?? "#e8dcc0"}
+						onChange={(color) => onChange({ ...b, color })}
+					/>
 					<NumberField
 						label="Odstęp Y (px)"
 						value={b.paddingY ?? 10}
@@ -290,7 +346,9 @@ function ColumnsEditor({
 							<button
 								type="button"
 								aria-label="Usuń element kolumny"
-								onClick={() => onChange({ ...block, [side]: items.filter((i) => i.id !== leaf.id) })}
+								onClick={() =>
+									onChange({ ...block, [side]: items.filter((i) => i.id !== leaf.id) })
+								}
 								className="text-muted-foreground hover:text-destructive"
 							>
 								<Trash2 className="size-3.5" aria-hidden />
@@ -312,7 +370,9 @@ function ColumnsEditor({
 							<button
 								key={type}
 								type="button"
-								onClick={() => onChange({ ...block, [side]: [...items, createBlock(type) as LeafBlock] })}
+								onClick={() =>
+									onChange({ ...block, [side]: [...items, createBlock(type) as LeafBlock] })
+								}
 								className={cn(
 									editorBtnRounded,
 									"inline-flex items-center gap-1 border border-input px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
@@ -374,7 +434,9 @@ export function BlockInspector({
 					<ToggleField
 						label="Miniatury produktów"
 						checked={(block as OrderItemsBlock).showThumbnails}
-						onChange={(showThumbnails) => onChange({ ...(block as OrderItemsBlock), showThumbnails })}
+						onChange={(showThumbnails) =>
+							onChange({ ...(block as OrderItemsBlock), showThumbnails })
+						}
 					/>
 					<ToggleField
 						label="Wiersz „Razem”"

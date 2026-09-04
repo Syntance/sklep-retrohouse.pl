@@ -1,17 +1,17 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { recordAudit } from "@/lib/admin/audit-log";
 import { getContactFormsConfig, saveContactFormsConfig } from "@/lib/admin/contact-forms";
-import type { ContactFormsConfig } from "@/lib/contact/default-forms";
 import { loadAdmin } from "@/lib/admin/load";
+import type { ContactFormsConfig } from "@/lib/contact/default-forms";
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
-export async function saveContactFormsAction(
-	config: ContactFormsConfig,
-): Promise<ActionResult> {
+export async function saveContactFormsAction(config: ContactFormsConfig): Promise<ActionResult> {
 	try {
 		await loadAdmin(() => saveContactFormsConfig(config));
+		await recordAudit("contact-forms.config.save");
 		revalidatePath("/magazyn/formularze");
 		revalidatePath("/kontakt");
 		revalidatePath("/polityka-prywatnosci");

@@ -36,17 +36,3 @@ export function buildWhatsAppHref(value: string): string {
 
 	return `https://wa.me/${digits}`;
 }
-
-/** Krótka etykieta do UI (np. @retrohouse). */
-export function instagramDisplayLabel(href: string): string {
-	try {
-		const url = new URL(href.startsWith("http") ? href : `https://${href}`);
-		const segment = url.pathname.replace(/^\/+|\/+$/g, "").split("/")[0];
-		if (segment) return `@${segment}`;
-	} catch {
-		// fallback poniżej
-	}
-
-	const handle = href.replace(/^@/, "").trim();
-	return handle.startsWith("http") ? "Instagram" : `@${handle}`;
-}

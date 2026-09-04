@@ -31,6 +31,7 @@ export function MedusaOrderImage({ src, alt, width, height, className }: Props) 
 	}
 
 	return (
+		// biome-ignore lint/performance/noImgElement: miniatury zamówień z dowolnych hostów Medusa/CDN (poza remotePatterns) + fallback onError; widok za logowaniem, lazy
 		<img
 			src={src}
 			alt={alt}

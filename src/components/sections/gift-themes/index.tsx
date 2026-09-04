@@ -4,7 +4,13 @@ import Link from "next/link";
 import { GiftIcon, HeartIcon, HouseIcon, PackageIcon } from "@/components/icons";
 import { track } from "@/lib/analytics/posthog";
 
-const THEMES: Array<{ id: string; label: string; description: string; icon: React.ReactNode; href: string }> = [
+const THEMES: Array<{
+	id: string;
+	label: string;
+	description: string;
+	icon: React.ReactNode;
+	href: string;
+}> = [
 	{
 		id: "rocznica",
 		label: "Rocznica",

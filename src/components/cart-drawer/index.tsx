@@ -11,10 +11,10 @@ import {
 	SheetHeader,
 	SheetTitle,
 } from "@/components/ui/sheet";
-import { formatPrice } from "@/lib/format";
+import { track } from "@/lib/analytics/posthog";
 import { selectCartCount, useCartStore } from "@/lib/cart/store";
 import { useCartMounted, useCartProducts } from "@/lib/cart/use-cart-products";
-import { track } from "@/lib/analytics/posthog";
+import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 type CartDrawerProps = {
@@ -97,11 +97,7 @@ export function CartDrawer({ triggerClassName }: CartDrawerProps) {
 							<p className="mt-2 max-w-xs text-sm text-foreground/70">
 								Dodaj unikat ze sklepu — pojawi się tutaj po akceptacji opisu stanu.
 							</p>
-							<CtaLink
-								href="/sklep"
-								className="mt-6"
-								onClick={() => setOpen(false)}
-							>
+							<CtaLink href="/sklep" className="mt-6" onClick={() => setOpen(false)}>
 								Przeglądaj sklep
 							</CtaLink>
 						</div>
@@ -176,9 +172,7 @@ export function CartDrawer({ triggerClassName }: CartDrawerProps) {
 							</div>
 							<div className="flex items-center justify-between">
 								<dt className="text-foreground/70">Wysyłka</dt>
-								<dd className="tabular">
-									{shippingFree ? "0 zł" : formatPrice(shipping)}
-								</dd>
+								<dd className="tabular">{shippingFree ? "0 zł" : formatPrice(shipping)}</dd>
 							</div>
 							<div className="flex items-baseline justify-between border-t border-border pt-3">
 								<dt className="font-display text-lg">Razem</dt>

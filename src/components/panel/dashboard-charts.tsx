@@ -9,9 +9,9 @@ import {
 	XAxis,
 	YAxis,
 } from "recharts";
-import { Badge, Card } from "./chrome";
-import { formatPrice } from "@/lib/format";
 import type { SalesStatistics } from "@/lib/admin/analytics/sales-stats";
+import { formatPrice } from "@/lib/format";
+import { Badge, Card } from "./chrome";
 
 const CHART_STROKE = "#AF7C61";
 
@@ -103,7 +103,10 @@ export function DashboardCharts({ stats }: Props) {
 								<span className="font-medium text-foreground">{item.val}</span>
 							</div>
 							<div className="h-1.5 rounded-full bg-muted">
-								<div className={`h-1.5 rounded-full ${item.color}`} style={{ width: `${item.pct}%` }} />
+								<div
+									className={`h-1.5 rounded-full ${item.color}`}
+									style={{ width: `${item.pct}%` }}
+								/>
 							</div>
 						</div>
 					))}

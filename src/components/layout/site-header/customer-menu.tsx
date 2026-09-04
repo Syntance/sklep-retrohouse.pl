@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { UserIcon } from "@/components/icons";
 import { useCustomerSession } from "@/components/customer/customer-session-provider";
+import { UserIcon } from "@/components/icons";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -53,11 +53,7 @@ export function CustomerMenu({ className, onNavigate }: Props) {
 				onClick={onNavigate}
 				aria-label="Konto klienta — zaloguj się"
 				aria-current={isAccountActive ? "page" : undefined}
-				className={cn(
-					accountIconButtonClass,
-					isAccountActive && "text-terracotta",
-					className,
-				)}
+				className={cn(accountIconButtonClass, isAccountActive && "text-terracotta", className)}
 			>
 				<UserIcon className="size-5" />
 			</Link>
@@ -67,14 +63,8 @@ export function CustomerMenu({ className, onNavigate }: Props) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger
-				className={cn(
-					accountIconButtonClass,
-					isAccountActive && "text-terracotta",
-					className,
-				)}
-				aria-label={
-					email ? `Menu konta — ${email}` : "Menu konta klienta"
-				}
+				className={cn(accountIconButtonClass, isAccountActive && "text-terracotta", className)}
+				aria-label={email ? `Menu konta — ${email}` : "Menu konta klienta"}
 			>
 				<UserIcon className="size-5" />
 				<span

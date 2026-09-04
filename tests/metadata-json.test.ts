@@ -4,7 +4,9 @@ import { parsePageContentMap } from "@/lib/content/parsers";
 
 describe("parseStoreMetadataJson", () => {
 	it("parses JSON string", () => {
-		expect(parseStoreMetadataJson('{"home":{"hero":{"productImageUrl":"https://cdn.example/a.webp"}}}')).toEqual({
+		expect(
+			parseStoreMetadataJson('{"home":{"hero":{"productImageUrl":"https://cdn.example/a.webp"}}}'),
+		).toEqual({
 			home: { hero: { productImageUrl: "https://cdn.example/a.webp" } },
 		});
 	});
@@ -26,7 +28,9 @@ describe("parsePageContentMap", () => {
 	it("accepts hero with only image URL (no copy fields)", () => {
 		const raw = {
 			prezent: {
-				hero: { productImageUrl: "https://pub-0830cd4d3a284718ab20b01eaab23d3b.r2.dev/cms-uploads/x.webp" },
+				hero: {
+					productImageUrl: "https://pub-0830cd4d3a284718ab20b01eaab23d3b.r2.dev/cms-uploads/x.webp",
+				},
 			},
 		};
 		const parsed = parsePageContentMap(raw);

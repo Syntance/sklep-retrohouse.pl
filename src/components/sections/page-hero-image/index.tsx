@@ -41,7 +41,11 @@ export function PageHeroImage({
 			)}
 		>
 			{missing ? (
-				<div aria-hidden className="absolute inset-0" style={{ backgroundImage: FALLBACK_GRADIENT }} />
+				<div
+					aria-hidden
+					className="absolute inset-0"
+					style={{ backgroundImage: FALLBACK_GRADIENT }}
+				/>
 			) : (
 				<Image
 					src={src}

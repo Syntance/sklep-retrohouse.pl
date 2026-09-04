@@ -1,11 +1,9 @@
 import type { ReturnRequest, ReturnStatus } from "@/lib/admin/return-types";
-import { isActiveReturnStatus } from "@/lib/customer/return-request-active";
 import {
-	mapReturnItemsToCustomer,
 	type CustomerReturnLineItem,
+	mapReturnItemsToCustomer,
 } from "@/lib/customer/return-line-items";
-
-export type { CustomerReturnLineItem };
+import { isActiveReturnStatus } from "@/lib/customer/return-request-active";
 
 const STATUS_LABELS: Record<ReturnStatus, string> = {
 	pending_approval: "Odstąpienie złożone",
@@ -25,8 +23,7 @@ const STATUS_HINTS: Partial<Record<ReturnStatus, string>> = {
 	shipped: "Otrzymaliśmy informację, że przesyłka zwrotna jest w drodze.",
 	received: "Mamy towar — przygotowujemy zwrot środków.",
 	refunded: "Środki zostały zwrócone — sprawa zamknięta.",
-	rejected:
-		"Wniosek o odstąpienie został odrzucony. Szczegóły w wiadomości e-mail.",
+	rejected: "Wniosek o odstąpienie został odrzucony. Szczegóły w wiadomości e-mail.",
 };
 
 export type CustomerWithdrawalInfo = {
@@ -42,9 +39,7 @@ export type CustomerWithdrawalInfo = {
 	isActive: boolean;
 };
 
-export function mapReturnToCustomerWithdrawal(
-	ret: ReturnRequest,
-): CustomerWithdrawalInfo {
+export function mapReturnToCustomerWithdrawal(ret: ReturnRequest): CustomerWithdrawalInfo {
 	return {
 		id: ret.id,
 		status: ret.status,

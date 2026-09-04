@@ -122,9 +122,7 @@ export async function getReturnById(id: string): Promise<ReturnRequest | null> {
 /**
  * Wnioski klienta (zwroty + reklamacje) po zweryfikowanym e-mailu z OTP.
  */
-export async function getReturnRequestsByCustomerEmail(
-	email: string,
-): Promise<ReturnRequest[]> {
+export async function getReturnRequestsByCustomerEmail(email: string): Promise<ReturnRequest[]> {
 	const returns = await readReturns();
 	const normalized = email.trim().toLowerCase();
 	return returns.filter((r) => r.customerEmail.trim().toLowerCase() === normalized);
@@ -149,10 +147,7 @@ export async function getActiveClaimForOrder(
 	const requests = await getReturnRequestsByCustomerEmail(customerEmail);
 	return (
 		requests.find(
-			(r) =>
-				r.requestType === "claim" &&
-				r.orderId === orderId &&
-				isActiveReturnRequest(r),
+			(r) => r.requestType === "claim" && r.orderId === orderId && isActiveReturnRequest(r),
 		) ?? null
 	);
 }
@@ -165,10 +160,7 @@ export async function getActiveWithdrawalForOrder(
 	const requests = await getReturnRequestsByCustomerEmail(customerEmail);
 	return (
 		requests.find(
-			(r) =>
-				r.requestType === "withdrawal" &&
-				r.orderId === orderId &&
-				isActiveReturnRequest(r),
+			(r) => r.requestType === "withdrawal" && r.orderId === orderId && isActiveReturnRequest(r),
 		) ?? null
 	);
 }

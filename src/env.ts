@@ -23,6 +23,13 @@ export const env = createEnv({
 		SENTRY_ORG: z.string().optional(),
 		SENTRY_PROJECT: z.string().optional(),
 
+		/**
+		 * Sekret HMAC podpisujący tokeny sesji klienta (OTP login /konto, /odstapienie, /reklamacje).
+		 * Wymagany na produkcji — bez niego logowanie klienta rzuca błąd (fail-closed).
+		 * Wygeneruj: `openssl rand -base64 48`.
+		 */
+		CUSTOMER_SESSION_SECRET: z.string().min(32).optional(),
+
 		/** Transactional — formularz /kontakt (Resend). Bez klucza akcja kończy się sukcesem bez wysyłki (preview / CI). */
 		RESEND_API_KEY: z.string().optional(),
 		/** Zweryfikowany nadawca w Resend (domyślnie w kodzie: kontakt@sklep-retrohouse.pl). */
@@ -82,10 +89,7 @@ export const env = createEnv({
 			.default("https://medusa-backend-production-9270.up.railway.app"),
 		/** Publishable API key ze sklepu Medusa (Settings → Publishable API Keys). */
 		NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: isStrictEnv
-			? z.preprocess(
-					(val) => (typeof val === "string" ? val.trim() : val),
-					z.string().min(1),
-				)
+			? z.preprocess((val) => (typeof val === "string" ? val.trim() : val), z.string().min(1))
 			: z.preprocess(
 					(val) => (typeof val === "string" ? val.trim() : val),
 					z.string().min(1).optional(),
@@ -111,10 +115,7 @@ export const env = createEnv({
 		NEXT_PUBLIC_POSTHOG_HOST: z.string().url().default("https://eu.posthog.com"),
 
 		/** Meta Pixel — ładowany wyłącznie po zgodzie marketingowej (art. 173 PT). */
-		NEXT_PUBLIC_META_PIXEL_ID: z
-			.string()
-			.regex(/^\d+$/)
-			.optional(),
+		NEXT_PUBLIC_META_PIXEL_ID: z.string().regex(/^\d+$/).optional(),
 
 		NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
 
@@ -157,6 +158,8 @@ export const env = createEnv({
 		SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
 		SENTRY_ORG: process.env.SENTRY_ORG,
 		SENTRY_PROJECT: process.env.SENTRY_PROJECT,
+
+		CUSTOMER_SESSION_SECRET: process.env.CUSTOMER_SESSION_SECRET,
 
 		RESEND_API_KEY: process.env.RESEND_API_KEY,
 		RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL,

@@ -44,7 +44,7 @@ export type OrderAddress = {
 	phone: string;
 };
 
-export type OrderLineItem = {
+type OrderLineItem = {
 	id: string;
 	title: string;
 	subtitle: string;

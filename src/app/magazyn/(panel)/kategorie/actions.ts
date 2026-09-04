@@ -9,6 +9,7 @@ import {
 	deleteCategory,
 	updateCategory,
 } from "@/lib/admin/categories";
+import { recordAudit } from "@/lib/admin/audit-log";
 import { AdminApiError, AdminUnauthorizedError } from "@/lib/admin/medusa-admin";
 import { slugify } from "@/lib/admin/slug";
 
@@ -49,6 +50,9 @@ export async function saveCategoryAction(payload: CategoryPayload): Promise<Cate
 		return { ok: false, error: "Nie udało się zapisać kategorii." };
 	}
 
+	await recordAudit(data.id ? "category.update" : "category.create", {
+		target: data.id ?? input.handle,
+	});
 	revalidatePath("/magazyn/kategorie");
 	return { ok: true, error: null };
 }
@@ -62,6 +66,7 @@ export async function deleteCategoryAction(id: string): Promise<CategoryActionSt
 		return { ok: false, error: "Nie udało się usunąć kategorii." };
 	}
 
+	await recordAudit("category.delete", { target: id });
 	revalidatePath("/magazyn/kategorie");
 	return { ok: true, error: null };
 }

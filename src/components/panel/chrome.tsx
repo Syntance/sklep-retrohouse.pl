@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export function PageHeader({
@@ -64,7 +64,7 @@ export function ModuleTile({
 	);
 }
 
-export const BADGE_TONE = {
+const BADGE_TONE = {
 	neutral: "bg-muted text-muted-foreground",
 	info: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
 	success: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
@@ -74,7 +74,7 @@ export const BADGE_TONE = {
 	brand: "bg-primary/10 text-primary",
 } as const;
 
-export type BadgeTone = keyof typeof BADGE_TONE;
+type BadgeTone = keyof typeof BADGE_TONE;
 
 export function Badge({
 	children,
@@ -142,10 +142,7 @@ export function StatTile({
 					{sub ? <p className="text-xs text-muted-foreground">{sub}</p> : null}
 					{trend ? (
 						<span
-							className={cn(
-								"text-xs font-medium",
-								trend.up ? "text-emerald-700" : "text-red-700",
-							)}
+							className={cn("text-xs font-medium", trend.up ? "text-emerald-700" : "text-red-700")}
 						>
 							{trend.up ? "↑" : "↓"} {trend.val}
 						</span>

@@ -4,7 +4,12 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect } from "react";
 import { applyConsentChange, hydrateConsent } from "./apply-consent";
 import { CONSENT_CHANGED_EVENT, type ConsentState, readConsent } from "./consent";
-import { initPostHog, startScopedSessionRecording, stopScopedSessionRecording, track } from "./posthog";
+import {
+	initPostHog,
+	startScopedSessionRecording,
+	stopScopedSessionRecording,
+	track,
+} from "./posthog";
 
 type AnalyticsProviderProps = { children: React.ReactNode };
 
@@ -58,13 +63,7 @@ function AnalyticsRouter() {
 
 	useEffect(() => {
 		const utm: Record<string, string | undefined> = {};
-		for (const key of [
-			"utm_source",
-			"utm_medium",
-			"utm_campaign",
-			"utm_content",
-			"utm_term",
-		]) {
+		for (const key of ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"]) {
 			const value = searchParams.get(key);
 			if (value) utm[key] = value;
 		}

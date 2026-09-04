@@ -1,5 +1,6 @@
 import "server-only";
 import { env } from "@/env";
+import { freeShippingPromotionCode } from "@/lib/admin/promotion-types";
 import { getProductBySlug } from "@/lib/products/queries";
 import type { CheckoutInput } from "@/lib/validation/checkout";
 
@@ -20,7 +21,7 @@ const PAYMENT_LABELS: Record<CheckoutInput["payment"], string> = {
 	transfer: "Przelewy24 (test)",
 };
 
-export type CreateOrderResult =
+type CreateOrderResult =
 	| { ok: true; orderId: string; displayId: number }
 	| { ok: false; error: string };
 
@@ -45,8 +46,7 @@ async function storeFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
 	}
 
 	if (!res.ok) {
-		const message =
-			(json as { message?: string })?.message ?? `Błąd Medusa (${res.status}).`;
+		const message = (json as { message?: string })?.message ?? `Błąd Medusa (${res.status}).`;
 		throw new Error(message);
 	}
 	return json as T;
@@ -58,6 +58,34 @@ type StoreCart = {
 };
 
 type StoreShippingOption = { id: string; name: string };
+
+const PICKUP_NAME_RE = /odbiór|odbior|pickup/i;
+
+/**
+ * Dobiera opcję wysyłki dla koszyka. Zwraca `null`, gdy nie da się dopasować —
+ * wołający MUSI wtedy przerwać zamówienie zamiast podstawiać cokolwiek.
+ */
+function resolveShippingOption(
+	options: StoreShippingOption[],
+	input: CheckoutInput,
+): StoreShippingOption | null {
+	// Ścieżka właściwa: konkretne ID wybrane przez klienta w UI (z Medusy).
+	// Musi nadal być dostępne dla TEGO koszyka — inaczej twardy błąd.
+	if (input.shippingOptionId && !input.shippingOptionId.startsWith("fallback:")) {
+		return options.find((option) => option.id === input.shippingOptionId) ?? null;
+	}
+
+	// Ścieżka awaryjna (brak MEDUSA_ADMIN_* → UI pokazało listę zastępczą):
+	// dobieramy po rodzaju, ale bez cichego podstawiania czegokolwiek.
+	const wantsPickup =
+		input.shippingOptionId === "fallback:pickup" || input.shipping === "pickup_nt";
+
+	return (
+		options.find((option) =>
+			wantsPickup ? PICKUP_NAME_RE.test(option.name) : !PICKUP_NAME_RE.test(option.name),
+		) ?? null
+	);
+}
 
 /**
  * Pełny flow zakupu w Medusa: koszyk → wysyłka → płatność (manualna/testowa) → zamówienie.
@@ -72,14 +100,24 @@ export async function createMedusaOrder(input: CheckoutInput): Promise<CreateOrd
 	if (!regionId) return { ok: false, error: "Brak skonfigurowanego regionu sprzedaży." };
 
 	const products = await Promise.all(input.items.map((slug) => getProductBySlug(slug)));
+
+	// Antyki to unikaty — jeśli którakolwiek pozycja zniknęła, NIE składamy
+	// okrojonego zamówienia po cichu. Klient musi zobaczyć, czego brakuje.
+	const unavailable = input.items.filter((_, index) => !products[index]?.medusaVariantId);
+	if (unavailable.length > 0) {
+		return {
+			ok: false,
+			error:
+				unavailable.length === input.items.length
+					? "Produkty z koszyka są już niedostępne."
+					: `Te pozycje są już niedostępne: ${unavailable.join(", ")}. Usuń je z koszyka i spróbuj ponownie.`,
+		};
+	}
+
 	const lineItems = products
 		.map((product) => product?.medusaVariantId)
 		.filter((variantId): variantId is string => Boolean(variantId))
 		.map((variantId) => ({ variant_id: variantId, quantity: 1 }));
-
-	if (lineItems.length === 0) {
-		return { ok: false, error: "Produkty z koszyka są już niedostępne." };
-	}
 
 	const address = {
 		first_name: input.firstName,
@@ -101,6 +139,9 @@ export async function createMedusaOrder(input: CheckoutInput): Promise<CreateOrd
 		if (input.nip) metadata.nip = input.nip;
 		if (input.companyName) metadata.companyName = input.companyName;
 	}
+	if (input.promoCode?.trim()) {
+		metadata.promoCode = input.promoCode.trim().toUpperCase();
+	}
 
 	// 2. Koszyk.
 	const { cart } = await storeFetch<{ cart: StoreCart }>("/store/carts", {
@@ -115,7 +156,10 @@ export async function createMedusaOrder(input: CheckoutInput): Promise<CreateOrd
 		}),
 	});
 
-	// 3. Metoda wysyłki — dopasuj do wyboru z UI (odbiór vs kurier).
+	// 3. Metoda wysyłki. Wybór jedzie po ID opcji Medusy; przy braku dopasowania
+	// przerywamy zamówienie. Wcześniejszy `?? options[0]` po cichu podstawiał
+	// pierwszą z brzegu opcję — klient wybierał darmowy odbiór osobisty, a
+	// dostawał (i płacił) kuriera.
 	const { shipping_options: options } = await storeFetch<{
 		shipping_options: StoreShippingOption[];
 	}>(`/store/shipping-options?cart_id=${cart.id}`);
@@ -124,18 +168,48 @@ export async function createMedusaOrder(input: CheckoutInput): Promise<CreateOrd
 		return { ok: false, error: "Brak dostępnej metody wysyłki dla tego adresu." };
 	}
 
-	const wantsPickup = input.shipping === "pickup_nt";
-	const chosen =
-		options.find((option) =>
-			wantsPickup
-				? /odbiór|odbior|pickup/i.test(option.name)
-				: /kurier|inpost|dpd|dhl/i.test(option.name),
-		) ?? options[0];
+	const chosen = resolveShippingOption(options, input);
+	if (!chosen) {
+		return {
+			ok: false,
+			error: "Wybrana metoda dostawy jest niedostępna. Odśwież stronę i wybierz ponownie.",
+		};
+	}
 
 	await storeFetch(`/store/carts/${cart.id}/shipping-methods`, {
 		method: "POST",
 		body: JSON.stringify({ option_id: chosen.id }),
 	});
+
+	// 3.5. Kod promocyjny — po dodaniu metody wysyłki (rabat na dostawę wymaga
+	// istniejącej metody w koszyku). Weryfikacja: kod musi faktycznie wisieć na
+	// koszyku po aplikacji — Medusa ignoruje nieznane/nieaktywne kody po cichu.
+	const promoCode = input.promoCode?.trim().toUpperCase();
+	if (promoCode) {
+		await storeFetch(`/store/carts/${cart.id}/promotions`, {
+			method: "POST",
+			body: JSON.stringify({ promo_codes: [promoCode] }),
+		}).catch(() => undefined);
+
+		const { cart: cartWithPromos } = await storeFetch<{
+			cart: { promotions?: Array<{ id?: string; code?: string }> };
+		}>(`/store/carts/${cart.id}?fields=id,*promotions`);
+
+		const applied = (cartWithPromos.promotions ?? []).find(
+			(p) => p.code?.toUpperCase() === promoCode,
+		);
+		if (!applied) {
+			return { ok: false, error: "Kod rabatowy jest nieprawidłowy lub nieaktywny." };
+		}
+
+		// Cień darmowej dostawy (kod łączy rabat + gratis dostawę) — best-effort.
+		if (applied.id) {
+			await storeFetch(`/store/carts/${cart.id}/promotions`, {
+				method: "POST",
+				body: JSON.stringify({ promo_codes: [freeShippingPromotionCode(applied.id)] }),
+			}).catch(() => undefined);
+		}
+	}
 
 	// 4. Płatność manualna (test) — kolekcja + sesja.
 	await storeFetch("/store/payment-collections", {

@@ -1,30 +1,30 @@
 import "server-only";
 
-import { adminFetch } from "./medusa-admin";
+import { resolveCmsMediaPublicUrl } from "@/lib/content/cms-media-url";
+import { DEFAULT_SITE_SETTINGS } from "@/lib/content/defaults";
+import { parseStoreMetadataJson } from "@/lib/content/metadata-json";
 import {
-	RETROHOUSE_SITE_SETTINGS_KEY,
+	RETROHOUSE_GLOBAL_CONTENT_KEY,
 	RETROHOUSE_PAGE_CONTENT_KEY,
 	RETROHOUSE_PAGE_SEO_KEY,
-	RETROHOUSE_GLOBAL_CONTENT_KEY,
+	RETROHOUSE_SITE_SETTINGS_KEY,
 } from "@/lib/content/metadata-keys";
-import { siteSettingsSchema } from "@/lib/content/parsers";
-import { normalizeSocialLinks } from "@/lib/content/social-links";
-import { DEFAULT_SITE_SETTINGS } from "@/lib/content/defaults";
-import { resolveCmsMediaPublicUrl } from "@/lib/content/cms-media-url";
-import { parseStoreMetadataJson } from "@/lib/content/metadata-json";
 import {
 	migrateKontaktHeroToONas,
 	pageContentMapNeedsHeroMigration,
 } from "@/lib/content/migrate-hero-pages";
+import { siteSettingsSchema } from "@/lib/content/parsers";
+import { normalizeSocialLinks } from "@/lib/content/social-links";
 import type {
+	ContentPageId,
+	GlobalContent,
+	PageContent,
+	PageContentMap,
 	PageSeoMap,
 	SeoMeta,
 	SiteSettings,
-	PageContent,
-	PageContentMap,
-	GlobalContent,
-	ContentPageId,
 } from "@/lib/content/types";
+import { adminFetch } from "./medusa-admin";
 
 type MedusaStore = {
 	id: string;
@@ -58,27 +58,6 @@ async function patchStoreMetadata(
 }
 
 /* ── Site Settings ─────────────────────────────────────────────────────── */
-
-export async function readSiteSettings(): Promise<SiteSettings | null> {
-	const store = await getStore();
-	const raw = store.metadata?.[RETROHOUSE_SITE_SETTINGS_KEY];
-	if (typeof raw !== "string") return null;
-	try {
-		return JSON.parse(raw) as SiteSettings;
-	} catch {
-		return null;
-	}
-}
-
-export async function saveSiteSettings(settings: SiteSettings): Promise<void> {
-	const store = await getStore();
-	await patchStoreMetadata(
-		store.id,
-		store.metadata,
-		RETROHOUSE_SITE_SETTINGS_KEY,
-		JSON.stringify(settings),
-	);
-}
 
 /** Read-modify-write: nakłada wybrane pola bez kasowania pozostałych ustawień witryny. */
 export async function mergeSiteSettings(patch: Partial<SiteSettings>): Promise<SiteSettings> {
@@ -126,10 +105,7 @@ function normalizePageContent(content: PageContent): PageContent {
 	const productImageUrl = normalizeHeroMediaUrl(hero.productImageUrl);
 	const backgroundImageUrl = normalizeHeroMediaUrl(hero.backgroundImageUrl);
 
-	if (
-		productImageUrl === hero.productImageUrl &&
-		backgroundImageUrl === hero.backgroundImageUrl
-	) {
+	if (productImageUrl === hero.productImageUrl && backgroundImageUrl === hero.backgroundImageUrl) {
 		return content;
 	}
 
@@ -153,20 +129,7 @@ function parsePageContentMapFromRaw(raw: unknown): PageContentMap {
 	return migrateKontaktHeroToONas(normalizePageContentMap(parsed));
 }
 
-async function readPageContentMap(): Promise<PageContentMap> {
-	const store = await getStore();
-	return parsePageContentMapFromRaw(store.metadata?.[RETROHOUSE_PAGE_CONTENT_KEY]);
-}
-
-export async function readPageContent(pageId: ContentPageId): Promise<PageContent | null> {
-	const map = await readPageContentMap();
-	return map[pageId] ?? null;
-}
-
-export async function savePageContent(
-	pageId: ContentPageId,
-	content: PageContent,
-): Promise<void> {
+export async function savePageContent(pageId: ContentPageId, content: PageContent): Promise<void> {
 	const store = await getStore();
 	const currentMap = parsePageContentMapFromRaw(store.metadata?.[RETROHOUSE_PAGE_CONTENT_KEY]);
 	const nextMap: PageContentMap = {
@@ -197,9 +160,7 @@ export async function savePageHeroImage(
 		hero: {
 			...currentHero,
 			productImageUrl: resolvedUrl,
-			...(patch.productImageAlt !== undefined
-				? { productImageAlt: patch.productImageAlt }
-				: {}),
+			...(patch.productImageAlt !== undefined ? { productImageAlt: patch.productImageAlt } : {}),
 		},
 	});
 
@@ -276,32 +237,9 @@ export async function savePageSeo(pageId: ContentPageId, seo: SeoMeta): Promise<
 	);
 }
 
-/* ── Global Content ────────────────────────────────────────────────────── */
-
-export async function readGlobalContent(): Promise<GlobalContent | null> {
-	const store = await getStore();
-	const raw = store.metadata?.[RETROHOUSE_GLOBAL_CONTENT_KEY];
-	if (typeof raw !== "string") return null;
-	try {
-		return JSON.parse(raw) as GlobalContent;
-	} catch {
-		return null;
-	}
-}
-
-export async function saveGlobalContent(content: GlobalContent): Promise<void> {
-	const store = await getStore();
-	await patchStoreMetadata(
-		store.id,
-		store.metadata,
-		RETROHOUSE_GLOBAL_CONTENT_KEY,
-		JSON.stringify(content),
-	);
-}
-
 /* ── Full admin read (dla panelu CMS) ───────────────────────────────────── */
 
-export type AdminCmsSnapshot = {
+type AdminCmsSnapshot = {
 	siteSettings: SiteSettings | null;
 	pageContentMap: PageContentMap;
 	globalContent: GlobalContent | null;
@@ -316,8 +254,9 @@ export async function readAdminCmsSnapshot(): Promise<AdminCmsSnapshot> {
 		return parseStoreMetadataJson<T>(meta[key]);
 	}
 
-	const rawPageContent =
-		normalizePageContentMap(tryParse<PageContentMap>(RETROHOUSE_PAGE_CONTENT_KEY) ?? {});
+	const rawPageContent = normalizePageContentMap(
+		tryParse<PageContentMap>(RETROHOUSE_PAGE_CONTENT_KEY) ?? {},
+	);
 
 	if (pageContentMapNeedsHeroMigration(rawPageContent)) {
 		const migrated = migrateKontaktHeroToONas(rawPageContent);

@@ -2,8 +2,8 @@ import Link from "next/link";
 import { MedusaOrderImage } from "@/components/customer/medusa-order-image";
 import type { CustomerClaimInfo } from "@/lib/customer/claim-status";
 import type { CustomerOrder } from "@/lib/customer/orders";
-import { getReturnToneClasses } from "@/lib/customer/return-request-visual";
 import type { CustomerReturnLineItem } from "@/lib/customer/return-line-items";
+import { getReturnToneClasses } from "@/lib/customer/return-request-visual";
 import type { CustomerWithdrawalInfo } from "@/lib/customer/withdrawal-status";
 import { formatDate, formatPrice } from "@/lib/format";
 
@@ -67,8 +67,7 @@ export function ClaimsStatusPanel({ claims }: { claims: CustomerClaimInfo[] }) {
 						<p className="font-medium text-foreground">{claim.statusLabel}</p>
 						{claim.referenceId ? (
 							<p className="mt-1 text-foreground/80">
-								Numer zgłoszenia:{" "}
-								<span className="font-mono">{claim.referenceId}</span>
+								Numer zgłoszenia: <span className="font-mono">{claim.referenceId}</span>
 							</p>
 						) : null}
 						{claim.remedyLabel ? (
@@ -90,11 +89,7 @@ export function ClaimsStatusPanel({ claims }: { claims: CustomerClaimInfo[] }) {
 	);
 }
 
-export function WithdrawalsStatusPanel({
-	withdrawals,
-}: {
-	withdrawals: CustomerWithdrawalInfo[];
-}) {
+export function WithdrawalsStatusPanel({ withdrawals }: { withdrawals: CustomerWithdrawalInfo[] }) {
 	if (withdrawals.length === 0) return null;
 
 	return (
@@ -113,9 +108,7 @@ export function WithdrawalsStatusPanel({
 							acceptedAt={w.approvedAt}
 							acceptedLabel="Data przyjęcia odstąpienia"
 						/>
-						{w.statusHint ? (
-							<p className="mt-2 text-foreground/70">{w.statusHint}</p>
-						) : null}
+						{w.statusHint ? <p className="mt-2 text-foreground/70">{w.statusHint}</p> : null}
 					</div>
 				);
 			})}
@@ -132,11 +125,7 @@ type CrossBlockProps = {
 
 type OrderCaseDetailsOrder = Pick<
 	CustomerOrder,
-	| "claims"
-	| "withdrawals"
-	| "items"
-	| "activeClaim"
-	| "activeWithdrawal"
+	"claims" | "withdrawals" | "items" | "activeClaim" | "activeWithdrawal"
 >;
 
 type OrderCaseDetailsVariant = "all" | "claim" | "withdrawal";
@@ -155,9 +144,7 @@ export function OrderCaseDetailsSection({
 		order.activeClaim?.status ?? order.claims[0]?.status ?? "pending_approval",
 	).itemTag;
 	const itemWithdrawalTagClass = getReturnToneClasses(
-		order.activeWithdrawal?.status ??
-			order.withdrawals[0]?.status ??
-			"pending_approval",
+		order.activeWithdrawal?.status ?? order.withdrawals[0]?.status ?? "pending_approval",
 	).itemTag;
 
 	const showClaims = variant === "all" || variant === "claim";
@@ -178,9 +165,7 @@ export function OrderCaseDetailsSection({
 			{showWithdrawals && order.withdrawals.length > 0 ? (
 				<WithdrawalsStatusPanel withdrawals={order.withdrawals} />
 			) : null}
-			{showClaims && order.claims.length > 0 ? (
-				<ClaimsStatusPanel claims={order.claims} />
-			) : null}
+			{showClaims && order.claims.length > 0 ? <ClaimsStatusPanel claims={order.claims} /> : null}
 			{affectedItemIds.size > 0 ? (
 				<div>
 					<p className="mb-3 text-sm font-medium">Produkty objęte sprawą</p>
@@ -225,20 +210,14 @@ export function OrderCaseDetailsSection({
 }
 
 /** Lista pozycji zamówienia z oznaczeniami „w reklamacji” / „w odstąpieniu”. */
-export function OrderItemsWithCaseTags({
-	order,
-}: {
-	order: OrderCaseDetailsOrder;
-}) {
+export function OrderItemsWithCaseTags({ order }: { order: OrderCaseDetailsOrder }) {
 	const claimedItemIds = new Set(order.claims.flatMap((c) => c.itemIds));
 	const withdrawnItemIds = new Set(order.withdrawals.flatMap((w) => w.itemIds));
 	const itemClaimTagClass = getReturnToneClasses(
 		order.activeClaim?.status ?? order.claims[0]?.status ?? "pending_approval",
 	).itemTag;
 	const itemWithdrawalTagClass = getReturnToneClasses(
-		order.activeWithdrawal?.status ??
-			order.withdrawals[0]?.status ??
-			"pending_approval",
+		order.activeWithdrawal?.status ?? order.withdrawals[0]?.status ?? "pending_approval",
 	).itemTag;
 
 	return (
@@ -280,17 +259,9 @@ export function OrderItemsWithCaseTags({
 	);
 }
 
-export function CrossRequestBlockNotice({
-	title,
-	body,
-	linkHref,
-	linkLabel,
-}: CrossBlockProps) {
+export function CrossRequestBlockNotice({ title, body, linkHref, linkLabel }: CrossBlockProps) {
 	return (
-		<div
-			role="status"
-			className="rounded-lg border border-border bg-muted/50 px-4 py-3 text-sm"
-		>
+		<div role="status" className="rounded-lg border border-border bg-muted/50 px-4 py-3 text-sm">
 			<p className="font-medium text-foreground">{title}</p>
 			<p className="mt-1 text-foreground/75">{body}</p>
 			<Link

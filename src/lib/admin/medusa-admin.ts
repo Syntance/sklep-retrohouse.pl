@@ -108,7 +108,10 @@ async function adminFetchWithToken<T>(
 }
 
 /** Odczyt Admin API bez sesji panelu — storefront / server actions (MEDUSA_ADMIN_*). */
-export async function catalogAdminFetch<T>(path: string, init: AdminFetchInit = {}): Promise<T | null> {
+export async function catalogAdminFetch<T>(
+	path: string,
+	init: AdminFetchInit = {},
+): Promise<T | null> {
 	const token = await getCatalogAdminToken();
 	if (!token) return null;
 	try {
@@ -119,7 +122,10 @@ export async function catalogAdminFetch<T>(path: string, init: AdminFetchInit = 
 }
 
 /** Zapis Admin API kontem serwisowym — np. licznik numerów spraw FK na storefront. */
-export async function catalogAdminMutate<T>(path: string, init: AdminFetchInit = {}): Promise<T | null> {
+export async function catalogAdminMutate<T>(
+	path: string,
+	init: AdminFetchInit = {},
+): Promise<T | null> {
 	return catalogAdminFetch<T>(path, init);
 }
 

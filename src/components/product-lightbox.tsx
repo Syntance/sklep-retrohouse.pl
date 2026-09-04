@@ -6,7 +6,7 @@ import { CloseIcon, ZoomIcon } from "@/components/icons";
 import { track } from "@/lib/analytics/posthog";
 import { cn } from "@/lib/utils";
 
-export type GallerySlot = {
+type GallerySlot = {
 	label: string;
 	hueIndex: number;
 	weight: number;
@@ -143,7 +143,9 @@ export function ProductLightbox({ productName, hues, images = [] }: ProductLight
 											aria-current={index === i ? "true" : undefined}
 											className={cn(
 												"relative block aspect-square w-full overflow-hidden rounded-xl border bg-card transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta",
-												index === i ? "border-terracotta ring-2 ring-terracotta/30" : "border-border",
+												index === i
+													? "border-terracotta ring-2 ring-terracotta/30"
+													: "border-border",
 											)}
 										>
 											{failedIndexes.has(i) ? (
@@ -232,7 +234,10 @@ export function ProductLightbox({ productName, hues, images = [] }: ProductLight
 					</figure>
 
 					{slotCount > 1 ? (
-						<nav aria-label="Nawigacja zdjęć" className="flex flex-wrap items-center justify-center gap-2">
+						<nav
+							aria-label="Nawigacja zdjęć"
+							className="flex flex-wrap items-center justify-center gap-2"
+						>
 							<button
 								type="button"
 								onClick={() => setIndex((prev) => (prev - 1 + slotCount) % slotCount)}

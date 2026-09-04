@@ -1,18 +1,10 @@
 import type { ReturnRequest, ReturnStatus } from "@/lib/admin/return-types";
 import { CLAIM_REMEDY_LABELS } from "@/lib/claims/labels";
-import { isActiveReturnStatus } from "@/lib/customer/return-request-active";
 import {
-	mapReturnItemsToCustomer,
 	type CustomerReturnLineItem,
+	mapReturnItemsToCustomer,
 } from "@/lib/customer/return-line-items";
-
-export type { CustomerReturnLineItem };
-
-export { getReturnToneClasses as getClaimToneClasses } from "@/lib/customer/return-request-visual";
-
-export function isActiveClaimStatus(status: ReturnStatus): boolean {
-	return isActiveReturnStatus(status);
-}
+import { isActiveReturnStatus } from "@/lib/customer/return-request-active";
 
 const STATUS_LABELS: Record<ReturnStatus, string> = {
 	pending_approval: "Reklamacja złożona",
@@ -52,8 +44,7 @@ export type CustomerClaimInfo = {
 };
 
 export function mapReturnToCustomerClaim(ret: ReturnRequest): CustomerClaimInfo {
-	const remedyLabel =
-		ret.claimRemedy !== null ? CLAIM_REMEDY_LABELS[ret.claimRemedy] : null;
+	const remedyLabel = ret.claimRemedy !== null ? CLAIM_REMEDY_LABELS[ret.claimRemedy] : null;
 
 	return {
 		id: ret.id,

@@ -27,9 +27,8 @@ export function CmsRedeployButton() {
 		<div className="flex flex-col gap-2 rounded-lg border border-border bg-muted/40 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
 			<p className="text-xs leading-relaxed text-muted-foreground">
 				<strong className="font-medium text-foreground">Zapis</strong> publikuje tekst od razu (bez
-				redeploy).{" "}
-				<strong className="font-medium text-foreground">Redeploy</strong> synchronizuje zdjęcia z CMS
-				do buildu (PageSpeed).
+				redeploy). <strong className="font-medium text-foreground">Redeploy</strong> synchronizuje
+				zdjęcia z CMS do buildu (PageSpeed).
 			</p>
 			<div className="flex shrink-0 flex-col items-stretch gap-1.5 sm:items-end">
 				<Button

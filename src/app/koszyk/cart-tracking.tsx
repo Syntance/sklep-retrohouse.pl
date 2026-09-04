@@ -44,9 +44,7 @@ export function CheckoutCta({ href, cartValue, className, children }: CheckoutCt
 	return (
 		<Link
 			href={href}
-			onClick={() =>
-				track({ name: "checkout_started", properties: { cart_value: cartValue } })
-			}
+			onClick={() => track({ name: "checkout_started", properties: { cart_value: cartValue } })}
 			className={
 				className ??
 				"inline-flex h-12 items-center justify-center gap-2 rounded-full bg-terracotta px-6 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground transition-transform hover:-translate-y-0.5"

@@ -1,14 +1,6 @@
 import { z } from "zod";
 import { parseStoreMetadataJson } from "./metadata-json";
-import type {
-	SiteSettings,
-	HeroContent,
-	PageContent,
-	PageContentMap,
-	GlobalContent,
-	SeoMeta,
-	PageSeoMap,
-} from "./types";
+import type { GlobalContent, PageContentMap, PageSeoMap, SiteSettings } from "./types";
 
 /* ---------- atoms ---------- */
 
@@ -23,10 +15,21 @@ export const seoMetaSchema = z.object({
 	noFollow: z.boolean().optional(),
 });
 
-export const announcementBarSchema = z.object({
+const announcementBarSchema = z.object({
 	enabled: z.boolean(),
 	text: z.string().max(200),
 	link: z.string().max(500).optional(),
+});
+
+export const popupBannerSchema = z.object({
+	enabled: z.boolean(),
+	title: z.string().max(120),
+	body: z.string().max(600).optional(),
+	imageUrl: z.string().max(500).optional(),
+	ctaLabel: z.string().max(60).optional(),
+	ctaHref: z.string().max(500).optional(),
+	oncePerSession: z.boolean(),
+	delayMs: z.number().int().min(0).max(60_000),
 });
 
 const optionalSocialLink = z.preprocess(
@@ -38,7 +41,7 @@ const optionalSocialLink = z.preprocess(
 		.transform((v) => v || undefined),
 );
 
-export const socialLinksSchema = z
+const socialLinksSchema = z
 	.object({
 		instagram: optionalSocialLink,
 		facebook: optionalSocialLink,
@@ -59,6 +62,7 @@ export const siteSettingsSchema = z.object({
 	title: z.string().min(1).max(100),
 	description: z.string().min(1).max(500),
 	announcementBar: announcementBarSchema.optional(),
+	popupBanner: popupBannerSchema.optional(),
 	socialLinks: socialLinksSchema.optional(),
 	footerText: z.string().max(500).optional(),
 	titleTemplate: z.string().max(100).optional(),
@@ -74,7 +78,7 @@ const heroImageUrlSchema = z.preprocess(
 	z.string().url().optional(),
 );
 
-export const heroContentSchema = z.object({
+const heroContentSchema = z.object({
 	headline: z.string().min(1).max(200),
 	subLead: z.string().max(100).optional(),
 	description: z.string().min(1).max(500),
@@ -91,7 +95,7 @@ export const heroContentSchema = z.object({
 });
 
 /** Odczyt z Medusa — hero może mieć tylko URL obrazu (bez copy). */
-export const heroContentReadSchema = z.object({
+const heroContentReadSchema = z.object({
 	headline: z.string().max(200).optional(),
 	subLead: z.string().max(100).optional(),
 	description: z.string().max(500).optional(),
@@ -117,7 +121,7 @@ export const heroBackgroundPatchSchema = z.object({
 	backgroundImageAlt: z.string().max(200).optional(),
 });
 
-export const faqItemSchema = z.object({
+const faqItemSchema = z.object({
 	id: z.string().min(1),
 	question: z.string().min(1).max(300),
 	answer: z.string().min(1).max(2000),
@@ -129,21 +133,21 @@ export const pageContentSchema = z.object({
 	faq: z.array(faqItemSchema).optional(),
 });
 
-export const pageContentReadSchema = z.object({
+const pageContentReadSchema = z.object({
 	hero: heroContentReadSchema.optional(),
 	faq: z.array(faqItemSchema).optional(),
 });
 
-export const globalContentSchema = z.object({
+const globalContentSchema = z.object({
 	announcementBar: announcementBarSchema.optional(),
 });
 
-export const pageSeoMapSchema = z.record(z.string(), seoMetaSchema);
-export const pageContentMapSchema = z.record(z.string(), pageContentSchema);
-export const pageContentMapReadSchema = z.record(z.string(), pageContentReadSchema);
+const pageSeoMapSchema = z.record(z.string(), seoMetaSchema);
+const pageContentMapReadSchema = z.record(z.string(), pageContentReadSchema);
 
 export const cmsGlobalSettingsSchema = z.object({
 	announcementBar: announcementBarSchema.optional(),
+	popupBanner: popupBannerSchema.optional(),
 	socialLinks: socialLinksSchema.optional(),
 	footerText: z.string().max(500).optional(),
 });
@@ -172,14 +176,3 @@ export function parsePageSeoMap(raw: unknown): PageSeoMap | null {
 export function parseGlobalContent(raw: unknown): GlobalContent | null {
 	return parseJsonBlob(raw, globalContentSchema);
 }
-
-/* re-eksport typów dla wygody */
-export type {
-	SiteSettings,
-	HeroContent,
-	PageContent,
-	PageContentMap,
-	GlobalContent,
-	SeoMeta,
-	PageSeoMap,
-};

@@ -1,6 +1,6 @@
 import { Bell } from "lucide-react";
-import { buildNotificationsSection } from "@/lib/admin/settings-snapshot";
 import { PageHeader } from "@/components/panel/chrome";
+import { buildNotificationsSection } from "@/lib/admin/settings-snapshot";
 import { SettingsStatusView } from "../components/settings-status-view";
 
 export const dynamic = "force-dynamic";

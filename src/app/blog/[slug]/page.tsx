@@ -7,11 +7,7 @@ import { ProductCard } from "@/components/product-card";
 import { formatDate } from "@/lib/format";
 import { getPostBySlug, getRelatedPosts, POSTS } from "@/lib/mock/posts";
 import { getProductBySlug, listProducts } from "@/lib/products/queries";
-import {
-	ArticleGenericCta,
-	ArticleProductCta,
-	RelatedArticleLink,
-} from "./article-tracking";
+import { ArticleGenericCta, ArticleProductCta, RelatedArticleLink } from "./article-tracking";
 
 export function generateStaticParams() {
 	return POSTS.map((post) => ({ slug: post.slug }));

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
+import { useEffect, useRef } from "react";
 
 /**
  * Przewinięcie tylko przy **pierwszym** ustawieniu filtra kategorii

@@ -5,12 +5,7 @@ type CheckboxInputProps = Omit<React.ComponentProps<"input">, "type">;
 
 export function CheckboxInput({ className, ...props }: CheckboxInputProps) {
 	return (
-		<span
-			className={cn(
-				"relative inline-grid size-4 shrink-0 place-items-center",
-				className,
-			)}
-		>
+		<span className={cn("relative inline-grid size-4 shrink-0 place-items-center", className)}>
 			<input type="checkbox" className="peer sr-only" {...props} />
 			<span
 				aria-hidden

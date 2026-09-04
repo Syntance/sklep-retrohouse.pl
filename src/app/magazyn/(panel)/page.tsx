@@ -1,16 +1,16 @@
-import Link from "next/link";
 import { Plus } from "lucide-react";
+import Link from "next/link";
+import { ModuleTile, Section, StatTile } from "@/components/panel/chrome";
+import { DashboardCharts } from "@/components/panel/dashboard-charts";
+import { buildOverviewModuleBadges, moduleBadgeFromHref } from "@/components/panel/demo-data";
+import { MAGAZYN_NAV_ITEMS } from "@/components/panel/nav-config";
+import { RecentOrdersSection } from "@/components/panel/recent-orders-section";
+import { buildSalesStatistics, isPaidPaymentStatus } from "@/lib/admin/analytics/sales-stats";
 import { listCategories } from "@/lib/admin/categories";
 import { loadAdmin } from "@/lib/admin/load";
 import { listAdminOrdersForStatistics } from "@/lib/admin/orders";
 import { listAdminProducts } from "@/lib/admin/products";
-import { buildSalesStatistics, isPaidPaymentStatus } from "@/lib/admin/analytics/sales-stats";
 import { formatPrice } from "@/lib/format";
-import { DashboardCharts } from "@/components/panel/dashboard-charts";
-import { buildOverviewModuleBadges, moduleBadgeFromHref } from "@/components/panel/demo-data";
-import { ModuleTile, Section, StatTile } from "@/components/panel/chrome";
-import { MAGAZYN_NAV_ITEMS } from "@/components/panel/nav-config";
-import { RecentOrdersSection } from "@/components/panel/recent-orders-section";
 
 export const dynamic = "force-dynamic";
 

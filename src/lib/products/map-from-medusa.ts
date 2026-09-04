@@ -1,16 +1,7 @@
-import {
-	categoryLabel,
-	HUE_TRIADS,
-	PRODUCT_CATEGORY_VALUES,
-} from "@/lib/products/constants";
 import { resolveMedusaMediaUrl, resolveMedusaMediaUrls } from "@/lib/medusa/media-url";
-import { epochLabelFor, type EpochOption } from "@/lib/products/epoch-types";
-import type {
-	Product,
-	ProductBadge,
-	ProductCategory,
-	ProductDefect,
-} from "@/lib/products/types";
+import { categoryLabel, HUE_TRIADS, PRODUCT_CATEGORY_VALUES } from "@/lib/products/constants";
+import { type EpochOption, epochLabelFor } from "@/lib/products/epoch-types";
+import type { Product, ProductBadge, ProductCategory, ProductDefect } from "@/lib/products/types";
 
 type MedusaVariant = {
 	id?: string;
@@ -115,7 +106,10 @@ function singleVariantPrice(product: MedusaStoreProduct): {
 	};
 }
 
-export function mapMedusaProduct(product: MedusaStoreProduct, epochOptions: EpochOption[]): Product | null {
+export function mapMedusaProduct(
+	product: MedusaStoreProduct,
+	epochOptions: EpochOption[],
+): Product | null {
 	if (!product.handle) return null;
 
 	const metadata = product.metadata ?? {};

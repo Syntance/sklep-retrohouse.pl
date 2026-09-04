@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { Breadcrumbs, Container, Eyebrow, Section } from "@/components/primitives";
 import { CookieSettingsButton } from "@/components/layout/site-footer/cookie-settings-button";
+import { Breadcrumbs, Container, Eyebrow, Section } from "@/components/primitives";
 import { LEGAL_DOCUMENT_CONTACT } from "@/components/sections/legal-document-contact/presets";
 import { LegalDocumentContactSection } from "@/components/sections/legal-document-contact/section";
 
@@ -27,9 +27,7 @@ export default function PolitykaCookiesPage() {
 		<main id="main" className="flex flex-col">
 			<Section spacing="sm">
 				<Container size="md">
-					<Breadcrumbs
-						items={[{ label: "Home", href: "/" }, { label: "Polityka cookies" }]}
-					/>
+					<Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Polityka cookies" }]} />
 				</Container>
 			</Section>
 
@@ -46,15 +44,15 @@ export default function PolitykaCookiesPage() {
 					<aside className="mt-6 rounded-2xl border border-brass/40 bg-terracotta/15 p-5 text-sm">
 						<p className="font-display text-base font-semibold">Treść w opracowaniu</p>
 						<p className="mt-1 text-foreground/80">
-							Pełna polityka cookies — kategorie, dostawcy, okresy przechowywania —
-							zostanie uzupełniona przez radcę prawnego przed uruchomieniem sprzedaży.
+							Pełna polityka cookies — kategorie, dostawcy, okresy przechowywania — zostanie
+							uzupełniona przez radcę prawnego przed uruchomieniem sprzedaży.
 						</p>
 					</aside>
 
 					<div className="mt-8 space-y-6 text-foreground/80 leading-relaxed">
 						<p>
-							RetroHouse używa plików cookie i podobnych technologii wyłącznie po uzyskaniu
-							Twojej zgody (z wyjątkiem cookies niezbędnych do działania serwisu).
+							RetroHouse używa plików cookie i podobnych technologii wyłącznie po uzyskaniu Twojej
+							zgody (z wyjątkiem cookies niezbędnych do działania serwisu).
 						</p>
 						<div className="rounded-xl border border-border bg-card p-4 text-sm">
 							<p className="font-semibold text-foreground">Zarządzaj ustawieniami</p>

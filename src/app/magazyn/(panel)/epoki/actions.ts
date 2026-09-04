@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { recordAudit } from "@/lib/admin/audit-log";
 import { deleteEpoch, upsertEpoch } from "@/lib/admin/epochs";
 import { AdminApiError, AdminUnauthorizedError } from "@/lib/admin/medusa-admin";
 import { slugify } from "@/lib/admin/slug";
@@ -40,6 +41,7 @@ export async function saveEpochAction(payload: EpochPayload): Promise<EpochActio
 		return { ok: false, error: "Nie udało się zapisać epoki." };
 	}
 
+	await recordAudit(data.previousValue ? "epoch.update" : "epoch.create", { target: value });
 	revalidateEpochPaths();
 	return { ok: true, error: null };
 }
@@ -54,6 +56,7 @@ export async function deleteEpochAction(value: string): Promise<EpochActionState
 		return { ok: false, error: "Nie udało się usunąć epoki." };
 	}
 
+	await recordAudit("epoch.delete", { target: value });
 	revalidateEpochPaths();
 	return { ok: true, error: null };
 }

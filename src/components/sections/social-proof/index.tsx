@@ -1,15 +1,14 @@
 "use client";
 
-import { useActionState, useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
+import { useActionState, useEffect, useId, useRef, useState } from "react";
+import { type ContactState, submitContact } from "@/app/kontakt/actions";
 import { ArrowRightIcon, InstagramIcon, StarIcon } from "@/components/icons";
 import { BrassRule, Container, Eyebrow, Section } from "@/components/primitives";
 import { track } from "@/lib/analytics/posthog";
-import type { ContactTopic } from "@/lib/analytics/events";
-import { submitContact, type ContactState } from "@/app/kontakt/actions";
 import { CONTACT_FORM_RESPONSE } from "@/lib/contact/response-time";
-import { getContactTopicOptions } from "@/lib/validation/contact";
 import { TESTIMONIALS } from "@/lib/mock/testimonials";
+import { getContactTopicOptions } from "@/lib/validation/contact";
 
 const HOME_TOPIC_OPTIONS = getContactTopicOptions("kontakt");
 
@@ -17,7 +16,7 @@ const HOME_TOPIC_OPTIONS = getContactTopicOptions("kontakt");
  * Social proof — opinie z DM / IG / Google (po zgodzie klientki).
  * Pre-launch: zamiast pustej sekcji pokazuje mini formularz kontaktowy.
  */
-export function SocialProofSection({ instagramHref }: { instagramHref?: string }) {
+export function SocialProofSection() {
 	const hasReviews = TESTIMONIALS.length > 0;
 
 	return (
@@ -26,7 +25,9 @@ export function SocialProofSection({ instagramHref }: { instagramHref?: string }
 				<header className="mb-10 flex flex-col items-center gap-3 text-center">
 					<Eyebrow variant="script">{hasReviews ? "co mówią" : "napisz do nas"}</Eyebrow>
 					<h2 className="max-w-xl font-display text-3xl font-medium leading-tight md:text-4xl">
-						{hasReviews ? "Twoje listy po odbiorze paczki." : `Odpowiemy w ${CONTACT_FORM_RESPONSE.labelShort}.`}
+						{hasReviews
+							? "Twoje listy po odbiorze paczki."
+							: `Odpowiemy w ${CONTACT_FORM_RESPONSE.labelShort}.`}
 					</h2>
 					<BrassRule className="my-2 max-w-[140px]" />
 				</header>
@@ -159,7 +160,10 @@ function ContactCard() {
 
 				<p className="text-xs text-foreground/45">
 					Wysyłając akceptujesz{" "}
-					<Link href="/polityka-prywatnosci" className="underline underline-offset-4 hover:text-terracotta">
+					<Link
+						href="/polityka-prywatnosci"
+						className="underline underline-offset-4 hover:text-terracotta"
+					>
 						politykę prywatności
 					</Link>
 					.
@@ -212,7 +216,16 @@ type FieldProps = {
 	error?: string;
 };
 
-function Field({ label, name, type = "text", required, textarea, rows = 4, placeholder, error }: FieldProps) {
+function Field({
+	label,
+	name,
+	type = "text",
+	required,
+	textarea,
+	rows = 4,
+	placeholder,
+	error,
+}: FieldProps) {
 	const id = useId();
 	const errId = `${id}-err`;
 	const base =

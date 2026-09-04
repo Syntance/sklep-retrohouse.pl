@@ -130,7 +130,7 @@ export type Block = LeafBlock | OrderItemsBlock | FooterBlock | ColumnsBlock;
 
 export type BlockType = Block["type"];
 
-export type OrderEmailTemplateType =
+type OrderEmailTemplateType =
 	| "placed"
 	| "realization_started"
 	| "shipped"
@@ -148,7 +148,7 @@ export type CaseEmailTemplateType =
 	| "withdrawal_rejected";
 
 /** Potwierdzenie dla klienta po wysłaniu formularza kontaktowego (wszystkie podstrony). */
-export type ContactEmailTemplateType = "contact_confirmation";
+type ContactEmailTemplateType = "contact_confirmation";
 
 export type EmailTemplateType =
 	| OrderEmailTemplateType
@@ -250,7 +250,7 @@ export const EMAIL_TEMPLATE_TYPES: Array<{
 	},
 ];
 
-export type EmailTemplateCategoryId = "order" | "returns" | "contact";
+type EmailTemplateCategoryId = "order" | "returns" | "contact";
 
 /** Grupy szablonów w edytorze magazynu (/magazyn/maile). */
 export const EMAIL_TEMPLATE_CATEGORIES: Array<{
@@ -273,7 +273,7 @@ export function getEmailTemplatesByCategory(
 }
 
 /** Zmienne danych zamówienia dostępne w treści jako {{token}}. */
-export const MERGE_VARIABLES: Array<{
+const MERGE_VARIABLES: Array<{
 	token: string;
 	label: string;
 	sample: string;
@@ -349,13 +349,11 @@ export function getMergeVariablesForTemplate(type: EmailTemplateType) {
 	return MERGE_VARIABLES;
 }
 
-export const MERGE_TOKENS = MERGE_VARIABLES.map((v) => v.token);
-
 /* ────────────────────────────────────────────── */
 /* Domyślny motyw + szablony (odtwarzają obecne e-maile) */
 /* ────────────────────────────────────────────── */
 
-export const DEFAULT_THEME: EmailTheme = {
+const DEFAULT_THEME: EmailTheme = {
 	bg: "#f5f0e8",
 	contentBg: "#fffdf8",
 	text: "#2a1f14",
@@ -441,7 +439,8 @@ const STAGE_CONTENT: Record<EmailTemplateType, StageContent> = {
 		headline: "Dziękujemy za zamówienie, {{imie}}!",
 		paragraphs: ["Potwierdzamy zamówienie #{{nrZamowienia}}. Poniżej szczegóły zakupu."],
 		withItems: true,
-		links: "Reklamacje: https://sklep-retrohouse.pl/reklamacje · Regulamin: https://sklep-retrohouse.pl/regulamin",
+		links:
+			"Reklamacje: https://sklep-retrohouse.pl/reklamacje · Regulamin: https://sklep-retrohouse.pl/regulamin",
 	},
 	claim_received: {
 		subject: "[RetroHouse] Reklamacja przyjęta — {{numerZgloszenia}}",
@@ -545,7 +544,7 @@ function leafText(id: string, text: string, style: BlockStyle): TextBlock {
 }
 
 /** Domyślne bloki dla danego typu szablonu (odwzorowanie obecnych e-maili). */
-export function buildDefaultBlocks(type: EmailTemplateType): Block[] {
+function buildDefaultBlocks(type: EmailTemplateType): Block[] {
 	const content = STAGE_CONTENT[type];
 	const blocks: Block[] = [
 		{
@@ -731,12 +730,7 @@ const columnsSchema = z.object({
 	paddingY: z.number().int().min(0).max(96).optional(),
 });
 
-export const blockSchema = z.union([
-	leafSchema,
-	orderItemsSchema,
-	footerSchema,
-	columnsSchema,
-]);
+const blockSchema = z.union([leafSchema, orderItemsSchema, footerSchema, columnsSchema]);
 
 const themeSchema = z.object({
 	bg: z.string(),

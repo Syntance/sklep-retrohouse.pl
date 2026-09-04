@@ -3,8 +3,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowRightIcon } from "@/components/icons";
-import { track } from "@/lib/analytics/posthog";
 import type { AnalyticsEvent } from "@/lib/analytics/events";
+import { track } from "@/lib/analytics/posthog";
 
 type CtaType = Extract<AnalyticsEvent, { name: "article_cta_clicked" }>["properties"]["cta_type"];
 

@@ -9,10 +9,7 @@ export function FormsSubnav() {
 	const onReceived = pathname.includes("/formularze/otrzymane");
 
 	return (
-		<nav
-			className="flex max-w-md gap-1 border-b border-border"
-			aria-label="Sekcje formularzy"
-		>
+		<nav className="flex max-w-md gap-1 border-b border-border" aria-label="Sekcje formularzy">
 			<Link
 				href="/magazyn/formularze"
 				className={cn(

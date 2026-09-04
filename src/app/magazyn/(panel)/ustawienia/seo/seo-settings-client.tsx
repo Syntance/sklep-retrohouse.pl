@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { CMS_PAGES, SETTINGS_SEO_BASE_PATH } from "@/lib/content/metadata-keys";
 import type { CmsPageConfig } from "@/lib/content/metadata-keys";
+import { SETTINGS_SEO_BASE_PATH } from "@/lib/content/metadata-keys";
 import type { PageSeoMap, SiteSettings } from "@/lib/content/types";
+import { cn } from "@/lib/utils";
 import { CmsRedeployButton } from "../../cms/cms-redeploy-button";
 import { SeoForm } from "./seo-form";
 
@@ -25,7 +25,11 @@ export function SeoSettingsClient({ siteSettings, pageSeo, pages, activeTab }: P
 				aria-label="Zakładki SEO"
 				className="flex shrink-0 flex-row flex-wrap gap-1 lg:w-52 lg:flex-col"
 			>
-				<SeoTab href={SETTINGS_SEO_BASE_PATH} label="Globalne" active={pathname === SETTINGS_SEO_BASE_PATH} />
+				<SeoTab
+					href={SETTINGS_SEO_BASE_PATH}
+					label="Globalne"
+					active={pathname === SETTINGS_SEO_BASE_PATH}
+				/>
 				{pages.map((page) => (
 					<SeoTab
 						key={page.id}
@@ -45,12 +49,7 @@ export function SeoSettingsClient({ siteSettings, pageSeo, pages, activeTab }: P
 						const page = pages.find((p) => p.id === activeTab);
 						if (!page) return null;
 						return (
-							<SeoForm
-								mode="page"
-								pageId={page.id}
-								path={page.path}
-								initial={pageSeo[page.id]}
-							/>
+							<SeoForm mode="page" pageId={page.id} path={page.path} initial={pageSeo[page.id]} />
 						);
 					})()
 				)}

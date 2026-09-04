@@ -17,11 +17,7 @@ import { ProductCtaBlock } from "@/components/product-cta-block";
 import { ProductLightbox } from "@/components/product-lightbox";
 import { ProductMobileBar } from "@/components/product-mobile-bar";
 import { daysSince, formatPrice } from "@/lib/format";
-import {
-	getProductBySlug,
-	getProductSlugs,
-	getRelatedProducts,
-} from "@/lib/products/queries";
+import { getProductBySlug, getProductSlugs, getRelatedProducts } from "@/lib/products/queries";
 import type { Product } from "@/lib/products/types";
 import { cn } from "@/lib/utils";
 
@@ -260,46 +256,46 @@ function InfoPanel({ product, isFresh }: InfoPanelProps) {
 				{product.shortDescription}
 			</p>
 
-		<p className="font-display text-4xl font-semibold tabular text-foreground">
-			{formatPrice(product.price, product.currencyCode)}
-		</p>
+			<p className="font-display text-4xl font-semibold tabular text-foreground">
+				{formatPrice(product.price, product.currencyCode)}
+			</p>
 
-		{product.pickupOnly ? (
-			<div
-				role="note"
-				className="flex items-start gap-3 rounded-2xl border border-terracotta/30 bg-terracotta/10 p-4"
-			>
-				<span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-full bg-terracotta/15 text-terracotta">
-					<PinIcon className="size-4" />
-				</span>
-				<div>
-					<p className="font-display text-base font-semibold text-foreground">
-						Tylko odbiór osobisty
-					</p>
-					<p className="mt-0.5 text-sm leading-relaxed text-foreground/70">
-						Ten przedmiot nie jest wysyłany. Odbierzesz go w sklepie w Nowym Targu — po
-						zamówieniu skontaktujemy się, aby ustalić termin.
-					</p>
+			{product.pickupOnly ? (
+				<div
+					role="note"
+					className="flex items-start gap-3 rounded-2xl border border-terracotta/30 bg-terracotta/10 p-4"
+				>
+					<span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-full bg-terracotta/15 text-terracotta">
+						<PinIcon className="size-4" />
+					</span>
+					<div>
+						<p className="font-display text-base font-semibold text-foreground">
+							Tylko odbiór osobisty
+						</p>
+						<p className="mt-0.5 text-sm leading-relaxed text-foreground/70">
+							Ten przedmiot nie jest wysyłany. Odbierzesz go w sklepie w Nowym Targu — po zamówieniu
+							skontaktujemy się, aby ustalić termin.
+						</p>
+					</div>
 				</div>
-			</div>
-		) : null}
+			) : null}
 
-		<Suspense fallback={null}>
-			<ProductCtaBlock product={product} />
-		</Suspense>
+			<Suspense fallback={null}>
+				<ProductCtaBlock product={product} />
+			</Suspense>
 
-		{/* Nota prawna po CTA — UPK art. 43a ust. 4 */}
-		<p className="text-sm text-foreground/60 leading-relaxed">
-			W koszyku potwierdzisz, że znasz i akceptujesz opis stanu przedmiotu.{" "}
-			<a
-				href="/reklamacje"
-				className="underline underline-offset-4 hover:text-foreground transition-colors"
-			>
-				Dlaczego?
-			</a>
-		</p>
+			{/* Nota prawna po CTA — UPK art. 43a ust. 4 */}
+			<p className="text-sm text-foreground/60 leading-relaxed">
+				W koszyku potwierdzisz, że znasz i akceptujesz opis stanu przedmiotu.{" "}
+				<a
+					href="/reklamacje"
+					className="underline underline-offset-4 hover:text-foreground transition-colors"
+				>
+					Dlaczego?
+				</a>
+			</p>
 
-		<ul className="grid gap-2.5 rounded-2xl border border-border bg-cream p-4 text-sm">
+			<ul className="grid gap-2.5 rounded-2xl border border-border bg-cream p-4 text-sm">
 				{product.pickupOnly ? (
 					<TrustItem
 						icon={<PinIcon className="size-4" />}
@@ -318,32 +314,32 @@ function InfoPanel({ product, isFresh }: InfoPanelProps) {
 					label="Pewność pochodzenia"
 					value="100% bezpośrednio z Wiednia"
 				/>
-			<TrustItem
-				icon={<CheckIcon className="size-4" />}
-				label="14 dni na zwrot"
-				value="bez podania przyczyny"
-			/>
-		</ul>
+				<TrustItem
+					icon={<CheckIcon className="size-4" />}
+					label="14 dni na zwrot"
+					value="bez podania przyczyny"
+				/>
+			</ul>
 
-		{/* Nota o odstąpieniu — UPK art. 27 */}
-		<p className="text-sm text-foreground/60 leading-relaxed">
-			📋 14 dni na odstąpienie ·{" "}
-			<a
-				href="/odstapienie"
-				className="underline underline-offset-4 hover:text-foreground transition-colors"
-			>
-				/odstapienie
-			</a>{" "}
-			·{" "}
-			<a
-				href="/reklamacje"
-				className="underline underline-offset-4 hover:text-foreground transition-colors"
-			>
-				/reklamacje
-			</a>
-		</p>
-	</aside>
-);
+			{/* Nota o odstąpieniu — UPK art. 27 */}
+			<p className="text-sm text-foreground/60 leading-relaxed">
+				📋 14 dni na odstąpienie ·{" "}
+				<a
+					href="/odstapienie"
+					className="underline underline-offset-4 hover:text-foreground transition-colors"
+				>
+					/odstapienie
+				</a>{" "}
+				·{" "}
+				<a
+					href="/reklamacje"
+					className="underline underline-offset-4 hover:text-foreground transition-colors"
+				>
+					/reklamacje
+				</a>
+			</p>
+		</aside>
+	);
 }
 
 function TrustItem({

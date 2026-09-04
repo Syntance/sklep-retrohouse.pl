@@ -4,14 +4,14 @@ import {
 	getEmailTemplateForSend,
 	isEmailTemplateEnabledForSend,
 } from "@/lib/admin/email-templates";
+import type { ContactFormTopicConfig } from "@/lib/contact/default-forms";
 import { buildContactEmailRenderVars } from "@/lib/email/contact-email-context";
-import { buildDefaultTemplate } from "@/lib/email/template-types";
 import { mergeSubject, renderTemplate } from "@/lib/email/render-template";
 import { sendTransactionalEmail } from "@/lib/email/send-transactional";
-import type { ContactFormTopicConfig } from "@/lib/contact/default-forms";
+import { buildDefaultTemplate } from "@/lib/email/template-types";
 import type { ContactData } from "@/lib/validation/contact";
 
-export type SendContactConfirmationResult =
+type SendContactConfirmationResult =
 	| { ok: true; skipped?: boolean }
 	| { ok: false; message: string };
 

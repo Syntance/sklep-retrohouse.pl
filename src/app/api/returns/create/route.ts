@@ -2,14 +2,14 @@ import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { createReturnRequest, getActiveClaimForOrder } from "@/lib/admin/returns";
 import { getCustomerEmailFromRequest } from "@/lib/customer/authorize-request";
+import { getCustomerOrderById } from "@/lib/customer/orders";
 import { buildReturnItemsFromOrder } from "@/lib/customer/return-items";
 import {
 	getLineItemsBlockedByOtherCases,
 	validateReturnLineItemSelection,
 } from "@/lib/customer/return-line-items";
-import { getCustomerOrderById } from "@/lib/customer/orders";
-import { EMAIL_CONTACT } from "@/lib/email/constants";
 import { buildCaseRenderVarsForNewWithdrawal } from "@/lib/email/case-email-context";
+import { EMAIL_CONTACT } from "@/lib/email/constants";
 import { buildCustomerCaseEmailBodies } from "@/lib/email/customer-case-email";
 import { sendCaseCustomerEmail } from "@/lib/email/send-case-customer-email";
 import { sendTransactionalEmail } from "@/lib/email/send-transactional";
@@ -23,10 +23,7 @@ export async function POST(request: Request) {
 	try {
 		const email = getCustomerEmailFromRequest(request);
 		if (!email) {
-			return NextResponse.json(
-				{ ok: false, error: "Brak autoryzacji" },
-				{ status: 401 },
-			);
+			return NextResponse.json({ ok: false, error: "Brak autoryzacji" }, { status: 401 });
 		}
 
 		const body = await request.json();
@@ -77,18 +74,16 @@ export async function POST(request: Request) {
 			return NextResponse.json({ ok: false, error: selectionError }, { status: 400 });
 		}
 
-		let items;
-		let totalToRefund;
+		let built: ReturnType<typeof buildReturnItemsFromOrder>;
 		try {
-			const built = buildReturnItemsFromOrder(order, itemIds);
-			items = built.items;
-			totalToRefund = built.totalToRefund;
+			built = buildReturnItemsFromOrder(order, itemIds);
 		} catch {
 			return NextResponse.json(
 				{ ok: false, error: "Nieprawidłowe pozycje zamówienia." },
 				{ status: 400 },
 			);
 		}
+		const { items, totalToRefund } = built;
 
 		const returnRequest = await createReturnRequest({
 			requestType: "withdrawal",

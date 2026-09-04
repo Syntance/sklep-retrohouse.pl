@@ -8,7 +8,9 @@ import {
 	saveEmailTemplate,
 	setEmailTemplateEnabled,
 } from "@/lib/admin/email-templates";
+import { recordAudit } from "@/lib/admin/audit-log";
 import { AdminApiError, AdminUnauthorizedError, adminUpload } from "@/lib/admin/medusa-admin";
+import { requireAdminSession } from "@/lib/admin/require-session";
 import {
 	mergeSubject,
 	renderTemplate,
@@ -48,6 +50,7 @@ export async function saveTemplateAction(template: unknown): Promise<EmailAction
 		return handleError(error, "Nie udało się zapisać szablonu.");
 	}
 
+	await recordAudit("email-template.save", { target: parsed.data.type });
 	revalidatePath("/magazyn/maile");
 	return { ok: true, error: null };
 }
@@ -63,6 +66,10 @@ export async function setTemplateEnabledAction(input: unknown): Promise<ToggleEn
 
 	try {
 		const template = await setEmailTemplateEnabled(parsed.data.type, parsed.data.enabled);
+		await recordAudit("email-template.toggle", {
+			target: parsed.data.type,
+			meta: { enabled: parsed.data.enabled },
+		});
 		revalidatePath("/magazyn/maile");
 		return { ok: true, error: null, template };
 	} catch (error) {
@@ -76,6 +83,7 @@ export async function resetTemplateAction(type: unknown): Promise<ResetActionSta
 
 	try {
 		const template = await resetEmailTemplate(parsed.data);
+		await recordAudit("email-template.reset", { target: parsed.data });
 		revalidatePath("/magazyn/maile");
 		return { ok: true, error: null, template };
 	} catch (error) {
@@ -109,6 +117,14 @@ const testSchema = z.object({
 });
 
 export async function sendTestEmailAction(input: unknown): Promise<EmailActionState> {
+	// Server Action jest publicznym endpointem — wysyłka przez Resend odbywa się
+	// POZA adminFetch, więc sesję trzeba zweryfikować jawnie.
+	try {
+		await requireAdminSession();
+	} catch (error) {
+		return handleError(error, "Sesja wygasła — zaloguj się ponownie.");
+	}
+
 	const parsed = testSchema.safeParse(input);
 	if (!parsed.success) {
 		return { ok: false, error: parsed.error.issues[0]?.message ?? "Błędne dane." };

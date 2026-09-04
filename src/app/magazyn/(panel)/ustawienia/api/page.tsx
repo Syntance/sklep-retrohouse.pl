@@ -1,6 +1,6 @@
 import { Key } from "lucide-react";
-import { buildApiSection } from "@/lib/admin/settings-snapshot";
 import { PageHeader } from "@/components/panel/chrome";
+import { buildApiSection } from "@/lib/admin/settings-snapshot";
 import { SettingsStatusView } from "../components/settings-status-view";
 
 export const dynamic = "force-dynamic";

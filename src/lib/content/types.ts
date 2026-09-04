@@ -12,10 +12,24 @@ export type SeoMeta = {
 	noFollow?: boolean;
 };
 
-export type AnnouncementBar = {
+type AnnouncementBar = {
 	enabled: boolean;
 	text: string;
 	link?: string;
+};
+
+/** Baner popup nad treścią — sterowany z /magazyn/cms/banery-popup. */
+export type PopupBanner = {
+	enabled: boolean;
+	title: string;
+	body?: string;
+	imageUrl?: string;
+	ctaLabel?: string;
+	ctaHref?: string;
+	/** Po zamknięciu nie pokazuj ponownie w tej sesji przeglądarki. */
+	oncePerSession: boolean;
+	/** Opóźnienie przed pokazaniem (ms) — 0 = od razu. */
+	delayMs: number;
 };
 
 export type SocialLinks = {
@@ -28,6 +42,7 @@ export type SiteSettings = {
 	title: string;
 	description: string;
 	announcementBar?: AnnouncementBar;
+	popupBanner?: PopupBanner;
 	socialLinks?: SocialLinks;
 	footerText?: string;
 	titleTemplate?: string;

@@ -5,10 +5,10 @@ import Link from "next/link";
 import { useState } from "react";
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { PinIcon } from "@/components/icons";
-import { formatPrice } from "@/lib/format";
-import type { Product } from "@/lib/products/types";
 import type { ProductSource } from "@/lib/analytics/events";
 import { track } from "@/lib/analytics/posthog";
+import { formatPrice } from "@/lib/format";
+import type { Product } from "@/lib/products/types";
 import { cn } from "@/lib/utils";
 
 const BADGE_LABELS: Record<NonNullable<Product["badges"][number]>, string> = {
@@ -170,9 +170,7 @@ export function ProductCard({
 									{formatPrice(product.price, product.currencyCode)}
 								</span>
 							</span>
-							<span
-								className="absolute inset-0 grid place-items-center text-[0.65rem] font-semibold uppercase leading-none tracking-[0.1em] text-foreground opacity-0 transition-opacity duration-300 group-hover/card:opacity-100 group-hover/card:text-terracotta group-focus-within/card:opacity-100 group-focus-within/card:text-terracotta motion-reduce:transition-none"
-							>
+							<span className="absolute inset-0 grid place-items-center text-[0.65rem] font-semibold uppercase leading-none tracking-[0.1em] text-foreground opacity-0 transition-opacity duration-300 group-hover/card:opacity-100 group-hover/card:text-terracotta group-focus-within/card:opacity-100 group-focus-within/card:text-terracotta motion-reduce:transition-none">
 								Zobacz produkt
 							</span>
 						</Link>

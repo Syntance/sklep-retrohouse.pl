@@ -34,6 +34,7 @@ export function ProductImagePreview({ url, isPrimary }: Props) {
 
 	return (
 		<>
+			{/* biome-ignore lint/performance/noImgElement: podgląd w panelu admina — URL-e Medusa spoza remotePatterns, z fallbackiem onError */}
 			<img
 				src={url}
 				alt=""

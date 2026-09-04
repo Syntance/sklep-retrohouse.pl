@@ -29,15 +29,18 @@ export function CookieConsentBanner() {
 	const handleRejectAll = () => {
 		update({ analytics: false, marketing: false, preferences: false });
 	};
-	const handleSaveCustom = (next: { analytics: boolean; marketing: boolean; preferences: boolean }) => {
+	const handleSaveCustom = (next: {
+		analytics: boolean;
+		marketing: boolean;
+		preferences: boolean;
+	}) => {
 		update(next);
 	};
 
 	return (
 		<>
 			{showBanner ? (
-				<div
-					role="region"
+				<section
 					aria-labelledby={headingId}
 					aria-describedby={`${headingId}-desc`}
 					className="fixed inset-x-0 bottom-0 z-50 px-4 pb-4 sm:inset-x-auto sm:bottom-4 sm:left-4 sm:max-w-xl sm:px-0"
@@ -47,7 +50,9 @@ export function CookieConsentBanner() {
 							Pliki cookie i prywatność
 						</h2>
 						<p id={`${headingId}-desc`} className="mt-2 text-sm leading-relaxed text-foreground/70">
-							Używamy plików cookie, by lepiej rozumieć jak korzystasz ze sklepu (PostHog, hosting w EU). Możesz zaakceptować wszystko, odrzucić wszystko albo wybrać po swojemu. Bez Twojej zgody — żadna analityka się nie uruchomi.{" "}
+							Używamy plików cookie, by lepiej rozumieć jak korzystasz ze sklepu (PostHog, hosting w
+							EU). Możesz zaakceptować wszystko, odrzucić wszystko albo wybrać po swojemu. Bez
+							Twojej zgody — żadna analityka się nie uruchomi.{" "}
 							<Link
 								href="/polityka-prywatnosci"
 								className="underline decoration-walnut/40 underline-offset-4 hover:text-terracotta hover:decoration-terracotta"
@@ -81,15 +86,10 @@ export function CookieConsentBanner() {
 							</button>
 						</div>
 					</div>
-				</div>
+				</section>
 			) : null}
 
-			<CustomizeDialog
-				open={isOpen}
-				current={consent}
-				onClose={close}
-				onSave={handleSaveCustom}
-			/>
+			<CustomizeDialog open={isOpen} current={consent} onClose={close} onSave={handleSaveCustom} />
 		</>
 	);
 }

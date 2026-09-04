@@ -1,8 +1,8 @@
 import { Globe } from "lucide-react";
-import { buildGeneralSection, buildSetupChecklist } from "@/lib/admin/settings-snapshot";
 import { PageHeader } from "@/components/panel/chrome";
-import { SetupChecklist } from "../components/setup-checklist";
+import { buildGeneralSection, buildSetupChecklist } from "@/lib/admin/settings-snapshot";
 import { SettingsStatusView } from "../components/settings-status-view";
+import { SetupChecklist } from "../components/setup-checklist";
 
 export const dynamic = "force-dynamic";
 

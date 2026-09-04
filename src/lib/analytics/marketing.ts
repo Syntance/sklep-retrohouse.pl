@@ -31,13 +31,13 @@ function getPixelId(): string {
 function loadMetaPixel(): void {
 	if (!isEnabled() || typeof window === "undefined" || pixelLoaded) return;
 
-	const fbq = function (...args: unknown[]) {
+	const fbq = ((...args: unknown[]) => {
 		if (fbq.callMethod) {
 			fbq.callMethod(...args);
 		} else {
 			fbq.queue?.push(args);
 		}
-	} as FbqFunction;
+	}) as FbqFunction;
 	if (!window.fbq) window.fbq = fbq;
 	if (!window._fbq) window._fbq = window.fbq;
 	window.fbq.push = window.fbq;
@@ -64,8 +64,10 @@ function clearMetaCookies(): void {
 	const domains = [hostname, `.${hostname}`];
 	for (const name of ["_fbp", "_fbc"]) {
 		for (const domain of domains) {
+			// biome-ignore lint/suspicious/noDocumentCookie: wygaszanie cookies Meta po cofnięciu zgody — cookieStore API nie ma wsparcia w Safari
 			document.cookie = `${name}=; Max-Age=0; path=/; domain=${domain}`;
 		}
+		// biome-ignore lint/suspicious/noDocumentCookie: jw. — wariant bez atrybutu domain
 		document.cookie = `${name}=; Max-Age=0; path=/`;
 	}
 }

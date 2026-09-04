@@ -23,8 +23,7 @@ export const segmentItem =
 export const segmentItemIdle = "text-muted-foreground hover:bg-muted hover:text-foreground";
 
 /** Aktywny — terracotta/primary. */
-export const segmentItemActive =
-	"bg-primary text-primary-foreground hover:bg-primary/90";
+export const segmentItemActive = "bg-primary text-primary-foreground hover:bg-primary/90";
 
 /** Klasa input[type=color] — wymaga email-editor.css (zaokrąglona próbka w środku). */
 export const colorSwatchInput = "email-editor-color-swatch h-9 w-10";

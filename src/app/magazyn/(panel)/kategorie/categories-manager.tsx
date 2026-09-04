@@ -210,7 +210,11 @@ export function CategoriesManager({ categories }: { categories: AdminCategory[] 
 				) : null}
 
 				<Button type="submit" size="lg" disabled={pending} className={cn("h-10 gap-1.5")}>
-					{isEditing ? <Check className="size-4" aria-hidden /> : <Plus className="size-4" aria-hidden />}
+					{isEditing ? (
+						<Check className="size-4" aria-hidden />
+					) : (
+						<Plus className="size-4" aria-hidden />
+					)}
 					{pending ? "Zapisywanie…" : isEditing ? "Zapisz" : "Dodaj kategorię"}
 				</Button>
 			</form>

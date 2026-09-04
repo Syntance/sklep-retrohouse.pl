@@ -5,22 +5,16 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { env } from "@/env";
 import { getCmsServiceToken, MEDUSA_BASE_URL } from "@/lib/admin/medusa-admin";
 import { inferCmsMimeFromMeta, inferCmsMimeType } from "./cms-mime";
-import {
-	MAX_CMS_UPLOAD_BYTES,
-	MAX_CMS_UPLOAD_MB,
-	VERCEL_SAFE_UPLOAD_MB,
-} from "./constants";
+import { MAX_CMS_UPLOAD_BYTES, MAX_CMS_UPLOAD_MB, VERCEL_SAFE_UPLOAD_MB } from "./constants";
 import { normalizeCmsImageFileToWebp } from "./normalize-cms-image.server";
 
-export { MAX_CMS_UPLOAD_BYTES, MAX_CMS_UPLOAD_MB, VERCEL_SAFE_UPLOAD_MB } from "./constants";
-
-export type CmsUploadResult = {
+type CmsUploadResult = {
 	url: string;
 	filename: string;
 	size: number;
 };
 
-export type CmsPresignedUpload = {
+type CmsPresignedUpload = {
 	uploadUrl: string;
 	publicUrl: string;
 };
@@ -61,10 +55,6 @@ function getR2Config() {
 	return { endpoint, accessKeyId, secretAccessKey, bucket, fileUrl };
 }
 
-export function isCmsR2UploadConfigured(): boolean {
-	return getR2Config() !== null;
-}
-
 function getOrCreateR2Client(config: NonNullable<ReturnType<typeof getR2Config>>): S3Client {
 	if (!cachedR2) {
 		cachedR2 = new S3Client({
@@ -93,8 +83,7 @@ async function uploadViaR2(
 	timeoutMs = R2_UPLOAD_TIMEOUT_MS,
 ): Promise<CmsUploadResult> {
 	const key = buildCmsUploadKey(file.name);
-	const contentType =
-		inferCmsMimeType(file) ?? (file.type || "application/octet-stream");
+	const contentType = inferCmsMimeType(file) ?? (file.type || "application/octet-stream");
 	const body = new Uint8Array(await file.arrayBuffer());
 
 	await withUploadTimeout(
@@ -160,11 +149,7 @@ export function validateCmsUploadFile(file: File): string | null {
 	return null;
 }
 
-export function validateCmsUploadMeta(
-	filename: string,
-	contentType: string,
-	size: number,
-): string | null {
+function validateCmsUploadMeta(filename: string, contentType: string, size: number): string | null {
 	if (size > MAX_CMS_UPLOAD_BYTES) {
 		return `Plik jest za duży (maks. ${MAX_CMS_UPLOAD_MB} MB). Zapisz jako JPG/WebP lub zmniejsz rozdzielczość.`;
 	}
@@ -242,11 +227,7 @@ export async function createCmsPresignedUpload(params: {
 	contentType: string;
 	size: number;
 }): Promise<CmsPresignedUpload> {
-	const validationError = validateCmsUploadMeta(
-		params.filename,
-		params.contentType,
-		params.size,
-	);
+	const validationError = validateCmsUploadMeta(params.filename, params.contentType, params.size);
 	if (validationError) throw new Error(validationError);
 
 	const r2 = getR2Config();
@@ -271,13 +252,4 @@ export async function createCmsPresignedUpload(params: {
 
 	const base = r2.fileUrl.replace(/\/$/, "");
 	return { uploadUrl, publicUrl: `${base}/${key}` };
-}
-
-export async function uploadCmsMediaFiles(files: File[]): Promise<string[]> {
-	const urls: string[] = [];
-	for (const file of files) {
-		const result = await uploadCmsAssetFile(file);
-		urls.push(result.url);
-	}
-	return urls;
 }

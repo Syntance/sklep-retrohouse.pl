@@ -1,14 +1,14 @@
+import { Container, Section } from "@/components/primitives";
 import { BestsellersSection } from "@/components/sections/bestsellers";
 import { CategoriesSection } from "@/components/sections/categories";
 import { HeroSection } from "@/components/sections/hero";
 import { LiveBanner } from "@/components/sections/live-banner";
 import { SocialProofSection } from "@/components/sections/social-proof";
-import { Container, Section } from "@/components/primitives";
 import { env } from "@/env";
 import { getPageContent } from "@/lib/content";
 import { resolveHomeHeroProductImage } from "@/lib/content/resolve-hero-image";
-import { getHomeHeroProduct } from "@/lib/sanity/home-hero";
 import { listProducts } from "@/lib/products/queries";
+import { getHomeHeroProduct } from "@/lib/sanity/home-hero";
 
 /**
  * Homepage:

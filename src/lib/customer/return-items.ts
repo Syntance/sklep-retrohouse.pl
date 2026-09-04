@@ -1,5 +1,5 @@
-import type { CustomerOrder } from "@/lib/customer/orders";
 import type { ReturnItem } from "@/lib/admin/return-types";
+import type { CustomerOrder } from "@/lib/customer/orders";
 import {
 	getLineItemsBlockedByOtherCases,
 	validateReturnLineItemSelection,
@@ -10,11 +10,7 @@ export function buildReturnItemsFromOrder(
 	itemIds: string[],
 ): { items: ReturnItem[]; totalToRefund: number } {
 	const blocked = getLineItemsBlockedByOtherCases(order);
-	const selectionError = validateReturnLineItemSelection(
-		order.items,
-		itemIds,
-		blocked,
-	);
+	const selectionError = validateReturnLineItemSelection(order.items, itemIds, blocked);
 	if (selectionError) {
 		throw new Error("INVALID_SELECTION");
 	}
@@ -35,10 +31,7 @@ export function buildReturnItemsFromOrder(
 		});
 	}
 
-	const totalToRefund = items.reduce(
-		(sum, item) => sum + item.unitPrice * item.quantity,
-		0,
-	);
+	const totalToRefund = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
 
 	return { items, totalToRefund };
 }

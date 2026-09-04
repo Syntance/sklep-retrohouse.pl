@@ -83,8 +83,7 @@ export function ReviewCard({ href }: { href: string }) {
 			</div>
 			<p className="font-display text-2xl">Zostaw opinię w Google</p>
 			<p className="text-sm text-foreground/70">
-				Pomożesz innym znaleźć nasz sklep w Nowym Targu — i utwierdzisz nas, że robimy dobrą
-				robotę.
+				Pomożesz innym znaleźć nasz sklep w Nowym Targu — i utwierdzisz nas, że robimy dobrą robotę.
 			</p>
 			<span className="inline-flex items-center gap-1 text-sm font-semibold text-foreground">
 				Otwórz wizytówkę

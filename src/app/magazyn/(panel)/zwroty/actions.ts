@@ -2,11 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { recordAudit } from "@/lib/admin/audit-log";
 import { AdminUnauthorizedError } from "@/lib/admin/medusa-admin";
-import { getSessionToken } from "@/lib/admin/session";
-import { getAllReturns, getReturnById, updateReturnStatus } from "@/lib/admin/returns";
-import { sendReturnStatusCustomerEmail } from "@/lib/email/return-status-customer-email";
 import type { ReturnStatus } from "@/lib/admin/return-types";
+import { getAllReturns, getReturnById, updateReturnStatus } from "@/lib/admin/returns";
+import { getSessionToken } from "@/lib/admin/session";
+import { sendReturnStatusCustomerEmail } from "@/lib/email/return-status-customer-email";
 
 export async function getReturnsListAction() {
 	const token = await getSessionToken();
@@ -45,6 +46,7 @@ export async function updateReturnStatusAction(
 
 	try {
 		await updateReturnStatus(id, status, extra);
+		await recordAudit("return.status.update", { target: id, meta: { status } });
 
 		// Wyślij email do klienta o zmianie statusu
 		const returnReq = await getReturnById(id);

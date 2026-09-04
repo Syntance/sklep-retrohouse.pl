@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
-import { CustomerLoginSchema } from "@/lib/validation/returns";
 import { generateOtp } from "@/lib/customer/auth";
-import {
-	sendTransactionalEmail,
-	type SendEmailInput,
-} from "@/lib/email/send-transactional";
+import { sendTransactionalEmail } from "@/lib/email/send-transactional";
+import { CustomerLoginSchema } from "@/lib/validation/returns";
 
 /**
  * POST /api/customer/login
@@ -16,10 +13,7 @@ export async function POST(request: Request) {
 		const parsed = CustomerLoginSchema.safeParse(body);
 
 		if (!parsed.success) {
-			return NextResponse.json(
-				{ ok: false, error: "Niepoprawny adres e-mail" },
-				{ status: 400 },
-			);
+			return NextResponse.json({ ok: false, error: "Niepoprawny adres e-mail" }, { status: 400 });
 		}
 
 		const { email } = parsed.data;
@@ -45,9 +39,6 @@ export async function POST(request: Request) {
 		return NextResponse.json({ ok: true });
 	} catch (error) {
 		console.error("Customer login error:", error);
-		return NextResponse.json(
-			{ ok: false, error: "Nie udało się wysłać kodu" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ ok: false, error: "Nie udało się wysłać kodu" }, { status: 500 });
 	}
 }

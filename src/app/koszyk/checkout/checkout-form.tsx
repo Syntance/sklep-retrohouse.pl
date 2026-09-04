@@ -5,62 +5,29 @@ import { useEffect, useId, useRef, useState } from "react";
 import { CheckIcon, ShieldIcon } from "@/components/icons";
 import { CheckboxInput } from "@/components/ui/checkbox-input";
 import { RadioInput } from "@/components/ui/radio-input";
+import type { CheckoutStep, PaymentMethod, ShippingMethod } from "@/lib/analytics/events";
 import { track } from "@/lib/analytics/posthog";
-import type {
-	CheckoutStep,
-	PaymentMethod,
-	ShippingMethod,
-} from "@/lib/analytics/events";
 import { useCartStore } from "@/lib/cart/store";
+import type { CheckoutShippingOption } from "@/lib/checkout/shipping-options";
 import { formatPrice } from "@/lib/format";
-import type { Product } from "@/lib/products/types";
 import type { OrderAcceptance } from "@/lib/order-acceptance";
+import type { Product } from "@/lib/products/types";
 import { AcceptanceStep } from "./acceptance-step";
 import { CheckoutSectionFieldset } from "./checkout-section-fieldset";
 
 type CheckoutFormProps = {
 	items: Product[];
 	subtotal: number;
+	/** Metody wysyłki z Medusy — nazwa, opis i cena ustawiane w /magazyn. */
+	shippingOptions: CheckoutShippingOption[];
 };
 
-const SHIPPING_OPTIONS: Array<{
-	value: ShippingMethod;
-	radio: string;
-	title: string;
-	description: string;
-	price: string;
-	defaultChecked?: boolean;
-}> = [
-	{
-		value: "inpost",
-		radio: "paczkomat",
-		title: "InPost Paczkomaty",
-		description: "2–3 dni robocze · domyślny wybór",
-		price: "19 zł",
-		defaultChecked: true,
-	},
-	{
-		value: "dpd",
-		radio: "kurier-dpd",
-		title: "Kurier DPD",
-		description: "1–2 dni robocze · standardowe gabaryty",
-		price: "29 zł",
-	},
-	{
-		value: "dhl",
-		radio: "kurier-dhl",
-		title: "Kurier DHL",
-		description: "1–2 dni robocze · większe gabaryty",
-		price: "39 zł",
-	},
-	{
-		value: "pickup_nt",
-		radio: "odbior-nt",
-		title: "Odbiór osobisty w Nowym Targu",
-		description: "Tego samego dnia, po wcześniejszym kontakcie",
-		price: "0 zł",
-	},
-];
+const PICKUP_NAME_RE = /odbiór|odbior|pickup/i;
+
+/** Rodzaj metody na potrzeby analityki — sama wysyłka jedzie po `id`. */
+function shippingKind(option: CheckoutShippingOption): ShippingMethod {
+	return PICKUP_NAME_RE.test(option.name) ? "pickup_nt" : "inpost";
+}
 
 const PAYMENT_OPTIONS: Array<{
 	value: PaymentMethod;
@@ -90,12 +57,13 @@ const PAYMENT_OPTIONS: Array<{
 	},
 ];
 
-export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
-	const total = subtotal;
+export function CheckoutForm({ items, subtotal, shippingOptions }: CheckoutFormProps) {
 	const formId = useId();
 	const router = useRouter();
 	const clearCart = useCartStore((state) => state.clear);
-	const [shipping, setShipping] = useState<ShippingMethod>("inpost");
+	const [shippingOptionId, setShippingOptionId] = useState<string>(
+		shippingOptions[0]?.id ?? "",
+	);
 	const [payment, setPayment] = useState<PaymentMethod>("blik");
 	const [invoice, setInvoice] = useState(false);
 	const [nipFilled, setNipFilled] = useState(false);
@@ -115,9 +83,14 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 		track({ name: "checkout_step_completed", properties: { step } });
 	};
 
-	const handleShippingChange = (method: ShippingMethod) => {
-		setShipping(method);
-		track({ name: "shipping_selected", properties: { method } });
+	const selectedShipping =
+		shippingOptions.find((option) => option.id === shippingOptionId) ?? shippingOptions[0];
+	const shippingCost = selectedShipping?.pricePln ?? 0;
+	const total = subtotal + shippingCost;
+
+	const handleShippingChange = (option: CheckoutShippingOption) => {
+		setShippingOptionId(option.id);
+		track({ name: "shipping_selected", properties: { method: shippingKind(option) } });
 		handleStepCompleted("shipping");
 	};
 
@@ -134,14 +107,21 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 		}
 	};
 
+	const defaultShipping = shippingOptions[0];
+	const mountTrackedRef = useRef(false);
+
 	useEffect(() => {
-		// Pierwszy event po mount: domyślne `inpost` + `blik`. Bez tego
-		// PostHog nie widzi wyboru, gdy user nic nie zmienia.
-		track({ name: "shipping_selected", properties: { method: "inpost" } });
+		// Pierwszy event po mount: domyślna metoda + `blik`. Bez tego
+		// PostHog nie widzi wyboru, gdy user nic nie zmienia. Ref pilnuje,
+		// żeby zmiana propsów nie wystrzeliła eventu drugi raz.
+		if (mountTrackedRef.current) return;
+		mountTrackedRef.current = true;
+
+		if (defaultShipping) {
+			track({ name: "shipping_selected", properties: { method: shippingKind(defaultShipping) } });
+		}
 		track({ name: "payment_selected", properties: { method: "blik" } });
-		// Brak deps — strzelamy raz przy mount.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [defaultShipping]);
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -159,11 +139,13 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 			address: value("address"),
 			postal: value("postal"),
 			city: value("city"),
-			shipping,
+			shipping: selectedShipping ? shippingKind(selectedShipping) : "inpost",
+			shippingOptionId,
 			payment,
 			invoice,
 			nip: value("nip"),
 			companyName: value("companyName"),
+			promoCode: value("promoCode") || undefined,
 		};
 
 		setSubmitting(true);
@@ -213,23 +195,13 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 			}}
 		>
 			<div className="space-y-10">
-				<CheckoutSectionFieldset
-					step={1}
-					title="Dane dostawy"
-					eyebrow="Wysyłka"
-					dataStep="data"
-				>
+				<CheckoutSectionFieldset step={1} title="Dane dostawy" eyebrow="Wysyłka" dataStep="data">
 					<div className="grid gap-4 sm:grid-cols-2">
 						<TextField label="Imię" name="firstName" required />
 						<TextField label="Nazwisko" name="lastName" required />
 						<TextField label="E-mail" name="email" type="email" required />
 						<TextField label="Telefon" name="phone" type="tel" required />
-						<TextField
-							label="Ulica i numer"
-							name="address"
-							required
-							className="sm:col-span-2"
-						/>
+						<TextField label="Ulica i numer" name="address" required className="sm:col-span-2" />
 						<TextField label="Kod pocztowy" name="postal" required />
 						<TextField label="Miasto" name="city" required />
 					</div>
@@ -250,29 +222,35 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 									name="nip"
 									onChange={(value) => setNipFilled(value.trim().length === 10)}
 								/>
-								<TextField
-									label="Nazwa firmy"
-									name="companyName"
-									className="sm:col-span-2"
-								/>
+								<TextField label="Nazwa firmy" name="companyName" className="sm:col-span-2" />
 							</div>
 						</div>
 					) : null}
 				</CheckoutSectionFieldset>
 
 				<CheckoutSectionFieldset step={2} title="Wybór dostawy" eyebrow="Logistyka">
-					{SHIPPING_OPTIONS.map((option) => (
-						<RadioCard
-							key={option.value}
-							name="shipping"
-							value={option.radio}
-							title={option.title}
-							description={option.description}
-							price={option.price}
-							checked={shipping === option.value}
-							onSelect={() => handleShippingChange(option.value)}
-						/>
-					))}
+					{shippingOptions.length === 0 ? (
+						<p
+							role="alert"
+							className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive"
+						>
+							Chwilowo nie możemy pobrać metod dostawy. Odśwież stronę lub napisz do nas — nie
+							chcemy, żebyś zapłacił za złą opcję.
+						</p>
+					) : (
+						shippingOptions.map((option) => (
+							<RadioCard
+								key={option.id}
+								name="shippingOption"
+								value={option.id}
+								title={option.name}
+								description={option.description ?? ""}
+								price={option.pricePln > 0 ? formatPrice(option.pricePln) : "0 zł"}
+								checked={shippingOptionId === option.id}
+								onSelect={() => handleShippingChange(option)}
+							/>
+						))
+					)}
 				</CheckoutSectionFieldset>
 
 				<CheckoutSectionFieldset step={3} title="Płatność" eyebrow="Bezpieczne 256-bit">
@@ -317,9 +295,17 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 						</div>
 						<div className="flex items-center justify-between">
 							<dt>Wysyłka</dt>
-							<dd className="tabular">obliczana wyżej</dd>
+							<dd className="tabular">
+								{selectedShipping ? formatPrice(shippingCost) : "wybierz metodę"}
+							</dd>
 						</div>
 					</dl>
+					<div className="mt-4 border-t border-border pt-4">
+						<TextField label="Kod promocyjny" name="promoCode" />
+						<p className="mt-1.5 text-xs text-foreground/60">
+							Rabat naliczymy przy finalizacji zamówienia.
+						</p>
+					</div>
 					<div className="mt-4 flex items-baseline justify-between border-t border-border pt-4">
 						<dt className="font-display text-lg">Razem</dt>
 						<dd className="font-display text-3xl font-semibold tabular">{formatPrice(total)}</dd>
@@ -328,16 +314,12 @@ export function CheckoutForm({ items, subtotal }: CheckoutFormProps) {
 
 				{/* Acceptance payload przekazywany do action jako JSON */}
 				{acceptance ? (
-					<input
-						type="hidden"
-						name="acceptance"
-						value={JSON.stringify(acceptance)}
-					/>
+					<input type="hidden" name="acceptance" value={JSON.stringify(acceptance)} />
 				) : null}
 				<button
 					type="submit"
-					disabled={!acceptance || submitting}
-					aria-disabled={!acceptance || submitting}
+					disabled={!acceptance || submitting || !selectedShipping}
+					aria-disabled={!acceptance || submitting || !selectedShipping}
 					className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-terracotta px-6 text-sm font-semibold uppercase tracking-[0.08em] text-terracotta-foreground shadow-md transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
 				>
 					<ShieldIcon className="size-4 text-brass" />

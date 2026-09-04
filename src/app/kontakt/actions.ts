@@ -12,10 +12,9 @@ import { sendContactConfirmationEmail } from "@/lib/email/send-contact-confirmat
 import { sendContactNotification } from "@/lib/email/send-contact-notification";
 import { rateLimit } from "@/lib/rate-limit";
 import {
-	ContactSchema,
 	CONTACT_TOPIC_PRESETS,
+	ContactSchema,
 	type ContactTopicPreset,
-	type ContactTopicValue,
 } from "@/lib/validation/contact";
 
 export type ContactState =
@@ -78,7 +77,8 @@ export async function submitContact(
 		return {
 			status: "error",
 			errors: {},
-			message: "Ten formularz jest chwilowo niedostępny. Napisz bezpośrednio na kontakt@sklep-retrohouse.pl.",
+			message:
+				"Ten formularz jest chwilowo niedostępny. Napisz bezpośrednio na kontakt@sklep-retrohouse.pl.",
 		};
 	}
 

@@ -6,7 +6,7 @@ import type {
 
 type Tone = "neutral" | "info" | "success" | "warning" | "danger";
 
-export type StatusBadge = { label: string; tone: Tone };
+type StatusBadge = { label: string; tone: Tone };
 
 const STATUS: Record<OrderStatus, StatusBadge> = {
 	pending: { label: "W toku", tone: "info" },

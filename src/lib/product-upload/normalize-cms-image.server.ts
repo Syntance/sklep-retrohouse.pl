@@ -1,7 +1,7 @@
 import "server-only";
 
-import { normalizeCmsImageToWebp } from "@/lib/content/normalize-cms-image";
 import { isCmsUploadImage } from "@/lib/content/image-file";
+import { normalizeCmsImageToWebp } from "@/lib/content/normalize-cms-image";
 import { inferCmsMimeType } from "./cms-mime";
 
 const SKIP_WEBP_CONVERSION = new Set(["image/gif", "image/svg+xml", "image/webp"]);

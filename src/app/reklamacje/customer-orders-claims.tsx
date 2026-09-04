@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { OrderLineItemPicker } from "@/components/customer/order-line-item-picker";
 import {
 	ClaimsStatusPanel,
@@ -8,16 +9,15 @@ import {
 	OrderItemsWithCaseTags,
 	WithdrawalsStatusPanel,
 } from "@/components/customer/order-request-panels";
+import { Button } from "@/components/ui/button";
 import type { CustomerOrder } from "@/lib/customer/orders";
 import {
 	getLineItemsBlockedByOtherCases,
 	validateReturnLineItemSelection,
 } from "@/lib/customer/return-line-items";
 import { getClaimTabOrderBadge } from "@/lib/customer/return-request-visual";
-import { CLAIM_REMEDIES } from "@/lib/validation/claim";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { formatPrice } from "@/lib/format";
+import type { CLAIM_REMEDIES } from "@/lib/validation/claim";
 
 const REMEDY_OPTIONS: Array<{ value: (typeof CLAIM_REMEDIES)[number]; label: string }> = [
 	{ value: "repair", label: "Naprawa" },
@@ -37,11 +37,7 @@ export function CustomerOrdersClaims({ token, onLogout, hideLogout = false }: Pr
 	const [loading, setLoading] = useState(true);
 	const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
 
-	useEffect(() => {
-		void fetchOrders();
-	}, []);
-
-	async function fetchOrders() {
+	const fetchOrders = useCallback(async () => {
 		try {
 			const res = await fetch("/api/customer/orders", {
 				headers: { Authorization: `Bearer ${token}` },
@@ -58,7 +54,11 @@ export function CustomerOrdersClaims({ token, onLogout, hideLogout = false }: Pr
 		} finally {
 			setLoading(false);
 		}
-	}
+	}, [token]);
+
+	useEffect(() => {
+		void fetchOrders();
+	}, [fetchOrders]);
 
 	if (loading) {
 		return <div className="py-12 text-center text-foreground/70">Ładowanie zamówień…</div>;
@@ -67,9 +67,7 @@ export function CustomerOrdersClaims({ token, onLogout, hideLogout = false }: Pr
 	if (orders.length === 0) {
 		return (
 			<div className="rounded-2xl border border-border bg-card p-6 text-center">
-				<p className="text-muted-foreground">
-					Nie znaleziono zamówień dla tego adresu e-mail.
-				</p>
+				<p className="text-muted-foreground">Nie znaleziono zamówień dla tego adresu e-mail.</p>
 				<Button onClick={onLogout} variant="outline" size="sm" className="mt-4">
 					Wyloguj się
 				</Button>
@@ -99,9 +97,7 @@ export function CustomerOrdersClaims({ token, onLogout, hideLogout = false }: Pr
 						order={order}
 						token={token}
 						isOpen={selectedOrder === order.id}
-						onToggle={() =>
-							setSelectedOrder(selectedOrder === order.id ? null : order.id)
-						}
+						onToggle={() => setSelectedOrder(selectedOrder === order.id ? null : order.id)}
 						onClaimSubmitted={() => void fetchOrders()}
 					/>
 				))}
@@ -134,8 +130,7 @@ function ClaimOrderCard({
 	const needsBank = remedy === "price_reduction" || remedy === "withdrawal";
 	const excludedLineItems = getLineItemsBlockedByOtherCases(order);
 	const badge = getClaimTabOrderBadge(order);
-	const canSubmitNewClaim =
-		order.canClaim && !order.activeClaim && !order.activeWithdrawal;
+	const canSubmitNewClaim = order.canClaim && !order.activeClaim && !order.activeWithdrawal;
 	const blockedByWithdrawal = Boolean(order.activeWithdrawal);
 
 	function validateClaim(): string | null {
@@ -204,9 +199,7 @@ function ClaimOrderCard({
 			if (json.ok) {
 				const ref = json.referenceId ?? "";
 				setSuccessRef(ref);
-				toast.success(
-					ref ? `Reklamacja wysłana — numer ${ref}` : "Reklamacja wysłana",
-				);
+				toast.success(ref ? `Reklamacja wysłana — numer ${ref}` : "Reklamacja wysłana");
 				setSelectedItems([]);
 				setDescription("");
 				setRemedy("");
@@ -241,9 +234,7 @@ function ClaimOrderCard({
 							{order.itemCount === 1 ? "produkt" : "produkty"} · {formatPrice(order.total)}
 						</p>
 					</div>
-					{badge ? (
-						<span className={badge.className}>{badge.label}</span>
-					) : null}
+					{badge ? <span className={badge.className}>{badge.label}</span> : null}
 				</div>
 			</button>
 
@@ -266,111 +257,110 @@ function ClaimOrderCard({
 
 					{canSubmitNewClaim ? (
 						<form onSubmit={handleSubmitClaim} className="space-y-4" noValidate>
-					<OrderLineItemPicker
-						orderId={order.id}
-						items={order.items}
-						selectedIds={selectedItems}
-						onChange={setSelectedItems}
-						excludedIds={excludedLineItems}
-						disabled={submitting}
-						legend="Którego produktu dotyczy reklamacja?"
-						singleItemHint="Reklamacja dotyczy produktu:"
-					/>
-					{successRef ? (
-						<div
-							role="status"
-							className="rounded-lg border border-terracotta/30 bg-terracotta/10 px-4 py-3 text-sm text-foreground"
-						>
-							<p className="font-medium">Reklamacja przyjęta</p>
-							<p className="mt-1 text-foreground/80">
-								Numer zgłoszenia: <strong>{successRef}</strong>. Potwierdzenie wyślemy na
-								e-mail — odpowiemy w ciągu 14 dni.
-							</p>
-						</div>
-					) : null}
-
-					{formError ? (
-						<div
-							role="alert"
-							className="rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive"
-						>
-							{formError}
-						</div>
-					) : null}
-
-					<div>
-						<label
-							htmlFor={`claim-desc-${order.id}`}
-							className="mb-1.5 block text-sm font-medium"
-						>
-							Opis niezgodności
-						</label>
-						<textarea
-							id={`claim-desc-${order.id}`}
-							value={description}
-							onChange={(e) => setDescription(e.target.value)}
-							placeholder="Co jest nie tak, kiedy to stwierdziłeś/-aś? Jeśli masz — opisz uszkodzenie w transporcie."
-							rows={4}
-							className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-							disabled={submitting}
-						/>
-						<p className="mt-1 text-xs text-muted-foreground">Min. 20 znaków</p>
-					</div>
-
-					<div>
-						<label htmlFor={`claim-remedy-${order.id}`} className="mb-1.5 block text-sm font-medium">
-							Żądanie
-						</label>
-						<select
-							id={`claim-remedy-${order.id}`}
-							value={remedy}
-							onChange={(e) => {
-								const v = e.target.value;
-								if (
-									v === "repair" ||
-									v === "price_reduction" ||
-									v === "withdrawal"
-								) {
-									setRemedy(v);
-								}
-							}}
-							className="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm"
-							disabled={submitting}
-						>
-							<option value="" disabled>
-								Wybierz…
-							</option>
-							{REMEDY_OPTIONS.map((opt) => (
-								<option key={opt.value} value={opt.value}>
-									{opt.label}
-								</option>
-							))}
-						</select>
-					</div>
-
-					{needsBank ? (
-						<div>
-							<label
-								htmlFor={`claim-iban-${order.id}`}
-								className="mb-1.5 block text-sm font-medium"
-							>
-								Numer rachunku (IBAN)
-							</label>
-							<input
-								id={`claim-iban-${order.id}`}
-								type="text"
-								value={bankAccount}
-								onChange={(e) => setBankAccount(e.target.value)}
-								placeholder="PL00 0000 0000 0000 0000 0000 0000"
-								className="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm"
+							<OrderLineItemPicker
+								orderId={order.id}
+								items={order.items}
+								selectedIds={selectedItems}
+								onChange={setSelectedItems}
+								excludedIds={excludedLineItems}
 								disabled={submitting}
+								legend="Którego produktu dotyczy reklamacja?"
+								singleItemHint="Reklamacja dotyczy produktu:"
 							/>
-						</div>
-					) : null}
+							{successRef ? (
+								<div
+									role="status"
+									className="rounded-lg border border-terracotta/30 bg-terracotta/10 px-4 py-3 text-sm text-foreground"
+								>
+									<p className="font-medium">Reklamacja przyjęta</p>
+									<p className="mt-1 text-foreground/80">
+										Numer zgłoszenia: <strong>{successRef}</strong>. Potwierdzenie wyślemy na e-mail
+										— odpowiemy w ciągu 14 dni.
+									</p>
+								</div>
+							) : null}
 
-					<Button type="submit" disabled={submitting} className="w-full">
-						{submitting ? "Wysyłamy reklamację…" : "Złóż reklamację"}
-					</Button>
+							{formError ? (
+								<div
+									role="alert"
+									className="rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+								>
+									{formError}
+								</div>
+							) : null}
+
+							<div>
+								<label
+									htmlFor={`claim-desc-${order.id}`}
+									className="mb-1.5 block text-sm font-medium"
+								>
+									Opis niezgodności
+								</label>
+								<textarea
+									id={`claim-desc-${order.id}`}
+									value={description}
+									onChange={(e) => setDescription(e.target.value)}
+									placeholder="Co jest nie tak, kiedy to stwierdziłeś/-aś? Jeśli masz — opisz uszkodzenie w transporcie."
+									rows={4}
+									className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+									disabled={submitting}
+								/>
+								<p className="mt-1 text-xs text-muted-foreground">Min. 20 znaków</p>
+							</div>
+
+							<div>
+								<label
+									htmlFor={`claim-remedy-${order.id}`}
+									className="mb-1.5 block text-sm font-medium"
+								>
+									Żądanie
+								</label>
+								<select
+									id={`claim-remedy-${order.id}`}
+									value={remedy}
+									onChange={(e) => {
+										const v = e.target.value;
+										if (v === "repair" || v === "price_reduction" || v === "withdrawal") {
+											setRemedy(v);
+										}
+									}}
+									className="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm"
+									disabled={submitting}
+								>
+									<option value="" disabled>
+										Wybierz…
+									</option>
+									{REMEDY_OPTIONS.map((opt) => (
+										<option key={opt.value} value={opt.value}>
+											{opt.label}
+										</option>
+									))}
+								</select>
+							</div>
+
+							{needsBank ? (
+								<div>
+									<label
+										htmlFor={`claim-iban-${order.id}`}
+										className="mb-1.5 block text-sm font-medium"
+									>
+										Numer rachunku (IBAN)
+									</label>
+									<input
+										id={`claim-iban-${order.id}`}
+										type="text"
+										value={bankAccount}
+										onChange={(e) => setBankAccount(e.target.value)}
+										placeholder="PL00 0000 0000 0000 0000 0000 0000"
+										className="h-11 w-full rounded-lg border border-input bg-background px-3 text-sm"
+										disabled={submitting}
+									/>
+								</div>
+							) : null}
+
+							<Button type="submit" disabled={submitting} className="w-full">
+								{submitting ? "Wysyłamy reklamację…" : "Złóż reklamację"}
+							</Button>
 						</form>
 					) : blockedByWithdrawal ? (
 						<p className="text-sm text-muted-foreground">
@@ -379,13 +369,13 @@ function ClaimOrderCard({
 						</p>
 					) : order.activeClaim ? (
 						<p className="text-sm text-muted-foreground">
-							Na tym zamówieniu trwa reklamacja — status widzisz powyżej. O zmianach
-							poinformujemy też e-mailem.
+							Na tym zamówieniu trwa reklamacja — status widzisz powyżej. O zmianach poinformujemy
+							też e-mailem.
 						</p>
 					) : (
 						<p className="text-sm text-muted-foreground">
-							Upłynęły 2 lata od wydania towaru — zgodnie z ustawą reklamacji w tym okresie
-							nie można już złożyć.
+							Upłynęły 2 lata od wydania towaru — zgodnie z ustawą reklamacji w tym okresie nie
+							można już złożyć.
 						</p>
 					)}
 				</div>

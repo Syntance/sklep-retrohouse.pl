@@ -1,12 +1,13 @@
 import { Pencil, Plus } from "lucide-react";
 import Link from "next/link";
-import { formatPrice } from "@/lib/format";
-import { BADGE_TONE_CLASS } from "@/lib/admin/order-status";
-import { loadAdmin } from "@/lib/admin/load";
-import { type AdminProductRow, listAdminProducts } from "@/lib/admin/products";
 import { PageHeader } from "@/components/panel/chrome";
+import { loadAdmin } from "@/lib/admin/load";
+import { BADGE_TONE_CLASS } from "@/lib/admin/order-status";
+import { type AdminProductRow, listAdminProducts } from "@/lib/admin/products";
+import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { DeleteProductButton } from "./delete-product-button";
+import { DuplicateProductButton } from "./duplicate-product-button";
 import { ProductListThumbnail } from "./product-list-thumbnail";
 
 export const dynamic = "force-dynamic";
@@ -110,6 +111,7 @@ export default async function ProductsPage() {
 											>
 												<Pencil className="size-4" aria-hidden />
 											</Link>
+											<DuplicateProductButton id={product.id} title={product.title} />
 											<DeleteProductButton id={product.id} title={product.title} />
 										</div>
 									</td>

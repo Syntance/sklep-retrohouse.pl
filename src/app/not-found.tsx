@@ -27,8 +27,8 @@ export default function NotFoundPage() {
 						</h1>
 
 						<p className="mt-4 max-w-md text-base leading-relaxed text-foreground/70">
-							Strona, której szukasz, nie istnieje albo została przeniesiona. Może to
-							unikat, który ktoś zdążył kupić przed Tobą.
+							Strona, której szukasz, nie istnieje albo została przeniesiona. Może to unikat, który
+							ktoś zdążył kupić przed Tobą.
 						</p>
 
 						<div className="mt-8 flex flex-wrap items-center justify-center gap-3">

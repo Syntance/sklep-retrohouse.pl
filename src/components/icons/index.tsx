@@ -44,15 +44,6 @@ export function ArrowRightIcon(props: IconProps) {
 	);
 }
 
-export function ArrowUpRightIcon(props: IconProps) {
-	return (
-		<Svg {...props}>
-			<path d="M7 17 17 7" />
-			<path d="M8 7h9v9" />
-		</Svg>
-	);
-}
-
 export function CartIcon(props: IconProps) {
 	return (
 		<Svg {...props}>
@@ -241,23 +232,6 @@ export function CheckIcon(props: IconProps) {
 	);
 }
 
-export function PlusIcon(props: IconProps) {
-	return (
-		<Svg {...props}>
-			<path d="M12 5v14" />
-			<path d="M5 12h14" />
-		</Svg>
-	);
-}
-
-export function MinusIcon(props: IconProps) {
-	return (
-		<Svg {...props}>
-			<path d="M5 12h14" />
-		</Svg>
-	);
-}
-
 export function ZoomIcon(props: IconProps) {
 	return (
 		<Svg {...props}>
@@ -303,15 +277,6 @@ export function StarIcon(props: IconProps) {
 	return (
 		<Svg {...props}>
 			<path d="M12 3.5l2.5 5.4 5.9.6-4.4 4 1.3 5.8L12 16.6l-5.3 2.7 1.3-5.8-4.4-4 5.9-.6L12 3.5Z" />
-		</Svg>
-	);
-}
-
-export function QuoteIcon(props: IconProps) {
-	return (
-		<Svg {...props}>
-			<path d="M7 8c-2 0-3 1.6-3 4 0 2.2 1.4 3.5 3 3.5L5 19" />
-			<path d="M17 8c-2 0-3 1.6-3 4 0 2.2 1.4 3.5 3 3.5L15 19" />
 		</Svg>
 	);
 }

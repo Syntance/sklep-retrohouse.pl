@@ -39,14 +39,6 @@ export const CONTACT_TOPIC_LABELS = {
 
 export type ContactTopicValue = keyof typeof CONTACT_TOPIC_LABELS;
 
-export const ALL_CONTACT_TOPICS = Object.keys(CONTACT_TOPIC_LABELS) as [
-	ContactTopicValue,
-	...ContactTopicValue[],
-];
-
-/** @deprecated Użyj ALL_CONTACT_TOPICS — zostawione dla importów akcji. */
-export const CONTACT_TOPICS = ALL_CONTACT_TOPICS;
-
 export const CONTACT_TOPIC_PRESETS = {
 	kontakt: ["produkt", "b2b", "wysylka", "inne"],
 	regulamin: [
@@ -105,10 +97,7 @@ export const ContactSchema = z
 		}
 	});
 
-export function formatContactTopicLabel(data: {
-	topic: string;
-	topicOther?: string;
-}): string {
+export function formatContactTopicLabel(data: { topic: string; topicOther?: string }): string {
 	if (data.topic === "inne" && data.topicOther?.trim()) {
 		return data.topicOther.trim();
 	}
@@ -118,5 +107,4 @@ export function formatContactTopicLabel(data: {
 	return data.topic;
 }
 
-export type ContactInput = z.input<typeof ContactSchema>;
 export type ContactData = z.output<typeof ContactSchema>;

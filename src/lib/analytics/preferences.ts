@@ -47,7 +47,7 @@ export function writeShopPreferences(params: ShopSearchParams): void {
 	}
 }
 
-export function clearShopPreferences(): void {
+function clearShopPreferences(): void {
 	if (typeof window === "undefined") return;
 	try {
 		window.localStorage.removeItem(SHOP_PREFERENCES_KEY);

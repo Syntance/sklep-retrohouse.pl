@@ -1,5 +1,5 @@
 /** Klucz sesji klienta (OTP) w localStorage — współdzielony navbar + /konto. */
-export const CUSTOMER_SESSION_STORAGE_KEY = "rh_customer_session";
+const CUSTOMER_SESSION_STORAGE_KEY = "rh_customer_session";
 
 export const CUSTOMER_SESSION_CHANGED_EVENT = "rh-customer-session-changed";
 
@@ -33,9 +33,7 @@ function decodeTokenPayload(token: string): { email?: string; iat?: number } | n
 		const base64 = token.replace(/-/g, "+").replace(/_/g, "/");
 		const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), "=");
 		const json =
-			typeof atob === "function"
-				? atob(padded)
-				: Buffer.from(token, "base64url").toString("utf8");
+			typeof atob === "function" ? atob(padded) : Buffer.from(token, "base64url").toString("utf8");
 		return JSON.parse(json) as { email?: string; iat?: number };
 	} catch {
 		return null;

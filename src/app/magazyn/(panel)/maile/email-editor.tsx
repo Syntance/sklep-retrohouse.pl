@@ -23,8 +23,9 @@ import {
 	setTemplateEnabledAction,
 	uploadEmailImageAction,
 } from "./actions";
-import { BLOCK_META, createBlock, duplicateBlock, PALETTE_BLOCKS } from "./block-meta";
 import { BlockInspector, type ImageUploader } from "./block-inspector";
+import { BLOCK_META, createBlock, duplicateBlock, PALETTE_BLOCKS } from "./block-meta";
+import { EditorCanvas } from "./editor-canvas";
 import {
 	editorBtnRounded,
 	segmentItem,
@@ -32,11 +33,7 @@ import {
 	segmentItemIdle,
 	segmentTrack,
 } from "./editor-chrome";
-import { EditorCanvas } from "./editor-canvas";
-import {
-	EmailTemplatePicker,
-	enabledByTypeFromTemplates,
-} from "./email-template-picker";
+import { EmailTemplatePicker, enabledByTypeFromTemplates } from "./email-template-picker";
 import { ThemePanel } from "./theme-panel";
 
 type Feedback = { type: "ok" | "err"; text: string } | null;
@@ -74,20 +71,14 @@ export function EmailEditor({
 	const activeEnabled = isEmailTemplateEnabled(active);
 
 	const templateList = useMemo(() => Object.values(templates), [templates]);
-	const enabledByType = useMemo(
-		() => enabledByTypeFromTemplates(templateList),
-		[templateList],
-	);
+	const enabledByType = useMemo(() => enabledByTypeFromTemplates(templateList), [templateList]);
 
 	const selectedBlock = useMemo(
 		() => active.blocks.find((b) => b.id === selectedId) ?? null,
 		[active.blocks, selectedId],
 	);
 
-	const mergeVariables = useMemo(
-		() => getMergeVariablesForTemplate(activeType),
-		[activeType],
-	);
+	const mergeVariables = useMemo(() => getMergeVariablesForTemplate(activeType), [activeType]);
 
 	const preview = useMemo(
 		() => renderTemplate(active, sampleRenderContextForTemplate(activeType)).html,
@@ -140,34 +131,31 @@ export function EmailEditor({
 		setFeedback(null);
 	}, []);
 
-	const onToggleEnabled = useCallback(
-		(type: EmailTemplateType, enabled: boolean) => {
-			setFeedback(null);
-			setTogglingType(type);
-			void (async () => {
-				const result = await setTemplateEnabledAction({ type, enabled });
-				setTogglingType(null);
-				if (result.ok && result.template) {
-					setTemplates((prev) => ({
-						...prev,
-						[type]: result.template as EmailTemplate,
-					}));
-					setFeedback({
-						type: "ok",
-						text: enabled
-							? "Wysyłka tego e-maila włączona."
-							: "Wysyłka tego e-maila wyłączona — klient nie dostanie go automatycznie.",
-					});
-				} else {
-					setFeedback({
-						type: "err",
-						text: result.error ?? "Nie udało się zapisać ustawienia.",
-					});
-				}
-			})();
-		},
-		[],
-	);
+	const onToggleEnabled = useCallback((type: EmailTemplateType, enabled: boolean) => {
+		setFeedback(null);
+		setTogglingType(type);
+		void (async () => {
+			const result = await setTemplateEnabledAction({ type, enabled });
+			setTogglingType(null);
+			if (result.ok && result.template) {
+				setTemplates((prev) => ({
+					...prev,
+					[type]: result.template as EmailTemplate,
+				}));
+				setFeedback({
+					type: "ok",
+					text: enabled
+						? "Wysyłka tego e-maila włączona."
+						: "Wysyłka tego e-maila wyłączona — klient nie dostanie go automatycznie.",
+				});
+			} else {
+				setFeedback({
+					type: "err",
+					text: result.error ?? "Nie udało się zapisać ustawienia.",
+				});
+			}
+		})();
+	}, []);
 
 	const uploadImage: ImageUploader = async (file) => {
 		const formData = new FormData();
@@ -192,7 +180,9 @@ export function EmailEditor({
 	}
 
 	function onReset() {
-		if (!window.confirm("Przywrócić domyślny szablon? Twoje zmiany tego e-maila zostaną usunięte.")) {
+		if (
+			!window.confirm("Przywrócić domyślny szablon? Twoje zmiany tego e-maila zostaną usunięte.")
+		) {
 			return;
 		}
 		setFeedback(null);
@@ -226,8 +216,7 @@ export function EmailEditor({
 
 	const busy = saving || resetting || testing || togglingType !== null;
 
-	const previewMaxWidth =
-		previewMode === "mobile" ? 390 : (active.theme.contentWidth + 80) * 2;
+	const previewMaxWidth = previewMode === "mobile" ? 390 : (active.theme.contentWidth + 80) * 2;
 
 	return (
 		<div className="flex flex-col gap-4">
@@ -273,7 +262,9 @@ export function EmailEditor({
 					className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-foreground"
 				>
 					Wysyłka automatyczna wyłączona dla tego szablonu. Możesz edytować treść
-					{hideTemplatePicker ? " i włączyć ją suwakiem powyżej." : " i włączyć ją suwakiem w liście powyżej."}
+					{hideTemplatePicker
+						? " i włączyć ją suwakiem powyżej."
+						: " i włączyć ją suwakiem w liście powyżej."}
 				</p>
 			) : null}
 
@@ -326,7 +317,11 @@ export function EmailEditor({
 							onClick={onTest}
 							className="gap-1.5"
 						>
-							{testing ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Send className="size-4" aria-hidden />}
+							{testing ? (
+								<Loader2 className="size-4 animate-spin" aria-hidden />
+							) : (
+								<Send className="size-4" aria-hidden />
+							)}
 							Wyślij test
 						</Button>
 					</div>
@@ -339,11 +334,19 @@ export function EmailEditor({
 							onClick={onReset}
 							className="gap-1.5"
 						>
-							{resetting ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <RotateCcw className="size-4" aria-hidden />}
+							{resetting ? (
+								<Loader2 className="size-4 animate-spin" aria-hidden />
+							) : (
+								<RotateCcw className="size-4" aria-hidden />
+							)}
 							Przywróć domyślny
 						</Button>
 						<Button type="button" size="sm" disabled={busy} onClick={onSave} className="gap-1.5">
-							{saving ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Save className="size-4" aria-hidden />}
+							{saving ? (
+								<Loader2 className="size-4 animate-spin" aria-hidden />
+							) : (
+								<Save className="size-4" aria-hidden />
+							)}
 							Zapisz
 						</Button>
 					</div>
@@ -354,7 +357,9 @@ export function EmailEditor({
 						role={feedback.type === "err" ? "alert" : "status"}
 						className={cn(
 							"text-sm",
-							feedback.type === "err" ? "text-destructive" : "text-emerald-600 dark:text-emerald-400",
+							feedback.type === "err"
+								? "text-destructive"
+								: "text-emerald-600 dark:text-emerald-400",
 						)}
 					>
 						{feedback.text}
@@ -395,7 +400,10 @@ export function EmailEditor({
 						</div>
 
 						{leftPanelTab === "theme" ? (
-							<ThemePanel theme={active.theme} onChange={(theme) => updateActive((t) => ({ ...t, theme }))} />
+							<ThemePanel
+								theme={active.theme}
+								onChange={(theme) => updateActive((t) => ({ ...t, theme }))}
+							/>
 						) : selectedBlock ? (
 							<BlockInspector
 								block={selectedBlock}

@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Mail, Plus, Trash2 } from "lucide-react";
+import { Mail, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -56,9 +56,7 @@ export function FormsManager({ initialConfig }: Props) {
 		setError(null);
 		setConfig((prev) => ({
 			forms: prev.forms.map((f) =>
-				f.id === formId
-					? { ...f, topics: [...f.topics, { value, label, enabled: true }] }
-					: f,
+				f.id === formId ? { ...f, topics: [...f.topics, { value, label, enabled: true }] } : f,
 			),
 		}));
 		setNewTopicValue("");
@@ -74,9 +72,7 @@ export function FormsManager({ initialConfig }: Props) {
 		setError(null);
 		setConfig((prev) => ({
 			forms: prev.forms.map((f) =>
-				f.id === formId
-					? { ...f, topics: f.topics.filter((t) => t.value !== topicValue) }
-					: f,
+				f.id === formId ? { ...f, topics: f.topics.filter((t) => t.value !== topicValue) } : f,
 			),
 		}));
 	}
@@ -169,9 +165,7 @@ export function FormsManager({ initialConfig }: Props) {
 						<Input
 							type="email"
 							value={activeForm.recipientEmail}
-							onChange={(e) =>
-								updateForm(activeForm.id, { recipientEmail: e.target.value })
-							}
+							onChange={(e) => updateForm(activeForm.id, { recipientEmail: e.target.value })}
 						/>
 					</label>
 					<label className="flex flex-col gap-1.5 text-sm md:col-span-2">
@@ -287,8 +281,7 @@ export function FormsManager({ initialConfig }: Props) {
 						>
 							E-maile → Formularze
 						</Link>
-						. Zmienne:{" "}
-						<code className="font-mono text-xs">{"{{temat}}"}</code>,{" "}
+						. Zmienne: <code className="font-mono text-xs">{"{{temat}}"}</code>,{" "}
 						<code className="font-mono text-xs">{"{{numerSprawy}}"}</code>,{" "}
 						<code className="font-mono text-xs">{"{{numerFormularza}}"}</code>,{" "}
 						<code className="font-mono text-xs">{"{{linkKonto}}"}</code>,{" "}

@@ -6,23 +6,21 @@ import { EMAIL_FROM, EMAIL_REPLY_TO } from "@/lib/email/constants";
 
 const RESEND_TIMEOUT_MS = 10_000;
 
-export type SendEmailInput = {
+type SendEmailInput = {
 	to: string;
 	subject: string;
 	text: string;
 	html: string;
 };
 
-export type SendEmailResult = { ok: true; skipped?: boolean } | { ok: false; message: string };
+type SendEmailResult = { ok: true; skipped?: boolean } | { ok: false; message: string };
 
 export async function sendTransactionalEmail(input: SendEmailInput): Promise<SendEmailResult> {
 	const apiKey = env.RESEND_API_KEY;
 	if (!apiKey) return { ok: true, skipped: true };
 	if (!input.to.trim()) return { ok: true, skipped: true };
 
-	const from = env.RESEND_FROM_EMAIL
-		? `RetroHouse <${env.RESEND_FROM_EMAIL}>`
-		: EMAIL_FROM;
+	const from = env.RESEND_FROM_EMAIL ? `RetroHouse <${env.RESEND_FROM_EMAIL}>` : EMAIL_FROM;
 
 	const resend = new Resend(apiKey);
 	const sendPromise = resend.emails.send({

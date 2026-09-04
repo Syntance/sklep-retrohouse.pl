@@ -1,9 +1,4 @@
-import type {
-	SiteSettings,
-	HeroContent,
-	PageContentMap,
-	GlobalContent,
-} from "./types";
+import type { GlobalContent, HeroContent, PageContentMap, SiteSettings } from "./types";
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
 	title: "RetroHouse \u2014 Antyki z prawdziw\u0105 histori\u0105",

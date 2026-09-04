@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckoutProgress } from "@/components/checkout-progress";
-import { HeartIcon, InstagramIcon, ArrowRightIcon } from "@/components/icons";
-import { getSiteSettings } from "@/lib/content";
+import { ArrowRightIcon, HeartIcon, InstagramIcon } from "@/components/icons";
 import { STORE_INFO } from "@/components/layout/site-header/nav-data";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { Container, CtaLink, Eyebrow, Section } from "@/components/primitives";
+import { getSiteSettings } from "@/lib/content";
 import { PurchaseTracker, ReviewCard, UgcCtaCard } from "./thank-you-tracking";
 
 export const metadata: Metadata = {
@@ -44,8 +44,8 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Sea
 						</h1>
 						<p className="mt-4 max-w-2xl text-pretty text-lg text-foreground/80">
 							Numer zamówienia <span className="tabular font-semibold">#{orderId}</span> trafił do
-							naszej skrzynki. W ciągu 2 godzin roboczych odeślemy e-maila z potwierdzeniem i numerem
-							śledzenia.
+							naszej skrzynki. W ciągu 2 godzin roboczych odeślemy e-maila z potwierdzeniem i
+							numerem śledzenia.
 						</p>
 					</div>
 				</Container>
@@ -112,22 +112,22 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Sea
 						<ReviewCard href={STORE_INFO.googleReviewsHref} />
 					</div>
 
-				<div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-					<CtaLink href="/sklep" variant="secondary" withArrow={false}>
-						Wróć do sklepu
-					</CtaLink>
-					{socialLinks?.instagram && (
-						<Link
-							href={socialLinks.instagram}
-							target="_blank"
-							rel="noreferrer"
-							className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-terracotta"
-						>
-							<InstagramIcon className="size-4" />
-							@retrohouse
-						</Link>
-					)}
-				</div>
+					<div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+						<CtaLink href="/sklep" variant="secondary" withArrow={false}>
+							Wróć do sklepu
+						</CtaLink>
+						{socialLinks?.instagram && (
+							<Link
+								href={socialLinks.instagram}
+								target="_blank"
+								rel="noreferrer"
+								className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-foreground/70 hover:text-terracotta"
+							>
+								<InstagramIcon className="size-4" />
+								@retrohouse
+							</Link>
+						)}
+					</div>
 				</Container>
 			</Section>
 		</main>

@@ -2,13 +2,17 @@
 
 import { useState } from "react";
 import { StatisticsView } from "@/components/panel/statistics-view";
-import type { AnalyticsDashboardData } from "@/lib/admin/analytics/types";
 import type { SalesStatistics } from "@/lib/admin/analytics/sales-stats";
+import type { AnalyticsDashboardData } from "@/lib/admin/analytics/types";
+import type { RawHitsData } from "@/lib/analytics/raw-hits";
 import { AnalyticsPanel } from "./analytics-panel";
+import { RawHitsPanel } from "./raw-hits-panel";
 
-type StatisticsTab = "sales" | "analytics";
+type StatisticsTab = "sales" | "analytics" | "raw-hits";
 
-const TABS: Array<{ id: StatisticsTab; label: string; description: string }> = [
+type TabMeta = { id: StatisticsTab; label: string; description: string };
+
+const TABS: [TabMeta, ...TabMeta[]] = [
 	{
 		id: "sales",
 		label: "Statystyki sprzedażowe",
@@ -20,16 +24,23 @@ const TABS: Array<{ id: StatisticsTab; label: string; description: string }> = [
 		description:
 			"Ruch i konwersja z GA4 / PostHog — wymaga kluczy serwerowych w ENV (bez konfiguracji zobaczysz status połączenia)",
 	},
+	{
+		id: "raw-hits",
+		label: "Surowe wejścia",
+		description:
+			"Licznik wejść niezależny od zgody na cookies — bez PII, wyłącznie agregat dzienny i per ścieżka (ostatnie 30 dni)",
+	},
 ];
 
 type Props = {
 	salesStats: SalesStatistics;
 	analyticsData: AnalyticsDashboardData;
+	rawHits: RawHitsData;
 };
 
-export function StatisticsTabs({ salesStats, analyticsData }: Props) {
+export function StatisticsTabs({ salesStats, analyticsData, rawHits }: Props) {
 	const [tab, setTab] = useState<StatisticsTab>("sales");
-	const activeMeta = TABS.find((item) => item.id === tab) ?? TABS[0]!;
+	const activeMeta = TABS.find((item) => item.id === tab) ?? TABS[0];
 
 	return (
 		<div className="flex flex-col gap-6">
@@ -60,11 +71,9 @@ export function StatisticsTabs({ salesStats, analyticsData }: Props) {
 
 			<p className="text-sm text-muted-foreground">{activeMeta.description}</p>
 
-			{tab === "sales" ? (
-				<StatisticsView stats={salesStats} />
-			) : (
-				<AnalyticsPanel data={analyticsData} />
-			)}
+			{tab === "sales" ? <StatisticsView stats={salesStats} /> : null}
+			{tab === "analytics" ? <AnalyticsPanel data={analyticsData} /> : null}
+			{tab === "raw-hits" ? <RawHitsPanel data={rawHits} /> : null}
 		</div>
 	);
 }

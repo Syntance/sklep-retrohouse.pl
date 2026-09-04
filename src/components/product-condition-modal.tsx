@@ -40,7 +40,9 @@ export function ProductConditionModal({ product, onClose }: ProductConditionModa
 									<span aria-hidden className="mt-1 size-1.5 shrink-0 rounded-full bg-primary" />
 									<span>
 										<span className="font-medium text-foreground">{defect.label}</span>
-										{defect.note ? <span className="text-foreground/65"> — {defect.note}</span> : null}
+										{defect.note ? (
+											<span className="text-foreground/65"> — {defect.note}</span>
+										) : null}
 									</span>
 								</li>
 							))}
@@ -49,9 +51,7 @@ export function ProductConditionModal({ product, onClose }: ProductConditionModa
 				) : null}
 				<p className="mt-3 text-xs text-foreground/55">
 					Wersja opisu:{" "}
-					<code className="font-mono">
-						{hashConditionDescriptionSync(product.condition)}
-					</code>
+					<code className="font-mono">{hashConditionDescriptionSync(product.condition)}</code>
 				</p>
 				<button
 					type="button"

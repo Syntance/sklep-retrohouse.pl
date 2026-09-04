@@ -1,8 +1,8 @@
 "use client";
 
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buildSettingsNavItems } from "./settings-nav-items";
 

@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { CheckIcon, CloseIcon } from "@/components/icons";
+import { track } from "@/lib/analytics/posthog";
 import { useCartCalloutStore } from "@/lib/cart/callout-store";
 import { selectCartCount, useCartStore } from "@/lib/cart/store";
-import { track } from "@/lib/analytics/posthog";
 import { cn } from "@/lib/utils";
 
 const AUTO_DISMISS_MS = 6_000;
@@ -22,6 +22,8 @@ export function CartAddedCallout() {
 	const count = useCartStore(selectCartCount);
 	const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies(productName): restart auto-dismiss, gdy przy otwartym callout doleci kolejny produkt
+	// biome-ignore lint/correctness/useExhaustiveDependencies(variant): jw. — zmiana wariantu ma zresetować timer
 	useEffect(() => {
 		if (!open) return;
 

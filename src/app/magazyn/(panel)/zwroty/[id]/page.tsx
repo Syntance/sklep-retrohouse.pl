@@ -1,11 +1,11 @@
-import Link from "next/link";
-import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CLAIM_REMEDY_LABELS } from "@/lib/claims/labels";
 import { formatPrice } from "@/lib/format";
 import { getReturnDetailAction } from "../actions";
 import { ReturnActions } from "./return-actions";
-import { CLAIM_REMEDY_LABELS } from "@/lib/claims/labels";
 
 const STATUS_LABELS: Record<string, string> = {
 	pending_approval: "Oczekuje na akceptację",
@@ -58,9 +58,7 @@ export default async function ReturnDetailPage({ params }: { params: Promise<{ i
 							{isClaim && ret.claimRemedy ? (
 								<div>
 									<dt className="font-medium text-muted-foreground">Żądanie klienta</dt>
-									<dd className="mt-1 text-foreground">
-										{CLAIM_REMEDY_LABELS[ret.claimRemedy]}
-									</dd>
+									<dd className="mt-1 text-foreground">{CLAIM_REMEDY_LABELS[ret.claimRemedy]}</dd>
 								</div>
 							) : null}
 							<div>
@@ -93,8 +91,11 @@ export default async function ReturnDetailPage({ params }: { params: Promise<{ i
 					<div className="rounded-xl border border-border bg-card p-6">
 						<h2 className="font-serif text-lg text-foreground mb-4">Produkty</h2>
 						<div className="space-y-3">
-							{ret.items.map((item, idx) => (
-								<div key={idx} className="flex items-center gap-4 rounded-lg border border-border p-3">
+							{ret.items.map((item) => (
+								<div
+									key={item.orderLineItemId}
+									className="flex items-center gap-4 rounded-lg border border-border p-3"
+								>
 									{item.thumbnail && (
 										<Image
 											src={item.thumbnail}
@@ -152,36 +153,48 @@ export default async function ReturnDetailPage({ params }: { params: Promise<{ i
 						<div className="space-y-3 text-sm">
 							<div>
 								<p className="font-medium text-foreground">Złożony</p>
-								<p className="text-muted-foreground">{new Date(ret.createdAt).toLocaleString("pl-PL")}</p>
+								<p className="text-muted-foreground">
+									{new Date(ret.createdAt).toLocaleString("pl-PL")}
+								</p>
 							</div>
 							{ret.approvedAt && (
 								<div>
 									<p className="font-medium text-foreground">Zaakceptowany</p>
-									<p className="text-muted-foreground">{new Date(ret.approvedAt).toLocaleString("pl-PL")}</p>
+									<p className="text-muted-foreground">
+										{new Date(ret.approvedAt).toLocaleString("pl-PL")}
+									</p>
 								</div>
 							)}
 							{ret.shippedAt && (
 								<div>
 									<p className="font-medium text-foreground">Wysłany</p>
-									<p className="text-muted-foreground">{new Date(ret.shippedAt).toLocaleString("pl-PL")}</p>
+									<p className="text-muted-foreground">
+										{new Date(ret.shippedAt).toLocaleString("pl-PL")}
+									</p>
 								</div>
 							)}
 							{ret.receivedAt && (
 								<div>
 									<p className="font-medium text-foreground">Otrzymany</p>
-									<p className="text-muted-foreground">{new Date(ret.receivedAt).toLocaleString("pl-PL")}</p>
+									<p className="text-muted-foreground">
+										{new Date(ret.receivedAt).toLocaleString("pl-PL")}
+									</p>
 								</div>
 							)}
 							{ret.refundedAt && (
 								<div>
 									<p className="font-medium text-success">Zwrócono środki</p>
-									<p className="text-muted-foreground">{new Date(ret.refundedAt).toLocaleString("pl-PL")}</p>
+									<p className="text-muted-foreground">
+										{new Date(ret.refundedAt).toLocaleString("pl-PL")}
+									</p>
 								</div>
 							)}
 							{ret.rejectedAt && (
 								<div>
 									<p className="font-medium text-destructive">Odrzucony</p>
-									<p className="text-muted-foreground">{new Date(ret.rejectedAt).toLocaleString("pl-PL")}</p>
+									<p className="text-muted-foreground">
+										{new Date(ret.rejectedAt).toLocaleString("pl-PL")}
+									</p>
 								</div>
 							)}
 						</div>

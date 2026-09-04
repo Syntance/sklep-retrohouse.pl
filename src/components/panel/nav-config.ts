@@ -3,6 +3,7 @@ import {
 	Clock,
 	FileText,
 	LayoutGrid,
+	type LucideIcon,
 	Mail,
 	MessageSquare,
 	Package,
@@ -10,10 +11,10 @@ import {
 	Settings,
 	ShoppingBag,
 	Tags,
-	type LucideIcon,
+	TicketPercent,
 } from "lucide-react";
 
-export type MagazynNavItem = {
+type MagazynNavItem = {
 	href: string;
 	label: string;
 	icon: LucideIcon;
@@ -30,6 +31,7 @@ export const MAGAZYN_NAV_ITEMS: MagazynNavItem[] = [
 	{ href: "/magazyn/zwroty", label: "Zwroty i reklamacje", icon: RotateCcw },
 	{ href: "/magazyn/produkty", label: "Produkty", icon: Package },
 	{ href: "/magazyn/kategorie", label: "Kategorie", icon: Tags },
+	{ href: "/magazyn/kody-promocyjne", label: "Kody promocyjne", icon: TicketPercent },
 	{ href: "/magazyn/epoki", label: "Epoki", icon: Clock, retrohouse: true },
 	{ href: "/magazyn/cms", label: "CMS", icon: FileText },
 	{ href: "/magazyn/maile", label: "E-maile", icon: Mail },

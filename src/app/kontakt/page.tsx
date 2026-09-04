@@ -10,17 +10,16 @@ import {
 	WhatsAppIcon,
 } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
-import { getSiteSettings } from "@/lib/content";
 import { STORE_INFO } from "@/components/layout/site-header/nav-data";
 import { Breadcrumbs, Container, CtaLink, Eyebrow, Lead, Section } from "@/components/primitives";
 import { CONTACT_FAST_RESPONSE, CONTACT_FORM_RESPONSE } from "@/lib/contact/response-time";
-import { KontaktFormSection } from "./kontakt-form-section";
+import { getSiteSettings } from "@/lib/content";
 import { MapDirectionsLink, PhoneLink, WhatsAppLink } from "./contact-cta";
+import { KontaktFormSection } from "./kontakt-form-section";
 
 export const metadata: Metadata = {
 	title: "Sklep z antykami w Nowym Targu — kontakt",
-	description:
-		`Napisz lub odwiedź sklep RetroHouse w Nowym Targu. Pytania o produkty, B2B, wysyłka — odpowiemy w ciągu ${CONTACT_FORM_RESPONSE.labelShort}.`,
+	description: `Napisz lub odwiedź sklep RetroHouse w Nowym Targu. Pytania o produkty, B2B, wysyłka — odpowiemy w ciągu ${CONTACT_FORM_RESPONSE.labelShort}.`,
 	alternates: { canonical: "/kontakt" },
 };
 
@@ -104,8 +103,8 @@ export default async function KontaktPage() {
 						</h1>
 						<Lead className="mt-4">
 							Napisz do nas lub odwiedź nas osobiście. Gwarantujemy odpowiedź w ciągu{" "}
-							{CONTACT_FORM_RESPONSE.label} — w godzinach otwarcia DM na Instagramie
-							i&nbsp;WhatsApp odpisujemy {CONTACT_FAST_RESPONSE.within}.
+							{CONTACT_FORM_RESPONSE.label} — w godzinach otwarcia DM na Instagramie i&nbsp;WhatsApp
+							odpisujemy {CONTACT_FAST_RESPONSE.within}.
 						</Lead>
 					</div>
 				</Container>
@@ -196,12 +195,12 @@ export default async function KontaktPage() {
 								<p className="mt-1 text-sm text-foreground/70">
 									{CONTACT_FAST_RESPONSE.openingHoursNote}
 								</p>
-							<div className="mt-4 flex flex-wrap items-center gap-2">
-								{socialLinks?.instagram && (
-									<CtaLink href={socialLinks.instagram} variant="secondary">
-										DM na IG
-									</CtaLink>
-								)}
+								<div className="mt-4 flex flex-wrap items-center gap-2">
+									{socialLinks?.instagram && (
+										<CtaLink href={socialLinks.instagram} variant="secondary">
+											DM na IG
+										</CtaLink>
+									)}
 									<WhatsAppLink
 										href={whatsappHref}
 										className="inline-flex h-11 items-center gap-2 rounded-full border border-border bg-background px-5 text-xs font-semibold uppercase tracking-[0.08em] text-foreground transition-colors hover:border-terracotta hover:text-terracotta"

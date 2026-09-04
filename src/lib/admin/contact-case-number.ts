@@ -1,6 +1,6 @@
 import "server-only";
 
-import { catalogAdminMutate, catalogAdminFetch } from "./medusa-admin";
+import { catalogAdminFetch, catalogAdminMutate } from "./medusa-admin";
 
 const COUNTER_KEY = "contact_case_counter";
 const YEAR_KEY = "contact_case_year";

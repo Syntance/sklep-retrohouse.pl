@@ -15,13 +15,9 @@ type Bucket = { count: number; resetAt: number };
 
 const BUCKETS = new Map<string, Bucket>();
 
-export type RateLimitResult = { ok: boolean; retryAfterSec: number };
+type RateLimitResult = { ok: boolean; retryAfterSec: number };
 
-export function rateLimit(
-	key: string,
-	limit: number,
-	windowMs: number,
-): RateLimitResult {
+export function rateLimit(key: string, limit: number, windowMs: number): RateLimitResult {
 	const now = Date.now();
 	const existing = BUCKETS.get(key);
 	if (!existing || existing.resetAt <= now) {

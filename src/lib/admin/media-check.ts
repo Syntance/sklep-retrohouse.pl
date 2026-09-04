@@ -1,5 +1,5 @@
 import "server-only";
-import { resolveMedusaMediaUrl, resolveMedusaMediaUrls } from "@/lib/medusa/media-url";
+import { resolveMedusaMediaUrls } from "@/lib/medusa/media-url";
 
 /** Sprawdza, czy plik pod URL istnieje (HEAD). Martwe linki = upload sprzed migracji / utrata dysku Railway. */
 export async function partitionReachableMediaUrls(urls: string[]): Promise<{
@@ -23,5 +23,3 @@ export async function partitionReachableMediaUrls(urls: string[]): Promise<{
 	const valid = checks.filter((url): url is string => url !== null);
 	return { valid, staleCount: resolved.length - valid.length };
 }
-
-export { resolveMedusaMediaUrl };

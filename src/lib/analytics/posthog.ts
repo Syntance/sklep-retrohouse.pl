@@ -101,11 +101,6 @@ export function track<E extends AnalyticsEvent>(event: E): void {
 	posthog.capture(event.name, event.properties as Record<string, unknown>);
 }
 
-export function identify(distinctId: string, traits?: Record<string, string | number | boolean>) {
-	if (!isEnabled() || !initialized || !consented) return;
-	posthog.identify(distinctId, traits);
-}
-
 export function resetAnalytics() {
 	if (!isEnabled() || !initialized) return;
 	posthog.reset();

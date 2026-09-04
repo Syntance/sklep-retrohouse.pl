@@ -21,11 +21,7 @@ type Props = {
 	hideTemplatePicker?: boolean;
 };
 
-export function EmailEditorWrapper({
-	initialTemplates,
-	initialType,
-	hideTemplatePicker,
-}: Props) {
+export function EmailEditorWrapper({ initialTemplates, initialType, hideTemplatePicker }: Props) {
 	return (
 		<EmailEditorDynamic
 			initialTemplates={initialTemplates}

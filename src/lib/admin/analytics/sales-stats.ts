@@ -1,7 +1,20 @@
-import type { AdminOrderStatsRow, OrderPaymentStatus, OrderStatus } from "@/lib/admin/order-types";
 import { orderStatusBadge } from "@/lib/admin/order-status";
+import type { AdminOrderStatsRow, OrderPaymentStatus, OrderStatus } from "@/lib/admin/order-types";
 
-const MONTH_LABELS = ["Sty", "Lut", "Mar", "Kwi", "Maj", "Cze", "Lip", "Sie", "Wrz", "Paź", "Lis", "Gru"] as const;
+const MONTH_LABELS = [
+	"Sty",
+	"Lut",
+	"Mar",
+	"Kwi",
+	"Maj",
+	"Cze",
+	"Lip",
+	"Sie",
+	"Wrz",
+	"Paź",
+	"Lis",
+	"Gru",
+] as const;
 
 /** Medusa Admin — kwoty zamówień w PLN (major), jak `formatPrice`. */
 const PAID_PAYMENT: OrderPaymentStatus[] = ["captured", "partially_captured"];
@@ -10,27 +23,27 @@ export function isPaidPaymentStatus(paymentStatus: OrderPaymentStatus): boolean 
 	return PAID_PAYMENT.includes(paymentStatus);
 }
 
-export type MonthlySalesPoint = {
+type MonthlySalesPoint = {
 	miesiac: string;
 	/** Przychód w PLN (zaksięgowane płatności). */
 	przychod: number;
 	zamowienia: number;
 };
 
-export type StatusBreakdownRow = {
+type StatusBreakdownRow = {
 	label: string;
 	val: number;
 	color: string;
 	pct: number;
 };
 
-export type TopProductRow = {
+type TopProductRow = {
 	nazwa: string;
 	sprzedane: number;
 	przychod: number;
 };
 
-export type ShareRow = {
+type ShareRow = {
 	name: string;
 	value: number;
 	pct: number;
@@ -110,8 +123,9 @@ export function buildSalesStatistics(
 
 	for (const order of orders) {
 		const key = monthKey(order.createdAt);
-		if (!key || !monthlyMap.has(key)) continue;
-		const bucket = monthlyMap.get(key)!;
+		if (!key) continue;
+		const bucket = monthlyMap.get(key);
+		if (!bucket) continue;
 		bucket.zamowienia += 1;
 		if (isPaidOrder(order.paymentStatus)) {
 			bucket.przychodPln += order.total;
@@ -119,7 +133,7 @@ export function buildSalesStatistics(
 	}
 
 	const monthly: MonthlySalesPoint[] = monthKeys.map((key) => {
-		const bucket = monthlyMap.get(key)!;
+		const bucket = monthlyMap.get(key) ?? { przychodPln: 0, zamowienia: 0 };
 		return {
 			miesiac: formatMonthLabel(key, showYearOnMonths),
 			przychod: Math.round(bucket.przychodPln),

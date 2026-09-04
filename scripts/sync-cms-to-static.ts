@@ -10,10 +10,10 @@ import path from "node:path";
 import { Readable } from "node:stream";
 import { loadEnvConfig } from "@next/env";
 import { CMS_HERO_STATIC_FILES } from "../src/lib/content/cms-hero-image";
-import { normalizeCmsImageToWebp } from "../src/lib/content/normalize-cms-image";
 import { PAGE_HERO_IMAGES } from "../src/lib/content/hero-images";
 import { parseStoreMetadataJson } from "../src/lib/content/metadata-json";
 import { migrateKontaktHeroToONas } from "../src/lib/content/migrate-hero-pages";
+import { normalizeCmsImageToWebp } from "../src/lib/content/normalize-cms-image";
 
 loadEnvConfig(process.cwd());
 
@@ -97,9 +97,7 @@ async function fetchPageContentMap(token: string): Promise<Record<string, unknow
 
 	const data = (await res.json()) as { stores: Array<{ metadata?: Record<string, unknown> }> };
 	const raw = data.stores[0]?.metadata?.[RETROHOUSE_PAGE_CONTENT_KEY];
-	return migrateKontaktHeroToONas(
-		parseStoreMetadataJson<Record<string, unknown>>(raw) ?? {},
-	);
+	return migrateKontaktHeroToONas(parseStoreMetadataJson<Record<string, unknown>>(raw) ?? {});
 }
 
 function readHeroFields(pageContentMap: Record<string, unknown>, pageKey: HeroPageKey): HeroFields {

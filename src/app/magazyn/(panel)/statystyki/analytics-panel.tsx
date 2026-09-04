@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertCircle, CheckCircle2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
 	Area,
@@ -12,7 +13,6 @@ import {
 	XAxis,
 	YAxis,
 } from "recharts";
-import { CheckCircle2, AlertCircle } from "lucide-react";
 import { Badge, Card, Section, StatTile } from "@/components/panel/chrome";
 import { formatKwota } from "@/components/panel/demo-data";
 import type { AnalyticsDashboardData, AnalyticsKpi } from "@/lib/admin/analytics/types";
@@ -46,9 +46,7 @@ function KpiGrid({ kpi, periodLabel }: { kpi: AnalyticsKpi; periodLabel: string 
 					label="Konwersja"
 					value={kpi.conversionRate != null ? `${kpi.conversionRate}%` : "—"}
 					sub={
-						kpi.purchases != null
-							? `${kpi.purchases.toLocaleString("pl-PL")} zakupów`
-							: undefined
+						kpi.purchases != null ? `${kpi.purchases.toLocaleString("pl-PL")} zakupów` : undefined
 					}
 				/>
 			</div>
@@ -144,8 +142,7 @@ export function AnalyticsPanel({ data }: AnalyticsPanelProps) {
 	const [tab, setTab] = useState<SourceTab>("combined");
 	const periodLabel = `ostatnie ${data.rangeDays} dni`;
 	const kpi = pickKpi(data, tab);
-	const analyticsReady =
-		data.ga4.status === "connected" || data.posthog.status === "connected";
+	const analyticsReady = data.ga4.status === "connected" || data.posthog.status === "connected";
 
 	const sourceTabs: Array<{ id: SourceTab; label: string }> = [
 		{ id: "combined", label: "Łącznie" },
@@ -195,8 +192,8 @@ export function AnalyticsPanel({ data }: AnalyticsPanelProps) {
 					</p>
 					<ul className="mt-3 list-inside list-disc space-y-1 text-xs">
 						<li>
-							<code>POSTHOG_PERSONAL_API_KEY</code> + <code>POSTHOG_PROJECT_ID</code> — odczyt
-							ruchu i lejka w panelu
+							<code>POSTHOG_PERSONAL_API_KEY</code> + <code>POSTHOG_PROJECT_ID</code> — odczyt ruchu
+							i lejka w panelu
 						</li>
 						<li>
 							<code>GA4_PROPERTY_ID</code> + <code>GA4_SERVICE_ACCOUNT_JSON</code> — opcjonalnie;
@@ -244,7 +241,11 @@ export function AnalyticsPanel({ data }: AnalyticsPanelProps) {
 						<h2 className="font-serif text-lg text-foreground">Kanały ruchu (GA4)</h2>
 						<div className="mt-4">
 							<ResponsiveContainer width="100%" height={200}>
-								<BarChart data={data.ga4.channels} layout="vertical" margin={{ left: 0, right: 16 }}>
+								<BarChart
+									data={data.ga4.channels}
+									layout="vertical"
+									margin={{ left: 0, right: 16 }}
+								>
 									<XAxis type="number" hide />
 									<YAxis
 										type="category"

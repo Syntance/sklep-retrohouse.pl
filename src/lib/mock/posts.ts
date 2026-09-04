@@ -22,12 +22,12 @@ export type Post = {
 	bodyExtended?: ArticleBody;
 };
 
-export type ArticleSection = {
+type ArticleSection = {
 	heading: string;
 	paragraphs: string[];
 };
 
-export type ArticleBody = {
+type ArticleBody = {
 	intro: string;
 	sections: ArticleSection[];
 	conclusion: string;

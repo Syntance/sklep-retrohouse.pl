@@ -2,8 +2,8 @@
 
 import { useId, useState } from "react";
 import { ArrowRightIcon } from "@/components/icons";
-import { track } from "@/lib/analytics/posthog";
 import type { AnalyticsEvent } from "@/lib/analytics/events";
+import { track } from "@/lib/analytics/posthog";
 
 type NewsletterSource = Extract<
 	AnalyticsEvent,
@@ -75,9 +75,7 @@ export function NewsletterForm({
 					</button>
 				</div>
 				{status === "ok" ? (
-					<p className="mt-2 text-xs text-success">
-						Sprawdź skrzynkę — wysłaliśmy potwierdzenie.
-					</p>
+					<p className="mt-2 text-xs text-success">Sprawdź skrzynkę — wysłaliśmy potwierdzenie.</p>
 				) : null}
 			</form>
 		);
@@ -131,12 +129,7 @@ export function NewsletterForm({
 				</button>
 			</form>
 			{status === "ok" ? (
-				<p
-					className={`mt-2 text-xs ${
-						isInk ? "text-success" : "text-success"
-					}`}
-					role="status"
-				>
+				<p className={`mt-2 text-xs ${isInk ? "text-success" : "text-success"}`} role="status">
 					Sprawdź skrzynkę — wysłaliśmy potwierdzenie.
 				</p>
 			) : null}

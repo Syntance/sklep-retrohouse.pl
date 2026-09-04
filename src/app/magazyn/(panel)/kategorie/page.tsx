@@ -1,6 +1,6 @@
+import { PageHeader } from "@/components/panel/chrome";
 import { listCategories } from "@/lib/admin/categories";
 import { loadAdmin } from "@/lib/admin/load";
-import { PageHeader } from "@/components/panel/chrome";
 import { CategoriesManager } from "./categories-manager";
 
 export const dynamic = "force-dynamic";

@@ -43,11 +43,7 @@ export function ReklamacjePortal() {
 					Zarządzaj zamówieniami i reklamacjami w{" "}
 					<strong className="text-foreground">Moim koncie</strong>.
 				</p>
-				<Button
-					type="button"
-					size="sm"
-					onClick={() => router.push("/konto?tab=reklamacje")}
-				>
+				<Button type="button" size="sm" onClick={() => router.push("/konto?tab=reklamacje")}>
 					Panel konta
 				</Button>
 			</div>

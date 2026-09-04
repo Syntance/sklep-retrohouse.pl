@@ -1,14 +1,14 @@
 "use client";
 
-import Link from "next/link";
 import { Edit3, Eye, Mail } from "lucide-react";
+import Link from "next/link";
+import { Badge, Card, PageHeader, StatTile } from "@/components/panel/chrome";
 import { Button } from "@/components/ui/button";
 import {
 	EMAIL_TEMPLATE_TYPES,
 	type EmailTemplate,
 	isEmailTemplateEnabled,
 } from "@/lib/email/template-types";
-import { Badge, Card, PageHeader, StatTile } from "@/components/panel/chrome";
 
 const EMAILS_BASE_PATH = "/magazyn/maile";
 

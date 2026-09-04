@@ -1,15 +1,15 @@
 "use client";
 
-import { useId, useState } from "react";
 import Link from "next/link";
+import { useId, useState } from "react";
 import { ClipboardIcon } from "@/components/icons";
-import { CheckboxInput } from "@/components/ui/checkbox-input";
 import { ProductConditionModal } from "@/components/product-condition-modal";
+import { CheckboxInput } from "@/components/ui/checkbox-input";
 import { track } from "@/lib/analytics/posthog";
 import { hashConditionDescriptionSync } from "@/lib/condition-hash";
-import { TERMS_VERSION, PRIVACY_VERSION } from "@/lib/legal-versions";
+import { PRIVACY_VERSION, TERMS_VERSION } from "@/lib/legal-versions";
+import type { LineItemAcceptance, OrderAcceptance } from "@/lib/order-acceptance";
 import type { Product } from "@/lib/products/types";
-import type { OrderAcceptance, LineItemAcceptance } from "@/lib/order-acceptance";
 import { CheckoutSectionFieldset } from "./checkout-section-fieldset";
 
 type AcceptanceStepProps = {
@@ -83,11 +83,7 @@ export function AcceptanceStep({ items, onComplete, onIncomplete }: AcceptanceSt
 		checkCompletion(itemAccepted, termsAccepted, checked);
 	};
 
-	const checkCompletion = (
-		items_: Record<string, boolean>,
-		terms: boolean,
-		privacy: boolean,
-	) => {
+	const checkCompletion = (items_: Record<string, boolean>, terms: boolean, privacy: boolean) => {
 		const allItems = items.every((item) => items_[item.slug]);
 		if (allItems && terms && privacy) {
 			const now = new Date().toISOString();
@@ -182,10 +178,7 @@ export function AcceptanceStep({ items, onComplete, onIncomplete }: AcceptanceSt
 							14 dni na odstąpienie od umowy
 						</strong>{" "}
 						od dnia otrzymania przesyłki. Szczegóły i formularz:{" "}
-						<Link
-							href="/odstapienie"
-							className="font-semibold underline-offset-4 hover:underline"
-						>
+						<Link href="/odstapienie" className="font-semibold underline-offset-4 hover:underline">
 							/odstapienie
 						</Link>
 						. Antyki są rzeczami używanymi — odpowiadasz za zmniejszenie wartości wynikłe z
@@ -238,9 +231,8 @@ function ItemAcceptanceRow({
 			/>
 			<div className="min-w-0 flex-1">
 				<label htmlFor={id} id={`${id}-desc`} className="cursor-pointer text-sm leading-snug">
-					Zapoznałem/am się z opisem stanu{" "}
-					<strong className="font-semibold">{product.name}</strong> i akceptuję wszystkie
-					wskazane ślady użytkowania, uszkodzenia i naprawy.
+					Zapoznałem/am się z opisem stanu <strong className="font-semibold">{product.name}</strong>{" "}
+					i akceptuję wszystkie wskazane ślady użytkowania, uszkodzenia i naprawy.
 				</label>
 				<button
 					type="button"

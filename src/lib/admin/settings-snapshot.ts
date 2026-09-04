@@ -45,9 +45,7 @@ export async function buildSetupChecklist(): Promise<SetupCheckItem[]> {
 		label: "Metody dostawy",
 		status: fieldStatus(shipping.length > 0),
 		detail:
-			shipping.length > 0
-				? `${shipping.length} opcji wysyłki`
-				: "Dodaj shipping options w Medusie",
+			shipping.length > 0 ? `${shipping.length} opcji wysyłki` : "Dodaj shipping options w Medusie",
 	});
 
 	items.push({
@@ -272,7 +270,10 @@ async function fetchShippingOptions(): Promise<MedusaShippingOption[]> {
 	}
 }
 
-function formatMinor(amount: number | null | undefined, currency: string | null | undefined): string {
+function formatMinor(
+	amount: number | null | undefined,
+	currency: string | null | undefined,
+): string {
 	if (amount == null) return "—";
 	const code = (currency ?? "pln").toUpperCase();
 	return new Intl.NumberFormat("pl-PL", {

@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import {
 	CONSENT_CHANGED_EVENT,
-	OPEN_COOKIE_BANNER_EVENT,
 	type ConsentCategories,
 	type ConsentState,
 	emitConsentChange,
+	OPEN_COOKIE_BANNER_EVENT,
 	readConsent,
 	writeConsent,
 } from "./consent";

@@ -133,13 +133,7 @@ const nextConfig: NextConfig = {
 		serverActions: {
 			bodySizeLimit: "15mb",
 		},
-		optimizePackageImports: [
-			"lucide-react",
-			"@react-three/drei",
-			"@react-three/fiber",
-			"motion",
-			"gsap",
-		],
+		optimizePackageImports: ["lucide-react"],
 	},
 	async headers() {
 		return [
@@ -157,7 +151,9 @@ const nextConfig: NextConfig = {
 			},
 			{
 				source: "/images/:path*",
-				headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+				headers: [
+					{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" },
+				],
 			},
 			{
 				source: "/.well-known/security.txt",

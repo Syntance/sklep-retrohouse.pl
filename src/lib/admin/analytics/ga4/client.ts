@@ -2,13 +2,7 @@ import "server-only";
 
 import { BetaAnalyticsDataClient } from "@google-analytics/data";
 import { analyticsEnv } from "../env";
-import type {
-	AnalyticsKpi,
-	ChannelRow,
-	DailyPoint,
-	Ga4AnalyticsSlice,
-	TopPageRow,
-} from "../types";
+import type { AnalyticsKpi, ChannelRow, DailyPoint, Ga4AnalyticsSlice, TopPageRow } from "../types";
 
 const FETCH_TIMEOUT_MS = 30_000;
 
@@ -42,9 +36,7 @@ function buildKpi(metrics: {
 	revenueMinor: number;
 }): AnalyticsKpi {
 	const conversionRate =
-		metrics.sessions > 0
-			? Math.round((metrics.purchases / metrics.sessions) * 10000) / 100
-			: null;
+		metrics.sessions > 0 ? Math.round((metrics.purchases / metrics.sessions) * 10000) / 100 : null;
 	return {
 		sessions: metrics.sessions,
 		users: metrics.users,

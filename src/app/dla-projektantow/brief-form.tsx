@@ -2,9 +2,9 @@
 
 import { useActionState, useEffect, useId, useState } from "react";
 import { ArrowRightIcon } from "@/components/icons";
-import { track } from "@/lib/analytics/posthog";
 import type { B2BBudgetBucket, B2BTimeline } from "@/lib/analytics/events";
-import { submitBrief, type B2BBriefState } from "./actions";
+import { track } from "@/lib/analytics/posthog";
+import { type B2BBriefState, submitBrief } from "./actions";
 
 const initialState: B2BBriefState = { status: "idle" };
 
@@ -139,9 +139,7 @@ export function BriefForm() {
 					onChange={(e) => setNewsletter(e.target.checked)}
 					className="mt-1 size-4 rounded border-ink-foreground/30 bg-ink-foreground/10 text-brass"
 				/>
-				<span>
-					Chcę dostawać priorytetowy newsletter B2B (48h przed publikacją w sklepie).
-				</span>
+				<span>Chcę dostawać priorytetowy newsletter B2B (48h przed publikacją w sklepie).</span>
 			</label>
 
 			<button
@@ -212,9 +210,9 @@ function DarkField({
 						rows={5}
 						minLength={50}
 						aria-invalid={Boolean(error)}
-						aria-describedby={[error ? errorId : null, hint ? hintId : null]
-							.filter(Boolean)
-							.join(" ") || undefined}
+						aria-describedby={
+							[error ? errorId : null, hint ? hintId : null].filter(Boolean).join(" ") || undefined
+						}
 						className="mt-2 w-full rounded-xl border border-ink-foreground/20 bg-ink-foreground/10 px-3 py-2 text-sm text-ink-foreground placeholder:text-ink-foreground/50 focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
 						placeholder="Mood board, paleta, klucz designerski, status projektu…"
 					/>
@@ -225,9 +223,9 @@ function DarkField({
 						type={type}
 						required={required}
 						aria-invalid={Boolean(error)}
-						aria-describedby={[error ? errorId : null, hint ? hintId : null]
-							.filter(Boolean)
-							.join(" ") || undefined}
+						aria-describedby={
+							[error ? errorId : null, hint ? hintId : null].filter(Boolean).join(" ") || undefined
+						}
 						className="mt-2 h-11 w-full rounded-xl border border-ink-foreground/20 bg-ink-foreground/10 px-3 text-sm text-ink-foreground placeholder:text-ink-foreground/50 focus-visible:border-terracotta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
 					/>
 				)}

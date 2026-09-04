@@ -3,7 +3,7 @@ import "server-only";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { RETROHOUSE_CONTENT_CACHE_TAG } from "./metadata-keys";
 
-export type RevalidateContentResult = {
+type RevalidateContentResult = {
 	live: true;
 };
 

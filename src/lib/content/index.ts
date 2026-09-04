@@ -2,12 +2,9 @@ import "server-only";
 
 import { cache } from "react";
 import { fetchStoreMetadataBlob } from "./admin-read";
-import { DEFAULT_HOME_HERO, DEFAULT_GLOBAL_CONTENT, DEFAULT_SITE_SETTINGS } from "./defaults";
+import { DEFAULT_HOME_HERO } from "./defaults";
 import { normalizeSocialLinks } from "./social-links";
-import type { ContentPageId, SiteSettings, PageContent, SeoMeta, GlobalContent, SocialLinks } from "./types";
-
-export type { ContentPageId, SiteSettings, PageContent, SeoMeta, GlobalContent };
-export type { HeroContent, FaqItem, PageSeoMap, PageContentMap, AnnouncementBar, SocialLinks } from "./types";
+import type { ContentPageId, PageContent, SiteSettings } from "./types";
 
 /**
  * Globalne ustawienia witryny (tytuł, opis, announcement bar, social links).
@@ -19,20 +16,6 @@ export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
 		...siteSettings,
 		socialLinks: normalizeSocialLinks(siteSettings.socialLinks),
 	};
-});
-
-/** Social media z CMS — tylko wypełnione linki. */
-export const getSocialLinks = cache(async (): Promise<SocialLinks | undefined> => {
-	const { socialLinks } = await getSiteSettings();
-	return socialLinks;
-});
-
-/**
- * SEO dla konkretnej podstrony.
- */
-export const getPageSeo = cache(async (pageId: ContentPageId): Promise<SeoMeta | undefined> => {
-	const { pageSeoMap } = await fetchStoreMetadataBlob();
-	return pageSeoMap[pageId];
 });
 
 /**
@@ -52,13 +35,3 @@ export const getPageContent = cache(async (pageId: ContentPageId): Promise<PageC
 
 	return page ?? {};
 });
-
-/**
- * Globalna treść współdzielona (announcement bar).
- */
-export const getGlobalContent = cache(async (): Promise<GlobalContent> => {
-	const { globalContent } = await fetchStoreMetadataBlob();
-	return globalContent ?? DEFAULT_GLOBAL_CONTENT;
-});
-
-export { DEFAULT_HOME_HERO, DEFAULT_SITE_SETTINGS, DEFAULT_GLOBAL_CONTENT };

@@ -2,12 +2,12 @@
 
 import {
 	createContext,
+	type ReactNode,
 	useCallback,
 	useContext,
 	useEffect,
 	useMemo,
 	useState,
-	type ReactNode,
 } from "react";
 import {
 	CUSTOMER_SESSION_CHANGED_EVENT,
@@ -26,9 +26,7 @@ type CustomerSessionContextValue = {
 	logout: () => void;
 };
 
-const CustomerSessionContext = createContext<CustomerSessionContextValue | null>(
-	null,
-);
+const CustomerSessionContext = createContext<CustomerSessionContextValue | null>(null);
 
 export function CustomerSessionProvider({ children }: { children: ReactNode }) {
 	const [token, setToken] = useState<string | null>(null);
@@ -87,9 +85,7 @@ export function CustomerSessionProvider({ children }: { children: ReactNode }) {
 	);
 
 	return (
-		<CustomerSessionContext.Provider value={value}>
-			{children}
-		</CustomerSessionContext.Provider>
+		<CustomerSessionContext.Provider value={value}>{children}</CustomerSessionContext.Provider>
 	);
 }
 

@@ -9,9 +9,9 @@ import { PageHeroImage } from "@/components/sections/page-hero-image";
 import { PageHeroSplit } from "@/components/sections/page-hero-split";
 import { getPageContent } from "@/lib/content";
 import { resolveStaticHeroProductImage } from "@/lib/content/resolve-hero-image";
-import { SmoothScrollAnchor } from "./smooth-scroll-anchor";
 import { PRICE_BUCKETS } from "@/lib/products";
 import { listProducts } from "@/lib/products/queries";
+import { SmoothScrollAnchor } from "./smooth-scroll-anchor";
 
 export const metadata: Metadata = {
 	title: "Prezent z duszą — antyki z Wiednia",
@@ -84,9 +84,7 @@ export default async function PrezentPage() {
 							</>
 						}
 						image={
-							heroImage ? (
-								<PageHeroImage src={heroImage.src} alt={heroImage.alt} priority />
-							) : null
+							heroImage ? <PageHeroImage src={heroImage.src} alt={heroImage.alt} priority /> : null
 						}
 					/>
 				</Container>

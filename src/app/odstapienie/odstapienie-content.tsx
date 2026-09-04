@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Breadcrumbs, Container, Eyebrow, Section } from "@/components/primitives";
 import { useCustomerSession } from "@/components/customer/customer-session-provider";
+import { Breadcrumbs, Container, Eyebrow, Section } from "@/components/primitives";
 import { Button } from "@/components/ui/button";
 import { CustomerLogin } from "./customer-login";
 import { CustomerOrders } from "./customer-orders";
@@ -53,9 +53,8 @@ export function OdstapienieContent() {
 									</h2>
 									<p>
 										Masz <strong className="font-semibold text-foreground">14 dni</strong> na
-										odstąpienie od umowy zawartej na odległość, licząc od dnia otrzymania
-										przesyłki — bez podania przyczyny (art. 27 ustawy o prawach konsumenta z
-										30.05.2014).
+										odstąpienie od umowy zawartej na odległość, licząc od dnia otrzymania przesyłki
+										— bez podania przyczyny (art. 27 ustawy o prawach konsumenta z 30.05.2014).
 									</p>
 									<p>
 										Zaloguj się w{" "}
@@ -66,13 +65,12 @@ export function OdstapienieContent() {
 									</p>
 									<p>
 										Antyki to rzeczy używane. Zapoznajesz się z opisem stanu przedmiotu przed
-										zakupem i akceptujesz go w koszyku — opisane ślady użytkowania nie są
-										podstawą reklamacji.
+										zakupem i akceptujesz go w koszyku — opisane ślady użytkowania nie są podstawą
+										reklamacji.
 									</p>
 									<p>
-										Odpowiadasz finansowo za zmniejszenie wartości przedmiotu wynikłe z
-										korzystania ponad to, co konieczne do sprawdzenia jego charakteru (art. 34
-										ust. 4 UPK).
+										Odpowiadasz finansowo za zmniejszenie wartości przedmiotu wynikłe z korzystania
+										ponad to, co konieczne do sprawdzenia jego charakteru (art. 34 ust. 4 UPK).
 									</p>
 								</div>
 							</>
@@ -83,11 +81,7 @@ export function OdstapienieContent() {
 										Zwroty i odstąpienia zarządzasz w{" "}
 										<strong className="text-foreground">Moim koncie</strong>.
 									</p>
-									<Button
-										type="button"
-										size="sm"
-										onClick={() => router.push("/konto?tab=zwroty")}
-									>
+									<Button type="button" size="sm" onClick={() => router.push("/konto?tab=zwroty")}>
 										Panel konta
 									</Button>
 								</div>

@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { ArrowRightIcon } from "@/components/icons";
 import { AddToCartButton } from "@/components/add-to-cart-button";
-import { track } from "@/lib/analytics/posthog";
+import { ArrowRightIcon } from "@/components/icons";
 import type { ProductSource } from "@/lib/analytics/events";
+import { track } from "@/lib/analytics/posthog";
 import type { Product } from "@/lib/products/types";
 
 const KNOWN_SOURCES = new Set<ProductSource>([

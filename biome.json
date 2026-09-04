@@ -17,6 +17,10 @@
 			"!**/playwright-report",
 			"!**/test-results",
 			"!**/.vercel",
+			"!**/.claude",
+			"!**/.gitnexus",
+			"!**/graphify-out",
+			"!data",
 			"!**/pnpm-lock.yaml",
 			"!**/*.css"
 		]
@@ -35,10 +39,28 @@
 				"noConsole": { "level": "warn", "options": { "allow": ["warn", "error"] } }
 			},
 			"a11y": {
-				"recommended": true
+				"recommended": true,
+				"noLabelWithoutControl": {
+					"level": "error",
+					"options": {
+						"inputComponents": ["Input", "CheckboxInput", "RadioInput", "Switch"]
+					}
+				}
 			}
 		}
 	},
+	"overrides": [
+		{
+			"includes": ["scripts/**"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noConsole": "off"
+					}
+				}
+			}
+		}
+	],
 	"assist": {
 		"enabled": true,
 		"actions": {

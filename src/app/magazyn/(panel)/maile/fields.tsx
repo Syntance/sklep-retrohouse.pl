@@ -6,7 +6,13 @@ import { CheckboxInput } from "@/components/ui/checkbox-input";
 import { Input } from "@/components/ui/input";
 import type { TextAlign } from "@/lib/email/template-types";
 import { cn } from "@/lib/utils";
-import { colorSwatchInput, segmentItem, segmentItemActive, segmentItemIdle, segmentTrack } from "./editor-chrome";
+import {
+	colorSwatchInput,
+	segmentItem,
+	segmentItemActive,
+	segmentItemIdle,
+	segmentTrack,
+} from "./editor-chrome";
 import "./email-editor.css";
 
 function FieldLabel({ htmlFor, children }: { htmlFor: string; children: string }) {

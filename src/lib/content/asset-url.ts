@@ -2,7 +2,7 @@ import { resolveMedusaMediaUrl } from "@/lib/medusa/media-url";
 
 const STOREFRONT_PUBLIC_PREFIXES = ["/images/", "/icons/"] as const;
 
-export function isStorefrontPublicAssetPath(url: string): boolean {
+function isStorefrontPublicAssetPath(url: string): boolean {
 	if (url.startsWith("/")) {
 		return STOREFRONT_PUBLIC_PREFIXES.some((prefix) => url.startsWith(prefix));
 	}

@@ -1,7 +1,7 @@
-import { SITE_URL } from "@/lib/email/constants";
 import type { ReturnRequestType } from "@/lib/admin/return-types";
+import { SITE_URL } from "@/lib/email/constants";
 
-export type CustomerCaseEmailTab = "reklamacje" | "zwroty";
+type CustomerCaseEmailTab = "reklamacje" | "zwroty";
 
 const KONTO_CTA_LABEL = "Przejdź do panelu konta";
 
@@ -16,17 +16,12 @@ export function getCustomerKontoUrl(tab?: CustomerCaseEmailTab): string {
 	return tab ? `${base}/konto?tab=${tab}` : `${base}/konto`;
 }
 
-export function customerCaseEmailTab(
-	requestType: ReturnRequestType,
-): CustomerCaseEmailTab {
+export function customerCaseEmailTab(requestType: ReturnRequestType): CustomerCaseEmailTab {
 	return requestType === "claim" ? "reklamacje" : "zwroty";
 }
 
 /** Stopka plain-text z linkiem do logowania w /konto. */
-export function appendCustomerKontoPanelCtaText(
-	message: string,
-	tab?: CustomerCaseEmailTab,
-): string {
+function appendCustomerKontoPanelCtaText(message: string, tab?: CustomerCaseEmailTab): string {
 	const url = getCustomerKontoUrl(tab);
 	return (
 		`${message.trim()}\n\n` +
@@ -36,7 +31,7 @@ export function appendCustomerKontoPanelCtaText(
 }
 
 /** Przycisk CTA w HTML (tabele — lepsza kompatybilność z klientami poczty). */
-export function buildCustomerKontoPanelCtaHtml(tab?: CustomerCaseEmailTab): string {
+function buildCustomerKontoPanelCtaHtml(tab?: CustomerCaseEmailTab): string {
 	const url = getCustomerKontoUrl(tab);
 	const escUrl = url.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
 	return (
@@ -51,10 +46,7 @@ export function buildCustomerKontoPanelCtaHtml(tab?: CustomerCaseEmailTab): stri
 }
 
 /** Owija treść e-maila + przycisk do panelu. */
-export function wrapCustomerCaseEmailHtml(
-	bodyHtml: string,
-	tab?: CustomerCaseEmailTab,
-): string {
+function wrapCustomerCaseEmailHtml(bodyHtml: string, tab?: CustomerCaseEmailTab): string {
 	return (
 		`<div style="font-family:system-ui,sans-serif;max-width:500px;padding:24px;color:#2D1810">` +
 		`${bodyHtml}${buildCustomerKontoPanelCtaHtml(tab)}` +

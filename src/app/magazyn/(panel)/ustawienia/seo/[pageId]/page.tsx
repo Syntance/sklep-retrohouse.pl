@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
-import { getSeoSettingsBundle } from "@/lib/admin/seo-store";
+import { PageHeader } from "@/components/panel/chrome";
 import { loadAdmin } from "@/lib/admin/load";
+import { getSeoSettingsBundle } from "@/lib/admin/seo-store";
 import { CMS_PAGES } from "@/lib/content/metadata-keys";
 import type { ContentPageId } from "@/lib/content/types";
-import { PageHeader } from "@/components/panel/chrome";
 import { SeoSettingsClient } from "../seo-settings-client";
 
 export const dynamic = "force-dynamic";

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Fragment } from "react";
 import { cn } from "@/lib/utils";
 
-export type Crumb = {
+type Crumb = {
 	label: string;
 	href?: string;
 };

@@ -13,6 +13,7 @@ export function ProductListThumbnail({ url }: Props) {
 	if (failed) return null;
 
 	return (
+		// biome-ignore lint/performance/noImgElement: miniatura w tabeli panelu admina — URL-e Medusa spoza remotePatterns, z fallbackiem onError
 		<img
 			src={url}
 			alt=""

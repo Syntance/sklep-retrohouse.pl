@@ -1,9 +1,10 @@
 import type { AdminOrderDetail, OrderAddress } from "@/lib/admin/order-types";
 import {
-	CASE_MERGE_VARIABLES,
 	type Block,
 	type BlockStyle,
 	type ButtonBlock,
+	CASE_MERGE_VARIABLES,
+	CONTACT_MERGE_VARIABLES,
 	type ColumnsBlock,
 	type DividerBlock,
 	type EmailTemplate,
@@ -13,7 +14,6 @@ import {
 	type FooterBlock,
 	type HeadingBlock,
 	type ImageBlock,
-	CONTACT_MERGE_VARIABLES,
 	isCaseEmailTemplateType,
 	isContactEmailTemplateType,
 	type LeafBlock,
@@ -24,7 +24,7 @@ import {
 } from "@/lib/email/template-types";
 import { formatPrice } from "@/lib/format";
 
-export type EmailRenderItem = {
+type EmailRenderItem = {
 	title: string;
 	subtitle: string;
 	quantity: number;
@@ -37,7 +37,7 @@ export type EmailRenderContext = {
 	items: EmailRenderItem[];
 };
 
-export type RenderedEmail = { html: string; text: string };
+type RenderedEmail = { html: string; text: string };
 
 const MERGE_RE = /\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g;
 
@@ -84,7 +84,11 @@ function textStyleCss(style: BlockStyle, theme: EmailTheme): string {
 	return parts.join(";");
 }
 
-function renderHeading(block: HeadingBlock, theme: EmailTheme, vars: Record<string, string>): string {
+function renderHeading(
+	block: HeadingBlock,
+	theme: EmailTheme,
+	vars: Record<string, string>,
+): string {
 	const sizes: Record<1 | 2 | 3, number> = { 1: 22, 2: 18, 3: 16 };
 	const style: BlockStyle = {
 		...block.style,
@@ -170,7 +174,11 @@ function renderLeaf(block: LeafBlock, theme: EmailTheme, vars: Record<string, st
 	}
 }
 
-function renderColumns(block: ColumnsBlock, theme: EmailTheme, vars: Record<string, string>): string {
+function renderColumns(
+	block: ColumnsBlock,
+	theme: EmailTheme,
+	vars: Record<string, string>,
+): string {
 	const gap = block.gap ?? 16;
 	const left = block.left.map((b) => renderLeaf(b, theme, vars)).join("");
 	const right = block.right.map((b) => renderLeaf(b, theme, vars)).join("");
@@ -241,7 +249,8 @@ function plainBlock(block: Block, ctx: EmailRenderContext): string[] {
 			return [""];
 		case "orderItems": {
 			const lines = ctx.items.map(
-				(item) => `• ${item.title}${item.quantity > 1 ? ` × ${item.quantity}` : ""} — ${item.total}`,
+				(item) =>
+					`• ${item.title}${item.quantity > 1 ? ` × ${item.quantity}` : ""} — ${item.total}`,
 			);
 			if (block.showTotal) lines.push(`Razem: ${ctx.vars.suma ?? ""}`);
 			return lines;

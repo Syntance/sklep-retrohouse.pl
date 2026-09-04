@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
-import { readAdminCmsSnapshot } from "@/lib/admin/content-store";
-import { CMS_PAGES } from "@/lib/content/metadata-keys";
-import { DEFAULT_GLOBAL_CONTENT, DEFAULT_SITE_SETTINGS } from "@/lib/content/defaults";
-import type { ContentPageId } from "@/lib/content/types";
 import { PageHeader } from "@/components/panel/chrome";
+import { readAdminCmsSnapshot } from "@/lib/admin/content-store";
+import { DEFAULT_GLOBAL_CONTENT, DEFAULT_SITE_SETTINGS } from "@/lib/content/defaults";
+import { CMS_PAGES } from "@/lib/content/metadata-keys";
+import type { ContentPageId } from "@/lib/content/types";
 import { CmsSettingsClient } from "../cms-settings-client";
 
 export const dynamic = "force-dynamic";

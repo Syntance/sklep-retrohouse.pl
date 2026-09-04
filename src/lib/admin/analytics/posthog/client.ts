@@ -84,9 +84,7 @@ function buildKpi(metrics: {
 	revenueMinor: number;
 }): AnalyticsKpi {
 	const conversionRate =
-		metrics.sessions > 0
-			? Math.round((metrics.purchases / metrics.sessions) * 10000) / 100
-			: null;
+		metrics.sessions > 0 ? Math.round((metrics.purchases / metrics.sessions) * 10000) / 100 : null;
 	return {
 		sessions: metrics.sessions,
 		users: metrics.users,
@@ -108,55 +106,61 @@ export async function fetchPosthogAnalytics(rangeDays: number): Promise<PosthogA
 	try {
 		const dateFrom = `-${rangeDays}d`;
 
-		const [trafficResponse, usersResponse, pageviewsResponse, purchasesResponse, revenueResponse, topEventsResponse] =
-			await Promise.all([
-				posthogQuery({
-					query: {
-						kind: "TrendsQuery",
-						dateRange: { date_from: dateFrom },
-						interval: "day",
-						series: [
-							{
-								kind: "EventsNode",
-								event: "$pageview",
-								name: "$pageview",
-								math: "total",
-							},
-						],
-						filterTestAccounts: true,
-					},
-				}),
-				posthogQuery({
-					query: {
-						kind: "HogQLQuery",
-						query: `SELECT uniq(person_id) AS users FROM events WHERE timestamp >= now() - INTERVAL ${rangeDays} DAY`,
-					},
-				}),
-				posthogQuery({
-					query: {
-						kind: "HogQLQuery",
-						query: `SELECT count() AS pageviews FROM events WHERE event = '$pageview' AND timestamp >= now() - INTERVAL ${rangeDays} DAY`,
-					},
-				}),
-				posthogQuery({
-					query: {
-						kind: "HogQLQuery",
-						query: `SELECT count() AS purchases FROM events WHERE event = 'purchase' AND timestamp >= now() - INTERVAL ${rangeDays} DAY`,
-					},
-				}),
-				posthogQuery({
-					query: {
-						kind: "HogQLQuery",
-						query: `SELECT sum(toFloat(properties.$value)) AS revenue FROM events WHERE event = 'purchase' AND timestamp >= now() - INTERVAL ${rangeDays} DAY`,
-					},
-				}),
-				posthogQuery({
-					query: {
-						kind: "HogQLQuery",
-						query: `SELECT event, count() AS c FROM events WHERE timestamp >= now() - INTERVAL ${rangeDays} DAY GROUP BY event ORDER BY c DESC LIMIT 8`,
-					},
-				}),
-			]);
+		const [
+			trafficResponse,
+			usersResponse,
+			pageviewsResponse,
+			purchasesResponse,
+			revenueResponse,
+			topEventsResponse,
+		] = await Promise.all([
+			posthogQuery({
+				query: {
+					kind: "TrendsQuery",
+					dateRange: { date_from: dateFrom },
+					interval: "day",
+					series: [
+						{
+							kind: "EventsNode",
+							event: "$pageview",
+							name: "$pageview",
+							math: "total",
+						},
+					],
+					filterTestAccounts: true,
+				},
+			}),
+			posthogQuery({
+				query: {
+					kind: "HogQLQuery",
+					query: `SELECT uniq(person_id) AS users FROM events WHERE timestamp >= now() - INTERVAL ${rangeDays} DAY`,
+				},
+			}),
+			posthogQuery({
+				query: {
+					kind: "HogQLQuery",
+					query: `SELECT count() AS pageviews FROM events WHERE event = '$pageview' AND timestamp >= now() - INTERVAL ${rangeDays} DAY`,
+				},
+			}),
+			posthogQuery({
+				query: {
+					kind: "HogQLQuery",
+					query: `SELECT count() AS purchases FROM events WHERE event = 'purchase' AND timestamp >= now() - INTERVAL ${rangeDays} DAY`,
+				},
+			}),
+			posthogQuery({
+				query: {
+					kind: "HogQLQuery",
+					query: `SELECT sum(toFloat(properties.$value)) AS revenue FROM events WHERE event = 'purchase' AND timestamp >= now() - INTERVAL ${rangeDays} DAY`,
+				},
+			}),
+			posthogQuery({
+				query: {
+					kind: "HogQLQuery",
+					query: `SELECT event, count() AS c FROM events WHERE timestamp >= now() - INTERVAL ${rangeDays} DAY GROUP BY event ORDER BY c DESC LIMIT 8`,
+				},
+			}),
+		]);
 
 		const funnelCounts = await Promise.all(
 			ECOMMERCE_FUNNEL.map(async ({ event }) => {

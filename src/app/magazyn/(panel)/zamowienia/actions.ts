@@ -2,14 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { recordAudit } from "@/lib/admin/audit-log";
+import { AdminApiError, AdminUnauthorizedError } from "@/lib/admin/medusa-admin";
 import {
 	cancelOrder,
 	completeOrder,
 	markOrderShipped,
 	startOrderRealization,
 } from "@/lib/admin/orders";
-import { AdminApiError, AdminUnauthorizedError } from "@/lib/admin/medusa-admin";
-import { sendOrderStatusEmail, type OrderEmailStage } from "@/lib/email/order-status-email";
+import { type OrderEmailStage, sendOrderStatusEmail } from "@/lib/email/order-status-email";
 
 export type OrderActionState = { error: string | null; ok: boolean };
 
@@ -45,6 +46,7 @@ export async function runOrderAction(
 		return { ok: false, error: "Operacja nie powiodła się." };
 	}
 
+	await recordAudit(`order.${action}`, { target: orderId });
 	revalidatePath("/magazyn/zamowienia");
 	revalidatePath(`/magazyn/zamowienia/${orderId}`);
 	revalidatePath("/magazyn");

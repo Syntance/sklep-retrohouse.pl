@@ -95,21 +95,19 @@ export function EmailTemplatePicker({
 						{category.title}
 					</h3>
 					<ul className="flex flex-col gap-0.5">
-						{getEmailTemplatesByCategory(category.id).map(
-							({ type, label, description }) => (
-								<TemplateListRow
-									key={type}
-									type={type}
-									label={label}
-									description={description}
-									active={type === activeType}
-									enabled={enabledByType[type] ?? true}
-									busy={togglingType === type}
-									onSelect={onSelect}
-									onToggleEnabled={onToggleEnabled}
-								/>
-							),
-						)}
+						{getEmailTemplatesByCategory(category.id).map(({ type, label, description }) => (
+							<TemplateListRow
+								key={type}
+								type={type}
+								label={label}
+								description={description}
+								active={type === activeType}
+								enabled={enabledByType[type] ?? true}
+								busy={togglingType === type}
+								onSelect={onSelect}
+								onToggleEnabled={onToggleEnabled}
+							/>
+						))}
 					</ul>
 				</section>
 			))}

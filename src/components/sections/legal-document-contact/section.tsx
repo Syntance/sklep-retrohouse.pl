@@ -37,11 +37,7 @@ export async function LegalDocumentContactSection({
 			<Container size="md">
 				<div className="space-y-6">
 					<Eyebrow>{heading}</Eyebrow>
-					<ContactForm
-						variant="embedded"
-						topicPreset={topicPreset}
-						topicOptions={topicOptions}
-					/>
+					<ContactForm variant="embedded" topicPreset={topicPreset} topicOptions={topicOptions} />
 					<div className="space-y-2 text-sm">
 						{noteBeforeEmail}
 						<EmailFallbackLine email={displayEmail} />

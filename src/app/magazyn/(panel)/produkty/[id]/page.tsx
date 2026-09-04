@@ -9,11 +9,7 @@ import { ProductForm } from "../product-form";
 
 export const dynamic = "force-dynamic";
 
-export default async function EditProductPage({
-	params,
-}: {
-	params: Promise<{ id: string }>;
-}) {
+export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
 	const { id } = await params;
 	const [product, categories, epochs] = await loadAdmin(() =>
 		Promise.all([getAdminProduct(id), listCategories(), getConfiguredEpochs()]),

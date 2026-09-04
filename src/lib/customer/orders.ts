@@ -1,30 +1,26 @@
 import "server-only";
 import { env } from "@/env";
-import { getReturnRequestsByCustomerEmail } from "@/lib/admin/returns";
-import {
-	type CustomerClaimInfo,
-	mapReturnToCustomerClaim,
-} from "@/lib/customer/claim-status";
-import {
-	type CustomerWithdrawalInfo,
-	mapReturnToCustomerWithdrawal,
-} from "@/lib/customer/withdrawal-status";
 import type {
 	OrderFulfillmentStatus,
 	OrderPaymentStatus,
 	OrderStatus,
 } from "@/lib/admin/order-types";
+import { getReturnRequestsByCustomerEmail } from "@/lib/admin/returns";
+import { type CustomerClaimInfo, mapReturnToCustomerClaim } from "@/lib/customer/claim-status";
 import {
 	CLAIM_WARRANTY_DAYS,
-	WITHDRAWAL_WINDOW_DAYS,
 	daysLeftInWindow,
+	WITHDRAWAL_WINDOW_DAYS,
 } from "@/lib/customer/order-windows";
 import {
+	type CustomerWithdrawalInfo,
+	mapReturnToCustomerWithdrawal,
+} from "@/lib/customer/withdrawal-status";
+import {
+	type MedusaProductMedia,
 	resolveLineItemThumbnailUrl,
 	resolveProductThumbnailUrl,
-	type MedusaProductMedia,
 } from "@/lib/medusa/product-thumbnail";
-import { resolveMedusaMediaUrl } from "@/lib/medusa/media-url";
 
 /** Pola Admin API — bez *items brak miniaturek i totali pozycji. */
 const CUSTOMER_ORDER_FIELDS = [
@@ -43,11 +39,7 @@ const CUSTOMER_ORDER_FIELDS = [
 	"metadata",
 ].join(",");
 
-export type { CustomerClaimInfo } from "@/lib/customer/claim-status";
-export type { CustomerWithdrawalInfo } from "@/lib/customer/withdrawal-status";
-
 const BASE_URL = env.NEXT_PUBLIC_MEDUSA_BACKEND_URL.replace(/\/$/, "");
-const PUBLISHABLE_KEY = env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY;
 
 /** Cache dla admin tokena (TTL 24h). W produkcji: Redis / Upstash. */
 let adminTokenCache: { token: string; expiresAt: number } | null = null;
@@ -201,8 +193,6 @@ export type CustomerOrder = {
  * @returns lista zamówień z możliwością zwrotu
  */
 export async function getCustomerOrders(email: string): Promise<CustomerOrder[]> {
-	console.log(`[getCustomerOrders] Fetching orders for email: ${email}`);
-	
 	try {
 		// Pobierz zamówienia z Admin API filtrowane po emailu
 		// CRITICAL: fields=+email MUSI być w query - bez tego Medusa nie zwraca pola email!
@@ -210,15 +200,11 @@ export async function getCustomerOrders(email: string): Promise<CustomerOrder[]>
 			`/admin/orders?email=${encodeURIComponent(email)}&limit=50&fields=${CUSTOMER_ORDER_FIELDS}`,
 		);
 
-		console.log(`[getCustomerOrders] API returned ${response.orders.length} orders`);
-
 		// CRITICAL SECURITY: Zawsze filtruj po stronie aplikacji, nawet jeśli API ma parametr email
 		// (defense in depth - API może ignorować parametr lub mieć bug)
 		const filteredOrders = response.orders.filter(
-			(order) => order.email.toLowerCase() === email.toLowerCase()
+			(order) => order.email.toLowerCase() === email.toLowerCase(),
 		);
-
-		console.log(`[getCustomerOrders] After filtering: ${filteredOrders.length} orders for ${email}`);
 
 		const customerReturns = await getReturnRequestsByCustomerEmail(email);
 		const claimsByOrderId = new Map<string, CustomerClaimInfo[]>();
@@ -239,9 +225,7 @@ export async function getCustomerOrders(email: string): Promise<CustomerOrder[]>
 		}
 
 		const sortByUpdated = <T extends { updatedAt: string }>(list: T[]) =>
-			list.sort(
-				(a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-			);
+			list.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 
 		for (const list of claimsByOrderId.values()) sortByUpdated(list);
 		for (const list of withdrawalsByOrderId.values()) sortByUpdated(list);
@@ -257,11 +241,7 @@ export async function getCustomerOrders(email: string): Promise<CustomerOrder[]>
 
 		return filteredOrders.map((order) => {
 			const warrantyStartAt = resolveClaimWarrantyStartAt(order);
-			const daysLeftReturn = daysLeftInWindow(
-				warrantyStartAt,
-				WITHDRAWAL_WINDOW_DAYS,
-				now,
-			);
+			const daysLeftReturn = daysLeftInWindow(warrantyStartAt, WITHDRAWAL_WINDOW_DAYS, now);
 			const daysLeftClaim = daysLeftInWindow(warrantyStartAt, CLAIM_WARRANTY_DAYS, now);
 			const claims = claimsByOrderId.get(order.id) ?? [];
 			const activeClaim = claims.find((c) => c.isActive) ?? null;

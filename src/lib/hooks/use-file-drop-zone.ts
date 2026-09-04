@@ -63,4 +63,3 @@ export function useFileDropZone({ onDropFiles, disabled = false, accept }: Optio
 		dropZoneProps: { onDragEnter, onDragLeave, onDragOver, onDrop },
 	};
 }
-

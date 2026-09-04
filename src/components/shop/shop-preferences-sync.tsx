@@ -2,14 +2,14 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
-import { CONSENT_CHANGED_EVENT, readConsent, type ConsentState } from "@/lib/analytics/consent";
+import type { ShopSearchParams } from "@/app/sklep/shop-params";
+import { CONSENT_CHANGED_EVENT, type ConsentState, readConsent } from "@/lib/analytics/consent";
 import {
 	hasActiveShopQuery,
 	readShopPreferences,
 	shopPreferencesToQuery,
 	writeShopPreferences,
 } from "@/lib/analytics/preferences";
-import type { ShopSearchParams } from "@/app/sklep/shop-params";
 
 /**
  * Przy zgodzie na preferencje: zapamiętuje filtry /sklep i przywraca je
@@ -50,7 +50,13 @@ export function ShopPreferencesSync() {
 			const params: ShopSearchParams = {};
 			for (const [key, value] of searchParams.entries()) {
 				if (!value) continue;
-				if (key === "kategoria" || key === "cenaOd" || key === "cenaDo" || key === "epoka" || key === "sort") {
+				if (
+					key === "kategoria" ||
+					key === "cenaOd" ||
+					key === "cenaDo" ||
+					key === "epoka" ||
+					key === "sort"
+				) {
 					params[key] = value;
 				}
 			}

@@ -103,7 +103,7 @@ export function HeroImageField({
 			>
 				{previewUrl ? (
 					<div className="relative h-32 w-48 overflow-hidden rounded-lg border border-border bg-muted">
-						{/* eslint-disable-next-line @next/next/no-img-element -- podgląd admina, dowolny CDN R2 */}
+						{/* biome-ignore lint/performance/noImgElement: podgląd w panelu admina — dowolny CDN R2 spoza remotePatterns */}
 						<img src={previewUrl} alt="" className="size-full object-cover" />
 						<button
 							type="button"

@@ -1,12 +1,12 @@
-import type { CustomerOrder } from "@/lib/customer/orders";
 import { MedusaOrderImage } from "@/components/customer/medusa-order-image";
 import {
 	BADGE_TONE_CLASS,
 	fulfillmentStatusBadge,
 	paymentStatusBadge,
 } from "@/lib/admin/order-status";
-import { cn } from "@/lib/utils";
+import type { CustomerOrder } from "@/lib/customer/orders";
 import { formatPrice } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 function StatusRow({ label, value }: { label: string; value: string }) {
 	return (
@@ -42,10 +42,7 @@ function formatShippingCost(shippingTotal: number): string {
 
 export function OrderCustomerDetailsSection({ order }: { order: CustomerOrder }) {
 	const payment = paymentStatusBadge(order.paymentStatus);
-	const fulfillment = fulfillmentStatusBadge(
-		order.fulfillmentStatus,
-		order.orderStatus,
-	);
+	const fulfillment = fulfillmentStatusBadge(order.fulfillmentStatus, order.orderStatus);
 	const shippingCost = formatShippingCost(order.shippingTotal);
 
 	return (
@@ -112,9 +109,7 @@ export function OrderCustomerDetailsSection({ order }: { order: CustomerOrder })
 							</div>
 							<p className="shrink-0 text-sm font-medium tabular-nums">
 								{formatPrice(
-									Number.isFinite(item.lineTotal)
-										? item.lineTotal
-										: item.unitPrice * item.quantity,
+									Number.isFinite(item.lineTotal) ? item.lineTotal : item.unitPrice * item.quantity,
 								)}
 							</p>
 						</li>

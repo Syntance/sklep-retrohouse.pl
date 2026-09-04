@@ -2,9 +2,9 @@ import {
 	Columns2,
 	Heading,
 	Image as ImageIcon,
+	type LucideIcon,
 	Minus,
 	MousePointerClick,
-	type LucideIcon,
 	MoveVertical,
 	PanelBottom,
 	ShoppingBag,
@@ -88,7 +88,13 @@ export function createBlock(type: BlockType): Block {
 		case "spacer":
 			return { id, type, height: 24 };
 		case "orderItems":
-			return { id, type, showThumbnails: false, showTotal: true, style: { fontSize: 14, paddingY: 12 } };
+			return {
+				id,
+				type,
+				showThumbnails: false,
+				showTotal: true,
+				style: { fontSize: 14, paddingY: 12 },
+			};
 		case "footer":
 			return {
 				id,

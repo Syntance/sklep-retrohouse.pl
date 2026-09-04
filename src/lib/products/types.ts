@@ -1,12 +1,6 @@
-export type ProductCategory =
-	| "porcelana"
-	| "szklo"
-	| "dekoracje"
-	| "meble"
-	| "obrazy"
-	| "inne";
+export type ProductCategory = "porcelana" | "szklo" | "dekoracje" | "meble" | "obrazy" | "inne";
 
-export type ProductEpoch = string;
+type ProductEpoch = string;
 
 export type ProductBadge = "unikat" | "fresh" | "bestseller";
 

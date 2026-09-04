@@ -135,8 +135,9 @@ export default function ReklamacjePage() {
 					<aside className="mt-6 rounded-2xl border border-brass/40 bg-terracotta/15 p-5 text-sm leading-relaxed">
 						<p className="font-display text-base font-semibold">Antyki — opis stanu w umowie</p>
 						<p className="mt-1 text-foreground/80">
-							Ślady użytkowania, uszkodzenia i naprawy <strong className="text-foreground">wyraźnie opisane na karcie produktu</strong>{" "}
-							i zaakceptowane w koszyku nie są brakiem zgodności z umową (art. 43a ust. 4 UPK).
+							Ślady użytkowania, uszkodzenia i naprawy{" "}
+							<strong className="text-foreground">wyraźnie opisane na karcie produktu</strong> i
+							zaakceptowane w koszyku nie są brakiem zgodności z umową (art. 43a ust. 4 UPK).
 						</p>
 					</aside>
 				</Container>
@@ -154,9 +155,7 @@ export default function ReklamacjePage() {
 									</p>
 								))}
 								{section.list ? <LegalBulletList items={section.list} /> : null}
-								{section.orderedList ? (
-									<LegalNumberedList items={section.orderedList} />
-								) : null}
+								{section.orderedList ? <LegalNumberedList items={section.orderedList} /> : null}
 								{section.number === 6 ? (
 									<ul className="mt-4 space-y-3 text-foreground/80 leading-relaxed">
 										<li>
@@ -222,8 +221,8 @@ export default function ReklamacjePage() {
 					<div id="formularz-reklamacyjny" className="scroll-mt-24">
 						<h2 className="font-display text-2xl font-semibold">Złóż reklamację online</h2>
 						<p className="mt-2 max-w-xl text-foreground/70">
-							Ten sam sposób logowania co przy odstąpieniu od umowy — kod na e-mail, potem
-							wybór produktu z zamówienia.
+							Ten sam sposób logowania co przy odstąpieniu od umowy — kod na e-mail, potem wybór
+							produktu z zamówienia.
 						</p>
 						<div className="mt-6">
 							<ReklamacjePortal />

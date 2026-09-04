@@ -1,8 +1,8 @@
 "use client";
 
-import type { ComponentProps } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { ComponentProps } from "react";
 
 const PRIVACY_PATH = "/polityka-prywatnosci";
 
@@ -18,8 +18,7 @@ export function PrivacyPolicyLink({
 	...props
 }: PrivacyPolicyLinkProps) {
 	const pathname = usePathname();
-	const onPrivacyPage =
-		pathname === PRIVACY_PATH || pathname.startsWith(`${PRIVACY_PATH}/`);
+	const onPrivacyPage = pathname === PRIVACY_PATH || pathname.startsWith(`${PRIVACY_PATH}/`);
 
 	return (
 		<Link

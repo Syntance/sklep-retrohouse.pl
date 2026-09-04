@@ -1,10 +1,7 @@
 "use server";
 
+import { getContactSubmissionById, listContactSubmissions } from "@/lib/admin/contact-submissions";
 import { loadAdmin } from "@/lib/admin/load";
-import {
-	getContactSubmissionById,
-	listContactSubmissions,
-} from "@/lib/admin/contact-submissions";
 
 export async function getSubmissionsListAction() {
 	try {

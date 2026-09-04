@@ -13,11 +13,11 @@ import { Breadcrumbs, Container, CtaLink, Eyebrow, Section } from "@/components/
 import { AboutCtaCards } from "@/components/sections/about-cta-cards";
 import { PageHeroImage } from "@/components/sections/page-hero-image";
 import { PageHeroSplit } from "@/components/sections/page-hero-split";
+import { StoreMap } from "@/components/sections/store-map";
 import { CONTACT_FORM_RESPONSE } from "@/lib/contact/response-time";
 import { getPageContent } from "@/lib/content";
 import { PAGE_HERO_IMAGES } from "@/lib/content/hero-images";
 import { resolveStaticHeroProductImage } from "@/lib/content/resolve-hero-image";
-import { StoreMap } from "@/components/sections/store-map";
 
 export const metadata: Metadata = {
 	title: "O nas — ratujemy skarby z wiedeńskich kamienic",
@@ -70,26 +70,23 @@ const VALUES = [
 	{
 		icon: <ShieldIcon className="size-5" />,
 		title: "Drugie życie",
-		description:
-			"Przedmioty trafiają w nowe ręce zamiast na strych albo wysypisko.",
+		description: "Przedmioty trafiają w nowe ręce zamiast na strych albo wysypisko.",
 	},
 	{
 		icon: <CompassIcon className="size-5" />,
 		title: "Uczciwość",
-		description:
-			"Transparentny stan, realne zdjęcia, ceny bez pośredników.",
+		description: "Transparentny stan, realne zdjęcia, ceny bez pośredników.",
 	},
 ];
 
 export default async function ONasPage() {
 	const cmsHero = (await getPageContent("o-nas")).hero;
-	const heroImage =
-		resolveStaticHeroProductImage("o-nas", cmsHero) ?? {
-			src: PAGE_HERO_IMAGES.oNas.src,
-			alt: PAGE_HERO_IMAGES.oNas.alt,
-			width: 1200,
-			height: 1500,
-		};
+	const heroImage = resolveStaticHeroProductImage("o-nas", cmsHero) ?? {
+		src: PAGE_HERO_IMAGES.oNas.src,
+		alt: PAGE_HERO_IMAGES.oNas.alt,
+		width: 1200,
+		height: 1500,
+	};
 
 	return (
 		<main id="main" className="flex flex-col">

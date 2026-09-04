@@ -26,7 +26,7 @@ export default async function LoginPage({
 				</div>
 
 				<div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-					<LoginForm googleError={error === "google"} />
+					<LoginForm googleError={error === "google"} forbidden={error === "forbidden"} />
 				</div>
 			</div>
 		</main>

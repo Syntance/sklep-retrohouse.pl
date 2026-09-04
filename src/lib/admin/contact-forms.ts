@@ -4,18 +4,12 @@ import { cache } from "react";
 import { z } from "zod";
 import {
 	buildDefaultContactFormsConfig,
-	buildDefaultTopicsForPreset,
-	getDefaultFormByPreset,
 	type ContactFormDefinition,
 	type ContactFormsConfig,
-	type ContactFormTopicConfig,
+	getDefaultFormByPreset,
 } from "@/lib/contact/default-forms";
-import {
-	CONTACT_TOPIC_LABELS,
-	type ContactTopicPreset,
-	type ContactTopicValue,
-} from "@/lib/validation/contact";
-import { adminFetch, AdminUnauthorizedError, catalogAdminFetch } from "./medusa-admin";
+import type { ContactTopicPreset } from "@/lib/validation/contact";
+import { AdminUnauthorizedError, adminFetch, catalogAdminFetch } from "./medusa-admin";
 
 const STORE_READ_PATH = "/admin/stores?limit=1&fields=id,metadata";
 
@@ -146,9 +140,7 @@ export function getContactTopicOptionsFromConfig(
 ): Array<{ value: string; label: string }> {
 	const form = getContactFormByPreset(config, preset);
 	if (!form.enabled) return [];
-	return form.topics
-		.filter((t) => t.enabled)
-		.map((t) => ({ value: t.value, label: t.label }));
+	return form.topics.filter((t) => t.enabled).map((t) => ({ value: t.value, label: t.label }));
 }
 
 export function getRecipientEmailForPreset(
@@ -156,15 +148,4 @@ export function getRecipientEmailForPreset(
 	preset: ContactTopicPreset,
 ): string {
 	return getContactFormByPreset(config, preset).recipientEmail;
-}
-
-/** Przywraca domyślne tematy etykiet dla jednego formularza. */
-export function resetTopicsToCodeDefaults(preset: ContactTopicPreset): ContactFormTopicConfig[] {
-	return buildDefaultTopicsForPreset(preset).map((t) => ({
-		...t,
-		label:
-			t.value in CONTACT_TOPIC_LABELS
-				? CONTACT_TOPIC_LABELS[t.value as ContactTopicValue]
-				: t.label,
-	}));
 }

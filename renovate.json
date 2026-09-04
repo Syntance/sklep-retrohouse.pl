@@ -25,7 +25,7 @@
 	},
 	"packageRules": [
 		{
-			"description": "Pin krytyczne paczki (Next, React, Tailwind, Sentry) — major upgrade tylko ręcznie",
+			"description": "Pin krytyczne paczki (Next, React, Tailwind) — major upgrade tylko ręcznie",
 			"matchPackageNames": [
 				"next",
 				"react",
@@ -33,7 +33,6 @@
 				"@types/react",
 				"@types/react-dom",
 				"tailwindcss",
-				"@sentry/nextjs",
 				"@medusajs/medusa"
 			],
 			"matchUpdateTypes": ["major"],

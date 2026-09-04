@@ -3,11 +3,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRightIcon, ChevronDownIcon } from "@/components/icons";
-import { Container, CtaLink, Eyebrow, Section, ctaPrimaryButtonClassName } from "@/components/primitives";
+import {
+	Container,
+	CtaLink,
+	ctaPrimaryButtonClassName,
+	Eyebrow,
+	Section,
+} from "@/components/primitives";
 import { track } from "@/lib/analytics/posthog";
-import type { HeroProductImage } from "@/lib/sanity/home-hero";
-import type { HeroContent } from "@/lib/content/types";
 import { DEFAULT_HOME_HERO } from "@/lib/content/defaults";
+import type { HeroContent } from "@/lib/content/types";
+import type { HeroProductImage } from "@/lib/sanity/home-hero";
 import { cn } from "@/lib/utils";
 
 type HeroSectionProps = {
@@ -28,9 +34,7 @@ export function HeroSection({ liveBadge, heroProduct, cmsHero }: HeroSectionProp
 
 	const scrollToDiscoverSection = () => {
 		track({ name: "hero_cta_clicked", properties: { variant: "primary" } });
-		const targetId = hero.ctaHref.startsWith("#")
-			? hero.ctaHref.slice(1)
-			: "home-kategorie";
+		const targetId = hero.ctaHref.startsWith("#") ? hero.ctaHref.slice(1) : "home-kategorie";
 		const el = document.getElementById(targetId);
 		if (!el) return;
 		const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

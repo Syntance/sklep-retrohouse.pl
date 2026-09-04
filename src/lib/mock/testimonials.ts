@@ -12,7 +12,7 @@
  *  4. Field `purchasedSlug` jeśli klient wskazał konkretny produkt.
  *  5. Pole `consentVersion` z datą zgody dla audytu GDPR.
  */
-export type Testimonial = {
+type Testimonial = {
 	id: string;
 	body: string;
 	author: string;

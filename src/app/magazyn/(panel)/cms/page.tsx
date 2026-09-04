@@ -1,8 +1,9 @@
-import { readAdminCmsSnapshot } from "@/lib/admin/content-store";
-import { CMS_PAGES } from "@/lib/content/metadata-keys";
-import { DEFAULT_GLOBAL_CONTENT, DEFAULT_SITE_SETTINGS } from "@/lib/content/defaults";
 import { PageHeader } from "@/components/panel/chrome";
+import { readAdminCmsSnapshot } from "@/lib/admin/content-store";
+import { DEFAULT_GLOBAL_CONTENT, DEFAULT_SITE_SETTINGS } from "@/lib/content/defaults";
+import { CMS_PAGES } from "@/lib/content/metadata-keys";
 import { CmsSettingsClient } from "./cms-settings-client";
+import { CmsSubnav } from "./cms-subnav";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,7 @@ export default async function CmsPage() {
 				title="CMS"
 				description="Treści i zdjęcia sekcji witryny — per podstrona i globalnie."
 			/>
+			<CmsSubnav />
 			<CmsSettingsClient
 				siteSettings={snapshot.siteSettings ?? DEFAULT_SITE_SETTINGS}
 				pageContent={snapshot.pageContentMap}

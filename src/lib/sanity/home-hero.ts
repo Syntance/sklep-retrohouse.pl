@@ -1,7 +1,7 @@
 import "server-only";
 
-import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url";
+import imageUrlBuilder from "@sanity/image-url";
 import { env } from "@/env";
 
 import { getSanityReadClient } from "./client";

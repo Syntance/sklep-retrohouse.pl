@@ -1,9 +1,9 @@
+import { resolveTopicLabel } from "@/lib/admin/contact-submissions";
 import type { ContactFormTopicConfig } from "@/lib/contact/default-forms";
 import { getCustomerKontoUrl } from "@/lib/email/customer-case-email";
-import { resolveTopicLabel } from "@/lib/admin/contact-submissions";
 import type { ContactData } from "@/lib/validation/contact";
 
-export type ContactEmailRenderVars = {
+type ContactEmailRenderVars = {
 	imie: string;
 	email: string;
 	temat: string;

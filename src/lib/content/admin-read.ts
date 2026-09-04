@@ -2,27 +2,27 @@ import "server-only";
 
 import { cache } from "react";
 import { env } from "@/env";
-import { MEDUSA_BASE_URL, loginWithEmailPassword } from "@/lib/admin/medusa-admin";
+import { loginWithEmailPassword, MEDUSA_BASE_URL } from "@/lib/admin/medusa-admin";
 import {
-	RETROHOUSE_SITE_SETTINGS_KEY,
+	DEFAULT_GLOBAL_CONTENT,
+	DEFAULT_PAGE_CONTENT_MAP,
+	DEFAULT_SITE_SETTINGS,
+} from "./defaults";
+import {
+	RETROHOUSE_CONTENT_CACHE_TAG,
+	RETROHOUSE_GLOBAL_CONTENT_KEY,
 	RETROHOUSE_PAGE_CONTENT_KEY,
 	RETROHOUSE_PAGE_SEO_KEY,
-	RETROHOUSE_GLOBAL_CONTENT_KEY,
-	RETROHOUSE_CONTENT_CACHE_TAG,
+	RETROHOUSE_SITE_SETTINGS_KEY,
 } from "./metadata-keys";
+import { migrateKontaktHeroToONas } from "./migrate-hero-pages";
 import {
-	parseSiteSettings,
+	parseGlobalContent,
 	parsePageContentMap,
 	parsePageSeoMap,
-	parseGlobalContent,
+	parseSiteSettings,
 } from "./parsers";
-import {
-	DEFAULT_SITE_SETTINGS,
-	DEFAULT_PAGE_CONTENT_MAP,
-	DEFAULT_GLOBAL_CONTENT,
-} from "./defaults";
-import { migrateKontaktHeroToONas } from "./migrate-hero-pages";
-import type { SiteSettings, PageContentMap, PageSeoMap, GlobalContent } from "./types";
+import type { GlobalContent, PageContentMap, PageSeoMap, SiteSettings } from "./types";
 
 type StoreMetadataBlob = {
 	siteSettings: SiteSettings;
@@ -92,14 +92,11 @@ export const fetchStoreMetadataBlob = cache(async (): Promise<StoreMetadataBlob>
 				};
 
 	try {
-		const res = await fetch(
-			`${MEDUSA_BASE_URL}/admin/stores?limit=1&fields=id,metadata`,
-			{
-				headers: { Authorization: `Bearer ${token}` },
-				...fetchInit,
-				signal: AbortSignal.timeout(30_000),
-			},
-		);
+		const res = await fetch(`${MEDUSA_BASE_URL}/admin/stores?limit=1&fields=id,metadata`, {
+			headers: { Authorization: `Bearer ${token}` },
+			...fetchInit,
+			signal: AbortSignal.timeout(30_000),
+		});
 
 		if (!res.ok) return FALLBACK;
 
@@ -108,16 +105,13 @@ export const fetchStoreMetadataBlob = cache(async (): Promise<StoreMetadataBlob>
 
 		return {
 			siteSettings:
-				parseSiteSettings(metadata[RETROHOUSE_SITE_SETTINGS_KEY]) ??
-				DEFAULT_SITE_SETTINGS,
+				parseSiteSettings(metadata[RETROHOUSE_SITE_SETTINGS_KEY]) ?? DEFAULT_SITE_SETTINGS,
 			pageContentMap: migrateKontaktHeroToONas(
-				parsePageContentMap(metadata[RETROHOUSE_PAGE_CONTENT_KEY]) ??
-					DEFAULT_PAGE_CONTENT_MAP,
+				parsePageContentMap(metadata[RETROHOUSE_PAGE_CONTENT_KEY]) ?? DEFAULT_PAGE_CONTENT_MAP,
 			),
 			pageSeoMap: parsePageSeoMap(metadata[RETROHOUSE_PAGE_SEO_KEY]) ?? {},
 			globalContent:
-				parseGlobalContent(metadata[RETROHOUSE_GLOBAL_CONTENT_KEY]) ??
-				DEFAULT_GLOBAL_CONTENT,
+				parseGlobalContent(metadata[RETROHOUSE_GLOBAL_CONTENT_KEY]) ?? DEFAULT_GLOBAL_CONTENT,
 		};
 	} catch {
 		return FALLBACK;

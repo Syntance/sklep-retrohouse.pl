@@ -4,7 +4,7 @@ import { getEpochOptions } from "@/lib/catalog/epochs";
 import { isMedusaBackendHealthy } from "@/lib/medusa/backend-health";
 import { getMedusaClient } from "@/lib/medusa/client";
 import { isMedusaConfigured } from "@/lib/medusa/is-medusa-configured";
-import { mapMedusaProduct, type MedusaStoreProduct } from "@/lib/products/map-from-medusa";
+import { type MedusaStoreProduct, mapMedusaProduct } from "@/lib/products/map-from-medusa";
 import { DEV_MOCK_PRODUCTS } from "@/lib/products/mock-catalog";
 import type { Product } from "@/lib/products/types";
 
@@ -28,14 +28,16 @@ function warnMedusaUnavailable(message: string): void {
 	console.warn(`[retrohouse] ${message}`);
 }
 
-export const getDefaultRegionId = cache(async (): Promise<string> => {
+const getDefaultRegionId = cache(async (): Promise<string> => {
 	if (!(await isMedusaBackendHealthy())) return "";
 
 	const medusa = getMedusaClient();
 	if (!medusa) return "";
 	try {
 		const { regions } = await medusa.store.region.list();
-		const pln = regions.find((region: { currency_code?: string | null }) => region.currency_code === "pln");
+		const pln = regions.find(
+			(region: { currency_code?: string | null }) => region.currency_code === "pln",
+		);
 		return pln?.id ?? regions[0]?.id ?? "";
 	} catch (error) {
 		warnMedusaUnavailable(

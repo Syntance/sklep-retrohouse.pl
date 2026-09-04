@@ -6,25 +6,21 @@ import { MobileCartFab } from "@/components/mobile-cart-fab";
 import { Container, CtaLink, Eyebrow, Section } from "@/components/primitives";
 import { ProductCard } from "@/components/product-card";
 import { ShopHero } from "@/components/sections/shop-hero";
-import {
-	PRODUCT_CATEGORIES,
-	type Product,
-	type ProductCategory,
-} from "@/lib/products";
-import { getEpochOptions } from "@/lib/catalog/epochs";
-import { listProducts } from "@/lib/products/queries";
-import { getPageContent } from "@/lib/content";
-import { cn } from "@/lib/utils";
 import { ShopPreferencesSync } from "@/components/shop/shop-preferences-sync";
+import { getEpochOptions } from "@/lib/catalog/epochs";
+import { getPageContent } from "@/lib/content";
+import { PRODUCT_CATEGORIES, type Product, type ProductCategory } from "@/lib/products";
+import { listProducts } from "@/lib/products/queries";
+import { cn } from "@/lib/utils";
 import { PriceRangeFilter } from "./price-range-filter";
 import { ShopCategoryAutoScroll } from "./shop-category-scroll";
-import { SortDropdown } from "./sort-dropdown";
 import {
 	mergeShopParams,
 	normalizePriceRange,
 	parsePriceParam,
 	type ShopSearchParams,
 } from "./shop-params";
+import { SortDropdown } from "./sort-dropdown";
 
 export const revalidate = 60;
 
@@ -164,8 +160,8 @@ export default async function SklepPage({ searchParams }: { searchParams: Promis
 								Napisz — doradzimy.
 							</h2>
 							<p className="mt-3 max-w-lg text-foreground/70">
-								Regularnie odstarczamy do sklepu nowe przedmioty
-								— odezwiemy się gdy znajdziemy coś idealnego dla Ciebie.
+								Regularnie odstarczamy do sklepu nowe przedmioty — odezwiemy się gdy znajdziemy coś
+								idealnego dla Ciebie.
 							</p>
 						</div>
 						<div className="flex flex-col items-start justify-center gap-3 md:items-end">

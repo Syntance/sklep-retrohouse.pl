@@ -2,9 +2,10 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { recordAudit } from "@/lib/admin/audit-log";
 import { AdminApiError, AdminUnauthorizedError } from "@/lib/admin/medusa-admin";
 import { saveGlobalSeoSettings, savePageSeoMeta } from "@/lib/admin/seo-store";
-import { siteSettingsSchema, seoMetaSchema } from "@/lib/content/parsers";
+import { seoMetaSchema, siteSettingsSchema } from "@/lib/content/parsers";
 import { revalidateContentCache } from "@/lib/content/revalidate-content";
 import type { ContentPageId, SeoMeta } from "@/lib/content/types";
 
@@ -51,6 +52,7 @@ export async function saveGlobalSeoAction(
 		return handleError(error, "Nie udało się zapisać SEO. Spróbuj ponownie.");
 	}
 
+	await recordAudit("seo.global.save");
 	await revalidateContentCache(["/"]);
 	return { ok: true, error: null };
 }
@@ -71,6 +73,7 @@ export async function savePageSeoAction(
 		return handleError(error, "Nie udało się zapisać SEO podstrony.");
 	}
 
+	await recordAudit("seo.page.save", { target: pageId });
 	await revalidateContentCache([path]);
 	return { ok: true, error: null };
 }

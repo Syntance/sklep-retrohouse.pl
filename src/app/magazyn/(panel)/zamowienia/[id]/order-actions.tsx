@@ -1,6 +1,6 @@
 "use client";
 
-import { Ban, Check, CreditCard, Truck, type LucideIcon } from "lucide-react";
+import { Ban, Check, CreditCard, type LucideIcon, Truck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { cn } from "@/lib/utils";
@@ -23,13 +23,7 @@ type Props = {
 	canCancel: boolean;
 };
 
-export function OrderActions({
-	orderId,
-	canCapture,
-	canShip,
-	canComplete,
-	canCancel,
-}: Props) {
+export function OrderActions({ orderId, canCapture, canShip, canComplete, canCancel }: Props) {
 	const router = useRouter();
 	const [error, setError] = useState<string | null>(null);
 	const [activeAction, setActiveAction] = useState<OrderActionType | null>(null);

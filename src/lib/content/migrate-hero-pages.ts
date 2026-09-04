@@ -1,6 +1,8 @@
 import type { HeroContent, PageContentMap } from "./types";
 
-function stripHeroProductImage(hero: Partial<HeroContent> | undefined): Partial<HeroContent> | undefined {
+function stripHeroProductImage(
+	hero: Partial<HeroContent> | undefined,
+): Partial<HeroContent> | undefined {
 	if (!hero) return undefined;
 	const {
 		productImageUrl: _url,

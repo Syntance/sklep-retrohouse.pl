@@ -11,10 +11,10 @@ import {
 	ShieldIcon,
 } from "@/components/icons";
 import { Container, CtaLink, Eyebrow, Section } from "@/components/primitives";
-import { formatPrice } from "@/lib/format";
+import { track } from "@/lib/analytics/posthog";
 import { useCartStore } from "@/lib/cart/store";
 import { useCartProducts } from "@/lib/cart/use-cart-products";
-import { track } from "@/lib/analytics/posthog";
+import { formatPrice } from "@/lib/format";
 import { CartTracker, CheckoutCta, DedicationField, GiftWrappingToggle } from "./cart-tracking";
 
 export function CartContent() {
@@ -36,8 +36,8 @@ export function CartContent() {
 							Jeszcze nic tu nie ma
 						</h2>
 						<p className="mx-auto mt-3 max-w-md text-foreground/70">
-							Dodaj unikat ze sklepu — zostaniesz na stronie produktu, a pozycja pojawi się
-							tutaj po kliknięciu ikony koszyka.
+							Dodaj unikat ze sklepu — zostaniesz na stronie produktu, a pozycja pojawi się tutaj po
+							kliknięciu ikony koszyka.
 						</p>
 						<div className="mt-6">
 							<CtaLink href="/sklep">Przeglądaj sklep</CtaLink>
@@ -89,10 +89,7 @@ export function CartContent() {
 															{item.epochLabel} · {item.categoryLabel}
 														</p>
 														<p className="mt-1 font-display text-xl">
-															<Link
-																href={`/sklep/${item.slug}`}
-																className="hover:text-terracotta"
-															>
+															<Link href={`/sklep/${item.slug}`} className="hover:text-terracotta">
 																{item.name}
 															</Link>
 														</p>

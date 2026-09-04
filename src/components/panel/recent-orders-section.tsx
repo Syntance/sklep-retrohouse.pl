@@ -1,8 +1,8 @@
 import Link from "next/link";
-import type { AdminOrderRow } from "@/lib/admin/order-types";
 import { orderStatusBadge } from "@/lib/admin/order-status";
+import type { AdminOrderRow } from "@/lib/admin/order-types";
 import { formatPrice } from "@/lib/format";
-import { Badge, Section, TBody, Td, THead, Th, Table } from "./chrome";
+import { Badge, Section, Table, TBody, Td, THead, Th } from "./chrome";
 
 type Props = {
 	orders: AdminOrderRow[];

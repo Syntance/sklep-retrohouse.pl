@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { ADMIN_COOKIE_NAME } from "@/lib/admin/session";
 
 /**
@@ -9,8 +9,7 @@ import { ADMIN_COOKIE_NAME } from "@/lib/admin/session";
 export function proxy(request: NextRequest) {
 	const { pathname } = request.nextUrl;
 
-	const isPublic =
-		pathname === "/magazyn/login" || pathname.startsWith("/magazyn/auth/");
+	const isPublic = pathname === "/magazyn/login" || pathname.startsWith("/magazyn/auth/");
 	if (isPublic) return NextResponse.next();
 
 	const hasSession = Boolean(request.cookies.get(ADMIN_COOKIE_NAME)?.value);

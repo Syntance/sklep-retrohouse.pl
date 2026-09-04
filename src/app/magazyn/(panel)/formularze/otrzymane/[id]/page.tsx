@@ -28,7 +28,10 @@ export default async function SubmissionDetailPage({
 			<div className="space-y-4">
 				<FormsSubnav />
 				<p className="text-sm text-destructive">{result.error}</p>
-				<Link href="/magazyn/formularze/otrzymane" className="text-sm text-terracotta hover:underline">
+				<Link
+					href="/magazyn/formularze/otrzymane"
+					className="text-sm text-terracotta hover:underline"
+				>
 					← Wróć do listy
 				</Link>
 			</div>
@@ -40,7 +43,10 @@ export default async function SubmissionDetailPage({
 	return (
 		<div className="flex flex-col gap-6">
 			<FormsSubnav />
-			<Link href="/magazyn/formularze/otrzymane" className="text-sm text-terracotta hover:underline">
+			<Link
+				href="/magazyn/formularze/otrzymane"
+				className="text-sm text-terracotta hover:underline"
+			>
 				← Otrzymane formularze
 			</Link>
 			<header className="space-y-1">

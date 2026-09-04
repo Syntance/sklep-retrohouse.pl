@@ -1,30 +1,22 @@
 import type { ReturnStatus } from "@/lib/admin/return-types";
 
-export type ReturnVisualTone = "success" | "pending" | "muted" | "destructive";
+type ReturnVisualTone = "success" | "pending" | "muted" | "destructive";
 
-export function getReturnVisualTone(status: ReturnStatus): ReturnVisualTone {
+function getReturnVisualTone(status: ReturnStatus): ReturnVisualTone {
 	if (status === "approved") return "success";
 	if (status === "rejected") return "destructive";
-	if (
-		status === "pending_approval" ||
-		status === "shipped" ||
-		status === "received"
-	) {
+	if (status === "pending_approval" || status === "shipped" || status === "received") {
 		return "pending";
 	}
 	return "muted";
 }
 
-const TONE_CLASSES: Record<
-	ReturnVisualTone,
-	{ badge: string; panel: string; itemTag: string }
-> = {
+const TONE_CLASSES: Record<ReturnVisualTone, { badge: string; panel: string; itemTag: string }> = {
 	success: {
 		badge:
 			"inline-flex shrink-0 items-center rounded-full bg-success/15 px-2.5 py-0.5 text-xs font-medium text-success",
 		panel: "rounded-lg border border-success/35 bg-success/10 px-4 py-3 text-sm",
-		itemTag:
-			"shrink-0 rounded-full bg-success/15 px-2 py-0.5 text-xs font-medium text-success",
+		itemTag: "shrink-0 rounded-full bg-success/15 px-2 py-0.5 text-xs font-medium text-success",
 	},
 	pending: {
 		badge:
@@ -37,8 +29,7 @@ const TONE_CLASSES: Record<
 		badge:
 			"inline-flex shrink-0 items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground",
 		panel: "rounded-lg border border-border bg-muted/40 px-4 py-3 text-sm",
-		itemTag:
-			"shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground",
+		itemTag: "shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground",
 	},
 	destructive: {
 		badge:
@@ -54,7 +45,7 @@ export function getReturnToneClasses(status: ReturnStatus) {
 }
 
 /** Badge: reklamacja lub odstąpienie jest możliwe (termin nie upłynął). */
-export const availableActionBadgeClass =
+const availableActionBadgeClass =
 	"inline-flex shrink-0 items-center rounded-full bg-orange/15 px-2.5 py-0.5 text-xs font-medium text-orange";
 
 type OrderWithActiveCase = {

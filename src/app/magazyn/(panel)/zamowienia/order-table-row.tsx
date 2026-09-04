@@ -25,6 +25,7 @@ export function OrderTableRow({ orderId, label, children }: Props) {
 	}
 
 	return (
+		// biome-ignore lint/a11y/useSemanticElements: <a> nie może opakować <tr>; klikalny wiersz ma pełną obsługę klawiatury (tabIndex + Enter/Spacja)
 		<tr
 			role="link"
 			tabIndex={0}

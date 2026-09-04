@@ -1,7 +1,7 @@
-import { getSeoSettingsBundle } from "@/lib/admin/seo-store";
-import { loadAdmin } from "@/lib/admin/load";
-import { CMS_PAGES } from "@/lib/content/metadata-keys";
 import { PageHeader } from "@/components/panel/chrome";
+import { loadAdmin } from "@/lib/admin/load";
+import { getSeoSettingsBundle } from "@/lib/admin/seo-store";
+import { CMS_PAGES } from "@/lib/content/metadata-keys";
 import { SeoSettingsClient } from "./seo-settings-client";
 
 export const dynamic = "force-dynamic";

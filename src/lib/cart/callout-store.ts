@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type CartCalloutVariant = "added" | "duplicate";
+type CartCalloutVariant = "added" | "duplicate";
 
 type CartCalloutState = {
 	open: boolean;

@@ -7,7 +7,13 @@ import { googleStartAction, type LoginState, loginEmailAction } from "@/lib/admi
 
 const initialState: LoginState = { error: null };
 
-export function LoginForm({ googleError }: { googleError: boolean }) {
+export function LoginForm({
+	googleError,
+	forbidden = false,
+}: {
+	googleError: boolean;
+	forbidden?: boolean;
+}) {
 	const [state, formAction, pending] = useActionState(loginEmailAction, initialState);
 	const [googleState, googleFormAction, googlePending] = useActionState(
 		async () => googleStartAction(),
@@ -15,7 +21,10 @@ export function LoginForm({ googleError }: { googleError: boolean }) {
 	);
 
 	const errorMessage =
-		state.error ?? googleState.error ?? (googleError ? "Logowanie Google nie powiodło się." : null);
+		state.error ??
+		googleState.error ??
+		(forbidden ? "To konto nie ma dostępu do panelu." : null) ??
+		(googleError ? "Logowanie Google nie powiodło się." : null);
 
 	return (
 		<div className="flex flex-col gap-6">

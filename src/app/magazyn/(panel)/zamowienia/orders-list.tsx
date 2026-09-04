@@ -3,13 +3,13 @@
 import { ArrowDown, ArrowUp, ArrowUpDown, Inbox, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
-import type { AdminOrderRow } from "@/lib/admin/order-types";
 import {
 	BADGE_TONE_CLASS,
 	fulfillmentStatusBadge,
 	orderStatusBadge,
 	paymentStatusBadge,
 } from "@/lib/admin/order-status";
+import type { AdminOrderRow } from "@/lib/admin/order-types";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { OrderTableRow } from "./order-table-row";
@@ -125,12 +125,7 @@ function matchesSearch(order: AdminOrderRow, query: string): boolean {
 	const q = query.trim().toLowerCase();
 	if (!q) return true;
 
-	const haystack = [
-		String(order.displayId),
-		order.email,
-		order.customerName,
-		order.id,
-	]
+	const haystack = [String(order.displayId), order.email, order.customerName, order.id]
 		.join(" ")
 		.toLowerCase();
 
@@ -159,7 +154,8 @@ export function OrdersList({ orders }: Props) {
 			if (!matchesSearch(order, query)) return false;
 			if (statusFilter !== "all" && order.status !== statusFilter) return false;
 			if (paymentFilter !== "all" && order.paymentStatus !== paymentFilter) return false;
-			if (fulfillmentFilter !== "all" && order.fulfillmentStatus !== fulfillmentFilter) return false;
+			if (fulfillmentFilter !== "all" && order.fulfillmentStatus !== fulfillmentFilter)
+				return false;
 			return true;
 		});
 		return [...result].sort((a, b) => compareOrders(a, b, sort));
@@ -287,19 +283,18 @@ export function OrdersList({ orders }: Props) {
 											: ArrowDown
 										: ArrowUpDown;
 									return (
-										<th key={col.id} className={cn("px-4 py-3 font-medium", col.className)}>
+										<th
+											key={col.id}
+											aria-sort={
+												active ? (sort.direction === "asc" ? "ascending" : "descending") : "none"
+											}
+											className={cn("px-4 py-3 font-medium", col.className)}
+										>
 											<button
 												type="button"
 												onClick={() => toggleSort(col.id)}
 												className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
 												aria-label={`Sortuj: ${col.label}`}
-												aria-sort={
-													active
-														? sort.direction === "asc"
-															? "ascending"
-															: "descending"
-														: "none"
-												}
 											>
 												{col.label}
 												<SortIcon

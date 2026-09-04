@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { PackageX } from "lucide-react";
-import { formatPrice } from "@/lib/format";
+import Link from "next/link";
 import { Badge, PageHeader } from "@/components/panel/chrome";
+import { formatPrice } from "@/lib/format";
 import { getReturnsListAction } from "./actions";
 
 const STATUS_LABELS: Record<string, string> = {

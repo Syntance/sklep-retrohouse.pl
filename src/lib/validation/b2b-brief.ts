@@ -13,8 +13,8 @@ import { z } from "zod";
  *    B2BTimeline w `src/lib/analytics/events.ts`).
  */
 
-export const B2B_BUDGETS = ["do_2k", "2_5k", "5_15k", "15k_plus"] as const;
-export const B2B_TIMELINES = ["lt_2w", "2_4w", "1_3m", "elastycznie"] as const;
+const B2B_BUDGETS = ["do_2k", "2_5k", "5_15k", "15k_plus"] as const;
+const B2B_TIMELINES = ["lt_2w", "2_4w", "1_3m", "elastycznie"] as const;
 
 export const B2BBriefSchema = z.object({
 	name: z.string().trim().min(2, "Podaj imię i nazwisko."),
@@ -48,6 +48,3 @@ export const B2BBriefSchema = z.object({
 		.optional()
 		.transform((v) => v === true || v === "on"),
 });
-
-export type B2BBriefInput = z.input<typeof B2BBriefSchema>;
-export type B2BBriefData = z.output<typeof B2BBriefSchema>;

@@ -3,10 +3,15 @@
 import { CheckoutProgress } from "@/components/checkout-progress";
 import { Container, CtaLink, Eyebrow, Section } from "@/components/primitives";
 import { useCartProducts } from "@/lib/cart/use-cart-products";
+import type { CheckoutShippingOption } from "@/lib/checkout/shipping-options";
 import { CONTACT_FAST_RESPONSE } from "@/lib/contact/response-time";
 import { CheckoutForm } from "./checkout-form";
 
-export function CheckoutPageContent() {
+export function CheckoutPageContent({
+	shippingOptions,
+}: {
+	shippingOptions: CheckoutShippingOption[];
+}) {
 	const products = useCartProducts();
 	const subtotal = products.reduce((acc, item) => acc + item.price, 0);
 
@@ -44,7 +49,7 @@ export function CheckoutPageContent() {
 
 					<CheckoutProgress step={2} />
 
-					<CheckoutForm items={products} subtotal={subtotal} />
+					<CheckoutForm items={products} subtotal={subtotal} shippingOptions={shippingOptions} />
 				</Container>
 			</Section>
 

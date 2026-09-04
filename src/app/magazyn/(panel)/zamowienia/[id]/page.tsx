@@ -9,7 +9,7 @@ import {
 	orderStatusBadge,
 	paymentStatusBadge,
 } from "@/lib/admin/order-status";
-import { type AdminOrderDetail, type OrderAddress, getAdminOrder } from "@/lib/admin/orders";
+import { type AdminOrderDetail, getAdminOrder, type OrderAddress } from "@/lib/admin/orders";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { OrderActions } from "./order-actions";
@@ -31,6 +31,9 @@ const META_LABELS: Record<string, string> = {
 	nip: "NIP",
 	companyName: "Nazwa firmy",
 	invoice: "Faktura VAT",
+	promoCode: "Kod rabatowy",
+	manual_order_source: "Źródło (zamówienie ręczne)",
+	order_notes: "Notatka do zamówienia",
 };
 
 function Badge({ label, tone }: { label: string; tone: keyof typeof BADGE_TONE_CLASS }) {
@@ -78,18 +81,17 @@ function actionFlags(order: AdminOrderDetail) {
 			!inRealization &&
 			["not_fulfilled", "partially_fulfilled"].includes(order.fulfillmentStatus),
 		/** Kurier odebrał paczkę. */
-		canShip: !closed && !shipped && (inRealization || order.fulfillments.some((f) => !f.canceledAt && !f.shippedAt)),
+		canShip:
+			!closed &&
+			!shipped &&
+			(inRealization || order.fulfillments.some((f) => !f.canceledAt && !f.shippedAt)),
 		/** Zamówienie dostarczone / domknięte w systemie. */
 		canComplete: !closed && shipped,
 		canCancel: !closed,
 	};
 }
 
-export default async function OrderDetailPage({
-	params,
-}: {
-	params: Promise<{ id: string }>;
-}) {
+export default async function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
 	const { id } = await params;
 	const order = await loadAdmin(() => getAdminOrder(id));
 	if (!order) notFound();
@@ -111,7 +113,9 @@ export default async function OrderDetailPage({
 					Zamówienia
 				</Link>
 				<div className="mt-2 flex flex-wrap items-center gap-3">
-					<h1 className="font-serif text-2xl text-foreground">Zamówienie #{order.displayId || "—"}</h1>
+					<h1 className="font-serif text-2xl text-foreground">
+						Zamówienie #{order.displayId || "—"}
+					</h1>
 					<Badge label={status.label} tone={status.tone} />
 				</div>
 				<p className="mt-1 text-sm text-muted-foreground">

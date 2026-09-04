@@ -8,10 +8,10 @@ import {
 	PinIcon,
 	WhatsAppIcon,
 } from "@/components/icons";
-import { getSiteSettings } from "@/lib/content";
-import { buildWhatsAppHref, hasSocialLink } from "@/lib/content/social-links";
 import { FOOTER_COLUMNS, STORE_INFO } from "@/components/layout/site-header/nav-data";
 import { Container } from "@/components/primitives";
+import { getSiteSettings } from "@/lib/content";
+import { buildWhatsAppHref, hasSocialLink } from "@/lib/content/social-links";
 import { CookieSettingsButton } from "./cookie-settings-button";
 
 /**
@@ -88,30 +88,30 @@ export async function SiteFooter() {
 						</div>
 					</div>
 
-				{FOOTER_COLUMNS.map((column) => (
-					<nav key={column.heading} aria-label={column.heading}>
-						<p className="font-sans text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-brass">
-							{column.heading}
-						</p>
-						<ul className="mt-4 space-y-2.5">
-							{column.items.map((item) => (
-								<li key={item.href}>
-									<Link
-										href={item.href}
-										className="text-sm text-ink-foreground/80 transition-colors hover:text-terracotta focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-									>
-										{item.label}
-									</Link>
-								</li>
-							))}
-							{column.heading === "Formalności" ? (
-								<li>
-									<CookieSettingsButton />
-								</li>
-							) : null}
-						</ul>
-					</nav>
-				))}
+					{FOOTER_COLUMNS.map((column) => (
+						<nav key={column.heading} aria-label={column.heading}>
+							<p className="font-sans text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-brass">
+								{column.heading}
+							</p>
+							<ul className="mt-4 space-y-2.5">
+								{column.items.map((item) => (
+									<li key={item.href}>
+										<Link
+											href={item.href}
+											className="text-sm text-ink-foreground/80 transition-colors hover:text-terracotta focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+										>
+											{item.label}
+										</Link>
+									</li>
+								))}
+								{column.heading === "Formalności" ? (
+									<li>
+										<CookieSettingsButton />
+									</li>
+								) : null}
+							</ul>
+						</nav>
+					))}
 				</div>
 
 				<div className="mt-12 grid gap-6 border-t border-ink-foreground/10 pt-8 text-sm text-ink-foreground/75 md:grid-cols-3">
@@ -159,4 +159,3 @@ export async function SiteFooter() {
 		</footer>
 	);
 }
-

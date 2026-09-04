@@ -29,9 +29,7 @@ export function PageHeroSplit({
 					{eyebrow}
 					{title}
 					{lead ? <div className="mt-6">{lead}</div> : null}
-					{actions ? (
-						<div className="mt-8 flex flex-wrap items-center gap-3">{actions}</div>
-					) : null}
+					{actions ? <div className="mt-8 flex flex-wrap items-center gap-3">{actions}</div> : null}
 				</div>
 				{image ? <div className="min-h-0">{image}</div> : null}
 			</div>

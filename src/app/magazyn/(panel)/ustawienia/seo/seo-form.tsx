@@ -5,15 +5,20 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { SeoMeta, SiteSettings } from "@/lib/content/types";
-import { saveGlobalSeoAction, savePageSeoAction } from "./seo-actions";
 import { cmsSaveSuccessMessage } from "../../cms/cms-save-feedback";
+import { saveGlobalSeoAction, savePageSeoAction } from "./seo-actions";
 
 const inputClass =
 	"w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
 
 type Props =
 	| { mode: "global"; initial: SiteSettings }
-	| { mode: "page"; pageId: import("@/lib/content/types").ContentPageId; path: string; initial: SeoMeta | undefined };
+	| {
+			mode: "page";
+			pageId: import("@/lib/content/types").ContentPageId;
+			path: string;
+			initial: SeoMeta | undefined;
+	  };
 
 export function SeoForm(props: Props) {
 	if (props.mode === "global") {
@@ -26,7 +31,9 @@ function GlobalSeoForm({ initial }: { initial: SiteSettings }) {
 	const [title, setTitle] = useState(initial.title);
 	const [description, setDescription] = useState(initial.description);
 	const [titleTemplate, setTitleTemplate] = useState(initial.titleTemplate ?? "");
-	const [googleVerification, setGoogleVerification] = useState(initial.googleSiteVerification ?? "");
+	const [googleVerification, setGoogleVerification] = useState(
+		initial.googleSiteVerification ?? "",
+	);
 	const [defaultOg, setDefaultOg] = useState(initial.defaultOgImageUrl ?? "");
 	const [seo, setSeo] = useState<SeoMeta>(initial.seo ?? {});
 	const [error, setError] = useState<string | null>(null);
@@ -60,43 +67,51 @@ function GlobalSeoForm({ initial }: { initial: SiteSettings }) {
 
 	return (
 		<form onSubmit={onSubmit} className="flex max-w-2xl flex-col gap-5">
-			<div className="flex flex-col gap-1.5">
-				<label className="text-sm font-medium">Tytuł witryny</label>
+			<label className="flex flex-col gap-1.5">
+				<span className="text-sm font-medium">Tytuł witryny</span>
 				<Input value={title} onChange={(e) => setTitle(e.target.value)} required className="h-10" />
-			</div>
-			<div className="flex flex-col gap-1.5">
-				<label className="text-sm font-medium">Opis witryny</label>
+			</label>
+			<label className="flex flex-col gap-1.5">
+				<span className="text-sm font-medium">Opis witryny</span>
 				<textarea
 					value={description}
 					onChange={(e) => setDescription(e.target.value)}
 					rows={3}
 					className={inputClass}
 				/>
-			</div>
+			</label>
 			<div className="flex flex-col gap-1.5">
-				<label className="text-sm font-medium">Szablon tytułu</label>
-				<Input
-					value={titleTemplate}
-					onChange={(e) => setTitleTemplate(e.target.value)}
-					placeholder="%s | RetroHouse"
-					className="h-10"
-				/>
+				<label className="flex flex-col gap-1.5">
+					<span className="text-sm font-medium">Szablon tytułu</span>
+					<Input
+						value={titleTemplate}
+						onChange={(e) => setTitleTemplate(e.target.value)}
+						placeholder="%s | RetroHouse"
+						className="h-10"
+					/>
+				</label>
 				<p className="text-xs text-muted-foreground">
-					<code className="text-[11px]">%s</code> to tytuł danej podstrony — reszta szablonu dokleja się
-					automatycznie.
+					<code className="text-[11px]">%s</code> to tytuł danej podstrony — reszta szablonu dokleja
+					się automatycznie.
 				</p>
 			</div>
-			<div className="flex flex-col gap-1.5">
-				<label className="text-sm font-medium">Google Site Verification</label>
+			<label className="flex flex-col gap-1.5">
+				<span className="text-sm font-medium">Google Site Verification</span>
 				<Input
 					value={googleVerification}
 					onChange={(e) => setGoogleVerification(e.target.value)}
 					className="h-10"
 				/>
-			</div>
+			</label>
 			<div className="flex flex-col gap-1.5">
-				<label className="text-sm font-medium">Domyślne zdjęcie OG (URL)</label>
-				<Input value={defaultOg} onChange={(e) => setDefaultOg(e.target.value)} className="h-10" />
+				<label className="flex flex-col gap-1.5">
+					<span className="text-sm font-medium">Domyślne zdjęcie OG (URL)</span>
+					<Input
+						value={defaultOg}
+						onChange={(e) => setDefaultOg(e.target.value)}
+						className="h-10"
+					/>
+				</label>
 				<p className="text-xs text-muted-foreground">
 					Puste pole — domyślny obraz OG z Next.js / Vercel. Własny URL wymaga redeploy po zmianie
 					obrazu.
@@ -161,17 +176,17 @@ function SeoFields({
 	return (
 		<fieldset className="flex flex-col gap-4 rounded-xl border border-border p-4">
 			<legend className="px-1 text-sm font-medium">Meta tagi</legend>
-			<div className="flex flex-col gap-1.5">
-				<label className="text-sm font-medium">Meta Title (max 70)</label>
+			<label className="flex flex-col gap-1.5">
+				<span className="text-sm font-medium">Meta Title (max 70)</span>
 				<Input
 					value={seo.metaTitle ?? ""}
 					onChange={(e) => onChange({ metaTitle: e.target.value })}
 					maxLength={70}
 					className="h-10"
 				/>
-			</div>
-			<div className="flex flex-col gap-1.5">
-				<label className="text-sm font-medium">Meta Description (max 160)</label>
+			</label>
+			<label className="flex flex-col gap-1.5">
+				<span className="text-sm font-medium">Meta Description (max 160)</span>
 				<textarea
 					value={seo.metaDescription ?? ""}
 					onChange={(e) => onChange({ metaDescription: e.target.value })}
@@ -179,40 +194,40 @@ function SeoFields({
 					rows={3}
 					className={inputClass}
 				/>
-			</div>
-			<div className="flex flex-col gap-1.5">
-				<label className="text-sm font-medium">OG Title</label>
+			</label>
+			<label className="flex flex-col gap-1.5">
+				<span className="text-sm font-medium">OG Title</span>
 				<Input
 					value={seo.ogTitle ?? ""}
 					onChange={(e) => onChange({ ogTitle: e.target.value })}
 					className="h-10"
 				/>
-			</div>
-			<div className="flex flex-col gap-1.5">
-				<label className="text-sm font-medium">OG Description</label>
+			</label>
+			<label className="flex flex-col gap-1.5">
+				<span className="text-sm font-medium">OG Description</span>
 				<textarea
 					value={seo.ogDescription ?? ""}
 					onChange={(e) => onChange({ ogDescription: e.target.value })}
 					rows={2}
 					className={inputClass}
 				/>
-			</div>
-			<div className="flex flex-col gap-1.5">
-				<label className="text-sm font-medium">OG Image (URL)</label>
+			</label>
+			<label className="flex flex-col gap-1.5">
+				<span className="text-sm font-medium">OG Image (URL)</span>
 				<Input
 					value={seo.ogImageUrl ?? ""}
 					onChange={(e) => onChange({ ogImageUrl: e.target.value })}
 					className="h-10"
 				/>
-			</div>
-			<div className="flex flex-col gap-1.5">
-				<label className="text-sm font-medium">Canonical URL</label>
+			</label>
+			<label className="flex flex-col gap-1.5">
+				<span className="text-sm font-medium">Canonical URL</span>
 				<Input
 					value={seo.canonicalUrl ?? ""}
 					onChange={(e) => onChange({ canonicalUrl: e.target.value })}
 					className="h-10"
 				/>
-			</div>
+			</label>
 			<label className="flex items-center gap-2 text-sm">
 				<input
 					type="checkbox"

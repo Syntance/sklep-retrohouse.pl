@@ -5,8 +5,8 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { SiteSettings } from "@/lib/content/types";
-import { saveCmsGlobalSettingsAction } from "./content-actions";
 import { cmsSaveSuccessMessage } from "./cms-save-feedback";
+import { saveCmsGlobalSettingsAction } from "./content-actions";
 
 const inputClass =
 	"w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";

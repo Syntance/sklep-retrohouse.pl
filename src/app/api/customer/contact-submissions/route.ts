@@ -6,10 +6,7 @@ export async function GET(request: Request) {
 	try {
 		const authHeader = request.headers.get("Authorization");
 		if (!authHeader?.startsWith("Bearer ")) {
-			return NextResponse.json(
-				{ ok: false, error: "Brak tokenu autoryzacji" },
-				{ status: 401 },
-			);
+			return NextResponse.json({ ok: false, error: "Brak tokenu autoryzacji" }, { status: 401 });
 		}
 
 		const email = verifyCustomerToken(authHeader.slice(7));

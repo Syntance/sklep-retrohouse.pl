@@ -3,7 +3,7 @@
 
 import { PAGE_HERO_IMAGES } from "./hero-images";
 
-export type StaticCmsHeroEntry = {
+type StaticCmsHeroEntry = {
 	productImageUrl: string;
 	productImageAlt: string;
 	productImageWidth: number;

@@ -1,14 +1,14 @@
 import {
+	canCompressCmsImage,
+	compressCmsImageForUpload,
+	prepareCmsImageForUpload,
+} from "@/lib/product-upload/compress-cms-image";
+import {
 	MAX_CMS_UPLOAD_BYTES,
 	MAX_CMS_UPLOAD_MB,
 	VERCEL_SAFE_UPLOAD_BYTES,
 	VERCEL_SAFE_UPLOAD_MB,
 } from "@/lib/product-upload/constants";
-import {
-	canCompressCmsImage,
-	compressCmsImageForUpload,
-	prepareCmsImageForUpload,
-} from "@/lib/product-upload/compress-cms-image";
 
 function resolveUploadContentType(file: File): string {
 	if (file.type) return file.type;
@@ -146,10 +146,7 @@ async function uploadViaPresigned(file: File): Promise<string> {
 
 	const presign = await readPresignResponse(presignRes);
 	if (!presign.ok || !presign.uploadUrl || !presign.publicUrl) {
-		if (
-			process.env.NODE_ENV === "development" &&
-			isR2PresignUnavailableMessage(presign.error)
-		) {
+		if (process.env.NODE_ENV === "development" && isR2PresignUnavailableMessage(presign.error)) {
 			return uploadViaApi(file);
 		}
 		throw new Error(

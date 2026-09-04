@@ -1,8 +1,8 @@
 import "server-only";
 import {
 	DEFAULT_EPOCH_OPTIONS,
-	parseEpochsJson,
 	type EpochOption,
+	parseEpochsJson,
 } from "@/lib/products/epoch-types";
 import { adminFetch } from "./medusa-admin";
 
@@ -18,7 +18,9 @@ type MedusaStore = {
 };
 
 async function getStore(): Promise<MedusaStore> {
-	const data = await adminFetch<{ stores: MedusaStore[] }>("/admin/stores?limit=1&fields=id,metadata");
+	const data = await adminFetch<{ stores: MedusaStore[] }>(
+		"/admin/stores?limit=1&fields=id,metadata",
+	);
 	const store = data.stores[0];
 	if (!store) throw new Error("Nie znaleziono sklepu w Medusa.");
 	return store;
@@ -70,12 +72,12 @@ export async function listEpochs(): Promise<AdminEpoch[]> {
 	}));
 }
 
-export type EpochInput = {
+type EpochInput = {
 	value: string;
 	label: string;
 };
 
-export async function saveEpochs(epochs: EpochInput[]): Promise<void> {
+async function saveEpochs(epochs: EpochInput[]): Promise<void> {
 	const normalized = epochs
 		.map((epoch) => ({
 			value: epoch.value.trim(),

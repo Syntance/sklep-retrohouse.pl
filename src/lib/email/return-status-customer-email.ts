@@ -1,13 +1,12 @@
 import "server-only";
 
-import type { ReturnRequest } from "@/lib/admin/return-types";
-import type { ReturnStatus } from "@/lib/admin/return-types";
+import type { ReturnRequest, ReturnStatus } from "@/lib/admin/return-types";
 import { buildCaseRenderVarsFromReturn } from "@/lib/email/case-email-context";
+import { templateTypeForReturnStatus } from "@/lib/email/case-email-template-map";
 import {
 	buildCustomerCaseEmailBodies,
 	customerCaseEmailTab,
 } from "@/lib/email/customer-case-email";
-import { templateTypeForReturnStatus } from "@/lib/email/case-email-template-map";
 import {
 	defaultCaseEmailSubject,
 	sendCaseCustomerEmail,

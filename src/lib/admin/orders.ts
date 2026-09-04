@@ -1,5 +1,6 @@
 import "server-only";
 import { resolveMedusaMediaUrl } from "@/lib/medusa/media-url";
+import { adminFetch, catalogAdminFetch } from "./medusa-admin";
 import type {
 	AdminOrderDetail,
 	AdminOrderRow,
@@ -7,25 +8,15 @@ import type {
 	OrderAddress,
 	OrderFulfillment,
 	OrderFulfillmentStatus,
-	OrderLineItem,
 	OrderPayment,
 	OrderPaymentStatus,
 	OrderStatus,
 } from "./order-types";
-import { adminFetch, catalogAdminFetch } from "./medusa-admin";
 import { getSessionToken } from "./session";
 
 export type {
 	AdminOrderDetail,
-	AdminOrderRow,
-	AdminOrderStatsRow,
 	OrderAddress,
-	OrderFulfillment,
-	OrderFulfillmentStatus,
-	OrderLineItem,
-	OrderPayment,
-	OrderPaymentStatus,
-	OrderStatus,
 } from "./order-types";
 
 type MedusaAddress = {
@@ -66,7 +57,11 @@ type MedusaFulfillment = {
 	shipped_at?: string | null;
 	delivered_at?: string | null;
 	canceled_at?: string | null;
-	items?: Array<{ id?: string | null; line_item_id?: string | null; quantity?: number | null }> | null;
+	items?: Array<{
+		id?: string | null;
+		line_item_id?: string | null;
+		quantity?: number | null;
+	}> | null;
 };
 
 type MedusaOrder = {
@@ -118,7 +113,9 @@ function customerNameFrom(order: MedusaOrder): string {
 	return parts.join(" ").trim();
 }
 
-function normalizeMetadata(metadata: Record<string, unknown> | null | undefined): Record<string, string> {
+function normalizeMetadata(
+	metadata: Record<string, unknown> | null | undefined,
+): Record<string, string> {
 	const result: Record<string, string> = {};
 	for (const [key, value] of Object.entries(metadata ?? {})) {
 		if (value == null) continue;
@@ -380,7 +377,7 @@ type MedusaOrderRaw = {
 };
 
 /** Utworzenie wysyłki (fulfillment) dla wszystkich niezrealizowanych pozycji. */
-export async function fulfillOrder(orderId: string): Promise<void> {
+async function fulfillOrder(orderId: string): Promise<void> {
 	const data = await adminFetch<{ order: MedusaOrderRaw }>(
 		`/admin/orders/${orderId}?fields=id,*items,shipping_methods.shipping_option_id`,
 	);
@@ -463,22 +460,6 @@ export async function markOrderShipped(orderId: string): Promise<void> {
 	});
 }
 
-/** Oznaczenie wysyłki jako dostarczonej. */
-export async function markOrderDelivered(orderId: string): Promise<void> {
-	const order = await getAdminOrder(orderId);
-	if (!order) throw new Error("Nie znaleziono zamówienia.");
-
-	const fulfillment = order.fulfillments
-		.filter((f) => !f.canceledAt && !f.deliveredAt)
-		.at(-1);
-	if (!fulfillment) throw new Error("Brak realizacji do oznaczenia jako dostarczona.");
-
-	await adminFetch(
-		`/admin/orders/${orderId}/fulfillments/${fulfillment.id}/mark-as-delivered`,
-		{ method: "POST", body: JSON.stringify({}) },
-	);
-}
-
 export async function cancelOrder(orderId: string): Promise<void> {
 	await adminFetch(`/admin/orders/${orderId}/cancel`, {
 		method: "POST",
@@ -488,13 +469,6 @@ export async function cancelOrder(orderId: string): Promise<void> {
 
 export async function completeOrder(orderId: string): Promise<void> {
 	await adminFetch(`/admin/orders/${orderId}/complete`, {
-		method: "POST",
-		body: JSON.stringify({}),
-	});
-}
-
-export async function archiveOrder(orderId: string): Promise<void> {
-	await adminFetch(`/admin/orders/${orderId}/archive`, {
 		method: "POST",
 		body: JSON.stringify({}),
 	});

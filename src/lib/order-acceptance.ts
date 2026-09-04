@@ -41,18 +41,3 @@ export type OrderAcceptance = {
 	/** Wersja polityki prywatności (z PRIVACY_VERSION). */
 	privacyVersion: string;
 };
-
-/**
- * Sprawdza, czy wszystkie wymagane akceptacje zostały zebrane
- * dla danej listy slugów produktów.
- */
-export function isAcceptanceComplete(
-	acceptance: Partial<OrderAcceptance>,
-	productSlugs: string[],
-): boolean {
-	if (!acceptance.termsAcceptedAt || !acceptance.privacyAcceptedAt) return false;
-	if (!acceptance.items || acceptance.items.length < productSlugs.length) return false;
-	return productSlugs.every((slug) =>
-		acceptance.items?.some((item) => item.productSlug === slug && item.acceptedAt),
-	);
-}

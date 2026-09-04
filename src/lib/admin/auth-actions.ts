@@ -8,19 +8,30 @@ import {
 	loginWithEmailPassword,
 	MEDUSA_BASE_URL,
 } from "./medusa-admin";
+import { isAdminEmailAllowed } from "./allowlist";
+import { checkLoginRateLimit } from "./login-rate-limit";
 import { clearSessionToken, setSessionToken } from "./session";
 
 export type LoginState = { error: string | null };
 
-export async function loginEmailAction(
-	_prev: LoginState,
-	formData: FormData,
-): Promise<LoginState> {
+export async function loginEmailAction(_prev: LoginState, formData: FormData): Promise<LoginState> {
 	const email = String(formData.get("email") ?? "").trim();
 	const password = String(formData.get("password") ?? "");
 
 	if (!email || !password) {
 		return { error: "Podaj email i hasło." };
+	}
+
+	// Rate-limit logowania (brute-force) — per IP, fail-open bez Upstash.
+	const rl = await checkLoginRateLimit();
+	if (!rl.ok) {
+		return { error: "Za dużo prób logowania. Odczekaj chwilę i spróbuj ponownie." };
+	}
+
+	// Allowlista e-maili (MAGAZYN_ADMIN_ALLOWLIST) — gdy ustawiona, tylko wskazane
+	// konta mogą wejść do panelu, nawet z poprawnymi danymi Medusa Admin.
+	if (!isAdminEmailAllowed(email)) {
+		return { error: "To konto nie ma dostępu do panelu." };
 	}
 
 	try {

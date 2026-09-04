@@ -27,19 +27,6 @@ export type ConsentState = {
 	categories: ConsentCategories;
 };
 
-export const DEFAULT_CONSENT: ConsentCategories = {
-	necessary: true,
-	analytics: false,
-	marketing: false,
-	preferences: false,
-};
-
-export function hasConsentCategory(
-	category: keyof Omit<ConsentCategories, "necessary">,
-): boolean {
-	return Boolean(readConsent()?.categories[category]);
-}
-
 export function readConsent(): ConsentState | null {
 	if (typeof window === "undefined") return null;
 	try {

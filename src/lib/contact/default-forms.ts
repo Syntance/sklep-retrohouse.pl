@@ -3,7 +3,6 @@ import {
 	CONTACT_TOPIC_LABELS,
 	CONTACT_TOPIC_PRESETS,
 	type ContactTopicPreset,
-	type ContactTopicValue,
 } from "@/lib/validation/contact";
 
 export type ContactFormTopicConfig = {
@@ -72,7 +71,7 @@ const DEFAULT_FORM_META: Record<
 	},
 };
 
-export function buildDefaultTopicsForPreset(preset: ContactTopicPreset): ContactFormTopicConfig[] {
+function buildDefaultTopicsForPreset(preset: ContactTopicPreset): ContactFormTopicConfig[] {
 	return CONTACT_TOPIC_PRESETS[preset].map((value) => ({
 		value,
 		label: CONTACT_TOPIC_LABELS[value],

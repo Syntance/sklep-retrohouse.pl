@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CustomerLogin } from "@/app/odstapienie/customer-login";
-import { CustomerOrdersClaims } from "@/app/reklamacje/customer-orders-claims";
 import { CustomerOrders } from "@/app/odstapienie/customer-orders";
+import { CustomerOrdersClaims } from "@/app/reklamacje/customer-orders-claims";
+import { CustomerContactSubmissions } from "@/components/customer/customer-contact-submissions";
 import { useCustomerSession } from "@/components/customer/customer-session-provider";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CustomerContactSubmissions } from "@/components/customer/customer-contact-submissions";
 import { CustomerOrdersOverview } from "./customer-orders-overview";
 
 const TABS = ["zamowienia", "reklamacje", "zwroty", "formularze"] as const;
@@ -63,11 +63,7 @@ export function KontoDashboard() {
 				</Button>
 			</div>
 
-			<Tabs
-				value={activeTab}
-				onValueChange={(value) => setTab(parseTab(value))}
-				className="gap-6"
-			>
+			<Tabs value={activeTab} onValueChange={(value) => setTab(parseTab(value))} className="gap-6">
 				<TabsList className="w-full max-w-xl">
 					<TabsTrigger value="zamowienia" className="flex-1">
 						Zamówienia
@@ -84,18 +80,11 @@ export function KontoDashboard() {
 				</TabsList>
 
 				<TabsContent value="zamowienia">
-					<CustomerOrdersOverview
-						token={token}
-						onOpenTab={(tab) => setTab(tab)}
-					/>
+					<CustomerOrdersOverview token={token} onOpenTab={(tab) => setTab(tab)} />
 				</TabsContent>
 
 				<TabsContent value="reklamacje">
-					<CustomerOrdersClaims
-						token={token}
-						onLogout={logout}
-						hideLogout
-					/>
+					<CustomerOrdersClaims token={token} onLogout={logout} hideLogout />
 				</TabsContent>
 
 				<TabsContent value="zwroty">

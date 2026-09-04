@@ -2,7 +2,6 @@
 
 import type { ConsentState } from "./consent";
 import { setMarketingConsent } from "./marketing";
-import { setPreferencesConsent } from "./preferences";
 import {
 	isAnalyticsConsented,
 	resetAnalytics,
@@ -10,6 +9,7 @@ import {
 	stopScopedSessionRecording,
 	track,
 } from "./posthog";
+import { setPreferencesConsent } from "./preferences";
 
 function applyConsentRuntime(state: ConsentState): void {
 	const { categories } = state;

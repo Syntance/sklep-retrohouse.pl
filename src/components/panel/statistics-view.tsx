@@ -14,9 +14,9 @@ import {
 	XAxis,
 	YAxis,
 } from "recharts";
-import { Badge, Card } from "./chrome";
-import { formatPrice } from "@/lib/format";
 import type { SalesStatistics } from "@/lib/admin/analytics/sales-stats";
+import { formatPrice } from "@/lib/format";
+import { Badge, Card } from "./chrome";
 
 const CHART_STROKE = "#AF7C61";
 const CHART_COLORS = ["#AF7C61", "#725750", "#C9A48D", "#8f7a74", "#5c4a44"];
@@ -151,7 +151,10 @@ export function StatisticsView({ stats }: Props) {
 									<span className="font-medium text-foreground">{item.val}</span>
 								</div>
 								<div className="h-1.5 rounded-full bg-muted">
-									<div className={`h-1.5 rounded-full ${item.color}`} style={{ width: `${item.pct}%` }} />
+									<div
+										className={`h-1.5 rounded-full ${item.color}`}
+										style={{ width: `${item.pct}%` }}
+									/>
 								</div>
 							</div>
 						))}
@@ -161,7 +164,9 @@ export function StatisticsView({ stats }: Props) {
 				<Card className="lg:col-span-2">
 					<h2 className="font-serif text-lg text-foreground">Metody dostawy</h2>
 					{stats.shippingMethods.length === 0 ? (
-						<p className="mt-3 text-sm text-muted-foreground">Brak danych o wysyłce w zamówieniach.</p>
+						<p className="mt-3 text-sm text-muted-foreground">
+							Brak danych o wysyłce w zamówieniach.
+						</p>
 					) : (
 						<>
 							<div className="mt-4">
@@ -252,7 +257,9 @@ export function StatisticsView({ stats }: Props) {
 												style={{ width: `${(p.przychod / topProductMax) * 100}%` }}
 											/>
 										</div>
-										<span className="shrink-0 text-xs text-muted-foreground">{p.sprzedane} szt.</span>
+										<span className="shrink-0 text-xs text-muted-foreground">
+											{p.sprzedane} szt.
+										</span>
 									</div>
 								</div>
 							</li>

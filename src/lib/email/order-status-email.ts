@@ -7,11 +7,7 @@ import {
 import type { AdminOrderDetail } from "@/lib/admin/orders";
 import { getAdminOrderForEmail } from "@/lib/admin/orders";
 import { EMAIL_CONTACT, SITE_URL } from "@/lib/email/constants";
-import {
-	buildOrderRenderContext,
-	mergeSubject,
-	renderTemplate,
-} from "@/lib/email/render-template";
+import { buildOrderRenderContext, mergeSubject, renderTemplate } from "@/lib/email/render-template";
 import { sendTransactionalEmail } from "@/lib/email/send-transactional";
 import { formatPrice } from "@/lib/format";
 
@@ -109,7 +105,10 @@ function buildHtml(order: AdminOrderDetail, copy: StageCopy): string {
 		.join("");
 
 	const bodyParagraphs = copy.body
-		.map((p) => `<p style="margin:0 0 12px;font-size:14px;line-height:1.7;color:#5a4a3a">${esc(p)}</p>`)
+		.map(
+			(p) =>
+				`<p style="margin:0 0 12px;font-size:14px;line-height:1.7;color:#5a4a3a">${esc(p)}</p>`,
+		)
 		.join("");
 
 	return `<!DOCTYPE html>

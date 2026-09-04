@@ -3,15 +3,17 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { recordAudit } from "@/lib/admin/audit-log";
 import { AdminApiError, AdminUnauthorizedError, adminUpload } from "@/lib/admin/medusa-admin";
-import { resolveMedusaMediaUrls } from "@/lib/medusa/media-url";
 import {
 	createAdminProduct,
 	deleteAdminProduct,
+	duplicateAdminProduct,
 	type ProductFormValues,
 	updateAdminProduct,
 } from "@/lib/admin/products";
 import { slugify } from "@/lib/admin/slug";
+import { resolveMedusaMediaUrls } from "@/lib/medusa/media-url";
 
 export type SaveProductState = { error: string | null; ok: boolean };
 
@@ -94,6 +96,10 @@ export async function saveProductAction(payload: ProductPayload): Promise<SavePr
 		return { ok: false, error: "Nie udało się zapisać produktu. Spróbuj ponownie." };
 	}
 
+	await recordAudit(data.id ? "product.update" : "product.create", {
+		target: data.id ?? values.handle,
+		meta: { title: values.title },
+	});
 	revalidatePath("/magazyn/produkty");
 	redirect("/magazyn/produkty");
 }
@@ -105,7 +111,26 @@ export async function deleteProductAction(id: string): Promise<void> {
 		if (error instanceof AdminUnauthorizedError) redirect("/magazyn/auth/logout");
 		throw error;
 	}
+	await recordAudit("product.delete", { target: id });
 	revalidatePath("/magazyn/produkty");
+}
+
+export type DuplicateProductState = { ok: boolean; error: string | null; newId?: string };
+
+export async function duplicateProductAction(id: string): Promise<DuplicateProductState> {
+	let newId: string;
+	try {
+		newId = await duplicateAdminProduct(id);
+	} catch (error) {
+		if (error instanceof AdminUnauthorizedError) redirect("/magazyn/auth/logout");
+		if (error instanceof AdminApiError) return { ok: false, error: error.message };
+		if (error instanceof Error) return { ok: false, error: error.message };
+		return { ok: false, error: "Nie udało się powielić produktu." };
+	}
+
+	await recordAudit("product.duplicate", { target: id, meta: { newId } });
+	revalidatePath("/magazyn/produkty");
+	return { ok: true, error: null, newId };
 }
 
 export type UploadState = { urls: string[]; error: string | null };

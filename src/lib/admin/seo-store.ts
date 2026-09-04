@@ -1,10 +1,10 @@
 import "server-only";
 
-import { readAdminCmsSnapshot, mergeSiteSettings, savePageSeo } from "./content-store";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/content/defaults";
 import type { ContentPageId, PageSeoMap, SeoMeta, SiteSettings } from "@/lib/content/types";
+import { mergeSiteSettings, readAdminCmsSnapshot, savePageSeo } from "./content-store";
 
-export type SeoSettingsBundle = {
+type SeoSettingsBundle = {
 	siteSettings: SiteSettings;
 	pageSeo: PageSeoMap;
 };

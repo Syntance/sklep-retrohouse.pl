@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
-import {
-	shopPreferencesToQuery,
-	SHOP_PREFERENCES_KEY,
-} from "@/lib/analytics/preferences";
 import { CONSENT_STORAGE_KEY, CONSENT_VERSION } from "@/lib/analytics/consent";
+import { SHOP_PREFERENCES_KEY, shopPreferencesToQuery } from "@/lib/analytics/preferences";
 
 describe("shop preferences", () => {
 	it("serializes saved filters to query string", () => {

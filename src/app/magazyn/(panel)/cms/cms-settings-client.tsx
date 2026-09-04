@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { CMS_BASE_PATH } from "@/lib/content/metadata-keys";
 import type { CmsPageConfig } from "@/lib/content/metadata-keys";
+import { CMS_BASE_PATH } from "@/lib/content/metadata-keys";
 import type { GlobalContent, PageContentMap, SiteSettings } from "@/lib/content/types";
+import { cn } from "@/lib/utils";
+import { CmsRedeployButton } from "./cms-redeploy-button";
 import { GlobalContentEditor } from "./global-content-editor";
 import { PageContentEditor } from "./page-content-editor";
-import { CmsRedeployButton } from "./cms-redeploy-button";
 
 type Props = {
 	siteSettings: SiteSettings;

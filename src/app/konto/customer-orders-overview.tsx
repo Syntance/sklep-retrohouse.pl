@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
 import Link from "next/link";
+import { useEffect, useId, useState } from "react";
+import { toast } from "sonner";
 import { OrderCustomerDetailsSection } from "@/components/customer/order-customer-details";
 import { OrderCaseDetailsSection } from "@/components/customer/order-request-panels";
+import { Button } from "@/components/ui/button";
 import type { CustomerOrder } from "@/lib/customer/orders";
 import { getActiveCaseOrderBadge } from "@/lib/customer/return-request-visual";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { formatPrice } from "@/lib/format";
 
 type Props = {
@@ -21,26 +21,30 @@ export function CustomerOrdersOverview({ token, onOpenTab }: Props) {
 	const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
 
 	useEffect(() => {
-		void fetchOrders();
-	}, []);
-
-	async function fetchOrders() {
-		try {
-			const res = await fetch("/api/customer/orders", {
-				headers: { Authorization: `Bearer ${token}` },
-			});
-			const json = await res.json();
-			if (json.ok) {
-				setOrders(json.orders);
-			} else {
-				toast.error("Nie udało się pobrać zamówień");
+		let cancelled = false;
+		async function fetchOrders() {
+			try {
+				const res = await fetch("/api/customer/orders", {
+					headers: { Authorization: `Bearer ${token}` },
+				});
+				const json = await res.json();
+				if (cancelled) return;
+				if (json.ok) {
+					setOrders(json.orders);
+				} else {
+					toast.error("Nie udało się pobrać zamówień");
+				}
+			} catch {
+				if (!cancelled) toast.error("Błąd połączenia");
+			} finally {
+				if (!cancelled) setLoading(false);
 			}
-		} catch {
-			toast.error("Błąd połączenia");
-		} finally {
-			setLoading(false);
 		}
-	}
+		void fetchOrders();
+		return () => {
+			cancelled = true;
+		};
+	}, [token]);
 
 	if (loading) {
 		return <div className="py-12 text-center text-foreground/70">Ładowanie zamówień…</div>;
@@ -64,9 +68,7 @@ export function CustomerOrdersOverview({ token, onOpenTab }: Props) {
 					key={order.id}
 					order={order}
 					isOrderOpen={expandedOrderId === order.id}
-					onToggleOrder={() =>
-						setExpandedOrderId(expandedOrderId === order.id ? null : order.id)
-					}
+					onToggleOrder={() => setExpandedOrderId(expandedOrderId === order.id ? null : order.id)}
 					onOpenTab={onOpenTab}
 				/>
 			))}
@@ -106,9 +108,7 @@ function OrderOverviewCard({
 					{order.itemCount === 1 ? "produkt" : "produkty"} · {formatPrice(order.total)}
 				</p>
 				<p className="mt-1 text-xs text-muted-foreground">
-					{isOrderOpen
-						? "Zwiń szczegóły zamówienia"
-						: "Kliknij, aby zobaczyć szczegóły zamówienia"}
+					{isOrderOpen ? "Zwiń szczegóły zamówienia" : "Kliknij, aby zobaczyć szczegóły zamówienia"}
 				</p>
 			</div>
 			<div className="flex shrink-0 items-center gap-2">
@@ -123,6 +123,7 @@ function OrderOverviewCard({
 						viewBox="0 0 16 16"
 						fill="none"
 						xmlns="http://www.w3.org/2000/svg"
+						aria-hidden="true"
 						className={isOrderOpen ? "transition-transform rotate-180" : "transition-transform"}
 					>
 						<path
@@ -165,9 +166,7 @@ function OrderOverviewCard({
 							size="sm"
 							aria-expanded={casePanel === "claim"}
 							aria-controls={claimPanelId}
-							onClick={() =>
-								setCasePanel((current) => (current === "claim" ? null : "claim"))
-							}
+							onClick={() => setCasePanel((current) => (current === "claim" ? null : "claim"))}
 						>
 							{casePanel === "claim" ? "Ukryj szczegóły reklamacji" : "Szczegóły reklamacji"}
 						</Button>
@@ -180,14 +179,10 @@ function OrderOverviewCard({
 							aria-expanded={casePanel === "withdrawal"}
 							aria-controls={withdrawalPanelId}
 							onClick={() =>
-								setCasePanel((current) =>
-									current === "withdrawal" ? null : "withdrawal",
-								)
+								setCasePanel((current) => (current === "withdrawal" ? null : "withdrawal"))
 							}
 						>
-							{casePanel === "withdrawal"
-								? "Ukryj szczegóły odstąpienia"
-								: "Szczegóły odstąpienia"}
+							{casePanel === "withdrawal" ? "Ukryj szczegóły odstąpienia" : "Szczegóły odstąpienia"}
 						</Button>
 					) : null}
 					{canStartNewCase ? (

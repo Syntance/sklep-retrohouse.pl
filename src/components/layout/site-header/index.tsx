@@ -5,14 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import {
-	ChevronDownIcon,
-	CloseIcon,
-	GiftIcon,
-	MenuIcon,
-	SearchIcon,
-} from "@/components/icons";
 import { CartDrawer } from "@/components/cart-drawer";
+import { ChevronDownIcon, CloseIcon, GiftIcon, MenuIcon, SearchIcon } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import { CustomerMenu, CustomerMenuMobileLinks } from "./customer-menu";
 import { PRIMARY_NAV, SHOP_MEGA_MENU } from "./nav-data";

@@ -1,11 +1,11 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { SidebarNav } from "./sidebar-nav";
-import { SettingsSidebarNav } from "./settings-sidebar-nav";
 import { SidebarFooter } from "@/components/panel/sidebar-footer";
+import { cn } from "@/lib/utils";
 import { isSettingsPath } from "./settings-nav-items";
+import { SettingsSidebarNav } from "./settings-sidebar-nav";
+import { SidebarNav } from "./sidebar-nav";
 
 export function PanelSidebarNav({ className }: { className?: string }) {
 	const pathname = usePathname();

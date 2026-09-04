@@ -1,7 +1,7 @@
 import "server-only";
 import { partitionReachableMediaUrls } from "@/lib/admin/media-check";
-import { resolveProductThumbnailUrl } from "@/lib/medusa/product-thumbnail";
 import { resolveMedusaMediaUrls } from "@/lib/medusa/media-url";
+import { resolveProductThumbnailUrl } from "@/lib/medusa/product-thumbnail";
 import { adminFetch } from "./medusa-admin";
 import { getStoreConfig } from "./store-config";
 
@@ -164,7 +164,12 @@ export async function getAdminProduct(id: string): Promise<AdminProductDetail | 
 		pricePln: priceOf(variant, "pln"),
 		images,
 		staleImageCount,
-		badges: badgesRaw ? badgesRaw.split(",").map((b) => b.trim()).filter(Boolean) : [],
+		badges: badgesRaw
+			? badgesRaw
+					.split(",")
+					.map((b) => b.trim())
+					.filter(Boolean)
+			: [],
 		popularity: Number(popularityRaw) || 0,
 		giftBestseller: metaString(metadata, "giftBestseller") === "true",
 	};
@@ -255,4 +260,20 @@ export async function updateAdminProduct(
 
 export async function deleteAdminProduct(id: string): Promise<void> {
 	await adminFetch(`/admin/products/${id}`, { method: "DELETE" });
+}
+
+/**
+ * Powiela produkt: kopiuje wszystkie pola + metadane, tworzy szkic z unikalnym
+ * handle (antyki to unikaty — kopia startuje jako draft do edycji).
+ */
+export async function duplicateAdminProduct(id: string): Promise<string> {
+	const source = await getAdminProduct(id);
+	if (!source) throw new Error("Nie znaleziono produktu do powielenia.");
+
+	return createAdminProduct({
+		...source,
+		title: `${source.title} (kopia)`,
+		handle: `${source.handle}-kopia-${Date.now().toString(36)}`,
+		status: "draft",
+	});
 }

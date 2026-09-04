@@ -1,5 +1,5 @@
-import type { SetupCheckItem } from "@/lib/admin/settings-types";
 import { Badge, Card } from "@/components/panel/chrome";
+import type { SetupCheckItem } from "@/lib/admin/settings-types";
 
 const STATUS_TONE = {
 	ok: "success",

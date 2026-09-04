@@ -36,9 +36,9 @@ export type CheckoutStep = "data" | "shipping" | "payment" | "acceptance";
 import type { ContactTopicValue } from "@/lib/validation/contact";
 
 /** Wartość tematu z formularza (preset lub własny slug z magazynu). */
-export type ContactTopic = ContactTopicValue | (string & {});
+type ContactTopic = ContactTopicValue | (string & {});
 
-export type ScrollSection =
+type ScrollSection =
 	| "hero"
 	| "categories"
 	| "bestsellers"
@@ -64,17 +64,45 @@ export type ScrollSection =
 
 export type AnalyticsEvent =
 	// Ogólne (wszystkie strony)
-	| { name: "page_viewed"; properties: { path: string; referrer?: string; utm_source?: string; utm_medium?: string; utm_campaign?: string; utm_content?: string; utm_term?: string } }
+	| {
+			name: "page_viewed";
+			properties: {
+				path: string;
+				referrer?: string;
+				utm_source?: string;
+				utm_medium?: string;
+				utm_campaign?: string;
+				utm_content?: string;
+				utm_term?: string;
+			};
+	  }
 	| { name: "scroll_depth"; properties: { percent: 25 | 50 | 75 | 100; section: ScrollSection } }
-	| { name: "newsletter_signup"; properties: { source: "homepage" | "blog" | "footer" | "popup" | "b2b" | "live_reminder" } }
+	| {
+			name: "newsletter_signup";
+			properties: { source: "homepage" | "blog" | "footer" | "popup" | "b2b" | "live_reminder" };
+	  }
 	| { name: "whatsapp_clicked"; properties: { source: string } }
 	| { name: "phone_clicked"; properties: { source: string } }
-	| { name: "consent_updated"; properties: { analytics: boolean; marketing: boolean; preferences: boolean } }
+	| {
+			name: "consent_updated";
+			properties: { analytics: boolean; marketing: boolean; preferences: boolean };
+	  }
 	// Sklep i produkt
 	| { name: "category_tile_clicked"; properties: { category: string } }
 	| { name: "filter_used"; properties: { filter_name: string; filter_value: string } }
-	| { name: "product_card_clicked"; properties: { product_id: string; position: number; source: ProductSource } }
-	| { name: "product_viewed"; properties: { product_id: string; category: string; price: number; source: ProductSource | "direct" } }
+	| {
+			name: "product_card_clicked";
+			properties: { product_id: string; position: number; source: ProductSource };
+	  }
+	| {
+			name: "product_viewed";
+			properties: {
+				product_id: string;
+				category: string;
+				price: number;
+				source: ProductSource | "direct";
+			};
+	  }
 	| { name: "image_zoom"; properties: { image_index: number } }
 	| { name: "product_ask_clicked"; properties: { channel: "form" | "dm" | "whatsapp" } }
 	| { name: "wishlist_added"; properties: { product_id: string } }
@@ -84,7 +112,10 @@ export type AnalyticsEvent =
 	| { name: "hero_cta_clicked"; properties: { variant: "primary" | "secondary" } }
 	| { name: "b2b_strip_clicked"; properties: Record<string, never> }
 	// Koszyk i checkout
-	| { name: "add_to_cart"; properties: { product_id: string; price: number; source: ProductSource | "pdp" } }
+	| {
+			name: "add_to_cart";
+			properties: { product_id: string; price: number; source: ProductSource | "pdp" };
+	  }
 	| { name: "remove_from_cart"; properties: { product_id: string } }
 	| { name: "view_cart"; properties: { items_count: number; cart_value: number } }
 	| { name: "checkout_started"; properties: { cart_value: number } }
@@ -93,7 +124,10 @@ export type AnalyticsEvent =
 	| { name: "payment_selected"; properties: { method: PaymentMethod } }
 	| { name: "invoice_requested"; properties: { has_nip: boolean } }
 	| { name: "gift_wrapping_selected"; properties: Record<string, never> }
-	| { name: "purchase"; properties: { value: number; currency: "PLN"; order_id: string; items: number } }
+	| {
+			name: "purchase";
+			properties: { value: number; currency: "PLN"; order_id: string; items: number };
+	  }
 	| { name: "cart_abandoned"; properties: { cart_value: number; last_step: CheckoutStep | "cart" } }
 	// Compliance — UPK akceptacje (Krok 4 checkoutu)
 	| { name: "item_acceptance_checked"; properties: { product_id: string; order_draft_id: string } }
@@ -104,12 +138,23 @@ export type AnalyticsEvent =
 	| { name: "gift_theme_selected"; properties: { theme: string } }
 	// B2B (Flow 5, segment C)
 	| { name: "b2b_brief_started"; properties: Record<string, never> }
-	| { name: "b2b_brief_submitted"; properties: { budget: B2BBudgetBucket; timeline: B2BTimeline; has_moodboard: boolean; newsletter_optin: boolean } }
+	| {
+			name: "b2b_brief_submitted";
+			properties: {
+				budget: B2BBudgetBucket;
+				timeline: B2BTimeline;
+				has_moodboard: boolean;
+				newsletter_optin: boolean;
+			};
+	  }
 	| { name: "b2b_budget_selected"; properties: { budget_bucket: B2BBudgetBucket } }
 	| { name: "b2b_whatsapp_clicked"; properties: Record<string, never> }
 	| { name: "b2b_call_scheduled"; properties: Record<string, never> }
 	| { name: "b2b_case_study_clicked"; properties: { case_study_id: string } }
-	| { name: "b2b_landing_clicked"; properties: { source: "/o-nas" | "footer" | "/blog" | "header" } }
+	| {
+			name: "b2b_landing_clicked";
+			properties: { source: "/o-nas" | "footer" | "/blog" | "header" };
+	  }
 	| { name: "b2b_topic_selected"; properties: Record<string, never> }
 	// Live commerce (Flow 2)
 	| { name: "live_reminder_signup"; properties: { channel: "email" | "calendar" } }
@@ -117,7 +162,10 @@ export type AnalyticsEvent =
 	| { name: "visit_store_cta_clicked"; properties: { source: "homepage" | "/o-nas" | "/kontakt" } }
 	| { name: "map_directions_clicked"; properties: Record<string, never> }
 	// Blog i kontakt
-	| { name: "article_cta_clicked"; properties: { cta_type: "product" | "category" | "b2b" | "newsletter"; article_slug: string } }
+	| {
+			name: "article_cta_clicked";
+			properties: { cta_type: "product" | "category" | "b2b" | "newsletter"; article_slug: string };
+	  }
 	| { name: "related_article_clicked"; properties: { article_slug: string } }
 	| { name: "contact_form_submitted"; properties: { topic: ContactTopic } }
 	| { name: "contact_topic_selected"; properties: { topic: ContactTopic } }
@@ -131,7 +179,7 @@ export type AnalyticsEvent =
 	// Story scroll target (Notion: "story_section_scrolled" >60%)
 	| { name: "story_section_scrolled"; properties: { percent: 25 | 50 | 75 | 100 } };
 
-export type AnalyticsEventName = AnalyticsEvent["name"];
+type AnalyticsEventName = AnalyticsEvent["name"];
 
 /**
  * Lista wszystkich nazw eventów — pojedyncze źródło prawdy

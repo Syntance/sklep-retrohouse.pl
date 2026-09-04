@@ -2,13 +2,10 @@
 
 import Link from "next/link";
 import { useActionState, useEffect, useState } from "react";
+import { type LiveReminderState, submitLiveReminder } from "@/app/api/live-reminder/action";
 import { ArrowRightIcon, CalendarIcon } from "@/components/icons";
 import { CtaLink, Eyebrow } from "@/components/primitives";
 import { track } from "@/lib/analytics/posthog";
-import {
-	type LiveReminderState,
-	submitLiveReminder,
-} from "@/app/api/live-reminder/action";
 
 type LiveBannerProps = {
 	dateIso: string;
@@ -27,10 +24,7 @@ const initialState: LiveReminderState = { status: "idle" };
  * - render warunkowy w HomePage gdy `env.NEXT_PUBLIC_LIVE_SCHEDULED === true`.
  */
 export function LiveBanner({ dateIso, dropTitle, dropCount }: LiveBannerProps) {
-	const [state, formAction, isPending] = useActionState(
-		submitLiveReminder,
-		initialState,
-	);
+	const [state, formAction, isPending] = useActionState(submitLiveReminder, initialState);
 	const countdown = useCountdown(dateIso);
 
 	useEffect(() => {
@@ -193,21 +187,14 @@ function computeCountdown(targetMs: number, reduced: boolean): CountdownState {
 
 function Countdown(state: CountdownState) {
 	if (state.isLive) {
-		return (
-			<p className="mt-4 cta-text text-sm text-terracotta">Trwa live — odśwież koszyk</p>
-		);
+		return <p className="mt-4 cta-text text-sm text-terracotta">Trwa live — odśwież koszyk</p>;
 	}
 	if (state.reduced) {
 		const target = state.days > 0 ? `${state.days} dni` : "wkrótce";
-		return (
-			<p className="mt-4 cta-text text-sm text-foreground/65">Do startu: {target}</p>
-		);
+		return <p className="mt-4 cta-text text-sm text-foreground/65">Do startu: {target}</p>;
 	}
 	return (
-		<dl
-			aria-label="Czas do startu"
-			className="mt-4 flex gap-4 text-foreground"
-		>
+		<dl aria-label="Czas do startu" className="mt-4 flex gap-4 text-foreground">
 			<CountUnit label="dni" value={state.days} />
 			<CountUnit label="godz." value={state.hours} />
 			<CountUnit label="min" value={state.minutes} />

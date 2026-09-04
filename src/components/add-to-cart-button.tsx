@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { CartIcon, CartPlusIcon, CheckIcon } from "@/components/icons";
 import { ConditionAcceptanceDialog } from "@/components/condition-acceptance-dialog";
+import { CartIcon, CartPlusIcon, CheckIcon } from "@/components/icons";
+import type { ProductSource } from "@/lib/analytics/events";
 import { track } from "@/lib/analytics/posthog";
 import { useCartCalloutStore } from "@/lib/cart/callout-store";
-import type { ProductSource } from "@/lib/analytics/events";
-import type { Product } from "@/lib/products/types";
 import { useCartStore } from "@/lib/cart/store";
+import type { Product } from "@/lib/products/types";
 import { cn } from "@/lib/utils";
 
 type AddToCartButtonProps = {
@@ -33,9 +33,7 @@ export function AddToCartButton({
 	const addItem = useCartStore((state) => state.addItem);
 	const removeItem = useCartStore((state) => state.removeItem);
 	const showCartCallout = useCartCalloutStore((state) => state.show);
-	const inCart = useCartStore((state) =>
-		state.items.some((item) => item.slug === product.slug),
-	);
+	const inCart = useCartStore((state) => state.items.some((item) => item.slug === product.slug));
 	const [feedback, setFeedback] = useState<"idle" | "added" | "duplicate">("idle");
 	const [dialogOpen, setDialogOpen] = useState(false);
 

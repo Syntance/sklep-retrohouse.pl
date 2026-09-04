@@ -1,13 +1,22 @@
-import type { CustomerOrder } from "@/lib/customer/orders";
-
 export type CustomerReturnLineItem = {
 	orderLineItemId: string;
 	productTitle: string;
 	quantity: number;
 };
 
+/**
+ * Minimalne kształty strukturalne (zamiast pełnego `CustomerOrder`) —
+ * pełny typ importowałby `orders.ts` i domykał cykl orders → *-status → return-line-items → orders.
+ */
+type OrderWithCases = {
+	claims: Array<{ itemIds: string[] }>;
+	withdrawals: Array<{ itemIds: string[] }>;
+};
+
+type SelectableLineItem = { id: string };
+
 /** Pozycje już objęte inną reklamacją lub odstąpieniem na tym zamówieniu. */
-export function getLineItemsBlockedByOtherCases(order: CustomerOrder): Set<string> {
+export function getLineItemsBlockedByOtherCases(order: OrderWithCases): Set<string> {
 	return new Set([
 		...order.claims.flatMap((c) => c.itemIds),
 		...order.withdrawals.flatMap((w) => w.itemIds),
@@ -16,7 +25,7 @@ export function getLineItemsBlockedByOtherCases(order: CustomerOrder): Set<strin
 
 /** Walidacja wyboru pozycji przed wysłaniem wniosku (UI + API). */
 export function validateReturnLineItemSelection(
-	orderItems: CustomerOrder["items"],
+	orderItems: SelectableLineItem[],
 	selectedIds: string[],
 	excludedIds: Set<string>,
 ): string | null {

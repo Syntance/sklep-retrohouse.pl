@@ -24,9 +24,18 @@ export function ThemePanel({
 				<p className="text-xs text-muted-foreground">Globalne kolory, font i układ.</p>
 			</div>
 
-			<TextField label="Nazwa marki (nagłówek)" value={theme.brandName} onChange={(brandName) => patch({ brandName })} />
+			<TextField
+				label="Nazwa marki (nagłówek)"
+				value={theme.brandName}
+				onChange={(brandName) => patch({ brandName })}
+			/>
 
-			<SelectField label="Font" value={theme.fontKey} options={FONT_OPTIONS} onChange={(fontKey) => patch({ fontKey })} />
+			<SelectField
+				label="Font"
+				value={theme.fontKey}
+				options={FONT_OPTIONS}
+				onChange={(fontKey) => patch({ fontKey })}
+			/>
 
 			<div className="grid grid-cols-2 gap-3">
 				<NumberField
@@ -48,14 +57,38 @@ export function ThemePanel({
 
 			<div className="grid grid-cols-2 gap-3">
 				<ColorField label="Tło strony" value={theme.bg} onChange={(bg) => patch({ bg })} />
-				<ColorField label="Tło treści" value={theme.contentBg} onChange={(contentBg) => patch({ contentBg })} />
+				<ColorField
+					label="Tło treści"
+					value={theme.contentBg}
+					onChange={(contentBg) => patch({ contentBg })}
+				/>
 				<ColorField label="Tekst" value={theme.text} onChange={(text) => patch({ text })} />
-				<ColorField label="Nagłówki" value={theme.heading} onChange={(heading) => patch({ heading })} />
-				<ColorField label="Akcent / przyciski" value={theme.accent} onChange={(accent) => patch({ accent })} />
-				<ColorField label="Tekst drugorzędny" value={theme.muted} onChange={(muted) => patch({ muted })} />
+				<ColorField
+					label="Nagłówki"
+					value={theme.heading}
+					onChange={(heading) => patch({ heading })}
+				/>
+				<ColorField
+					label="Akcent / przyciski"
+					value={theme.accent}
+					onChange={(accent) => patch({ accent })}
+				/>
+				<ColorField
+					label="Tekst drugorzędny"
+					value={theme.muted}
+					onChange={(muted) => patch({ muted })}
+				/>
 				<ColorField label="Linki" value={theme.link} onChange={(link) => patch({ link })} />
-				<ColorField label="Tło nagłówka" value={theme.headerBg} onChange={(headerBg) => patch({ headerBg })} />
-				<ColorField label="Tekst nagłówka" value={theme.headerText} onChange={(headerText) => patch({ headerText })} />
+				<ColorField
+					label="Tło nagłówka"
+					value={theme.headerBg}
+					onChange={(headerBg) => patch({ headerBg })}
+				/>
+				<ColorField
+					label="Tekst nagłówka"
+					value={theme.headerText}
+					onChange={(headerText) => patch({ headerText })}
+				/>
 			</div>
 		</div>
 	);

@@ -30,14 +30,3 @@ export function daysSince(value: Date | string): number {
 	const diffMs = Date.now() - then.getTime();
 	return Math.floor(diffMs / (1000 * 60 * 60 * 24));
 }
-
-/**
- * Formatuje kwotę w groszach na walutę (np. 10000 groszy → "100,00 zł").
- * Zwroty w bazie / metadata — NIE kwoty zamówień z Medusa Admin (te: `formatPrice`).
- */
-export function formatCurrency(amountInCents: number, currencyCode = "PLN"): string {
-	return new Intl.NumberFormat("pl-PL", {
-		style: "currency",
-		currency: currencyCode.toUpperCase(),
-	}).format(amountInCents / 100);
-}

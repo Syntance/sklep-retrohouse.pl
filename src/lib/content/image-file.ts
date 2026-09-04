@@ -5,7 +5,7 @@ export function isImageFile(file: File): boolean {
 	return file.type.startsWith("image/") || IMAGE_EXT.test(file.name);
 }
 
-export function isSvgFile(file: File): boolean {
+function isSvgFile(file: File): boolean {
 	return file.type === "image/svg+xml" || file.name.toLowerCase().endsWith(".svg");
 }
 

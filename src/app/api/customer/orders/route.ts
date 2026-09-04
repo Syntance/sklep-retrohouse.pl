@@ -11,10 +11,7 @@ export async function GET(request: Request) {
 	try {
 		const authHeader = request.headers.get("Authorization");
 		if (!authHeader?.startsWith("Bearer ")) {
-			return NextResponse.json(
-				{ ok: false, error: "Brak tokenu autoryzacji" },
-				{ status: 401 },
-			);
+			return NextResponse.json({ ok: false, error: "Brak tokenu autoryzacji" }, { status: 401 });
 		}
 
 		const token = authHeader.slice(7);
@@ -27,11 +24,7 @@ export async function GET(request: Request) {
 			);
 		}
 
-		console.log(`[GET /api/customer/orders] Verified email from token: ${email}`);
-
 		const orders = await getCustomerOrders(email);
-
-		console.log(`[GET /api/customer/orders] Returning ${orders.length} orders for ${email}`);
 
 		return NextResponse.json({ ok: true, orders });
 	} catch (error) {

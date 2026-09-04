@@ -6,15 +6,19 @@ import { fetchGa4Analytics } from "./ga4/client";
 import { fetchPosthogAnalytics } from "./posthog/client";
 import type { AnalyticsDashboardData } from "./types";
 
-async function fetchAnalyticsDashboardUncached(
-	rangeDays: number,
-): Promise<AnalyticsDashboardData> {
+async function fetchAnalyticsDashboardUncached(rangeDays: number): Promise<AnalyticsDashboardData> {
 	if (!analyticsEnv.panelEnabled) {
 		return {
 			fetchedAt: new Date().toISOString(),
 			rangeDays,
-			ga4: { status: "disconnected", reason: "Panel analityki wyłączony (FEATURE_ANALYTICS_PANEL=0)." },
-			posthog: { status: "disconnected", reason: "Panel analityki wyłączony (FEATURE_ANALYTICS_PANEL=0)." },
+			ga4: {
+				status: "disconnected",
+				reason: "Panel analityki wyłączony (FEATURE_ANALYTICS_PANEL=0).",
+			},
+			posthog: {
+				status: "disconnected",
+				reason: "Panel analityki wyłączony (FEATURE_ANALYTICS_PANEL=0).",
+			},
 		};
 	}
 

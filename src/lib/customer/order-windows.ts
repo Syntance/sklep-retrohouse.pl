@@ -6,7 +6,7 @@ export const CLAIM_WARRANTY_DAYS = 730;
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
-export function daysSince(isoDate: string, nowMs = Date.now()): number {
+function daysSince(isoDate: string, nowMs = Date.now()): number {
 	return Math.floor((nowMs - new Date(isoDate).getTime()) / MS_PER_DAY);
 }
 

@@ -62,12 +62,7 @@ export function ShopHero({ backgroundImageUrl, backgroundImageAlt }: Props) {
 						>
 							Nasza kolekcja
 						</h1>
-						<Lead
-							className={cn(
-								"mt-4 max-w-xl",
-								hasBackground && "text-foreground/85",
-							)}
-						>
+						<Lead className={cn("mt-4 max-w-xl", hasBackground && "text-foreground/85")}>
 							Antyki, które już się nie powtórzą.
 						</Lead>
 						{hasBackground && backgroundImageAlt ? (

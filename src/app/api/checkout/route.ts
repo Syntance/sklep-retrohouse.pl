@@ -28,10 +28,19 @@ export async function POST(request: Request) {
 		if (!result.ok) {
 			return NextResponse.json({ ok: false, error: result.error }, { status: 422 });
 		}
-		await Promise.all([
+
+		// Zamówienie JUŻ istnieje — awaria maila nie może zamienić sukcesu w błąd.
+		// Wcześniej rzucony mail leciał do catch → klient widział "nie udało się"
+		// i ponawiał, tworząc drugie realne zamówienie.
+		const mailResults = await Promise.allSettled([
 			sendOrderStatusEmail(result.orderId, "placed"),
 			sendNewOrderShopNotification(result.orderId),
 		]);
+		for (const outcome of mailResults) {
+			if (outcome.status === "rejected") {
+				console.error("[checkout] order created, e-mail failed", result.orderId, outcome.reason);
+			}
+		}
 
 		return NextResponse.json({
 			ok: true,

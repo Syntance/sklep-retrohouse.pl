@@ -118,9 +118,7 @@ export default async function BlogPage({ searchParams }: { searchParams: SearchP
 												<p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-brass">
 													{post.categoryLabel}
 												</p>
-												<p className="mt-1 font-display text-base leading-snug">
-													{post.title}
-												</p>
+												<p className="mt-1 font-display text-base leading-snug">{post.title}</p>
 												<p className="mt-1 text-xs text-foreground/60">
 													{formatDate(post.publishedAt)} · {post.readingTime} min
 												</p>

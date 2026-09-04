@@ -2,12 +2,12 @@ import {
 	Bell,
 	CreditCard,
 	Key,
+	type LucideIcon,
 	Paintbrush,
 	Search,
 	Settings,
 	Shield,
 	Truck,
-	type LucideIcon,
 } from "lucide-react";
 import { SETTINGS_BASE_PATH } from "@/lib/content/metadata-keys";
 

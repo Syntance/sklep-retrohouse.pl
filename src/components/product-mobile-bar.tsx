@@ -37,9 +37,7 @@ export function ProductMobileBar({ product }: ProductMobileBarProps) {
 				<span>Unikat 1/1</span>
 				<Link
 					href={`/kontakt?subject=produkt&slug=${product.slug}`}
-					onClick={() =>
-						track({ name: "product_ask_clicked", properties: { channel: "form" } })
-					}
+					onClick={() => track({ name: "product_ask_clicked", properties: { channel: "form" } })}
 					className="font-semibold uppercase tracking-[0.14em] text-foreground hover:text-terracotta"
 				>
 					Zapytaj

@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CartIcon } from "@/components/icons";
+import { track } from "@/lib/analytics/posthog";
 import { selectCartCount, useCartStore } from "@/lib/cart/store";
 import { useCartMounted } from "@/lib/cart/use-cart-products";
-import { track } from "@/lib/analytics/posthog";
 
 /**
  * Pływający przycisk „Otwórz koszyk" na mobile dla /sklep

@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
-import type { SettingsFieldStatus, SettingsStatusSection } from "@/lib/admin/settings-types";
 import { Card } from "@/components/panel/chrome";
+import type { SettingsFieldStatus, SettingsStatusSection } from "@/lib/admin/settings-types";
+import { cn } from "@/lib/utils";
 
 const STATUS_LABEL: Record<SettingsFieldStatus, string> = {
 	ok: "OK",

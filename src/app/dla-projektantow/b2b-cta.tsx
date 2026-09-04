@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { ArrowRightIcon, MailIcon, WhatsAppIcon } from "@/components/icons";
 import { CtaLink } from "@/components/primitives";
 import { track } from "@/lib/analytics/posthog";
-import { useSearchParams } from "next/navigation";
 
 type B2BHeroCtaProps = {
 	whatsappHref: string;

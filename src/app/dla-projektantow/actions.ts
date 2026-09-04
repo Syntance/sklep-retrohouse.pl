@@ -1,8 +1,8 @@
 "use server";
 
 import { headers } from "next/headers";
-import { B2BBriefSchema } from "@/lib/validation/b2b-brief";
 import { rateLimit } from "@/lib/rate-limit";
+import { B2BBriefSchema } from "@/lib/validation/b2b-brief";
 
 export type B2BBriefState =
 	| { status: "idle" }

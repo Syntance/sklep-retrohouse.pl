@@ -11,6 +11,9 @@ import { cn } from "@/lib/utils";
 import { type ProductPayload, saveProductAction, uploadImagesAction } from "./actions";
 import { ProductImagePreview } from "./product-image-preview";
 
+/** Wiersz wady w formularzu — `key` jest tylko kluczem Reacta, nie trafia do payloadu. */
+type DefectRow = DefectItem & { key: string };
+
 type CategoryOption = { id: string; name: string };
 type EpochOption = { value: string; label: string };
 
@@ -75,7 +78,9 @@ export function ProductForm({ categories, epochs, initial }: Props) {
 	const [title, setTitle] = useState(initial?.title ?? "");
 	const [status, setStatus] = useState<ProductStatus>(initial?.status ?? "draft");
 	const [categoryId, setCategoryId] = useState(initial?.categoryId ?? "");
-	const [pricePln, setPricePln] = useState(initial?.pricePln != null ? String(initial.pricePln) : "");
+	const [pricePln, setPricePln] = useState(
+		initial?.pricePln != null ? String(initial.pricePln) : "",
+	);
 	const [description, setDescription] = useState(initial?.description ?? "");
 	const [shortDescription, setShortDescription] = useState(initial?.shortDescription ?? "");
 	const [story, setStory] = useState(initial?.story ?? "");
@@ -85,7 +90,9 @@ export function ProductForm({ categories, epochs, initial }: Props) {
 	const [dimensions, setDimensions] = useState(initial?.dimensions ?? "");
 	const [condition, setCondition] = useState(initial?.condition ?? "");
 	const [pickupOnly, setPickupOnly] = useState(initial?.pickupOnly ?? false);
-	const [defects, setDefects] = useState<DefectItem[]>(initial?.defects ?? []);
+	const [defects, setDefects] = useState<DefectRow[]>(() =>
+		(initial?.defects ?? []).map((d) => ({ ...d, key: crypto.randomUUID() })),
+	);
 	const [images, setImages] = useState<string[]>(initial?.images ?? []);
 	const [badgesText, setBadgesText] = useState((initial?.badges ?? []).join(", "));
 	const [popularity, setPopularity] = useState(String(initial?.popularity ?? 0));
@@ -169,7 +176,9 @@ export function ProductForm({ categories, epochs, initial }: Props) {
 			signature,
 			dimensions,
 			condition,
-			defects: defects.filter((d) => d.label.trim().length > 0),
+			defects: defects
+				.filter((d) => d.label.trim().length > 0)
+				.map(({ key: _key, ...defect }) => defect),
 			pickupOnly,
 			pricePln: parseNumber(pricePln),
 			images,
@@ -280,8 +289,8 @@ export function ProductForm({ categories, epochs, initial }: Props) {
 								{initial.staleImageCount}{" "}
 								{initial.staleImageCount === 1 ? "zdjęcie wygasło" : "zdjęć wygasło"}
 							</strong>{" "}
-							— pliki zniknęły z serwera (upload sprzed migracji). Dodaj zdjęcia ponownie i
-							zapisz produkt.
+							— pliki zniknęły z serwera (upload sprzed migracji). Dodaj zdjęcia ponownie i zapisz
+							produkt.
 						</p>
 					) : null}
 					{images.length > 0 ? (
@@ -313,9 +322,7 @@ export function ProductForm({ categories, epochs, initial }: Props) {
 						onDrop={onDrop}
 						className={cn(
 							"flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-8 text-center transition-colors",
-							isDragging
-								? "border-primary bg-primary/5"
-								: "border-border hover:bg-muted/40",
+							isDragging ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40",
 							uploading && "cursor-not-allowed opacity-60",
 						)}
 					>
@@ -404,13 +411,25 @@ export function ProductForm({ categories, epochs, initial }: Props) {
 						/>
 					</Field>
 					<Field label="Sygnatura / oznaczenia">
-						<Input value={signature} onChange={(e) => setSignature(e.target.value)} className="h-10" />
+						<Input
+							value={signature}
+							onChange={(e) => setSignature(e.target.value)}
+							className="h-10"
+						/>
 					</Field>
 					<Field label="Wymiary" hint="np. wys. 24 cm, śr. 12 cm">
-						<Input value={dimensions} onChange={(e) => setDimensions(e.target.value)} className="h-10" />
+						<Input
+							value={dimensions}
+							onChange={(e) => setDimensions(e.target.value)}
+							className="h-10"
+						/>
 					</Field>
 					<Field label="Stan ogólny" hint="np. bardzo dobry, ślady używania">
-						<Input value={condition} onChange={(e) => setCondition(e.target.value)} className="h-10" />
+						<Input
+							value={condition}
+							onChange={(e) => setCondition(e.target.value)}
+							className="h-10"
+						/>
 					</Field>
 				</div>
 			</Section>
@@ -421,8 +440,10 @@ export function ProductForm({ categories, epochs, initial }: Props) {
 						Każdą wadę dodaj osobno — to buduje zaufanie i chroni przed reklamacjami.
 					</p>
 					{defects.map((defect, index) => (
-						// biome-ignore lint/suspicious/noArrayIndexKey: rows have no stable id, order is stable
-						<div key={index} className="flex flex-col gap-2 rounded-lg border border-border p-3 sm:flex-row">
+						<div
+							key={defect.key}
+							className="flex flex-col gap-2 rounded-lg border border-border p-3 sm:flex-row"
+						>
 							<Input
 								value={defect.label}
 								onChange={(e) => updateDefect(index, { label: e.target.value })}
@@ -449,7 +470,9 @@ export function ProductForm({ categories, epochs, initial }: Props) {
 						type="button"
 						variant="outline"
 						size="sm"
-						onClick={() => setDefects((prev) => [...prev, { label: "", note: "" }])}
+						onClick={() =>
+							setDefects((prev) => [...prev, { label: "", note: "", key: crypto.randomUUID() }])
+						}
 						className="gap-1.5 self-start"
 					>
 						<Plus className="size-4" aria-hidden />
@@ -461,7 +484,11 @@ export function ProductForm({ categories, epochs, initial }: Props) {
 			<Section title="Dodatkowe">
 				<div className="grid gap-4 sm:grid-cols-2">
 					<Field label="Etykiety" hint="Oddziel przecinkami, np. Unikat, Vintage">
-						<Input value={badgesText} onChange={(e) => setBadgesText(e.target.value)} className="h-10" />
+						<Input
+							value={badgesText}
+							onChange={(e) => setBadgesText(e.target.value)}
+							className="h-10"
+						/>
 					</Field>
 					<Field label="Popularność (0–100)" hint="Wpływa na kolejność na liście.">
 						<Input

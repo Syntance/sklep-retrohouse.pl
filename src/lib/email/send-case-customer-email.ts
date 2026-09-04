@@ -4,15 +4,11 @@ import {
 	getEmailTemplateForSend,
 	isEmailTemplateEnabledForSend,
 } from "@/lib/admin/email-templates";
-import { buildDefaultTemplate } from "@/lib/email/template-types";
 import type { CaseEmailRenderVars } from "@/lib/email/case-email-context";
-import {
-	mergeSubject,
-	renderTemplate,
-	type EmailRenderContext,
-} from "@/lib/email/render-template";
+import { type EmailRenderContext, mergeSubject, renderTemplate } from "@/lib/email/render-template";
 import { sendTransactionalEmail } from "@/lib/email/send-transactional";
 import type { EmailTemplateType } from "@/lib/email/template-types";
+import { buildDefaultTemplate } from "@/lib/email/template-types";
 
 type SendCaseCustomerEmailInput = {
 	templateType: EmailTemplateType;

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
-import { getSessionToken } from "@/lib/admin/session";
 import { MAGAZYN_BRANDING } from "@/components/panel/nav-config";
+import { getSessionToken } from "@/lib/admin/session";
 import { PanelSidebarNav } from "./panel-sidebar-nav";
 
 export default async function PanelLayout({ children }: { children: ReactNode }) {

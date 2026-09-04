@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useId } from "react";
-import type { CustomerOrder } from "@/lib/customer/orders";
 import { MedusaOrderImage } from "@/components/customer/medusa-order-image";
+import type { CustomerOrder } from "@/lib/customer/orders";
 import { formatPrice } from "@/lib/format";
 
 type OrderLine = CustomerOrder["items"][number];

@@ -1,4 +1,4 @@
-export type AnalyticsSourceState =
+type AnalyticsSourceState =
 	| { status: "connected"; label: string }
 	| { status: "disconnected"; reason: string }
 	| { status: "error"; reason: string };

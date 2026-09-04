@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { Product } from "@/lib/products/types";
 import { useCartStore } from "@/lib/cart/store";
+import type { Product } from "@/lib/products/types";
 
 /**
  * Produkty koszyka z Medusa — fetch po rehydracji Zustand.

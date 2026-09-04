@@ -13,10 +13,7 @@ export function parsePriceParam(value: string | undefined): number | undefined {
 	return parsed;
 }
 
-export function normalizePriceRange(
-	min?: number,
-	max?: number,
-): { min?: number; max?: number } {
+export function normalizePriceRange(min?: number, max?: number): { min?: number; max?: number } {
 	if (min !== undefined && max !== undefined && min > max) {
 		return { min: max, max: min };
 	}

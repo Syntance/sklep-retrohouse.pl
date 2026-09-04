@@ -1,13 +1,13 @@
 import { EMAIL_B2B, EMAIL_CONTACT } from "@/lib/email/constants";
 
-export type NavLink = {
+type NavLink = {
 	label: string;
 	href: string;
 	description?: string;
 	external?: boolean;
 };
 
-export type NavGroup = {
+type NavGroup = {
 	heading: string;
 	items: NavLink[];
 };

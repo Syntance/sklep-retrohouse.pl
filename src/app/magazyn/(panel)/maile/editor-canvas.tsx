@@ -20,8 +20,8 @@ import { CSS } from "@dnd-kit/utilities";
 import { Copy, GripVertical, Trash2 } from "lucide-react";
 import type { Block } from "@/lib/email/template-types";
 import { cn } from "@/lib/utils";
-import { editorBtnRounded } from "./editor-chrome";
 import { BLOCK_META } from "./block-meta";
+import { editorBtnRounded } from "./editor-chrome";
 
 function snippet(block: Block): string {
 	switch (block.type) {
@@ -68,7 +68,9 @@ function SortableRow({
 			style={{ transform: CSS.Transform.toString(transform), transition }}
 			className={cn(
 				"flex items-center gap-2 rounded-lg border bg-card px-2 py-2 transition-colors",
-				selected ? "border-primary ring-1 ring-primary/40" : "border-border hover:border-foreground/30",
+				selected
+					? "border-primary ring-1 ring-primary/40"
+					: "border-border hover:border-foreground/30",
 				isDragging && "opacity-60",
 			)}
 		>
@@ -89,7 +91,9 @@ function SortableRow({
 			>
 				<Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
 				<span className="min-w-0">
-					<span className="block text-xs font-medium text-foreground">{BLOCK_META[block.type].label}</span>
+					<span className="block text-xs font-medium text-foreground">
+						{BLOCK_META[block.type].label}
+					</span>
 					<span className="block truncate text-xs text-muted-foreground">{snippet(block)}</span>
 				</span>
 			</button>

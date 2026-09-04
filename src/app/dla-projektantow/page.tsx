@@ -32,10 +32,22 @@ const TRADE_TERMS = [
 ];
 
 const PROCESS = [
-	{ title: "Wyślij brief", description: "Mood board (PDF / link / zdjęcia), opis stylistyki, budżet, termin." },
-	{ title: "Selekcja w 24 h", description: "E-mailem dostajesz 3–5 propozycji z fotografią i pochodzeniem każdego obiektu." },
-	{ title: "Rezerwacja 14 dni", description: "Wybrane przedmioty blokujemy — masz czas pokazać klientowi." },
-	{ title: "FV VAT + dostawa", description: "Faktura po zatwierdzeniu, kurier ubezpieczony lub odbiór w NT." },
+	{
+		title: "Wyślij brief",
+		description: "Mood board (PDF / link / zdjęcia), opis stylistyki, budżet, termin.",
+	},
+	{
+		title: "Selekcja w 24 h",
+		description: "E-mailem dostajesz 3–5 propozycji z fotografią i pochodzeniem każdego obiektu.",
+	},
+	{
+		title: "Rezerwacja 14 dni",
+		description: "Wybrane przedmioty blokujemy — masz czas pokazać klientowi.",
+	},
+	{
+		title: "FV VAT + dostawa",
+		description: "Faktura po zatwierdzeniu, kurier ubezpieczony lub odbiór w NT.",
+	},
 ];
 
 const FAQS = [
@@ -229,9 +241,9 @@ export default function DlaProjektantowPage() {
 								Pakujemy paczki, jeździmy do Wiednia, odpisujemy na briefy. Wszystko sami.
 							</p>
 							<p className="mt-3 text-sm text-foreground/70">
-								Bez działu sprzedaży i pośredników. Twoje studio trafia bezpośrednio do osoby,
-								która stoi w wiedeńskim mieszkaniu i sprawdza sygnatury — przewaga, której nie
-								da inny antykwariat.
+								Bez działu sprzedaży i pośredników. Twoje studio trafia bezpośrednio do osoby, która
+								stoi w wiedeńskim mieszkaniu i sprawdza sygnatury — przewaga, której nie da inny
+								antykwariat.
 							</p>
 						</div>
 					</aside>
@@ -242,8 +254,8 @@ export default function DlaProjektantowPage() {
 							Zbieramy referencje od pierwszych studiów, z którymi pracujemy w 2026 r.
 						</p>
 						<p className="mt-2 max-w-2xl text-foreground/70">
-							Chcesz być pierwszym studiem, którego realizację tu opublikujemy? Wyślij brief —
-							case study przygotowujemy razem (z mood boardem, fotografią profesjonalną i kartą
+							Chcesz być pierwszym studiem, którego realizację tu opublikujemy? Wyślij brief — case
+							study przygotowujemy razem (z mood boardem, fotografią profesjonalną i kartą
 							pochodzenia każdego obiektu).
 						</p>
 					</aside>

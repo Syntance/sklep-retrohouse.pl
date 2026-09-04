@@ -32,6 +32,7 @@ export function ConditionAcceptanceDialog({
 		setMounted(true);
 	}, []);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies(product.slug): zwiń opis stanu także przy zmianie produktu w otwartym dialogu
 	useEffect(() => {
 		if (open) setShowCondition(false);
 	}, [open, product.slug]);
@@ -106,9 +107,7 @@ export function ConditionAcceptanceDialog({
 							{product.condition}
 							<p className="mt-2 text-xs text-foreground/55">
 								Wersja opisu:{" "}
-								<code className="font-mono">
-									{hashConditionDescriptionSync(product.condition)}
-								</code>
+								<code className="font-mono">{hashConditionDescriptionSync(product.condition)}</code>
 							</p>
 						</div>
 					</div>

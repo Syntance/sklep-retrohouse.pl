@@ -53,8 +53,8 @@ export function CustomizeDialog({ open, current, onClose, onSave }: CustomizeDia
 					Dostosuj preferencje plików cookie
 				</h2>
 				<p className="mt-2 text-sm leading-relaxed text-foreground/70">
-					Włącz lub wyłącz poszczególne kategorie. Pliki niezbędne są zawsze aktywne — bez
-					nich strona nie zadziała (sesja, koszyk, ochrona przed CSRF).
+					Włącz lub wyłącz poszczególne kategorie. Pliki niezbędne są zawsze aktywne — bez nich
+					strona nie zadziała (sesja, koszyk, ochrona przed CSRF).
 				</p>
 
 				<ul className="mt-6 grid gap-3">

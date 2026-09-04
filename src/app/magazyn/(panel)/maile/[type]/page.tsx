@@ -1,13 +1,10 @@
+import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
+import { PageHeader } from "@/components/panel/chrome";
 import { getAllEmailTemplates } from "@/lib/admin/email-templates";
 import { loadAdmin } from "@/lib/admin/load";
-import {
-	EMAIL_TEMPLATE_TYPES,
-	type EmailTemplateType,
-} from "@/lib/email/template-types";
-import { PageHeader } from "@/components/panel/chrome";
+import { EMAIL_TEMPLATE_TYPES, type EmailTemplateType } from "@/lib/email/template-types";
 import { EmailEditorWrapper } from "../email-editor-wrapper";
 
 export const dynamic = "force-dynamic";

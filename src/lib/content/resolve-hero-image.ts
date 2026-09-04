@@ -1,7 +1,7 @@
 import type { HeroProductImage } from "@/lib/sanity/home-hero";
 import { DEFAULT_HERO_PRODUCT } from "@/lib/sanity/home-hero";
-import { resolveCmsMediaPublicUrl } from "./cms-media-url";
 import type { CmsHeroPageKey } from "./cms-hero-image";
+import { resolveCmsMediaPublicUrl } from "./cms-media-url";
 import { PAGE_HERO_IMAGES } from "./hero-images";
 import { STATIC_CMS_HERO } from "./static-cms-hero";
 import type { HeroContent } from "./types";
@@ -77,9 +77,5 @@ export function resolveHomeHeroProductImage(
 	cmsHero: Partial<HeroContent> | undefined,
 	sanityFallback: HeroProductImage | null,
 ): HeroProductImage {
-	return (
-		resolveStaticHeroProductImage("home", cmsHero) ??
-		sanityFallback ??
-		DEFAULT_HERO_PRODUCT
-	);
+	return resolveStaticHeroProductImage("home", cmsHero) ?? sanityFallback ?? DEFAULT_HERO_PRODUCT;
 }

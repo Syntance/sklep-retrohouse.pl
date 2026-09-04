@@ -1,8 +1,10 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { buildSalesStatistics } from "@/lib/admin/analytics/sales-stats";
 import type { AdminOrderStatsRow } from "@/lib/admin/order-types";
 
-function order(partial: Partial<AdminOrderStatsRow> & Pick<AdminOrderStatsRow, "id">): AdminOrderStatsRow {
+function order(
+	partial: Partial<AdminOrderStatsRow> & Pick<AdminOrderStatsRow, "id">,
+): AdminOrderStatsRow {
 	return {
 		displayId: 1,
 		status: "completed",
@@ -21,10 +23,31 @@ function order(partial: Partial<AdminOrderStatsRow> & Pick<AdminOrderStatsRow, "
 }
 
 describe("buildSalesStatistics", () => {
+	// Okno "ostatnie 6 miesięcy" liczy się od new Date() — bez pinowania zegara
+	// asercje na styczeń/czerwiec 2026 przechodziłyby tylko w części roku.
+	beforeEach(() => {
+		vi.useFakeTimers();
+		vi.setSystemTime(new Date("2026-06-15T12:00:00.000Z"));
+	});
+
+	afterEach(() => {
+		vi.useRealTimers();
+	});
+
 	it("traktuje kwoty Medusa jako PLN (bez dzielenia przez 100)", () => {
 		const stats = buildSalesStatistics([
-			order({ id: "1", total: 1_500, paymentStatus: "captured", createdAt: "2026-06-10T12:00:00.000Z" }),
-			order({ id: "2", total: 500, paymentStatus: "not_paid", createdAt: "2026-06-11T12:00:00.000Z" }),
+			order({
+				id: "1",
+				total: 1_500,
+				paymentStatus: "captured",
+				createdAt: "2026-06-10T12:00:00.000Z",
+			}),
+			order({
+				id: "2",
+				total: 500,
+				paymentStatus: "not_paid",
+				createdAt: "2026-06-11T12:00:00.000Z",
+			}),
 		]);
 
 		expect(stats.capturedRevenuePln).toBe(1_500);

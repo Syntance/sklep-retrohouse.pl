@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { OrderLineItemPicker } from "@/components/customer/order-line-item-picker";
 import {
 	ClaimsStatusPanel,
@@ -8,17 +9,13 @@ import {
 	OrderItemsWithCaseTags,
 	WithdrawalsStatusPanel,
 } from "@/components/customer/order-request-panels";
+import { Button } from "@/components/ui/button";
 import type { CustomerOrder } from "@/lib/customer/orders";
 import {
 	getLineItemsBlockedByOtherCases,
 	validateReturnLineItemSelection,
 } from "@/lib/customer/return-line-items";
-import {
-	availableActionBadgeClass,
-	getWithdrawalTabOrderBadge,
-} from "@/lib/customer/return-request-visual";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { getWithdrawalTabOrderBadge } from "@/lib/customer/return-request-visual";
 import { formatPrice } from "@/lib/format";
 
 type Props = {
@@ -32,11 +29,7 @@ export function CustomerOrders({ token, onLogout, hideLogout = false }: Props) {
 	const [loading, setLoading] = useState(true);
 	const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
 
-	useEffect(() => {
-		void fetchOrders();
-	}, []);
-
-	async function fetchOrders() {
+	const fetchOrders = useCallback(async () => {
 		try {
 			const res = await fetch("/api/customer/orders", {
 				headers: { Authorization: `Bearer ${token}` },
@@ -53,7 +46,11 @@ export function CustomerOrders({ token, onLogout, hideLogout = false }: Props) {
 		} finally {
 			setLoading(false);
 		}
-	}
+	}, [token]);
+
+	useEffect(() => {
+		void fetchOrders();
+	}, [fetchOrders]);
 
 	if (loading) {
 		return <div className="py-12 text-center text-foreground/70">Ładowanie zamówień…</div>;
@@ -62,9 +59,7 @@ export function CustomerOrders({ token, onLogout, hideLogout = false }: Props) {
 	if (orders.length === 0) {
 		return (
 			<div className="rounded-2xl border border-border bg-card p-6 text-center">
-				<p className="text-muted-foreground">
-					Nie znaleziono zamówień dla tego adresu e-mail.
-				</p>
+				<p className="text-muted-foreground">Nie znaleziono zamówień dla tego adresu e-mail.</p>
 				<Button onClick={onLogout} variant="outline" className="mt-4">
 					Wyloguj się
 				</Button>
@@ -90,9 +85,7 @@ export function CustomerOrders({ token, onLogout, hideLogout = false }: Props) {
 						order={order}
 						token={token}
 						isOpen={selectedOrder === order.id}
-						onToggle={() =>
-							setSelectedOrder(selectedOrder === order.id ? null : order.id)
-						}
+						onToggle={() => setSelectedOrder(selectedOrder === order.id ? null : order.id)}
 						onWithdrawalSubmitted={() => void fetchOrders()}
 					/>
 				))}
@@ -121,8 +114,7 @@ function WithdrawalOrderCard({
 
 	const excludedLineItems = getLineItemsBlockedByOtherCases(order);
 	const badge = getWithdrawalTabOrderBadge(order);
-	const canSubmitNewWithdrawal =
-		order.canReturn && !order.activeWithdrawal && !order.activeClaim;
+	const canSubmitNewWithdrawal = order.canReturn && !order.activeWithdrawal && !order.activeClaim;
 	const blockedByClaim = Boolean(order.activeClaim);
 
 	async function handleSubmitReturn(e: React.FormEvent) {
@@ -204,9 +196,7 @@ function WithdrawalOrderCard({
 							{order.itemCount === 1 ? "produkt" : "produkty"} · {formatPrice(order.total)}
 						</p>
 					</div>
-					{badge ? (
-						<span className={badge.className}>{badge.label}</span>
-					) : null}
+					{badge ? <span className={badge.className}>{badge.label}</span> : null}
 				</div>
 			</button>
 
@@ -248,10 +238,7 @@ function WithdrawalOrderCard({
 								</div>
 							) : null}
 							<div>
-								<label
-									htmlFor={`reason-${order.id}`}
-									className="mb-1.5 block text-sm font-medium"
-								>
+								<label htmlFor={`reason-${order.id}`} className="mb-1.5 block text-sm font-medium">
 									Powód odstąpienia
 								</label>
 								<textarea
@@ -277,8 +264,8 @@ function WithdrawalOrderCard({
 						</p>
 					) : order.activeWithdrawal ? (
 						<p className="text-sm text-muted-foreground">
-							Na tym zamówieniu trwa odstąpienie — status widzisz powyżej. O zmianach
-							poinformujemy e-mailem.
+							Na tym zamówieniu trwa odstąpienie — status widzisz powyżej. O zmianach poinformujemy
+							e-mailem.
 						</p>
 					) : (
 						<p className="text-sm text-muted-foreground">

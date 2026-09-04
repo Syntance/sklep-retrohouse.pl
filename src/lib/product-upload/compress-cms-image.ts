@@ -124,7 +124,7 @@ async function encodeUnderLimit(
 	return null;
 }
 
-export async function convertCmsImageToWebp(file: File): Promise<File> {
+async function convertCmsImageToWebp(file: File): Promise<File> {
 	const type = file.type.toLowerCase();
 	const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
 	if (SKIP_WEBP_CONVERSION.has(type) || ext === "webp" || ext === "gif" || ext === "svg") {

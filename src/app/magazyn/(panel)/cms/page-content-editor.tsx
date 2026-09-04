@@ -4,17 +4,16 @@ import { Loader2, Plus, Save, Trash2 } from "lucide-react";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { ContentBlockKey } from "@/lib/content/metadata-keys";
-import type {
-	ContentPageId,
-	FaqItem,
-	HeroContent,
-	PageContent,
-} from "@/lib/content/types";
 import { DEFAULT_HOME_HERO } from "@/lib/content/defaults";
+import type { ContentBlockKey } from "@/lib/content/metadata-keys";
+import type { ContentPageId, FaqItem, HeroContent, PageContent } from "@/lib/content/types";
 import { usePreventWindowFileDrop } from "@/lib/hooks/use-prevent-window-file-drop";
-import { savePageContentAction, savePageHeroImageAction, savePageHeroBackgroundAction } from "./content-actions";
 import { cmsSaveSuccessMessage } from "./cms-save-feedback";
+import {
+	savePageContentAction,
+	savePageHeroBackgroundAction,
+	savePageHeroImageAction,
+} from "./content-actions";
 import { HeroImageField } from "./hero-image-field";
 
 const inputClass =
@@ -110,7 +109,11 @@ export function PageContentEditor({ pageId, path, blocks, initial }: Props) {
 					{successMessage}
 				</p>
 			) : null}
-			<Button type="submit" disabled={pending || heroSaving || pageId === "sklep"} className="h-10 w-fit gap-1.5">
+			<Button
+				type="submit"
+				disabled={pending || heroSaving || pageId === "sklep"}
+				className="h-10 w-fit gap-1.5"
+			>
 				{pending ? (
 					<Loader2 className="size-4 animate-spin" aria-hidden />
 				) : (
@@ -223,16 +226,8 @@ function HeroEditor({
 			{showHeroImage ? (
 				<HeroImageField
 					label={isShopBackground ? "Zdjęcie panoramiczne (tło)" : "Zdjęcie hero"}
-					value={
-						isShopBackground
-							? (hero.backgroundImageUrl ?? "")
-							: (hero.productImageUrl ?? "")
-					}
-					alt={
-						isShopBackground
-							? (hero.backgroundImageAlt ?? "")
-							: (hero.productImageAlt ?? "")
-					}
+					value={isShopBackground ? (hero.backgroundImageUrl ?? "") : (hero.productImageUrl ?? "")}
+					alt={isShopBackground ? (hero.backgroundImageAlt ?? "") : (hero.productImageAlt ?? "")}
 					saving={heroSaving}
 					requiresRedeploy={!isShopBackground}
 					onChangeUrl={(url) => {

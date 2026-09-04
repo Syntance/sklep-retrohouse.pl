@@ -1,7 +1,7 @@
 import { ExternalLink, LogOut } from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { logoutAction } from "@/lib/admin/auth-actions";
+import { cn } from "@/lib/utils";
 import { MAGAZYN_BRANDING } from "./nav-config";
 
 export function SidebarFooter({ className }: { className?: string }) {

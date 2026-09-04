@@ -2,9 +2,9 @@ import "server-only";
 
 import { Resend } from "resend";
 import { env } from "@/env";
-import { EMAIL_CONTACT, EMAIL_FROM } from "@/lib/email/constants";
-import type { ContactFormTopicConfig } from "@/lib/contact/default-forms";
 import { resolveTopicLabel } from "@/lib/admin/contact-submissions";
+import type { ContactFormTopicConfig } from "@/lib/contact/default-forms";
+import { EMAIL_CONTACT, EMAIL_FROM } from "@/lib/email/constants";
 import type { ContactData } from "@/lib/validation/contact";
 
 const RESEND_TIMEOUT_MS = 5_000;
@@ -12,13 +12,13 @@ const RESEND_TIMEOUT_MS = 5_000;
 /** Domyślny odbiorca gdy brak RESEND_CONTACT_TO. */
 const DEFAULT_CONTACT_INBOX = EMAIL_CONTACT;
 
-export type SendContactResult = { ok: true; skipped?: boolean } | { ok: false; message: string };
+type SendContactResult = { ok: true; skipped?: boolean } | { ok: false; message: string };
 
 /**
  * Wysyła treść formularza /kontakt na skrzynkę zespołu przez Resend.
  * Bez RESEND_API_KEY zwraca sukces (skipped) — preview i CI bez sekretów.
  */
-export type SendContactNotificationOptions = {
+type SendContactNotificationOptions = {
 	recipientEmail: string;
 	caseNumber: string;
 	formName?: string;
@@ -35,8 +35,7 @@ export async function sendContactNotification(
 	}
 
 	const from = env.RESEND_FROM_EMAIL ? `RetroHouse <${env.RESEND_FROM_EMAIL}>` : EMAIL_FROM;
-	const to =
-		(options.recipientEmail.trim() || env.RESEND_CONTACT_TO) ?? DEFAULT_CONTACT_INBOX;
+	const to = (options.recipientEmail.trim() || env.RESEND_CONTACT_TO) ?? DEFAULT_CONTACT_INBOX;
 
 	const topicLabel = resolveTopicLabel({
 		topic: data.topic,

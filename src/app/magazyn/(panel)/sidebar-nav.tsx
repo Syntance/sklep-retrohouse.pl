@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 import { MAGAZYN_NAV_ITEMS } from "@/components/panel/nav-config";
+import { cn } from "@/lib/utils";
 
 export function SidebarNav() {
 	const pathname = usePathname();

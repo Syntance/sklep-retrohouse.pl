@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
-	CustomerLoginSchema,
+	type CustomerCodeOnlyInput,
 	CustomerCodeOnlySchema,
 	type CustomerLoginInput,
-	type CustomerCodeOnlyInput,
+	CustomerLoginSchema,
 } from "@/lib/validation/returns";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 
 type LoginStep = "email" | "code";
 
@@ -69,7 +69,7 @@ export function CustomerLogin({ onSuccess }: Props) {
 		setLoading(true);
 		try {
 			const payload = { ...parsed.data, email };
-			
+
 			const res = await fetch("/api/customer/verify-otp", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -134,14 +134,10 @@ export function CustomerLogin({ onSuccess }: Props) {
 				Kod został wysłany na <strong>{email}</strong>
 			</p>
 
-			<form 
-				onSubmit={otpForm.handleSubmit(
-					handleVerifyCode,
-					(errors) => {
-						console.log("[otpForm] Validation errors:", errors);
-						toast.error("Kod musi mieć 6 cyfr");
-					}
-				)} 
+			<form
+				onSubmit={otpForm.handleSubmit(handleVerifyCode, () => {
+					toast.error("Kod musi mieć 6 cyfr");
+				})}
 				className="space-y-4"
 			>
 				<div>
@@ -159,12 +155,11 @@ export function CustomerLogin({ onSuccess }: Props) {
 						className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm font-mono text-center text-2xl tracking-widest focus:outline-none focus:ring-2 focus:ring-ring"
 						disabled={loading}
 						autoComplete="one-time-code"
+						// biome-ignore lint/a11y/noAutofocus: krok OTP renderuje się po świadomej akcji „Wyślij kod” — focus na polu kodu to poprawne zarządzanie fokusem, nie autofocus przy ładowaniu strony
 						autoFocus
 					/>
 					{otpForm.formState.errors.code && (
-						<p className="mt-1 text-xs text-destructive">
-							{otpForm.formState.errors.code.message}
-						</p>
+						<p className="mt-1 text-xs text-destructive">{otpForm.formState.errors.code.message}</p>
 					)}
 				</div>
 
