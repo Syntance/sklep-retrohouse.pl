@@ -122,6 +122,12 @@ const nextConfig: NextConfig = {
 	productionBrowserSourceMaps: false,
 	images: {
 		formats: ["image/avif", "image/webp"],
+		/**
+		 * Rok cache dla /_next/image — bezpieczne, bo URL wariantu zawiera
+		 * ?dpl= per deployment (Vercel skew protection), więc nowy deploy
+		 * to nowy URL. Domyślne 1d obrywało w audycie "efficient cache TTL".
+		 */
+		minimumCacheTTL: 31536000,
 		remotePatterns: [
 			{ protocol: "https", hostname: "res.cloudinary.com" },
 			{ protocol: "https", hostname: "cdn.sanity.io" },
@@ -130,6 +136,14 @@ const nextConfig: NextConfig = {
 		],
 	},
 	experimental: {
+		/**
+		 * CSS inline w <style> zamiast render-blockingowego <link> — Tailwind
+		 * generuje ~24 KiB gz, a Lighthouse mobile wyceniał blokujący request
+		 * na ~2,7 s opóźnienia FCP/LCP przy Slow 4G. Ruch sklepu to głównie
+		 * pierwsze wizyty, więc utrata cache'owania arkusza to dobry trade-off
+		 * (rekomendacja z docs Next dla atomic CSS).
+		 */
+		inlineCss: true,
 		serverActions: {
 			bodySizeLimit: "15mb",
 		},

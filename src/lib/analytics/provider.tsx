@@ -37,7 +37,7 @@ function AnalyticsRouter() {
 
 	useEffect(() => {
 		const bootstrap = () => {
-			initPostHog();
+			void initPostHog();
 			const stored = readConsent();
 			if (stored) hydrateConsent(stored);
 		};

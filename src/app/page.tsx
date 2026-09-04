@@ -19,13 +19,18 @@ import { getHomeHeroProduct } from "@/lib/sanity/home-hero";
  *  5. SocialProof — formularz kontaktowy (pre-launch) / opinie (po zebraniu)
  */
 export default async function HomePage() {
-	const products = await listProducts();
+	// Trzy niezależne źródła (Medusa, metadane sklepu, Sanity) — równolegle,
+	// nie szeregowo: każdy await z osobna dokładał pełny round-trip do TTFB,
+	// a <head> (i preload obrazu LCP) czeka na zakończenie renderu strony.
+	const [products, content, sanityHeroProduct] = await Promise.all([
+		listProducts(),
+		getPageContent("home"),
+		getHomeHeroProduct(),
+	]);
 	const bestsellers = [...products].sort((a, b) => b.popularity - a.popularity).slice(0, 4);
 
-	const content = await getPageContent("home");
 	const hero = content.hero;
-
-	const heroProduct = resolveHomeHeroProductImage(hero, await getHomeHeroProduct());
+	const heroProduct = resolveHomeHeroProductImage(hero, sanityHeroProduct);
 
 	const liveScheduled =
 		env.NEXT_PUBLIC_LIVE_SCHEDULED &&

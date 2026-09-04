@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { EMAIL_ACCESS } from "@/lib/email/constants";
-import type { ContactTopicPreset } from "@/lib/validation/contact";
+import type { ContactTopicPreset } from "@/lib/validation/contact-topics";
 
 export type LegalDocumentContactSectionProps = {
 	heading: string;
@@ -16,7 +16,9 @@ export const LEGAL_DOCUMENT_CONTACT = {
 	privacy: {
 		heading: "Kontakt w sprawie danych",
 		topicPreset: "privacy" as const,
-		noteBeforeEmail: <p className="text-foreground/70">Odpowiadamy w 14 dni roboczych.</p>,
+		noteBeforeEmail: (
+			<p className="text-foreground/70">Odpowiadamy w 14 dni roboczych.</p>
+		),
 	},
 	cookies: { heading: "Pytania o cookies?", topicPreset: "cookies" as const },
 	withdrawal: { heading: "Pytania o odstąpienie od umowy?", topicPreset: "withdrawal" as const },

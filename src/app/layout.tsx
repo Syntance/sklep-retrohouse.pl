@@ -1,12 +1,12 @@
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
+import { RawHitsBeacon } from "@/components/analytics/raw-hits-beacon";
 import { AppToaster } from "@/components/app-toaster";
-import { CartAddedCallout } from "@/components/cart-added-callout";
+import { CartAddedCalloutLazy } from "@/components/cart-added-callout-lazy";
 import { CookieConsentBanner } from "@/components/cookie-consent";
 import { CustomerSessionProvider } from "@/components/customer/customer-session-provider";
 import { HideOnMagazyn } from "@/components/layout/hide-on-magazyn";
-import { RawHitsBeacon } from "@/components/analytics/raw-hits-beacon";
 import { PopupBannerSlot } from "@/components/layout/popup-banner-slot";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -83,8 +83,6 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="pl" className="h-full antialiased">
-			{/* Preload LCP: robi to next/image `priority` na hero danej podstrony — ręczny preload
-			    w layoucie ładowałby surowy plik na każdej trasie i dublował zoptymalizowany URL. */}
 			<body className="min-h-full flex flex-col bg-background text-foreground">
 				<HideOnMagazyn>
 					<a
@@ -108,7 +106,7 @@ export default function RootLayout({
 					<CookieConsentBanner />
 				</HideOnMagazyn>
 				<HideOnMagazyn>
-					<CartAddedCallout />
+					<CartAddedCalloutLazy />
 				</HideOnMagazyn>
 				<HideOnMagazyn>
 					<PopupBannerSlot />

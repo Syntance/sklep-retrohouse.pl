@@ -1,9 +1,19 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useId } from "react";
+import { useId, useRef } from "react";
 import { useConsent } from "@/lib/analytics/use-consent";
-import { CustomizeDialog } from "./customize-dialog";
+
+/**
+ * Dialog „Dostosuj" (@base-ui Dialog) — dynamiczny: otwierany rzadko,
+ * a jego kod nie musi wchodzić do initial JS. Montowany dopiero przy
+ * pierwszym otwarciu (potem zostaje, żeby zamknięcie miało animację).
+ */
+const CustomizeDialog = dynamic(
+	() => import("./customize-dialog").then((m) => m.CustomizeDialog),
+	{ ssr: false },
+);
 
 /**
  * CookieConsentBanner — sticky bottom + 3 przyciski równoważne (UODO 2023).
@@ -19,6 +29,8 @@ import { CustomizeDialog } from "./customize-dialog";
 export function CookieConsentBanner() {
 	const headingId = useId();
 	const { consent, isLoaded, isOpen, open, close, update } = useConsent();
+	const dialogEverOpenedRef = useRef(false);
+	if (isOpen) dialogEverOpenedRef.current = true;
 
 	if (!isLoaded) return null;
 	const showBanner = consent === null;
@@ -29,11 +41,7 @@ export function CookieConsentBanner() {
 	const handleRejectAll = () => {
 		update({ analytics: false, marketing: false, preferences: false });
 	};
-	const handleSaveCustom = (next: {
-		analytics: boolean;
-		marketing: boolean;
-		preferences: boolean;
-	}) => {
+	const handleSaveCustom = (next: { analytics: boolean; marketing: boolean; preferences: boolean }) => {
 		update(next);
 	};
 
@@ -50,9 +58,7 @@ export function CookieConsentBanner() {
 							Pliki cookie i prywatność
 						</h2>
 						<p id={`${headingId}-desc`} className="mt-2 text-sm leading-relaxed text-foreground/70">
-							Używamy plików cookie, by lepiej rozumieć jak korzystasz ze sklepu (PostHog, hosting w
-							EU). Możesz zaakceptować wszystko, odrzucić wszystko albo wybrać po swojemu. Bez
-							Twojej zgody — żadna analityka się nie uruchomi.{" "}
+							Używamy plików cookie, by lepiej rozumieć jak korzystasz ze sklepu (PostHog, hosting w EU). Możesz zaakceptować wszystko, odrzucić wszystko albo wybrać po swojemu. Bez Twojej zgody — żadna analityka się nie uruchomi.{" "}
 							<Link
 								href="/polityka-prywatnosci"
 								className="underline decoration-walnut/40 underline-offset-4 hover:text-terracotta hover:decoration-terracotta"
@@ -89,7 +95,14 @@ export function CookieConsentBanner() {
 				</section>
 			) : null}
 
-			<CustomizeDialog open={isOpen} current={consent} onClose={close} onSave={handleSaveCustom} />
+			{dialogEverOpenedRef.current ? (
+				<CustomizeDialog
+					open={isOpen}
+					current={consent}
+					onClose={close}
+					onSave={handleSaveCustom}
+				/>
+			) : null}
 		</>
 	);
 }

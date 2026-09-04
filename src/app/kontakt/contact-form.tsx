@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useActionState, useEffect, useId, useRef, useState } from "react";
+import Link from "next/link";
 import { ArrowRightIcon } from "@/components/icons";
 import { PrivacyPolicyLink } from "@/components/primitives";
 import { track } from "@/lib/analytics/posthog";
@@ -10,8 +10,8 @@ import {
 	type ContactTopicPreset,
 	formatContactTopicLabel,
 	getContactTopicOptions,
-} from "@/lib/validation/contact";
-import { type ContactState, submitContact } from "./actions";
+} from "@/lib/validation/contact-topics";
+import { submitContact, type ContactState } from "./actions";
 
 const INITIAL: ContactState = { status: "idle" };
 
@@ -136,7 +136,8 @@ export function ContactForm({
 				/>
 				<p className="sm:col-span-2 text-xs text-foreground/60">
 					Wysyłając formularz akceptujesz{" "}
-					<PrivacyPolicyLink className="underline underline-offset-4 hover:text-terracotta" />.
+					<PrivacyPolicyLink className="underline underline-offset-4 hover:text-terracotta" />
+					.
 				</p>
 			</div>
 
@@ -205,9 +206,7 @@ function TextField({
 	const errId = `${id}-err`;
 	const baseClass =
 		"mt-2 w-full rounded-xl border bg-background px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta";
-	const borderClass = error
-		? "border-destructive"
-		: "border-border focus-visible:border-terracotta";
+	const borderClass = error ? "border-destructive" : "border-border focus-visible:border-terracotta";
 
 	return (
 		<label htmlFor={id} className={className}>
@@ -259,9 +258,7 @@ function TopicSelect({
 }) {
 	const id = useId();
 	const errId = `${id}-err`;
-	const borderClass = error
-		? "border-destructive"
-		: "border-border focus-visible:border-terracotta";
+	const borderClass = error ? "border-destructive" : "border-border focus-visible:border-terracotta";
 
 	return (
 		<label htmlFor={id} className="sm:col-span-2">

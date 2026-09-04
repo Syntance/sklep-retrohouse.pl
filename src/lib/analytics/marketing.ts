@@ -1,6 +1,6 @@
 "use client";
 
-import { env } from "@/env";
+import { clientEnv } from "@/env.client";
 
 type FbqFunction = ((...args: unknown[]) => void) & {
 	callMethod?: (...args: unknown[]) => void;
@@ -21,11 +21,11 @@ const SCRIPT_ID = "rh-meta-pixel";
 let pixelLoaded = false;
 
 function isEnabled(): boolean {
-	return Boolean(env.NEXT_PUBLIC_META_PIXEL_ID);
+	return Boolean(clientEnv.NEXT_PUBLIC_META_PIXEL_ID);
 }
 
 function getPixelId(): string {
-	return env.NEXT_PUBLIC_META_PIXEL_ID ?? "";
+	return clientEnv.NEXT_PUBLIC_META_PIXEL_ID ?? "";
 }
 
 function loadMetaPixel(): void {

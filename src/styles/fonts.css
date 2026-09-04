@@ -1,7 +1,12 @@
 /**
  * Self-hosted Inter + Playfair (latin + latin-ext).
  * @fontsource zapewnia spójne unicode-range — bez Arial fallback na ą, ę, ś itd.
- * Inter Variable: jedna oś opsz pokrywa wszystkie wagi.
+ * Inter Variable: oś opsz — ZOSTAWIAMY mimo 71 KiB narzutu wzgledem osi
+ * wght. Optical sizing (font-optical-sizing: auto jest domyslne) dziala
+ * powyzej 14 px i realnie zmienia rysunek liter: bez niego tekst jest
+ * szerszy o 0,99% przy 16 px, 2,04% przy 18 px i 8,30% przy 34 px
+ * (zmierzone canvas measureText). Ponizej 14 px roznica to 0,00%.
+ * Nie zamieniac na wght.css — to zmiana wygladu, nie tylko rozmiaru.
  * Playfair: minimum niezbędne do UI — 400/700 + 400-italic (callout na zdjęciu).
  * Wagi 500/600/800 eliminujemy — przeglądarka interpoluje z osi Variable (Inter)
  * lub syntetyzuje (Playfair jest fontom zmiennym niezgodna, ale 400→700 wystarczy).
@@ -10,3 +15,67 @@
 @import "@fontsource/playfair-display/400.css";
 @import "@fontsource/playfair-display/700.css";
 @import "@fontsource/playfair-display/400-italic.css";
+
+/**
+ * Podzbiory latin-ext ograniczone do 16 polskich liter (Ąą Ćć Ęę Łł Ńń Śś Źź Żż).
+ *
+ * Pliki latin-ext z @fontsource wioza ~500 glifow calej Europy Srodkowej
+ * (czeski, wegierski, turecki, IPA, waluty swiata) — polska strona rysuje
+ * z tego 16. Po inline'owaniu CSS fonty startuja natychmiast i zabieraja
+ * pasmo obrazowi LCP, wiec te 151 KiB kosztowalo FCP i LCP:
+ *   inter-latin-ext-opsz     133 336 ->  8 424 B
+ *   playfair-latin-ext-400    12 336 ->  2 824 B
+ *   playfair-latin-ext-700    12 904 ->  2 872 B
+ *   playfair-latin-ext-400i   13 668 ->  3 048 B
+ *
+ * ZERO zmiany wygladu — to te same pliki zrodlowe, te same kontury, ta sama
+ * os opsz 14-32 i wght 100-900 (zweryfikowane fontTools). Usuniete sa
+ * wylacznie glify, ktorych strona nigdy nie rysuje.
+ *
+ * Bezpieczenstwo: te reguly stoja PO @importach, wiec wygrywaja tylko dla
+ * swojego unicode-range (16 kodow). Oryginalne deklaracje latin-ext zostaja
+ * aktywne jako fallback — gdyby w tresci z CMS pojawil sie znak spoza tego
+ * zakresu (np. czeskie "ř"), przegladarka pobierze pelny plik i narysuje go
+ * prawdziwym krojem. Nigdy nie ma tofu ani podmiany na font systemowy.
+ *
+ * Regeneracja po aktualizacji @fontsource:
+ *   python3 -m fontTools.subset <src.woff2> --flavor=woff2 --layout-features='*' \
+ *     --unicodes="U+0104-0107,U+0118-0119,U+0141-0144,U+015A-015B,U+0179-017C" \
+ *     --output-file=src/styles/fonts/<out>.woff2
+ */
+
+@font-face {
+	font-family: "Inter Variable";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 100 900;
+	src: url("./fonts/inter-latin-ext-opsz-pl.woff2") format("woff2-variations");
+	unicode-range: U+0104-0107, U+0118-0119, U+0141-0144, U+015A-015B, U+0179-017C;
+}
+
+@font-face {
+	font-family: "Playfair Display";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 400;
+	src: url("./fonts/playfair-latin-ext-400-pl.woff2") format("woff2");
+	unicode-range: U+0104-0107, U+0118-0119, U+0141-0144, U+015A-015B, U+0179-017C;
+}
+
+@font-face {
+	font-family: "Playfair Display";
+	font-style: normal;
+	font-display: swap;
+	font-weight: 700;
+	src: url("./fonts/playfair-latin-ext-700-pl.woff2") format("woff2");
+	unicode-range: U+0104-0107, U+0118-0119, U+0141-0144, U+015A-015B, U+0179-017C;
+}
+
+@font-face {
+	font-family: "Playfair Display";
+	font-style: italic;
+	font-display: swap;
+	font-weight: 400;
+	src: url("./fonts/playfair-latin-ext-400-italic-pl.woff2") format("woff2");
+	unicode-range: U+0104-0107, U+0118-0119, U+0141-0144, U+015A-015B, U+0179-017C;
+}
