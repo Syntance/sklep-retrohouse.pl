@@ -10,6 +10,7 @@ import {
 	markOrderShipped,
 	startOrderRealization,
 } from "@/lib/admin/orders";
+import { requireAdminSession } from "@/lib/admin/require-session";
 import { type OrderEmailStage, sendOrderStatusEmail } from "@/lib/email/order-status-email";
 
 export type OrderActionState = { error: string | null; ok: boolean };
@@ -38,6 +39,7 @@ export async function runOrderAction(
 	if (!handler) return { ok: false, error: "Nieznana akcja." };
 
 	try {
+		await requireAdminSession();
 		await handler(orderId);
 	} catch (error) {
 		if (error instanceof AdminUnauthorizedError) redirect("/magazyn/auth/logout");

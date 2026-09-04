@@ -446,10 +446,21 @@ export async function createPromoCode(input: PromoCodeInput): Promise<void> {
 async function replacePromotion(
 	oldId: string,
 	code: string,
+	status: "active" | "draft",
+	all: MedusaPromotion[],
 	build: (tempCode: string) => CreatePromotionBody,
 ): Promise<MedusaPromotion> {
+	// Kolizję kodu wykrywamy PRZED jakąkolwiek mutacją — inaczej stara promocja
+	// zdąży zniknąć, a rename i tak padnie na unikalności.
+	const collision = all.find((p) => p.id !== oldId && p.code.toUpperCase() === code);
+	if (collision) {
+		throw new Error(`Kod „${code}” jest już zajęty przez inną promocję.`);
+	}
+
 	const tempCode = `${code}__MIGR${oldId.slice(-6).toUpperCase()}`;
-	const created = await createPromotion(build(tempCode));
+	// Następca powstaje jako SZKIC: gdyby rename padł, pod kodem tymczasowym nie
+	// zostaje działający rabat możliwy do wykorzystania w checkoucie.
+	const created = await createPromotion({ ...build(tempCode), status: "draft" });
 
 	try {
 		await deletePromotion(oldId);
@@ -459,8 +470,18 @@ async function replacePromotion(
 		throw error;
 	}
 
-	await updatePromotion(created.id, { code });
-	return { ...created, code };
+	try {
+		await updatePromotion(created.id, { code, status });
+	} catch (error) {
+		// Stara już nie istnieje. Kasujemy niedokończonego następcę, żeby kod
+		// tymczasowy nie krążył po sklepie, i mówimy wprost, co się stało.
+		await deletePromotion(created.id).catch(() => undefined);
+		throw new Error(
+			`Nie udało się dokończyć zmiany kodu „${code}”. Poprzednia wersja została usunięta — utwórz kod ponownie. (${error instanceof Error ? error.message : "błąd API"})`,
+		);
+	}
+
+	return { ...created, code, status };
 }
 
 export async function updatePromoCode(id: string, input: PromoCodeInput): Promise<void> {
@@ -513,7 +534,7 @@ export async function updatePromoCode(id: string, input: PromoCodeInput): Promis
 
 		const shadow = all.find((p) => p.code === freeShippingPromotionCode(id));
 		if (shadow) await deletePromotion(shadow.id);
-		await replacePromotion(id, code, (tempCode) =>
+		await replacePromotion(id, code, input.status, all, (tempCode) =>
 			buildFreeShippingPromotionBody(tempCode, input.status, minPln),
 		);
 		return;
@@ -521,7 +542,7 @@ export async function updatePromoCode(id: string, input: PromoCodeInput): Promis
 
 	if (wasFreeShippingOnly) {
 		const discountValue = resolveDiscountValue(input);
-		const main = await replacePromotion(id, code, (tempCode) =>
+		const main = await replacePromotion(id, code, input.status, all, (tempCode) =>
 			buildDiscountPromotionBody({ ...input, code: tempCode }, discountValue),
 		);
 		await syncShadowFreeShipping(main.id, { ...input, code }, minPln);

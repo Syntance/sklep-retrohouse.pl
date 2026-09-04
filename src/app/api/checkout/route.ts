@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createMedusaOrder } from "@/lib/checkout/create-order";
 import { sendNewOrderShopNotification, sendOrderStatusEmail } from "@/lib/email/order-status-email";
+import { rateLimit } from "@/lib/rate-limit";
 import { CheckoutSchema } from "@/lib/validation/checkout";
 
 /**
@@ -8,6 +9,21 @@ import { CheckoutSchema } from "@/lib/validation/checkout";
  * Body JSON zgodne z CheckoutSchema. Zwraca { ok, orderId, displayId } lub błąd.
  */
 export async function POST(request: Request) {
+	// Endpoint jest publiczny i tworzy REALNE zamówienia; bez limitu daje też
+	// wyrocznię do zgadywania kodów rabatowych (inny komunikat dla kodu
+	// istniejącego i nieistniejącego).
+	const ip =
+		request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+		request.headers.get("x-real-ip")?.trim() ||
+		"anonymous";
+	const limit = rateLimit(`checkout:${ip}`, 10, 10 * 60_000);
+	if (!limit.ok) {
+		return NextResponse.json(
+			{ ok: false, error: "Zbyt wiele prób. Odczekaj chwilę i spróbuj ponownie." },
+			{ status: 429, headers: { "Retry-After": String(limit.retryAfterSec) } },
+		);
+	}
+
 	let body: unknown;
 	try {
 		body = await request.json();

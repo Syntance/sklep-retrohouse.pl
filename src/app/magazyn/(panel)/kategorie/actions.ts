@@ -11,6 +11,7 @@ import {
 } from "@/lib/admin/categories";
 import { recordAudit } from "@/lib/admin/audit-log";
 import { AdminApiError, AdminUnauthorizedError } from "@/lib/admin/medusa-admin";
+import { requireAdminSession } from "@/lib/admin/require-session";
 import { slugify } from "@/lib/admin/slug";
 
 export type CategoryActionState = { error: string | null; ok: boolean };
@@ -39,6 +40,7 @@ export async function saveCategoryAction(payload: CategoryPayload): Promise<Cate
 	};
 
 	try {
+		await requireAdminSession();
 		if (data.id) {
 			await updateCategory(data.id, input);
 		} else {
@@ -59,6 +61,7 @@ export async function saveCategoryAction(payload: CategoryPayload): Promise<Cate
 
 export async function deleteCategoryAction(id: string): Promise<CategoryActionState> {
 	try {
+		await requireAdminSession();
 		await deleteCategory(id);
 	} catch (error) {
 		if (error instanceof AdminUnauthorizedError) redirect("/magazyn/auth/logout");

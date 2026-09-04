@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { recordAudit } from "@/lib/admin/audit-log";
 import { AdminApiError, AdminUnauthorizedError } from "@/lib/admin/medusa-admin";
+import { requireAdminSession } from "@/lib/admin/require-session";
 import { saveGlobalSeoSettings, savePageSeoMeta } from "@/lib/admin/seo-store";
 import { seoMetaSchema, siteSettingsSchema } from "@/lib/content/parsers";
 import { revalidateContentCache } from "@/lib/content/revalidate-content";
@@ -39,6 +40,7 @@ export async function saveGlobalSeoAction(
 	}
 
 	try {
+		await requireAdminSession();
 		const settings = siteSettingsSchema.parse({
 			title: parsed.data.title,
 			description: parsed.data.description,
@@ -68,6 +70,7 @@ export async function savePageSeoAction(
 	}
 
 	try {
+		await requireAdminSession();
 		await savePageSeoMeta(pageId, parsed.data);
 	} catch (error) {
 		return handleError(error, "Nie udało się zapisać SEO podstrony.");

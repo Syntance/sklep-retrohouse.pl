@@ -6,6 +6,7 @@ import { z } from "zod";
 import { recordAudit } from "@/lib/admin/audit-log";
 import { AdminApiError, AdminUnauthorizedError } from "@/lib/admin/medusa-admin";
 import { createPromoCode, deletePromoCode, updatePromoCode } from "@/lib/admin/promotions";
+import { requireAdminSession } from "@/lib/admin/require-session";
 import type { PromoCodeInput } from "@/lib/admin/promotion-types";
 
 export type PromoActionState = { error: string | null; ok: boolean };
@@ -46,6 +47,7 @@ export async function savePromoCodeAction(payload: PromoPayload): Promise<PromoA
 	const input = toInput(parsed.data);
 
 	try {
+		await requireAdminSession();
 		if (parsed.data.id) await updatePromoCode(parsed.data.id, input);
 		else await createPromoCode(input);
 		await recordAudit(parsed.data.id ? "promo.update" : "promo.create", {
@@ -64,6 +66,7 @@ export async function savePromoCodeAction(payload: PromoPayload): Promise<PromoA
 
 export async function deletePromoCodeAction(id: string): Promise<PromoActionState> {
 	try {
+		await requireAdminSession();
 		await deletePromoCode(id);
 		await recordAudit("promo.delete", { target: id });
 	} catch (error) {

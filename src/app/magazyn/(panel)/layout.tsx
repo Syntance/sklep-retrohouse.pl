@@ -2,12 +2,24 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { MAGAZYN_BRANDING } from "@/components/panel/nav-config";
+import { requireAdminSession } from "@/lib/admin/require-session";
 import { getSessionToken } from "@/lib/admin/session";
 import { PanelSidebarNav } from "./panel-sidebar-nav";
 
 export default async function PanelLayout({ children }: { children: ReactNode }) {
 	const token = await getSessionToken();
 	if (!token) redirect("/magazyn/login");
+
+	// Samo istnienie cookie NIC nie dowodzi: jego wartością jest surowy JWT
+	// Medusy, a `/auth/user/emailpass` w backendzie jest publiczny — każdy, kto
+	// ma konto admina w Medusie, może wystawić sobie token i wkleić go jako
+	// cookie, omijając allowlistę sprawdzaną tylko przy logowaniu. Dlatego przy
+	// każdym wejściu weryfikujemy tożsamość i allowlistę po stronie serwera.
+	try {
+		await requireAdminSession();
+	} catch {
+		redirect("/magazyn/auth/logout");
+	}
 
 	return (
 		<div

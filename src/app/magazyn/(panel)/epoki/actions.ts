@@ -6,6 +6,7 @@ import { z } from "zod";
 import { recordAudit } from "@/lib/admin/audit-log";
 import { deleteEpoch, upsertEpoch } from "@/lib/admin/epochs";
 import { AdminApiError, AdminUnauthorizedError } from "@/lib/admin/medusa-admin";
+import { requireAdminSession } from "@/lib/admin/require-session";
 import { slugify } from "@/lib/admin/slug";
 
 export type EpochActionState = { error: string | null; ok: boolean };
@@ -33,6 +34,7 @@ export async function saveEpochAction(payload: EpochPayload): Promise<EpochActio
 	const value = slugify(data.label);
 
 	try {
+		await requireAdminSession();
 		await upsertEpoch({ value, label: data.label.trim() }, data.previousValue);
 	} catch (error) {
 		if (error instanceof AdminUnauthorizedError) redirect("/magazyn/auth/logout");
@@ -48,6 +50,7 @@ export async function saveEpochAction(payload: EpochPayload): Promise<EpochActio
 
 export async function deleteEpochAction(value: string): Promise<EpochActionState> {
 	try {
+		await requireAdminSession();
 		await deleteEpoch(value);
 	} catch (error) {
 		if (error instanceof AdminUnauthorizedError) redirect("/magazyn/auth/logout");

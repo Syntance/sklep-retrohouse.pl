@@ -24,6 +24,7 @@ export type PopupBanner = {
 	title: string;
 	body?: string;
 	imageUrl?: string;
+	imageAlt?: string;
 	ctaLabel?: string;
 	ctaHref?: string;
 	/** Po zamknięciu nie pokazuj ponownie w tej sesji przeglądarki. */

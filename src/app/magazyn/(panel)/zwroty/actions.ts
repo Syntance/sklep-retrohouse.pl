@@ -6,6 +6,7 @@ import { recordAudit } from "@/lib/admin/audit-log";
 import { AdminUnauthorizedError } from "@/lib/admin/medusa-admin";
 import type { ReturnStatus } from "@/lib/admin/return-types";
 import { getAllReturns, getReturnById, updateReturnStatus } from "@/lib/admin/returns";
+import { requireAdminSession } from "@/lib/admin/require-session";
 import { getSessionToken } from "@/lib/admin/session";
 import { sendReturnStatusCustomerEmail } from "@/lib/email/return-status-customer-email";
 
@@ -45,6 +46,7 @@ export async function updateReturnStatusAction(
 	if (!token) throw new AdminUnauthorizedError("No session token");
 
 	try {
+		await requireAdminSession();
 		await updateReturnStatus(id, status, extra);
 		await recordAudit("return.status.update", { target: id, meta: { status } });
 

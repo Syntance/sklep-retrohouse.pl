@@ -26,8 +26,16 @@ export const popupBannerSchema = z.object({
 	title: z.string().max(120),
 	body: z.string().max(600).optional(),
 	imageUrl: z.string().max(500).optional(),
+	imageAlt: z.string().max(200).optional(),
 	ctaLabel: z.string().max(60).optional(),
-	ctaHref: z.string().max(500).optional(),
+	// Tylko ścieżka wewnętrzna albo https — blokuje javascript:/data: i open-redirect.
+	ctaHref: z
+		.string()
+		.max(500)
+		.refine((v) => v === "" || v.startsWith("/") || v.startsWith("https://"), {
+			message: "Adres musi zaczynać się od / albo https://",
+		})
+		.optional(),
 	oncePerSession: z.boolean(),
 	delayMs: z.number().int().min(0).max(60_000),
 });

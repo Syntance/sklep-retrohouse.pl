@@ -28,18 +28,17 @@ export async function checkLoginRateLimit(): Promise<LoginRateLimitResult> {
 	// Bez Upstash NIE przepuszczamy wszystkiego — schodzimy na limiter in-memory.
 	// Jest "miękki" (resetuje się przy zimnym starcie), ale to jedyna ochrona
 	// brute-force panelu, więc cicha kapitulacja jest gorsza niż limit przybliżony.
+	const ip = await clientIp();
+
 	if (!url || !token) {
 		if (process.env.NODE_ENV === "production") {
 			console.error(
 				"[security] Brak UPSTASH_REDIS_REST_URL/TOKEN — rate-limit logowania działa tylko in-memory.",
 			);
 		}
-		const ip = await clientIp();
-		const local = rateLimit(`magazyn:login:${ip}`, MAX_ATTEMPTS, WINDOW_SECONDS * 1000);
-		return local.ok ? { ok: true } : { ok: false, retryAfter: local.retryAfterSec };
+		return localFallback(ip);
 	}
 
-	const ip = await clientIp();
 	const bucket = Math.floor(Date.now() / 1000 / WINDOW_SECONDS);
 	const key = `magazyn:login:${ip}:${bucket}`;
 
@@ -66,6 +65,15 @@ export async function checkLoginRateLimit(): Promise<LoginRateLimitResult> {
 		}
 		return { ok: true };
 	} catch {
-		return { ok: true }; // fail-open
+		// Błąd/wyczerpany limit Upstasha NIE może rozbroić jedynej ochrony
+		// brute-force. Publiczny /api/track-hit korzysta z tej samej instancji,
+		// więc fail-open dawał tani sposób na wyłączenie limitera logowania.
+		return localFallback(ip);
 	}
+}
+
+/** Limiter in-memory: miękki (reset przy zimnym starcie), ale nigdy nie przepuszcza wszystkiego. */
+async function localFallback(ip: string): Promise<LoginRateLimitResult> {
+	const local = rateLimit(`magazyn:login:${ip}`, MAX_ATTEMPTS, WINDOW_SECONDS * 1000);
+	return local.ok ? { ok: true } : { ok: false, retryAfter: local.retryAfterSec };
 }

@@ -43,6 +43,7 @@ export async function savePageContentAction(
 	}
 
 	try {
+		await requireAdminSession();
 		await savePageContent(pageId, parsed.data);
 	} catch (error) {
 		return handleError(error, "Nie udało się zapisać treści podstrony.");
@@ -64,6 +65,7 @@ export async function savePageHeroImageAction(
 	}
 
 	try {
+		await requireAdminSession();
 		await savePageHeroImage(pageId, parsed.data);
 	} catch (error) {
 		return handleError(error, "Nie udało się zapisać zdjęcia hero.");
@@ -85,6 +87,7 @@ export async function savePageHeroBackgroundAction(
 	}
 
 	try {
+		await requireAdminSession();
 		await savePageHeroBackground(pageId, parsed.data);
 	} catch (error) {
 		return handleError(error, "Nie udało się zapisać tła hero.");
@@ -111,6 +114,7 @@ export async function saveCmsGlobalSettingsAction(
 	}
 
 	try {
+		await requireAdminSession();
 		await mergeSiteSettings(parsed.data);
 	} catch (error) {
 		return handleError(error, "Nie udało się zapisać treści globalnych.");

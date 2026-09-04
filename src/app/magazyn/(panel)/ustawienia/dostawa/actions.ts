@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { recordAudit } from "@/lib/admin/audit-log";
 import { AdminApiError, AdminUnauthorizedError } from "@/lib/admin/medusa-admin";
+import { requireAdminSession } from "@/lib/admin/require-session";
 import { setShippingOptionCheckoutEnabled, updateShippingOption } from "@/lib/admin/shipping-options";
 
 export type ShippingActionState = { error: string | null; ok: boolean };
@@ -37,6 +38,7 @@ export async function toggleShippingOptionAction(payload: {
 	}
 
 	try {
+		await requireAdminSession();
 		await setShippingOptionCheckoutEnabled(parsed.data.optionId, parsed.data.enabled);
 		await recordAudit("shipping.toggle", {
 			target: parsed.data.optionId,
@@ -63,6 +65,7 @@ export async function saveShippingOptionAction(
 	}
 
 	try {
+		await requireAdminSession();
 		await updateShippingOption(parsed.data.optionId, {
 			name: parsed.data.name,
 			priceMajor: parsed.data.priceMajor,

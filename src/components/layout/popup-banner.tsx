@@ -18,6 +18,8 @@ export function PopupBanner({ banner }: { banner: PopupBannerContent }) {
 	const titleId = useId();
 	const [open, setOpen] = useState(false);
 	const closeRef = useRef<HTMLButtonElement>(null);
+	const dialogRef = useRef<HTMLDivElement>(null);
+	const restoreFocusRef = useRef<HTMLElement | null>(null);
 
 	useEffect(() => {
 		if (!banner.enabled || !banner.title.trim()) return;
@@ -46,13 +48,40 @@ export function PopupBanner({ banner }: { banner: PopupBannerContent }) {
 
 	useEffect(() => {
 		if (!open) return;
+
+		// `aria-modal` obiecuje czytnikowi ekranu, że reszta strony jest poza
+		// zasięgiem — bez pułapki na Tab ta obietnica jest nieprawdziwa.
+		restoreFocusRef.current = document.activeElement as HTMLElement | null;
 		closeRef.current?.focus();
 
 		const onKey = (event: KeyboardEvent) => {
-			if (event.key === "Escape") dismiss();
+			if (event.key === "Escape") {
+				dismiss();
+				return;
+			}
+			if (event.key !== "Tab") return;
+
+			const focusables = dialogRef.current?.querySelectorAll<HTMLElement>(
+				'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])',
+			);
+			if (!focusables || focusables.length === 0) return;
+
+			const first = focusables[0];
+			const last = focusables[focusables.length - 1];
+			if (event.shiftKey && document.activeElement === first) {
+				event.preventDefault();
+				last.focus();
+			} else if (!event.shiftKey && document.activeElement === last) {
+				event.preventDefault();
+				first.focus();
+			}
 		};
+
 		document.addEventListener("keydown", onKey);
-		return () => document.removeEventListener("keydown", onKey);
+		return () => {
+			document.removeEventListener("keydown", onKey);
+			restoreFocusRef.current?.focus?.();
+		};
 	}, [open, dismiss]);
 
 	if (!open) return null;
@@ -68,6 +97,7 @@ export function PopupBanner({ banner }: { banner: PopupBannerContent }) {
 				className="absolute inset-0 cursor-default border-0 bg-foreground/30 p-0"
 			/>
 			<div
+				ref={dialogRef}
 				role="dialog"
 				aria-modal="true"
 				aria-labelledby={titleId}
@@ -85,13 +115,15 @@ export function PopupBanner({ banner }: { banner: PopupBannerContent }) {
 
 				{banner.imageUrl ? (
 					<span className="relative block aspect-[3/2] w-full bg-muted">
+						{/* Bez `unoptimized`: baner potrafi wejść tuż po pierwszym renderze,
+						    a surowy plik z uploadu bywa wielkością pełnego zdjęcia. */}
 						<Image
 							src={banner.imageUrl}
-							alt=""
+							alt={banner.imageAlt?.trim() ?? ""}
 							fill
 							sizes="(max-width: 640px) 92vw, 26rem"
 							className="object-cover"
-							unoptimized
+							loading="lazy"
 						/>
 					</span>
 				) : null}

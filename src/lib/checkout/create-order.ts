@@ -1,6 +1,7 @@
 import "server-only";
 import { env } from "@/env";
 import { freeShippingPromotionCode } from "@/lib/admin/promotion-types";
+import { isMedusaBackendHealthy } from "@/lib/medusa/backend-health";
 import { getProductBySlug } from "@/lib/products/queries";
 import type { CheckoutInput } from "@/lib/validation/checkout";
 
@@ -99,6 +100,17 @@ export async function createMedusaOrder(input: CheckoutInput): Promise<CreateOrd
 	const regionId = regions.find((r) => r.currency_code === "pln")?.id ?? regions[0]?.id;
 	if (!regionId) return { ok: false, error: "Brak skonfigurowanego regionu sprzedaży." };
 
+	// `getProductBySlug` zwraca `undefined` ZARÓWNO gdy produkt naprawdę zniknął,
+	// JAK I gdy backend jest chwilowo niedostępny (health ping / błąd sieci).
+	// Bez tego rozróżnienia awaria Medusy wyglądałaby jak „produkty
+	// niedostępne" i blokowała poprawne zamówienia fałszywym komunikatem.
+	if (!(await isMedusaBackendHealthy())) {
+		return {
+			ok: false,
+			error: "Chwilowy problem z połączeniem ze sklepem. Spróbuj ponownie za chwilę.",
+		};
+	}
+
 	const products = await Promise.all(input.items.map((slug) => getProductBySlug(slug)));
 
 	// Antyki to unikaty — jeśli którakolwiek pozycja zniknęła, NIE składamy
@@ -130,6 +142,9 @@ export async function createMedusaOrder(input: CheckoutInput): Promise<CreateOrd
 		company: input.companyName || "",
 	};
 
+	// `shipping` z klienta służy tylko analityce — etykietę w zamówieniu
+	// nadpisujemy nazwą metody FAKTYCZNIE dobranej w Medusie (patrz krok 3),
+	// żeby w panelu nie było napisane co innego, niż policzono.
 	const metadata: Record<string, string> = {
 		shipping: SHIPPING_LABELS[input.shipping],
 		payment: PAYMENT_LABELS[input.payment],
@@ -180,6 +195,12 @@ export async function createMedusaOrder(input: CheckoutInput): Promise<CreateOrd
 		method: "POST",
 		body: JSON.stringify({ option_id: chosen.id }),
 	});
+
+	// Etykieta w zamówieniu = realnie dobrana metoda, nie deklaracja klienta.
+	await storeFetch(`/store/carts/${cart.id}`, {
+		method: "POST",
+		body: JSON.stringify({ metadata: { ...metadata, shipping: chosen.name } }),
+	}).catch(() => undefined);
 
 	// 3.5. Kod promocyjny — po dodaniu metody wysyłki (rabat na dostawę wymaga
 	// istniejącej metody w koszyku). Weryfikacja: kod musi faktycznie wisieć na

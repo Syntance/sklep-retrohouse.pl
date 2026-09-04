@@ -12,6 +12,7 @@ import {
 	type ProductFormValues,
 	updateAdminProduct,
 } from "@/lib/admin/products";
+import { requireAdminSession } from "@/lib/admin/require-session";
 import { slugify } from "@/lib/admin/slug";
 import { resolveMedusaMediaUrls } from "@/lib/medusa/media-url";
 
@@ -85,6 +86,7 @@ export async function saveProductAction(payload: ProductPayload): Promise<SavePr
 	const values = toValues(data);
 
 	try {
+		await requireAdminSession();
 		if (data.id) {
 			await updateAdminProduct(data.id, data.variantId ?? null, values);
 		} else {
@@ -106,6 +108,7 @@ export async function saveProductAction(payload: ProductPayload): Promise<SavePr
 
 export async function deleteProductAction(id: string): Promise<void> {
 	try {
+		await requireAdminSession();
 		await deleteAdminProduct(id);
 	} catch (error) {
 		if (error instanceof AdminUnauthorizedError) redirect("/magazyn/auth/logout");
@@ -120,6 +123,7 @@ export type DuplicateProductState = { ok: boolean; error: string | null; newId?:
 export async function duplicateProductAction(id: string): Promise<DuplicateProductState> {
 	let newId: string;
 	try {
+		await requireAdminSession();
 		newId = await duplicateAdminProduct(id);
 	} catch (error) {
 		if (error instanceof AdminUnauthorizedError) redirect("/magazyn/auth/logout");
@@ -140,6 +144,7 @@ export async function uploadImagesAction(formData: FormData): Promise<UploadStat
 	if (files.length === 0) return { urls: [], error: "Nie wybrano plików." };
 
 	try {
+		await requireAdminSession();
 		const urls = resolveMedusaMediaUrls(await adminUpload(files));
 		return { urls, error: null };
 	} catch (error) {

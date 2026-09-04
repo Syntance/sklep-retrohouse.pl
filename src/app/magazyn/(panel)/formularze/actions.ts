@@ -4,12 +4,14 @@ import { revalidatePath } from "next/cache";
 import { recordAudit } from "@/lib/admin/audit-log";
 import { getContactFormsConfig, saveContactFormsConfig } from "@/lib/admin/contact-forms";
 import { loadAdmin } from "@/lib/admin/load";
+import { requireAdminSession } from "@/lib/admin/require-session";
 import type { ContactFormsConfig } from "@/lib/contact/default-forms";
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
 export async function saveContactFormsAction(config: ContactFormsConfig): Promise<ActionResult> {
 	try {
+		await requireAdminSession();
 		await loadAdmin(() => saveContactFormsConfig(config));
 		await recordAudit("contact-forms.config.save");
 		revalidatePath("/magazyn/formularze");

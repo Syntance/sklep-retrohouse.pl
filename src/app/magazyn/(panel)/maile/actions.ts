@@ -45,6 +45,7 @@ export async function saveTemplateAction(template: unknown): Promise<EmailAction
 	}
 
 	try {
+		await requireAdminSession();
 		await saveEmailTemplate(parsed.data as EmailTemplate);
 	} catch (error) {
 		return handleError(error, "Nie udało się zapisać szablonu.");
@@ -65,6 +66,7 @@ export async function setTemplateEnabledAction(input: unknown): Promise<ToggleEn
 	if (!parsed.success) return { ok: false, error: "Nieprawidłowe dane przełącznika." };
 
 	try {
+		await requireAdminSession();
 		const template = await setEmailTemplateEnabled(parsed.data.type, parsed.data.enabled);
 		await recordAudit("email-template.toggle", {
 			target: parsed.data.type,
@@ -82,6 +84,7 @@ export async function resetTemplateAction(type: unknown): Promise<ResetActionSta
 	if (!parsed.success) return { ok: false, error: "Nieznany typ szablonu." };
 
 	try {
+		await requireAdminSession();
 		const template = await resetEmailTemplate(parsed.data);
 		await recordAudit("email-template.reset", { target: parsed.data });
 		revalidatePath("/magazyn/maile");
@@ -102,6 +105,7 @@ export async function uploadEmailImageAction(formData: FormData): Promise<Upload
 	}
 
 	try {
+		await requireAdminSession();
 		const urls = await adminUpload([file]);
 		const url = urls[0];
 		if (!url) return { ok: false, error: "Upload nie zwrócił adresu obrazu." };

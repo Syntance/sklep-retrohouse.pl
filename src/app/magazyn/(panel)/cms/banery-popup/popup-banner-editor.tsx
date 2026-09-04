@@ -17,6 +17,7 @@ export const EMPTY_POPUP_BANNER: PopupBanner = {
 	title: "",
 	body: "",
 	imageUrl: "",
+	imageAlt: "",
 	ctaLabel: "",
 	ctaHref: "",
 	oncePerSession: true,
@@ -60,6 +61,11 @@ export function PopupBannerEditor({ initial, rest }: Props) {
 		}
 		if (form.ctaLabel?.trim() && !form.ctaHref?.trim()) {
 			setError("Podaj adres, do którego prowadzi przycisk.");
+			return;
+		}
+		const href = form.ctaHref?.trim();
+		if (href && !href.startsWith("/") && !href.startsWith("https://")) {
+			setError("Adres przycisku musi zaczynać się od / (strona sklepu) albo https://");
 			return;
 		}
 
@@ -178,10 +184,10 @@ export function PopupBannerEditor({ initial, rest }: Props) {
 				<HeroImageField
 					label="Zdjęcie banera"
 					value={form.imageUrl ?? ""}
-					alt=""
+					alt={form.imageAlt ?? ""}
 					requiresRedeploy={false}
 					onChangeUrl={(url) => patch({ imageUrl: url })}
-					onChangeAlt={() => undefined}
+					onChangeAlt={(alt) => patch({ imageAlt: alt })}
 				/>
 			</div>
 

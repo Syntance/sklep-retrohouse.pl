@@ -29,6 +29,21 @@ function shippingKind(option: CheckoutShippingOption): ShippingMethod {
 	return PICKUP_NAME_RE.test(option.name) ? "pickup_nt" : "inpost";
 }
 
+/**
+ * Ceny dostawy bywają groszowe (np. 16,99). Globalne `formatPrice` zaokrągla
+ * PLN do pełnych złotych, co pokazywałoby inną kwotę, niż realnie obciąży
+ * klienta — tu pokazujemy grosze, gdy występują.
+ */
+function formatShipping(amount: number): string {
+	return Number.isInteger(amount)
+		? formatPrice(amount)
+		: new Intl.NumberFormat("pl-PL", {
+				style: "currency",
+				currency: "PLN",
+				minimumFractionDigits: 2,
+			}).format(amount);
+}
+
 const PAYMENT_OPTIONS: Array<{
 	value: PaymentMethod;
 	title: string;
@@ -247,7 +262,7 @@ export function CheckoutForm({ items, subtotal, shippingOptions }: CheckoutFormP
 								value={option.id}
 								title={option.name}
 								description={option.description ?? ""}
-								price={option.pricePln === null ? "wg cennika" : formatPrice(option.pricePln)}
+								price={option.pricePln === null ? "wg cennika" : formatShipping(option.pricePln)}
 								checked={shippingOptionId === option.id}
 								onSelect={() => handleShippingChange(option)}
 							/>
@@ -302,7 +317,7 @@ export function CheckoutForm({ items, subtotal, shippingOptions }: CheckoutFormP
 									? "wybierz metodę"
 									: shippingCost === null
 										? "wg cennika"
-										: formatPrice(shippingCost)}
+										: formatShipping(shippingCost)}
 							</dd>
 						</div>
 					</dl>
