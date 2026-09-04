@@ -21,8 +21,12 @@ export type CheckoutShippingOption = {
 	id: string;
 	name: string;
 	description: string | null;
-	/** Cena w PLN (major units), tak jak zwraca Medusa v2. */
-	pricePln: number;
+	/**
+	 * Cena w PLN (major units) z Medusy. `null` = cena nieznana (tryb awaryjny) —
+	 * UI musi wtedy napisać, że koszt policzy się przy finalizacji, zamiast
+	 * pokazywać 0 zł i zaniżać sumę.
+	 */
+	pricePln: number | null;
 };
 
 type MedusaShippingOption = {
@@ -62,7 +66,9 @@ export const FALLBACK_SHIPPING_OPTIONS: CheckoutShippingOption[] = [
 		id: "fallback:courier",
 		name: "Wysyłka kurierska",
 		description: "1–3 dni robocze",
-		pricePln: 0,
+		// Nieznana: w trybie awaryjnym nie znamy cennika Medusy, a pokazanie 0 zł
+		// zaniżyłoby sumę względem tego, co realnie obciąży klienta.
+		pricePln: null,
 	},
 ];
 
@@ -94,7 +100,7 @@ export const listCheckoutShippingOptions = cache(async (): Promise<CheckoutShipp
 				description: option.type?.description?.trim() || option.type?.label?.trim() || null,
 				pricePln: option.prices?.find((p) => p.currency_code === "pln")?.amount ?? 0,
 			}))
-			.sort((a, b) => a.pricePln - b.pricePln);
+			.sort((a, b) => (a.pricePln ?? 0) - (b.pricePln ?? 0));
 	} catch {
 		return [];
 	}

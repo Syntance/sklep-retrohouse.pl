@@ -85,8 +85,10 @@ export function CheckoutForm({ items, subtotal, shippingOptions }: CheckoutFormP
 
 	const selectedShipping =
 		shippingOptions.find((option) => option.id === shippingOptionId) ?? shippingOptions[0];
-	const shippingCost = selectedShipping?.pricePln ?? 0;
-	const total = subtotal + shippingCost;
+	// `null` = cennik nieznany (tryb awaryjny). Nie doliczamy zera do sumy —
+	// zamiast tego mówimy wprost, że koszt policzy się przy finalizacji.
+	const shippingCost = selectedShipping?.pricePln ?? null;
+	const total = subtotal + (shippingCost ?? 0);
 
 	const handleShippingChange = (option: CheckoutShippingOption) => {
 		setShippingOptionId(option.id);
@@ -245,7 +247,7 @@ export function CheckoutForm({ items, subtotal, shippingOptions }: CheckoutFormP
 								value={option.id}
 								title={option.name}
 								description={option.description ?? ""}
-								price={option.pricePln > 0 ? formatPrice(option.pricePln) : "0 zł"}
+								price={option.pricePln === null ? "wg cennika" : formatPrice(option.pricePln)}
 								checked={shippingOptionId === option.id}
 								onSelect={() => handleShippingChange(option)}
 							/>
@@ -296,10 +298,20 @@ export function CheckoutForm({ items, subtotal, shippingOptions }: CheckoutFormP
 						<div className="flex items-center justify-between">
 							<dt>Wysyłka</dt>
 							<dd className="tabular">
-								{selectedShipping ? formatPrice(shippingCost) : "wybierz metodę"}
+								{!selectedShipping
+									? "wybierz metodę"
+									: shippingCost === null
+										? "wg cennika"
+										: formatPrice(shippingCost)}
 							</dd>
 						</div>
 					</dl>
+					{shippingCost === null && selectedShipping ? (
+						<p className="mt-2 text-xs text-foreground/60">
+							Koszt wysyłki doliczymy przy finalizacji — potwierdzimy go przed pobraniem
+							płatności.
+						</p>
+					) : null}
 					<div className="mt-4 border-t border-border pt-4">
 						<TextField label="Kod promocyjny" name="promoCode" />
 						<p className="mt-1.5 text-xs text-foreground/60">
